@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    main h2 {
+        margin-bottom: 0;
+    }
+
+    section.status {
+        margin: 0px 10px;
+        padding-top: 0px;
+        width: 80%;
+        max-width: 600px;
+        align-self: center;
+        background-color: transparent;
+        box-shadow: none;
+    }
+
+    section.status p {
+        margin: 0.1em 1em;
+        text-align: center;
+    }
+
+    div.topicgrid {
+        display: grid;
+        width: 80%;
+        max-width: 600px;
+    }
+
+    section.topicblock {
+        text-align: left;
+        align-self: center;
+        padding: 4px;
+        margin: 10px;
+    }
+
+    section.topicblock div.facinghdr {
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 20px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+
+    section.topicblock div.facinghdr.priorities h3 {
+        font-style: italic;
+    }
+
+    section.topicblock div.facinghdr.priorities h3,
+    section.topicblock div.facinghdr.priorities p {
+        color: darkgreen;
+    }
+
+    section.topicblock div.facinghdr.domaincov h3 {
+        font-style: italic;
+    }
+
+    section.topicblock div.facinghdr.domaincov h3,
+    section.topicblock div.facinghdr.domaincov p {
+        color: teal;
+    }
+
+    div.facinghdr {
+        display: grid;
+        grid-template-columns: 80% 20%;
+        align-items: start;
+    }
+
+    div.facinghdr h3 {
+        text-align: left;
+        align-self: center;
+        margin: 0px;
+    }
+
+    div.facinghdr p.toggle {
+        text-align: right;
+        align-self: center;
+        margin: 0px;
+        padding: 3px 6px 3px 0px;
+        font-size: smaller;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    div.facinghdr p.toggle span:hover {
+        background-color: lightcyan;
+    }
+
+    div.topics {
+        display: grid;
+        max-width: 580px;
+        grid-template-columns: 85% 15%;
+        align-items: start;
+        margin: 2px 8px 8px 8px;
+        padding: 0px 20px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+    }
+
+    div.topics.priorities {
+        grid-template-columns: 100%;
+    }
+
+    div.topics.priorities ol {
+        margin: 3px 0px;
+        padding-left: 10px;
+    }
+
+    div.topics.priorities ol li {
+        margin: 4px 0px;
+    }
+
+    div.facingdesc {
+        max-width: 580px;
+        margin: 2px 8px 8px 8px;
+        padding: 0px 20px;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+    }
+
+    div.facingdesc p {
+        margin: 0px;
+        padding: 8px 0px 0px 0px;
+        font-size: smaller;
+        font-style: italic;
+    }
+
+    li.prioQ {
+        font-size: 0.9em;
+    }
+
+    p.prioQ {
+        font-style: italic;
+        font-size: 0.9em;
+    }
+
+    div.topics details {
+        min-width: 20em;
+    }
+
+    div.topics ul {
+        list-style: none;
+        padding-left: 1.5em;
+        margin: 0em;
+        display: block;
+    }
+
+    div.topics p.topicheader {
+        font-weight: bold;
+    }
+
+    div.topics p {
+        align-self: stretch;
+        margin: 0px;
+        padding: 2px 0px;
+    }
+
+    p.tcov.topicheader {
+        font-size: smaller;
+    }
+
+    div.topics p.tname {
+        text-align: left;
+        align-self: center;
+        padding-left: 4px;
+    }
+
+    div.topics p.tcov {
+        text-align: right;
+        padding-right: 2px;
+    }
+
+    div.topics p.tcov span {
+        display: block;
+    }
+
+    div.topics p.tcov span.wip {
+        margin-top: .1em;
+        font-size: 0.85em;
+    }
+
+    section.submission {
+        text-align: center;
+        align-self: center;
+        padding: 4px;
+        margin: 30px 10px 10px 10px;
+        max-width: 600px;
+        box-shadow: none;
+    }
+
+    section.submission,
+    section.submission section.actions {
+        background-color: lavender;
+    }
+
+    section.submission:hover {
+        box-shadow: 0 3px 5px rgba(var(--linksrgb), 0.3);
+    }
+
+    section.submission p {
+        margin-bottom: 2px;
+    }
+
+    section.submission section.actions {
+        margin: 5px;
+    }
+
+    section.priorities {
+        width: 80%;
+        max-width: 600px;
+    }
+
+    button:disabled,
+    button:disabled:hover {
+        border: 1px solid #999999;
+        background-color: #cccccc;
+        color: #666666;
+        cursor: default;
+    }
+
+    p.hidden {
+        display: none;
+    }
+</style>
+<script>
+    var SHOWN ="1";
+    var HIDDEN = "0";
+    var SHOW_HIDE_SUFFIX = "SH";
+    var COOKIE_LIFE = 7*24*60*60*1000;  // Save state for a week
+
+    var toggleDesc = false; // Control whether to collapse the descriptions when showing the topics
+
+    function hideTopics(topicsEl, descEl, showHideEl, section) {
+        topicsEl.style.maxHeight = null;
+        if (toggleDesc) {
+            descEl.style.display = "block";
+        }
+        showHideEl.innerHTML = showHideEl.innerHTML.replace("Hide","Show");
+        if(section)
+            setToggleStateCookie(section, HIDDEN)
+    }
+
+    function showTopics(topicsEl, descEl, showHideEl, section) {
+        topicsEl.style.maxHeight = topicsEl.scrollHeight + "px";
+        if (toggleDesc) {
+            descEl.style.display = "none";
+        }
+        showHideEl.innerHTML = showHideEl.innerHTML.replace("Show","Hide");
+        if(section)
+            setToggleStateCookie(section, SHOWN)
+    }
+
+    function toggleSection(showHideEl, section) {
+        var facingDesc = showHideEl.parentNode.nextElementSibling;
+        var facingTopics = facingDesc.nextElementSibling;
+        if (facingTopics.style.maxHeight) { // If showing Topics, hide 
+            hideTopics(facingTopics, facingDesc, showHideEl, section);
+        } else {
+            showTopics(facingTopics, facingDesc, showHideEl, section);
+        }
+    }
+    function showSectionInit(showHideElId) {
+        var showHideEl = document.getElementById(showHideElId);
+        if(showHideEl) {
+            toggleSection(showHideEl, null);
+        }
+    }
+
+    function getToggleStateCookie(section) {
+        let name = section+SHOW_HIDE_SUFFIX;
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i <ca.length; i++) {
+            let c = ca[i];
+            let cpair = c.split('=');
+            if (cpair[0].trim() == name) {
+                var shown = cpair[1].trim();
+                //console.log("Cookie found for section:"+section+" value: "+shown)
+                return shown != HIDDEN;
+            }
+        }
+        //console.log("No cookie found for showing section: "+section);
+        return false;   // If can't find the cookie, don't show the section
+    }
+  
+    function setToggleStateCookie(section, shown) {
+        const d = new Date();
+        d.setTime(d.getTime() + COOKIE_LIFE);
+        let expires = "expires="+ d.toUTCString();
+        let cname = section+SHOW_HIDE_SUFFIX;
+        document.cookie = cname + "=" + shown + ";" + expires + ";path=/";
+        //console.log("Set cookie for section: "+section+" to: "+shown);
+    }
+
+    function initSectionFromCookie(section) {
+        if(getToggleStateCookie(section)) {
+            showSectionInit(section+SHOW_HIDE_SUFFIX)
+        }
+    }
+    function initSectionsFromCookies() {
+        initSectionFromCookie("researcher");
+        initSectionFromCookie("data");
+        initSectionFromCookie("software");
+        initSectionFromCookie("systems");
+        initSectionFromCookie("strategy");
+        initSectionFromCookie("domaincov");
+        initSectionFromCookie("prios");
+}
+
+</script>
+{% endblock %}
+
+{% block main %}
+<h2>RCD Capabilities Assessment for {{ profile }}</h2>
+{% if profile.capabilities_assessment.review_status == "not_submitted" %}
+<section class="status">
+    <p>In progress, {{completed_questions}} of {{total_questions}} questions ({% widthratio pct_complete 1 100 %}%)
+        completed</p>
+</section>
+{% elif profile.capabilities_assessment.review_status == "pending" %}
+<h3>Review pending</h3>
+<section class="status">
+    <p>This assessment has been submitted and is pending final review by RCD Nexus administrators.<br />
+        You may make any last-minute adjustments to your answers, but once it is approved it will be frozen.</p>
+    <form method="post" action="unsubmit">
+        {% csrf_token %}
+        <section class="actions">
+            <button type="submit">Unsubmit</button>
+        </section>
+    </form>
+</section>
+{% elif profile.capabilities_assessment.review_status == "approved" %}
+<h3>Approved</h3>
+<section class="status">
+    <p>This assessment has been approved for inclusion in RCD Nexus community datasets and can no longer be altered.</p>
+</section>
+{% elif profile.capabilities_assessment.review_status == "denied" %}
+<h3><em><strong></em>Denied</strong></em></h3>
+<section class="status">
+    <p>This assessment has been rejected for the following reason(s):<br />
+        <i>{{ profile.capabilities_assessment.review_note }}</i>
+    </p>
+</section>
+{% else %}
+<h3>(Unknown state)</h3>
+<section class="status">
+    <p>This assessment is in an unknown state!
+        <a href="mailto:capsmodel-help@carcc.org?subject=Assessment for {{ profile }} in unknown state.">
+            Click here to email capsmodel-help@carcc.org for assistance
+        </a>
+    </p>
+</section>
+{% endif %}
+
+<div class="topicgrid">
+    {% for facing, topics in categories.items %}
+    <section class="topicblock">
+        <div class="facinghdr">
+            <h3>{{facing.content.display_name}}-Facing Topics</h3>
+            <p id="{{facing.slug}}SH" class="toggle" onclick="toggleSection(this, '{{facing.slug}}')"><span>Show Topics</span></p>
+        </div>
+        <div class="facingdesc" style="display:block;">
+            <p>{{facing.content.description}}</p>
+        </div>
+        <div class="topics">
+            <p class="tname topicheader">Topic</p>
+            <p class="tcov topicheader">Computed Coverage</p>
+            {% for topic, answers in topics.items %}
+            <p class="tname {% cycle 'odd-field' 'even-field' as fieldcycle %}" {%if answers.coverage_color%}
+                style="background-color: {{answers.coverage_color}}"{%endif%}>
+                <a
+                    href="{% url 'capmodel:topic' profile.pk facing.slug topic.slug %}">{{topic.content.display_name}}</a>
+            </p>
+            <p class="tcov  {% cycle 'odd-field' 'even-field' as fieldcycle %}" {%if answers.coverage_color%}
+                style="background-color: {{answers.coverage_color}}" {%endif%}>
+                {{answers.coverage_pct}}</p>
+            {% endfor %}
+        </div>
+    </section>
+    {% empty %}
+    <h3>No questions were found.</h3>
+    {% endfor %}
+
+    <section class="topicblock">
+        <div class="facinghdr domaincov">
+            <h3>Aggregated Domain Support Levels</h3>
+            <p id="domaincovSH" class="toggle" onclick="toggleSection(this, 'domaincov')"><span>Show Levels</span></p>
+        </div>
+        <div class="facingdesc" style="display:block;">
+            <p>The average of assessed support levels across all Facings.</p>
+        </div>
+        <div class="topics domains">
+            <p class="tname topicheader">Domain</p>
+            <p class="tcov topicheader">Support level</p>
+            {% for domain, coverage in domains.items %}
+            <p class="domainname {% cycle 'odd-field' 'even-field' as fieldcycle %}">{{domain}}</p>
+            <p class="tcov  {% cycle 'odd-field' 'even-field' as fieldcycle %}">{{ coverage }}</p>
+            {% endfor %}
+        </div>
+    </section>
+    
+<section class="topicblock">
+    <div class="facinghdr priorities">
+        <h3>Top 10 Priorities</h3>
+        <p id="priosSH" class="toggle" onclick="toggleSection(this, 'prios')"><span>Show Priorities</span></p>
+    </div>
+    <div class="facingdesc" style="display:block;">
+        <p>The top questions marked as a priority, in order as marked.</p>
+    </div>
+    <div class="topics priorities">
+        {% if top_priorities %}
+        <ol>
+            {% for answer in top_priorities %}
+            <li value="{{answer.priority}}" class="prioQ {% cycle 'odd-field' 'even-field' as fieldcycle %}">
+                <a href="{% url 'capmodel:answer' profile.pk answer.question_id %}">{{answer.html_display}}</a>
+            </li>
+            {% endfor %}
+        </ol>
+        <a href="{% url 'capmodel:priorities' profile.pk %}">View all priorities</a>
+        {% else %}
+        <p class="prioQ">No questions marked as priorities (yet)</p>
+        {% endif %}
+    </div>
+</section>
+
+    <section class="submission">
+        {% if profile.capabilities_assessment.review_status == "not_submitted" %}
+        {% if submit_form %}
+        <p>When you are satisfied with your answers, submit your assessment for final review.</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ submit_form }}
+            <section class="actions">
+                <button type="submit">Submit</button>
+            </section>
+        </form>
+        {% else %}
+        <p>Once you have answered all the questions, you can submit your assessment.</p>
+        <section class="actions">
+            <button type="button" disabled>Submit</button>
+        </section>
+        {% endif %}
+        {% endif %}
+    </section>
+
+</div>
+
+<script>
+    initSectionsFromCookies();
+</script>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends base_template %}
+{% load nexus_extras %}
+
+{% block head %}
+<style>
+    h2 {
+        color: dimgray;
+    }
+    span.Instname {
+        color: black;
+        font-size: 1.1em;
+    }
+
+    form section.fields div.field-head {
+        height: 100%;
+    }
+    form section.fields div.field-head label {
+        position:relative;
+        top: .6em;
+        left: .6em;
+    }
+    div#id_mission label {
+        display: block;
+        margin-left: 30px;
+        text-indent: -30px;
+        font-size: 0.9em;
+        padding-bottom: 6px;
+    }
+    div#id_mission + span {
+        display: none;
+    }
+
+    div.field-body p{
+        margin: 10px;
+    }
+    div.field-body p.help span {
+        font-size: 1.2em;
+    }
+    form section.fields {
+    display: grid;
+    grid-template-columns: 1fr .7fr;
+    }
+    form section.fields div.field-body p select,
+    form section.fields div.field-body p input,
+    form section.fields div.field-body p textarea {
+        width: 30em;
+        margin-bottom: 5px;
+    }
+    p.intro {
+        margin:0px;
+        max-width: 700px;
+        text-align: center;
+    }
+
+    div.IPEDS {
+        min-width: 400px;
+        max-width: 700px;
+    }
+
+    div.IPEDS section.fields {
+        display: grid;
+        grid-template-columns: auto 1fr;
+    }
+    div.IPEDS section.fields>div {
+        padding: 5px;
+    }
+    div.IPEDS div.fields-head {
+        text-align: right;
+    }
+    div.IPEDShdr {
+        grid-column: 1/-1;
+        background-color: #eee;
+        margin: 0 0 6px 0;
+        padding: 5px 20px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    div.IPEDShdr h3 {
+        margin:0;
+    }
+
+
+</style>
+
+<script>
+    var formSubmitting = false;
+    setFormSubmitting = function() { formSubmitting = true; };
+</script>
+
+{% endblock %}
+
+{% block main %}
+<h2>Edit Institutional Profile for: <span class="Instname">{{form.instance}}</span></h2>
+<p class="intro">Please tell us a little about your institution. 
+    This will provide valuable context in the Community datasets.</p>
+<form id="EditForm" method="post" onsubmit="setFormSubmitting()">
+    {% csrf_token %}
+    {{ form }}
+    <section class="actions">
+        <button type="submit">Save your answers</button>
+    </section>
+</form>
+<div class="IPEDS">
+    <section class="fields">
+        <div class="IPEDShdr">
+            <h3>IPEDS Data for Institution</h3>
+        </div>
+        <div class="fields-head even-field">
+            <label>{% get_verbose_name form.instance.institution 'carnegie_classification' %}:</label>
+        </div>
+        <div class="fields-body even-field">
+            <label>{{ form.instance.institution.carnegie_longname }}</label>
+        </div>
+        <div class="fields-head odd-field">
+            <label>{% get_verbose_name form.instance.institution 'research_expenditure' %}:</label>
+        </div>
+        <div class="fields-body odd-field">
+            <label>{{ form.instance.institution.research_mdollars }}</label>
+        </div>
+        <div class="fields-head even-field">
+            <label>{% get_verbose_name form.instance.institution 'ipeds_sector' %}:</label>
+        </div>
+        <div class="fields-body even-field">
+            <label>{{ form.instance.institution.get_ipeds_sector_display }}</label>
+        </div>
+        <div class="fields-head odd-field">
+            <label>{% get_verbose_name form.instance.institution 'student_pop' %}:</label>
+        </div>
+        <div class="fields-body odd-field">
+            <label>{{ form.instance.institution.student_thous }}</label>
+        </div>
+        <div class="fields-head even-field">
+            <label>Location:</label>
+        </div>
+        <div class="fields-body even-field">
+            <label>{{ form.instance.institution.country }} - {{ form.instance.institution.get_ipeds_region_display }} ({{ form.instance.institution.state_or_province }})</label>
+        </div>
+        {% if form.instance.institution.ipeds_land_grant == 1 %}
+            <div class="fields-head odd-field">
+                <label></label>
+            </div>
+            <div class="fields-body odd-field">
+                <label>{{ form.instance.institution.get_ipeds_land_grant_display }}</label>
+            </div>
+        {% endif %}
+        {% if form.instance.institution.ipeds_tcu == 1 %}
+            <div class="fields-head odd-field">
+                <label></label>
+            </div>
+            <div class="fields-body odd-field">
+                <label>{% get_verbose_name form.instance.institution 'ipeds_tcu' %}</label>
+            </div>
+        {% endif %}
+        {% if form.instance.institution.ipeds_hbcu == 1 %}
+            <div class="fields-head odd-field">
+                <label></label>
+            </div>
+            <div class="fields-body odd-field">
+                <label>{% get_verbose_name form.instance.institution 'ipeds_hbcu' %}</label>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+<script>
+    var formEl = document.getElementById("EditForm");
+    var i;
+    formChanged = false;
+    formEl.addEventListener("change", () => formChanged = true );
+    window.addEventListener('beforeunload', (event) => {
+        if (formChanged && !formSubmitting) {
+            event.returnValue = 'You have unsaved changes!';
+        }
+    });
+ </script>
+
+{% endblock %}

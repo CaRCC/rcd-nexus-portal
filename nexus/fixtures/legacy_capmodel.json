@@ -1,0 +1,5994 @@
+[
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "researcher"
+      ],
+      "slug": "staffing",
+      "index": 0
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "researcher"
+      ],
+      "slug": "outreach",
+      "index": 1
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "researcher"
+      ],
+      "slug": "consulting",
+      "index": 2
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "researcher"
+      ],
+      "slug": "lifecycle",
+      "index": 3
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "researcher"
+      ],
+      "slug": "domain-support",
+      "index": 4
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "data"
+      ],
+      "slug": "creation",
+      "index": 0
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "data"
+      ],
+      "slug": "discovery",
+      "index": 1
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "data"
+      ],
+      "slug": "analysis",
+      "index": 2
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "data"
+      ],
+      "slug": "visualization",
+      "index": 3
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "data"
+      ],
+      "slug": "curation",
+      "index": 4
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "data"
+      ],
+      "slug": "policy",
+      "index": 5
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "data"
+      ],
+      "slug": "security",
+      "index": 6
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "data"
+      ],
+      "slug": "domain-support",
+      "index": 7
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "software"
+      ],
+      "slug": "management",
+      "index": 0
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "software"
+      ],
+      "slug": "development",
+      "index": 1
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "software"
+      ],
+      "slug": "optimization",
+      "index": 2
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "software"
+      ],
+      "slug": "workflow",
+      "index": 3
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "software"
+      ],
+      "slug": "portability",
+      "index": 4
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "software"
+      ],
+      "slug": "access",
+      "index": 5
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "software"
+      ],
+      "slug": "physical_specimens",
+      "index": 6
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "software"
+      ],
+      "slug": "domain-support",
+      "index": 7
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "infrastructure",
+      "index": 0
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "compute",
+      "index": 1
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "storage",
+      "index": 2
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "network",
+      "index": 4
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "specialized",
+      "index": 4
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "software",
+      "index": 5
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "monitoring",
+      "index": 6
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "recordkeeping",
+      "index": 7
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "documentation",
+      "index": 8
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "planning",
+      "index": 9
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "security",
+      "index": 10
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "slug": "domain-support",
+      "index": 11
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "strategy"
+      ],
+      "slug": "alignment",
+      "index": 0
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "strategy"
+      ],
+      "slug": "culture",
+      "index": 1
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "strategy"
+      ],
+      "slug": "funding",
+      "index": 2
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "strategy"
+      ],
+      "slug": "partnerships",
+      "index": 3
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "strategy"
+      ],
+      "slug": "professionalization",
+      "index": 4
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "strategy"
+      ],
+      "slug": "diversity",
+      "index": 5
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopic",
+    "fields": {
+      "facing": [
+        "strategy"
+      ],
+      "slug": "domain-support",
+      "index": 6
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "researcher",
+        "staffing"
+      ],
+      "language": "en",
+      "display_name": "Research Computing and Data Staffing",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "researcher",
+        "outreach"
+      ],
+      "language": "en",
+      "display_name": "Research Computing and Data Outreach (Initial Contact)",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "researcher",
+        "consulting"
+      ],
+      "language": "en",
+      "display_name": "Research Computing and Data Advanced Support",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "researcher",
+        "lifecycle"
+      ],
+      "language": "en",
+      "display_name": "Research Computing Management of the Research Lifecycle",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "data",
+        "creation"
+      ],
+      "language": "en",
+      "display_name": "Data Creation",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "data",
+        "discovery"
+      ],
+      "language": "en",
+      "display_name": "Data Discovery and Collection",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "data",
+        "analysis"
+      ],
+      "language": "en",
+      "display_name": "Data Analysis",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "data",
+        "visualization"
+      ],
+      "language": "en",
+      "display_name": "Data Visualization",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "data",
+        "curation"
+      ],
+      "language": "en",
+      "display_name": "Research Data Curation, Storage, Backup, and Transfer",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "data",
+        "policy"
+      ],
+      "language": "en",
+      "display_name": "Research Data Policy Compliance",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "data",
+        "security"
+      ],
+      "language": "en",
+      "display_name": "Research Data Security/Sensitive Data Support",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "software",
+        "management"
+      ],
+      "language": "en",
+      "display_name": "Software Package Management",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "software",
+        "development"
+      ],
+      "language": "en",
+      "display_name": "Research Software Development",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "software",
+        "optimization"
+      ],
+      "language": "en",
+      "display_name": "Research Software Optimization or Troubleshooting",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "software",
+        "workflow"
+      ],
+      "language": "en",
+      "display_name": "Workflow Engineering",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "software",
+        "portability"
+      ],
+      "language": "en",
+      "display_name": "Software Portability, Containers and Cloud Computing",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "software",
+        "access"
+      ],
+      "language": "en",
+      "display_name": "Securing Access to Software",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "software",
+        "physical_specimens"
+      ],
+      "language": "en",
+      "display_name": "Software Associated with Physical Specimens",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "infrastructure"
+      ],
+      "language": "en",
+      "display_name": "Infrastructure Support",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "compute"
+      ],
+      "language": "en",
+      "display_name": "Compute Infrastructure",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "storage"
+      ],
+      "language": "en",
+      "display_name": "Storage Infrastructure",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "network"
+      ],
+      "language": "en",
+      "display_name": "Network and Data Movement Infrastructure",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "specialized"
+      ],
+      "language": "en",
+      "display_name": "Specialized Infrastructure",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "software"
+      ],
+      "language": "en",
+      "display_name": "Infrastructure Software",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "monitoring"
+      ],
+      "language": "en",
+      "display_name": "Monitoring and Measurement",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "recordkeeping"
+      ],
+      "language": "en",
+      "display_name": "Change Mngmnt, version control, administration, and ticketing",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "documentation"
+      ],
+      "language": "en",
+      "display_name": "Documentation",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "planning"
+      ],
+      "language": "en",
+      "display_name": "Planning",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "security"
+      ],
+      "language": "en",
+      "display_name": "Best security practices for open environments",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "strategy",
+        "alignment"
+      ],
+      "language": "en",
+      "display_name": "Institutional Alignment",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "strategy",
+        "culture"
+      ],
+      "language": "en",
+      "display_name": "Institutional Culture for Research Support",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "strategy",
+        "funding"
+      ],
+      "language": "en",
+      "display_name": "Funding",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "strategy",
+        "partnerships"
+      ],
+      "language": "en",
+      "display_name": "Partnerships and Engagement with External Communities",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "strategy",
+        "professionalization"
+      ],
+      "language": "en",
+      "display_name": "Professional Development of Research Computing and Data Staff",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "strategy",
+        "diversity"
+      ],
+      "language": "en",
+      "display_name": "Diversity, Equity, and Inclusion",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "researcher",
+        "domain-support"
+      ],
+      "language": "en",
+      "display_name": "Domain support",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "data",
+        "domain-support"
+      ],
+      "language": "en",
+      "display_name": "Domain support",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "software",
+        "domain-support"
+      ],
+      "language": "en",
+      "display_name": "Domain support",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "systems",
+        "domain-support"
+      ],
+      "language": "en",
+      "display_name": "Domain support",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiestopiccontent",
+    "fields": {
+      "topic": [
+        "strategy",
+        "domain-support"
+      ],
+      "language": "en",
+      "display_name": "Domain support",
+      "description": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "training",
+      "topic": [
+        "researcher",
+        "staffing"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "R1.1"
+      },
+      "valid_after": "2023-10-03T21:30:11.696Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "professional-development",
+      "topic": [
+        "researcher",
+        "staffing"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "R1.2"
+      },
+      "valid_after": "2023-10-03T21:30:11.705Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "broad-support",
+      "topic": [
+        "researcher",
+        "staffing"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "R1.3"
+      },
+      "valid_after": "2023-10-03T21:30:11.713Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "advocacy",
+      "topic": [
+        "researcher",
+        "staffing"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "R1.4"
+      },
+      "valid_after": "2023-10-03T21:30:11.721Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "vision",
+      "topic": [
+        "researcher",
+        "staffing"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "R1.5"
+      },
+      "valid_after": "2023-10-03T21:30:11.728Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "proactive-outreach",
+      "topic": [
+        "researcher",
+        "outreach"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "R2.1"
+      },
+      "valid_after": "2023-10-03T21:30:11.736Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "community-engagement",
+      "topic": [
+        "researcher",
+        "outreach"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "R2.2"
+      },
+      "valid_after": "2023-10-03T21:30:11.743Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "awareness",
+      "topic": [
+        "researcher",
+        "outreach"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "R2.3"
+      },
+      "valid_after": "2023-10-03T21:30:11.750Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "assessment",
+      "topic": [
+        "researcher",
+        "outreach"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "R2.4"
+      },
+      "valid_after": "2023-10-03T21:30:11.757Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "impact",
+      "topic": [
+        "researcher",
+        "outreach"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "R2.5"
+      },
+      "valid_after": "2023-10-03T21:30:11.765Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "marketing",
+      "topic": [
+        "researcher",
+        "outreach"
+      ],
+      "index": 5,
+      "attrs": {
+        "legacy_qid": "R2.6"
+      },
+      "valid_after": "2023-10-03T21:30:11.773Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "training",
+      "topic": [
+        "researcher",
+        "consulting"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "R3.1"
+      },
+      "valid_after": "2023-10-03T21:30:11.781Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "efficiency",
+      "topic": [
+        "researcher",
+        "consulting"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "R3.2"
+      },
+      "valid_after": "2023-10-03T21:30:11.789Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "emerging-technologies",
+      "topic": [
+        "researcher",
+        "consulting"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "R3.3"
+      },
+      "valid_after": "2023-10-03T21:30:11.796Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "documentation",
+      "topic": [
+        "researcher",
+        "consulting"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "R3.4"
+      },
+      "valid_after": "2023-10-03T21:30:11.805Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "proposal-development",
+      "topic": [
+        "researcher",
+        "lifecycle"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "R4.1"
+      },
+      "valid_after": "2023-10-03T21:30:11.812Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "compliance",
+      "topic": [
+        "researcher",
+        "lifecycle"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "R4.2"
+      },
+      "valid_after": "2023-10-03T21:30:11.821Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "lifecycle",
+      "topic": [
+        "data",
+        "creation"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "D1.1"
+      },
+      "valid_after": "2023-10-03T21:30:11.831Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "discovery",
+      "topic": [
+        "data",
+        "creation"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "D2.1"
+      },
+      "valid_after": "2023-10-03T21:30:11.839Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "terms-of-service",
+      "topic": [
+        "data",
+        "discovery"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "D2.2"
+      },
+      "valid_after": "2023-10-03T21:30:11.847Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "collection",
+      "topic": [
+        "data",
+        "discovery"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "D2.3"
+      },
+      "valid_after": "2023-10-03T21:30:11.854Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "software-development",
+      "topic": [
+        "data",
+        "discovery"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "D2.4"
+      },
+      "valid_after": "2023-10-03T21:30:11.861Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "wrangling-support",
+      "topic": [
+        "data",
+        "analysis"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "D3.1"
+      },
+      "valid_after": "2023-10-03T21:30:11.869Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "wrangling-software",
+      "topic": [
+        "data",
+        "analysis"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "D3.2"
+      },
+      "valid_after": "2023-10-03T21:30:11.876Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "wrangling-resources",
+      "topic": [
+        "data",
+        "analysis"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "D3.3"
+      },
+      "valid_after": "2023-10-03T21:30:11.884Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "software-development",
+      "topic": [
+        "data",
+        "analysis"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "D3.4"
+      },
+      "valid_after": "2023-10-03T21:30:11.891Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "consulting",
+      "topic": [
+        "data",
+        "visualization"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "D4.1"
+      },
+      "valid_after": "2023-10-03T21:30:11.898Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "software",
+      "topic": [
+        "data",
+        "visualization"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "D4.2"
+      },
+      "valid_after": "2023-10-03T21:30:11.905Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "resources",
+      "topic": [
+        "data",
+        "visualization"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "D4.3"
+      },
+      "valid_after": "2023-10-03T21:30:11.912Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "software-development",
+      "topic": [
+        "data",
+        "visualization"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "D4.4"
+      },
+      "valid_after": "2023-10-03T21:30:11.920Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "consulting",
+      "topic": [
+        "data",
+        "curation"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "D5.1"
+      },
+      "valid_after": "2023-10-03T21:30:11.927Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "resources",
+      "topic": [
+        "data",
+        "curation"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "D5.2"
+      },
+      "valid_after": "2023-10-03T21:30:11.934Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "software",
+      "topic": [
+        "data",
+        "curation"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "D5.3"
+      },
+      "valid_after": "2023-10-03T21:30:11.941Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "software-development",
+      "topic": [
+        "data",
+        "curation"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "D5.4"
+      },
+      "valid_after": "2023-10-03T21:30:11.948Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "big-data",
+      "topic": [
+        "data",
+        "curation"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "D5.5"
+      },
+      "valid_after": "2023-10-03T21:30:11.957Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "metadata",
+      "topic": [
+        "data",
+        "curation"
+      ],
+      "index": 5,
+      "attrs": {
+        "legacy_qid": "D5.6"
+      },
+      "valid_after": "2023-10-03T21:30:11.965Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "identifiers",
+      "topic": [
+        "data",
+        "curation"
+      ],
+      "index": 6,
+      "attrs": {
+        "legacy_qid": "D5.7"
+      },
+      "valid_after": "2023-10-03T21:30:11.974Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "governance",
+      "topic": [
+        "data",
+        "policy"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "D6.1"
+      },
+      "valid_after": "2023-10-03T21:30:11.984Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "training",
+      "topic": [
+        "data",
+        "policy"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "D6.2"
+      },
+      "valid_after": "2023-10-03T21:30:11.995Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "assessment",
+      "topic": [
+        "data",
+        "policy"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "D6.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.003Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "expertise",
+      "topic": [
+        "data",
+        "policy"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "D6.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.010Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "preservation",
+      "topic": [
+        "data",
+        "policy"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "D6.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.017Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "preservation-expertise",
+      "topic": [
+        "data",
+        "policy"
+      ],
+      "index": 5,
+      "attrs": {
+        "legacy_qid": "D6.6"
+      },
+      "valid_after": "2023-10-03T21:30:12.025Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "moderately-sensitive",
+      "topic": [
+        "data",
+        "security"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "D7.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.032Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "notice-triggering",
+      "topic": [
+        "data",
+        "security"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "D7.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.040Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "extremely-sensitive",
+      "topic": [
+        "data",
+        "security"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "D7.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.047Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "installation",
+      "topic": [
+        "software",
+        "management"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SW1.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.055Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "installation-training",
+      "topic": [
+        "software",
+        "management"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SW1.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.062Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "assessment",
+      "topic": [
+        "software",
+        "management"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SW1.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.069Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "resources",
+      "topic": [
+        "software",
+        "development"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SW2.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.076Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "resources-general",
+      "topic": [
+        "software",
+        "development"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SW2.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.084Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "security-validation",
+      "topic": [
+        "software",
+        "development"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SW2.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.091Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "usability-testing",
+      "topic": [
+        "software",
+        "development"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SW2.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.098Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "accessibility",
+      "topic": [
+        "software",
+        "development"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SW2.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.106Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "tools",
+      "topic": [
+        "software",
+        "optimization"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SW3.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.114Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "consulting",
+      "topic": [
+        "software",
+        "optimization"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SW3.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.121Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "diagnostic-tools",
+      "topic": [
+        "software",
+        "optimization"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SW3.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.128Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "diagnostic-consulting",
+      "topic": [
+        "software",
+        "optimization"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SW3.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.137Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "packages",
+      "topic": [
+        "software",
+        "workflow"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SW4.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.144Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "consulting",
+      "topic": [
+        "software",
+        "workflow"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SW4.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.152Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "support-staff",
+      "topic": [
+        "software",
+        "workflow"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SW4.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.159Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "support",
+      "topic": [
+        "software",
+        "portability"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SW5.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.167Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cloud-training",
+      "topic": [
+        "software",
+        "portability"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SW5.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.174Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cloud-resources",
+      "topic": [
+        "software",
+        "portability"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SW5.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.181Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "authentication",
+      "topic": [
+        "software",
+        "access"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SW6.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.189Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "licensed-software",
+      "topic": [
+        "software",
+        "access"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SW6.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.197Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "export-controlled",
+      "topic": [
+        "software",
+        "access"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SW6.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.204Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "license-compliance",
+      "topic": [
+        "software",
+        "access"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SW6.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.211Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "management",
+      "topic": [
+        "software",
+        "physical_specimens"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SW7.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.218Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "discovery",
+      "topic": [
+        "software",
+        "physical_specimens"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SW7.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.225Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "resources",
+      "topic": [
+        "software",
+        "physical_specimens"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SW7.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.233Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "datacenter",
+      "topic": [
+        "systems",
+        "infrastructure"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY1.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.240Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "professional-management",
+      "topic": [
+        "systems",
+        "infrastructure"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY1.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.247Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cloud-services",
+      "topic": [
+        "systems",
+        "infrastructure"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SY1.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.254Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "automation",
+      "topic": [
+        "systems",
+        "infrastructure"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SY1.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.261Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "containers",
+      "topic": [
+        "systems",
+        "infrastructure"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SY1.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.269Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "high-performance",
+      "topic": [
+        "systems",
+        "compute"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY2.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.276Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "high-throughput",
+      "topic": [
+        "systems",
+        "compute"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY2.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.284Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "production-level",
+      "topic": [
+        "systems",
+        "compute"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SY2.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.290Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "specialized-hardware",
+      "topic": [
+        "systems",
+        "compute"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SY2.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.298Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "interactive",
+      "topic": [
+        "systems",
+        "compute"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SY2.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.305Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "standardized-os",
+      "topic": [
+        "systems",
+        "compute"
+      ],
+      "index": 5,
+      "attrs": {
+        "legacy_qid": "SY2.6"
+      },
+      "valid_after": "2023-10-03T21:30:12.313Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "scratch",
+      "topic": [
+        "systems",
+        "storage"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY3.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.321Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "data-intensive",
+      "topic": [
+        "systems",
+        "storage"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY3.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.328Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "security",
+      "topic": [
+        "systems",
+        "storage"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SY3.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.336Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "management",
+      "topic": [
+        "systems",
+        "storage"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SY3.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.343Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "preservation",
+      "topic": [
+        "systems",
+        "storage"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SY3.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.351Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "final-research-data",
+      "topic": [
+        "systems",
+        "storage"
+      ],
+      "index": 5,
+      "attrs": {
+        "legacy_qid": "SY3.6"
+      },
+      "valid_after": "2023-10-03T21:30:12.358Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "collaborations",
+      "topic": [
+        "systems",
+        "storage"
+      ],
+      "index": 6,
+      "attrs": {
+        "legacy_qid": "SY3.7"
+      },
+      "valid_after": "2023-10-03T21:30:12.365Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "high-performance",
+      "topic": [
+        "systems",
+        "network"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY4.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.372Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "science-dmz",
+      "topic": [
+        "systems",
+        "network"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY4.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.380Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "data-transfer",
+      "topic": [
+        "systems",
+        "network"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SY4.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.388Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "buffering",
+      "topic": [
+        "systems",
+        "network"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SY4.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.395Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "security",
+      "topic": [
+        "systems",
+        "network"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SY4.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.403Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "virtualization",
+      "topic": [
+        "systems",
+        "network"
+      ],
+      "index": 5,
+      "attrs": {
+        "legacy_qid": "SY4.6"
+      },
+      "valid_after": "2023-10-03T21:30:12.410Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "edge-computing",
+      "topic": [
+        "systems",
+        "specialized"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY5.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.417Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "iot",
+      "topic": [
+        "systems",
+        "specialized"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY5.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.425Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "workstations",
+      "topic": [
+        "systems",
+        "specialized"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SY5.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.432Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "special-instruments",
+      "topic": [
+        "systems",
+        "specialized"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SY5.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.439Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "testbeds",
+      "topic": [
+        "systems",
+        "specialized"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SY5.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.446Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "resource-management",
+      "topic": [
+        "systems",
+        "software"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY6.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.454Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "identity-access-management",
+      "topic": [
+        "systems",
+        "software"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY6.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.461Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "2-factor-authentication",
+      "topic": [
+        "systems",
+        "software"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SY6.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.468Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "rbac",
+      "topic": [
+        "systems",
+        "software"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SY6.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.475Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "id-federation",
+      "topic": [
+        "systems",
+        "software"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SY6.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.483Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "modules",
+      "topic": [
+        "systems",
+        "software"
+      ],
+      "index": 5,
+      "attrs": {
+        "legacy_qid": "SY6.6"
+      },
+      "valid_after": "2023-10-03T21:30:12.491Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "node-level",
+      "topic": [
+        "systems",
+        "monitoring"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY7.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.499Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "network-measurement",
+      "topic": [
+        "systems",
+        "monitoring"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY7.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.507Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "whole-system",
+      "topic": [
+        "systems",
+        "monitoring"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SY7.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.515Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "infrastructure-measurement",
+      "topic": [
+        "systems",
+        "monitoring"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SY7.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.523Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "user-tools",
+      "topic": [
+        "systems",
+        "monitoring"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SY7.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.531Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "performance-data",
+      "topic": [
+        "systems",
+        "monitoring"
+      ],
+      "index": 5,
+      "attrs": {
+        "legacy_qid": "SY7.6"
+      },
+      "valid_after": "2023-10-03T21:30:12.539Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "resource-usage",
+      "topic": [
+        "systems",
+        "monitoring"
+      ],
+      "index": 6,
+      "attrs": {
+        "legacy_qid": "SY7.7"
+      },
+      "valid_after": "2023-10-03T21:30:12.546Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "change-management",
+      "topic": [
+        "systems",
+        "recordkeeping"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY8.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.553Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "version-control",
+      "topic": [
+        "systems",
+        "recordkeeping"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY8.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.560Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "ticketing-system",
+      "topic": [
+        "systems",
+        "recordkeeping"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SY8.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.568Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "privileged-account-management",
+      "topic": [
+        "systems",
+        "recordkeeping"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SY8.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.575Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "network-performance",
+      "topic": [
+        "systems",
+        "recordkeeping"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SY8.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.582Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "maintenance",
+      "topic": [
+        "systems",
+        "documentation"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY9.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.589Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "processes",
+      "topic": [
+        "systems",
+        "documentation"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY9.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.596Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "security-compliance",
+      "topic": [
+        "systems",
+        "planning"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY10.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.603Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "procurement",
+      "topic": [
+        "systems",
+        "planning"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY10.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.610Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "lifecycle",
+      "topic": [
+        "systems",
+        "planning"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SY10.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.618Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "user-engagement",
+      "topic": [
+        "systems",
+        "planning"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SY10.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.625Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "emerging-technologies",
+      "topic": [
+        "systems",
+        "planning"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SY10.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.632Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "governance",
+      "topic": [
+        "systems",
+        "security"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SY11.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.640Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "best-practices",
+      "topic": [
+        "systems",
+        "security"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SY11.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.647Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "incident-response",
+      "topic": [
+        "systems",
+        "security"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SY11.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.654Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "strategic-plan",
+      "topic": [
+        "strategy",
+        "alignment"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SP1.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.661Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "campus-plans",
+      "topic": [
+        "strategy",
+        "alignment"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SP1.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.669Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "research-initiatives",
+      "topic": [
+        "strategy",
+        "alignment"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SP1.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.676Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "research-priorities",
+      "topic": [
+        "strategy",
+        "alignment"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SP1.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.683Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "faculty-advisory-group",
+      "topic": [
+        "strategy",
+        "alignment"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SP1.8"
+      },
+      "valid_after": "2023-10-03T21:30:12.691Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "recognition",
+      "topic": [
+        "strategy",
+        "alignment"
+      ],
+      "index": 5,
+      "attrs": {
+        "legacy_qid": "SP1.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.698Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "awareness",
+      "topic": [
+        "strategy",
+        "alignment"
+      ],
+      "index": 6,
+      "attrs": {
+        "legacy_qid": "SP1.6"
+      },
+      "valid_after": "2023-10-03T21:30:12.705Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "pedagogy",
+      "topic": [
+        "strategy",
+        "alignment"
+      ],
+      "index": 7,
+      "attrs": {
+        "legacy_qid": "SP1.7"
+      },
+      "valid_after": "2023-10-03T21:30:12.712Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "rcd-understanding",
+      "topic": [
+        "strategy",
+        "culture"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SP2.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.719Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "rcd-importance",
+      "topic": [
+        "strategy",
+        "culture"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SP2.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.727Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "metrics",
+      "topic": [
+        "strategy",
+        "culture"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SP2.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.734Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "sustainable",
+      "topic": [
+        "strategy",
+        "funding"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SP3.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.741Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "opportunities",
+      "topic": [
+        "strategy",
+        "funding"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SP3.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.748Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "research-funding",
+      "topic": [
+        "strategy",
+        "funding"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SP3.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.756Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "extramural-grants",
+      "topic": [
+        "strategy",
+        "funding"
+      ],
+      "index": 3,
+      "attrs": {
+        "legacy_qid": "SP3.4"
+      },
+      "valid_after": "2023-10-03T21:30:12.763Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "awarded-grants",
+      "topic": [
+        "strategy",
+        "funding"
+      ],
+      "index": 4,
+      "attrs": {
+        "legacy_qid": "SP3.5"
+      },
+      "valid_after": "2023-10-03T21:30:12.771Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "regional-national",
+      "topic": [
+        "strategy",
+        "partnerships"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SP4.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.778Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "external-users",
+      "topic": [
+        "strategy",
+        "partnerships"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SP4.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.786Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "external-partnerships",
+      "topic": [
+        "strategy",
+        "partnerships"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SP4.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.793Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "training",
+      "topic": [
+        "strategy",
+        "professionalization"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SP5.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.800Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "career-advancement",
+      "topic": [
+        "strategy",
+        "professionalization"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SP5.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.808Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "community-engagement",
+      "topic": [
+        "strategy",
+        "professionalization"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SP5.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.815Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "policy-practice",
+      "topic": [
+        "strategy",
+        "diversity"
+      ],
+      "index": 0,
+      "attrs": {
+        "legacy_qid": "SP6.1"
+      },
+      "valid_after": "2023-10-03T21:30:12.822Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "inclusive-language",
+      "topic": [
+        "strategy",
+        "diversity"
+      ],
+      "index": 1,
+      "attrs": {
+        "legacy_qid": "SP6.2"
+      },
+      "valid_after": "2023-10-03T21:30:12.829Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "training",
+      "topic": [
+        "strategy",
+        "diversity"
+      ],
+      "index": 2,
+      "attrs": {
+        "legacy_qid": "SP6.3"
+      },
+      "valid_after": "2023-10-03T21:30:12.837Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "arts-and-humanities",
+      "topic": [
+        "researcher",
+        "domain-support"
+      ],
+      "index": 0,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.844Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cs-and-engineering",
+      "topic": [
+        "researcher",
+        "domain-support"
+      ],
+      "index": 1,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.852Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "health-and-life-sciences",
+      "topic": [
+        "researcher",
+        "domain-support"
+      ],
+      "index": 2,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.859Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "physical-sciences",
+      "topic": [
+        "researcher",
+        "domain-support"
+      ],
+      "index": 3,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.867Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "social-sciences",
+      "topic": [
+        "researcher",
+        "domain-support"
+      ],
+      "index": 4,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "arts-and-humanities",
+      "topic": [
+        "data",
+        "domain-support"
+      ],
+      "index": 0,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.881Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cs-and-engineering",
+      "topic": [
+        "data",
+        "domain-support"
+      ],
+      "index": 1,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.889Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "health-and-life-sciences",
+      "topic": [
+        "data",
+        "domain-support"
+      ],
+      "index": 2,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.896Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "physical-sciences",
+      "topic": [
+        "data",
+        "domain-support"
+      ],
+      "index": 3,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.903Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "social-sciences",
+      "topic": [
+        "data",
+        "domain-support"
+      ],
+      "index": 4,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.911Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "arts-and-humanities",
+      "topic": [
+        "software",
+        "domain-support"
+      ],
+      "index": 0,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.918Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cs-and-engineering",
+      "topic": [
+        "software",
+        "domain-support"
+      ],
+      "index": 1,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.925Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "health-and-life-sciences",
+      "topic": [
+        "software",
+        "domain-support"
+      ],
+      "index": 2,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.932Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "physical-sciences",
+      "topic": [
+        "software",
+        "domain-support"
+      ],
+      "index": 3,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.940Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "social-sciences",
+      "topic": [
+        "software",
+        "domain-support"
+      ],
+      "index": 4,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.947Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "arts-and-humanities",
+      "topic": [
+        "systems",
+        "domain-support"
+      ],
+      "index": 0,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.954Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cs-and-engineering",
+      "topic": [
+        "systems",
+        "domain-support"
+      ],
+      "index": 1,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.961Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "health-and-life-sciences",
+      "topic": [
+        "systems",
+        "domain-support"
+      ],
+      "index": 2,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.969Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "physical-sciences",
+      "topic": [
+        "systems",
+        "domain-support"
+      ],
+      "index": 3,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.977Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "social-sciences",
+      "topic": [
+        "systems",
+        "domain-support"
+      ],
+      "index": 4,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.985Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "arts-and-humanities",
+      "topic": [
+        "strategy",
+        "domain-support"
+      ],
+      "index": 0,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.992Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cs-and-engineering",
+      "topic": [
+        "strategy",
+        "domain-support"
+      ],
+      "index": 1,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.999Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "health-and-life-sciences",
+      "topic": [
+        "strategy",
+        "domain-support"
+      ],
+      "index": 2,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:13.007Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "physical-sciences",
+      "topic": [
+        "strategy",
+        "domain-support"
+      ],
+      "index": 3,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:13.014Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "social-sciences",
+      "topic": [
+        "strategy",
+        "domain-support"
+      ],
+      "index": 4,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:13.021Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "staffing",
+        "training"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>introductory user support and training</b> related to the use of research computing and data resources available at local, regional, and national level?",
+      "help_text": "That is, are there researcher-facing engagement and support staff who provide this? This often includes staff (and, at some institutions, students) who have the role of training and consulting on basic use of resources. This may include a combination of Research Computing and Data staff, Data Librarians, and staff in partner organizations. It will generally include training and support materials (documentation, recorded webinars and/or presentations, etc.)."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "staffing",
+        "professional-development"
+      ],
+      "language": "en",
+      "text": "Are researcher-facing staff provided with <b>professional development and networking opportunities</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "staffing",
+        "broad-support"
+      ],
+      "language": "en",
+      "text": "Do researcher-facing staff have the skills and capacity to <b>broadly support researchers across levels</b> (graduate students to PIs) and across domains with information about the use and effectiveness of new technologies?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "staffing",
+        "advocacy"
+      ],
+      "language": "en",
+      "text": "Can researcher-facing staff effectively <b>serve as advocates</b> for the research community <b>to leadership and IT governance</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "staffing",
+        "vision"
+      ],
+      "language": "en",
+      "text": "To what extent is there <b>a clear vision, effective guidance, and strategy</b> for the allocation and prioritization of support resources/personnel?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "outreach",
+        "proactive-outreach"
+      ],
+      "language": "en",
+      "text": "Is there an institutional practice to <b>proactively reach out to researchers, new faculty, or prospective faculty</b> to explain research support services and help with computing beyond the desktop?",
+      "help_text": "For example, this could happen during discussions with prospective faculty or graduate students, or as part of the onboarding or orientation for new researchers."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "outreach",
+        "community-engagement"
+      ],
+      "language": "en",
+      "text": "Do researcher-facing staff have the skills and capacity to <b>effectively engage in community outreach</b> and broader impacts?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "outreach",
+        "awareness"
+      ],
+      "language": "en",
+      "text": "Are researchers made aware of research computing and data related resources?",
+      "help_text": "i.   intra-campus resources (e.g., support, training, engineering, central IT services, library services, related centers or institutes)\r\n  ii.  cross-institution, regional, national, and/or international entities that comprise the larger ecosystem of Research Computing and Data (e.g., ACI-REF, Campus Champions, Research Software Engineers, CASC, CaRCC, CI Engineers, PEARC)?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "outreach",
+        "assessment"
+      ],
+      "language": "en",
+      "text": "Does your institution have a process to <b>assess researcher awareness, satisfaction, and engagement</b> related to Research Computing and Data services and support?",
+      "help_text": "This might include periodic satisfaction surveys, or another assessment mechanism."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "outreach",
+        "impact"
+      ],
+      "language": "en",
+      "text": "Does your institution have a process to <b>assess the impact</b> of research computing and data support?",
+      "help_text": "This often includes things like publications, grants, etc. for active users, as well as faculty and graduate student recruitment and retention cases supported. It may include profiles of and quotes from active research users."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "outreach",
+        "marketing"
+      ],
+      "language": "en",
+      "text": "Does your institution have <b>marketing/communication resources</b> (staff) with the skills and capacity to help publicize and explain research support services?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "consulting",
+        "training"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to application <b>support </b>(training, help) for standard <b>software packages, middleware, libraries, and modules</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "consulting",
+        "efficiency"
+      ],
+      "language": "en",
+      "text": "Do researcher-facing staff have the skills and capacity to <b>diagnose inefficiencies, monitor usage, and advise on policies and optimizations</b> to make for more efficient utilization of research computing and data resources?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "consulting",
+        "emerging-technologies"
+      ],
+      "language": "en",
+      "text": "Are researcher-facing staff engaged with <b>exploring, testing, and deploying emerging or advanced technologies</b> to help research?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "consulting",
+        "documentation"
+      ],
+      "language": "en",
+      "text": "Do researcher-facing staff regularly and effectively <b>document processes, policies, and resources</b> both internally and for the user community?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "lifecycle",
+        "proposal-development"
+      ],
+      "language": "en",
+      "text": "Are researchers <b>supported across the full research lifecycle</b>?",
+      "help_text": "I.e., are researchers supported during proposal development, during the active award, and post funding? This may include support for project planning and proposal development, as well as providing research computing and data services."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "lifecycle",
+        "compliance"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>advice on research compute and data compliance, security, management, and governance</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "creation",
+        "lifecycle"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>consulting or other resources on data lifecycle requirements</b> during data creation?",
+      "help_text": "For example, consulting, websites, hand-outs, or other resources providing support to anticipate requirements for metadata, storage, and reuse; publisher requirements; and/or funder requirements."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "creation",
+        "discovery"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>consulting or other resources supporting data discovery</b>?",
+      "help_text": "I.e., consulting, websites, hand-outs, or other resources to help identify appropriate data repositories (on campus, in domains, and more generally). Note: this may come from Research Computing and Data staff, library staff, or other partners."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "discovery",
+        "terms-of-service"
+      ],
+      "language": "en",
+      "text": "Do researchers have <b>access to expertise about common Terms of Service</b> for frequently crawled websites/data repositories and best practices guidance?",
+      "help_text": "Examples of this can include: <ul><li>Are there library or other staff with knowledge about common Terms of Service for frequently crawled websites/data repositories and <b>best practices guidance</b>?</li> <li>  Are there library or other staff with skills and capacity to <b>inform policies and educate researchers on data use agreements</b> (DUAs)?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "discovery",
+        "collection"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>software supporting data collection</b>?",
+      "help_text": "For example, do they have access to software for data crawling, for web-scraping, for data-gathering, and similar activities to collect data?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "discovery",
+        "software-development"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>resources </b>(e.g., staff) to <b>develop software supporting data discovery and collection</b>?",
+      "help_text": "For example, do they have access to software developers to develop software for: <ul><li>data collection (including web crawling/scraping/etc.).</li> <li>  user interfaces or web applications to collect and interact with data with appropriate security protocols and policies.</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "analysis",
+        "wrangling-support"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>consulting, expertise, or other resources on data wrangling/manipulation and data analysis</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "analysis",
+        "wrangling-software"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>software that supports data wrangling/manipulation and data analysis</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "analysis",
+        "wrangling-resources"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>dedicated resources</b> (e.g., staff) who can <b>perform data wrangling/manipulation and data analysis</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "analysis",
+        "software-development"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>resources </b>(e.g., staff) for <b>software development </b>of tools that support <b> data wrangling/manipulation and data analysis</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "visualization",
+        "consulting"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>consulting, expertise, or other resources on data visualization</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "visualization",
+        "software"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>software that supports data visualization</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "visualization",
+        "resources"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>dedicated resources</b> (e.g., staff) who can <b>perform data wrangling/manipulation and data analysis</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "visualization",
+        "software-development"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>resources </b>(e.g., staff) for <b>software development</b> of tools that support <b>data visualization</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "curation",
+        "consulting"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>consulting, expertise, or other resources</b> to help them <b>identify appropriate data repositories</b> (on campus, in domains, and more generally) to place their data?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "curation",
+        "resources"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>resources </b>(e.g., staff) who can advise and assist with <b>database creation and data organization</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "curation",
+        "software"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>tools/software</b> that supports <b>data backup, storage, and integrity checking</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "curation",
+        "software-development"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>resources </b>(e.g., staff) who will <b>develop tools/software</b> that supports <b>data backup, storage, and integrity checking</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "curation",
+        "big-data"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to software and/or environments to deal with datasets that exceed what is generally available to individuals on a workstation or personal storage subscription?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "curation",
+        "metadata"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>consulting, expertise, or other resources on metadata design and use</b>?",
+      "help_text": "Example areas of available consulting, expertise, websites, hand-outs, or other resources could include: <ul><li>Establishing controlled vocabularies for metadata and metadata fields for repository systems.</li> <li>  Help with designing metadata applicable to their research.</li> <li> Assistance in setting up metadata for reusable data sets, physical samples, research software.</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "curation",
+        "identifiers"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>tools, consulting, expertise, or other resources on good practices for use of identifiers</b>?",
+      "help_text": "Examples of good practice include: <ul><li>researchers are encouraged to use researcher identifiers; e.g., <b>ORCiD </b>(https://orcid.org/), <b>ResearcherID </b>(https://www.researcherid.com/), <b>Scopus Author ID</b>, etc.</li> <li>  researcher identifiers are supported in the enterprise directory.</li> <li> researchers have access to mechanisms/services to establish unique digital identifiers (DOIs) for data.</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "policy",
+        "governance"
+      ],
+      "language": "en",
+      "text": "Does your institution have <b>research data governance processes</b> in place to establish data policies for research data?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "policy",
+        "training"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>information and training on research data policy</b>?",
+      "help_text": "Example areas of information and training could include: <ul><li>Processes to support and inform users on policy compliance.</li> <li>  Training on research <b>data security protocols</b>.</li> <li> Support for <b>Data Management Plan (DMP) development</b>.</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "policy",
+        "assessment"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to support for <b>analysis of research data sensitivity</b>?",
+      "help_text": "This may include: <ul><li><b>Data Use Agreement (DUA) review/analysis</b> and consulting.</li> <li>  <b>Institutional Review Board (IRB) templates</b> for datasets (with human or animal subjects), from small datasets that don't need HPC, up to large datasets that need HPC or Cloud services.</li> <li> Support at the nexus of the IRB, legal counsel, and an office of sponsored programs.</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "policy",
+        "expertise"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>expertise and policy infrastructure to manage and use sensitive data</b>?",
+      "help_text": "This may include: <ul><li>Data Management Plan (DMP) compliance services (institutional framework, etc.).</li> <li>  Consulting, expertise, or other resources on contracts and government mandated data controls (e.g. FISMA, CUI, NIST 800-171, FEDRAMP, HIPAA, NAGPRA/Indigenous data rights).</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "policy",
+        "preservation"
+      ],
+      "language": "en",
+      "text": "Has your institution defined and deployed a <b>process for identifying which research data to archive, preserve, or discard</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "policy",
+        "preservation-expertise"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>planning expertise for storing, archival and preservation of research data beyond the term of grant funding</b>?",
+      "help_text": "For example, do researchers' DMPs regularly include planning for the physical and/or cyber resources and facilities (including those supplied by third parties) that will provide data storage, archival, and/or preservation after the grant ends?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "security",
+        "moderately-sensitive"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>compute and data environments to manage and use moderately sensitive data</b>?",
+      "help_text": "For example, NIH dbGaP data controls. Support can include: <ul><li><b>tools, systems, and environments that can scale</b> from small to large data sets (i.e., from workstations to VMs and up to high performance computing).</li> <li>  data security protocols in use, and monitored.</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "security",
+        "notice-triggering"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>compute and data environments to manage and use “notice triggering” data</b>?",
+      "help_text": "For example,  PHI, HIPAA, Export Control, licensed data. Support can include: <ul><li>   tools, systems, and environments that can scale from small to large data sets (i.e., up to high performance computing).</li> <li>  data security protocols in use, and monitored.</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "security",
+        "extremely-sensitive"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>compute and data environments to manage and use extremely sensitive data</b>?",
+      "help_text": "For example, data requiring cold room/air-gapped storage and computing, closely monitored access, dedicated data stewardship etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "management",
+        "installation"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to support for research <b>software package compilation and installation</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "management",
+        "installation-training"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>support, facilitation or training on how to compile, install, and deploy research software</b>?",
+      "help_text": "For example, The Carpentries, documentation on how to install and deploy anaconda environment, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "management",
+        "assessment"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to support for <b>research software package assessment, documentation, and validation</b>?",
+      "help_text": "That is, support to assess and document security issues, sustainability issues, export control issues, etc. associated with a software package of possible interest to researchers."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "development",
+        "resources"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>resources </b>(e.g., staff) who can <b>develop research software</b>?",
+      "help_text": "For example, staff to be written into grants to architect or develop specific research applications or workflow components."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "development",
+        "resources-general"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>resources </b>(e.g., staff) who can <b>develop software for wide usage</b>?",
+      "help_text": "This may include software for websites, portals, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "development",
+        "security-validation"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>security validation for research software</b>?",
+      "help_text": "For example, analysis for vulnerabilities that can be exploited by hackers, especially for locally developed software."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "development",
+        "usability-testing"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>usability testing for research software</b> developed on campus?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "development",
+        "accessibility"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to software or website <b>accessibility consulting, expertise, or other resources</b> (e.g., assessment tools, etc.)?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "optimization",
+        "tools"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>performance optimizing tools</b>?",
+      "help_text": "For example, Allinea/ARM Map, Intel VTune, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "optimization",
+        "consulting"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>support and consulting to optimize software</b>?",
+      "help_text": "For example, to parallelize code, to port to GPUs or other new architectures, to analyze and improve efficiency, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "optimization",
+        "diagnostic-tools"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>diagnostic and troubleshooting software</b>?",
+      "help_text": "For example, Allinea DDT, Intel Inspector, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "optimization",
+        "diagnostic-consulting"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>support and consulting for diagnosing and troubleshooting</b> software?",
+      "help_text": "For example, when migrating codes to new cluster environments, new operating systems, etc. This does not include deeper code porting or rewrite for new hardware, GPUs, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "workflow",
+        "packages"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>support for research workflow packages</b>?",
+      "help_text": "For example, Toil, Pegasus, NextFlow, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "workflow",
+        "consulting"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>expertise and basic support to develop or script data workflows</b>?",
+      "help_text": "For example: <ul><li>  support for initializing a research computing and data workflow?</li> <li> consulting on basic, common workflows, or guidance on good practices in developing custom workflows?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "workflow",
+        "support-staff"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>dedicated staff resources to develop or script data workflows</b>?",
+      "help_text": "For example: <ul><li>  authoring of advanced or specific workflows for given research areas (e.g., for genomics, for clinical research, for social sciences, etc.).</li> <li> support for optimizing a research computing and data workflow?</li></ul> <br>This does not/need not include complete implementation of workflows."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "portability",
+        "support"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>support for making software portable</b>?",
+      "help_text": "For example, software repositories, containerization, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "portability",
+        "cloud-training"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>guidance or training for cloud computing</b>?",
+      "help_text": "This can include: <ul><li>   Local private campus cloud infrastructure</li> <li>  National (e.g., XSEDE-supported) cloud infrastructure</li> <li> Commercial cloud platforms (e.g., AWS, Azure, GCP, etc.)</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "portability",
+        "cloud-resources"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>dedicated resources</b> (e.g., staff) for <b>architecting and deploying cloud solutions</b>?",
+      "help_text": "This can be platform independent, and may include: <ul><li>   Platform evaluation/comparison, cost estimation</li> <li>  Orchestration design and development (Kubernetes, Puppet, Chef, etc.)</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "access",
+        "authentication"
+      ],
+      "language": "en",
+      "text": "Do researchers have <b>access to credential systems</b> as an element of software security?",
+      "help_text": "For example, access to and support for integration with systems like CAS, Shibboleth, SAML, Single-Sign-on, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "access",
+        "licensed-software"
+      ],
+      "language": "en",
+      "text": "Do researchers have <b>access to support for utilizing licensed software</b> on shared resources?",
+      "help_text": "For example, do researchers have access to a common / shared <b>software license server</b>?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "access",
+        "export-controlled"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to support for <b>managing export controlled software</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "access",
+        "license-compliance"
+      ],
+      "language": "en",
+      "text": "Are processes defined and adhered to for <b>educating, monitoring, and auditing</b> Research Computing and Data staff, other IT professionals, and researchers, to <b>comply with software license agreements</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "physical_specimens",
+        "management"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>management software for physical collections</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "physical_specimens",
+        "discovery"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>software for discovery and research use of physical collections</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "physical_specimens",
+        "resources"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>resources </b>(e.g., staff) for <b>software development</b> for discovery and research use of physical collections?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "infrastructure",
+        "datacenter"
+      ],
+      "language": "en",
+      "text": "Do your systems-facing staff have access to a <b>fully functional and reliable data center</b>?",
+      "help_text": "For example, a full time IT operations and equipment facility?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "infrastructure",
+        "professional-management"
+      ],
+      "language": "en",
+      "text": "Is the <b>data center professionally managed</b>?",
+      "help_text": "For example are there dedicated FTEs, change management, 24/7, person-trap, closed circuit video, appropriate access controls and auditing?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "infrastructure",
+        "cloud-services"
+      ],
+      "language": "en",
+      "text": "Are there institutional <b>resources for leveraging commercial cloud services</b> for research computing and researchers?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "infrastructure",
+        "automation"
+      ],
+      "language": "en",
+      "text": "Are <b>deployment, operations, and maintenance of your infrastructure automated</b>?",
+      "help_text": "For example, using foreman, razor, puppet, ansible, chef, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "infrastructure",
+        "containers"
+      ],
+      "language": "en",
+      "text": "Do systems staff have the <b>skills and capacity to support container deployment and orchestration</b>?",
+      "help_text": "For example, APIs, kubernetes, docker, singularity, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "compute",
+        "high-performance"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>high performance</b> (batch) <b>computing </b>(HPC)?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "compute",
+        "high-throughput"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>high throughput computing</b> (HTC)?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "compute",
+        "production-level"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to a <b>production-level compute, storage, and network environment</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "compute",
+        "specialized-hardware"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>specialized hardware capabilities, such as accelerators</b>?",
+      "help_text": "For example, GPUs, TPUs, FPGAs, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "compute",
+        "interactive"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>interactive computing services</b>?",
+      "help_text": "For example, support for VDI, Gateways, JupyterHub, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "compute",
+        "standardized-os"
+      ],
+      "language": "en",
+      "text": "Is a <b>standardized set of operating systems</b> supported for HPC, workstations, and/or virtual machines?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "storage",
+        "scratch"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>active data storage services</b> (a.k.a., &quot;scratch&quot; storage, often a parallel filesystem) sufficient for HTC/HPC?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "storage",
+        "data-intensive"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to sufficient <b>storage to support researchers' data intensive computing needs</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "storage",
+        "security"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to mechanisms for <b>isolated and secure support for storage of sensitive/secure data</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "storage",
+        "management"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>policies and technologies that facilitate management and wide access to data</b>?",
+      "help_text": "For example: <ul><li>   Automated tiering and data migration.</li> <li>  Security/compliance management support for sensitive/controlled data that require special access/export controls.</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "storage",
+        "preservation"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>data archival and preservation services</b> (e.g. tape, cloud)?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "storage",
+        "final-research-data"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to a <b>place to store final research data</b> to address <b>institutional policy and/or funding agency requirements</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "storage",
+        "collaborations"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to support for <b>collaborative data grids and/or data repositories</b>?",
+      "help_text": "These may be national, local, or commercial. For example, OSN, iRODS, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "network",
+        "high-performance"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to a <b>high-performance network</b> that supports research <b>within campus</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "network",
+        "science-dmz"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to a <b>protected subnet or Science DMZ</b>?",
+      "help_text": "A Science DMZ is a means to securely enable high performance inter-campus data flows that bypass campus firewalls."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "network",
+        "data-transfer"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to support for <b>high performance data movement</b> with dedicated <b>data transfer nodes</b> (DTN) and associated <b>data movement software</b>?",
+      "help_text": "Software may include Globus, FDT, BBCP, or rclone, among others."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "network",
+        "buffering"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>infrastructure for data buffering</b> between <b>high I/O lab instruments</b> and the data center, and/or external resources?",
+      "help_text": "Examples may include “data capacitors” or “burst buffers”."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "network",
+        "security"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to mechanisms for <b>isolated and secure support for movement of sensitive/secure data</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "network",
+        "virtualization"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>virtualized networking techniques</b> such as Software Defined Networks, overlays, etc.?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "specialized",
+        "edge-computing"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to  support for <b>edge computing and data resources</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "specialized",
+        "iot"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to support for <b>sensors, internet of things</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "specialized",
+        "workstations"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to support for <b>researcher workstations or laptops</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "specialized",
+        "special-instruments"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to support for <b>special science instruments</b>?",
+      "help_text": "Examples may include Cryogenic electron microscopes (cryo-EM), DNA sequencers, telescopes, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "specialized",
+        "testbeds"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>specialized compute capability</b>?",
+      "help_text": "Examples may include bare metal hardware, reconfigurable BIOS, OS, and network, or experimental cloud testbeds."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "software",
+        "resource-management"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>resource management and/or queuing software</b> for managing access to resources (e.g.  <b>SLURM, Torque</b>)?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "software",
+        "identity-access-management"
+      ],
+      "language": "en",
+      "text": "Can researchers leverage <b>institutional-level Identity and Access Management</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "software",
+        "2-factor-authentication"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>2-factor authentication</b> (where prudent)?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "software",
+        "rbac"
+      ],
+      "language": "en",
+      "text": "Is <b>researcher access</b> to systems and data managed with a common, <b>project-based or role-based</b> tool?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "software",
+        "id-federation"
+      ],
+      "language": "en",
+      "text": "Are <b>researchers&#39; external collaborators</b> able to use their <b>home organization credentials</b> (or ORCID IDs, etc.) to access systems and data?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "software",
+        "modules"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>modules support</b> to provide access to <b>system-wide software libraries and applications</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "monitoring",
+        "node-level"
+      ],
+      "language": "en",
+      "text": "Is there a practice in place for <b>monitoring infrastructure at the node (individual unit) level</b> for resources that support research?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "monitoring",
+        "network-measurement"
+      ],
+      "language": "en",
+      "text": "Is there a practice in place utilizing <b>active network measurement tools</b> (i.e. perfSONAR) for the research-supporting network, DMZ, DTN etc.?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "monitoring",
+        "whole-system"
+      ],
+      "language": "en",
+      "text": "Is there a practice in place for <b>whole system testing</b> (e.g./chaos monkey) on resources that support research?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "monitoring",
+        "infrastructure-measurement"
+      ],
+      "language": "en",
+      "text": "Is there a practice in place for both <b>active and passive measurement of infrastructure</b> that supports research?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "monitoring",
+        "user-tools"
+      ],
+      "language": "en",
+      "text": "Do researchers have access to <b>monitoring tools</b> as part of their workflow?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "monitoring",
+        "performance-data"
+      ],
+      "language": "en",
+      "text": "Is <b>performance data</b> (on resources that support research) <b>analyzed and used for operational decision making</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "monitoring",
+        "resource-usage"
+      ],
+      "language": "en",
+      "text": "Is a method in place to <b>track and report resource usage at the researcher/project level</b>?",
+      "help_text": "For example, for institutional and funding agency reporting purposes."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "recordkeeping",
+        "change-management"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data staff <b>follow a documented change management process</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "recordkeeping",
+        "version-control"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data staff utilize <b>version control repositories of services and infrastructure data</b>?",
+      "help_text": "Also referred to as configuration management."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "recordkeeping",
+        "ticketing-system"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data staff leverage a <b>ticketing system for user support</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "recordkeeping",
+        "privileged-account-management"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data staff <b>follow an established procedure for privileged account management</b> among the administrators, including tracking of elevated privileges?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "recordkeeping",
+        "network-performance"
+      ],
+      "language": "en",
+      "text": "Have Research Computing and Data staff established a <b>workflow environment to support end-to-end network performance troubleshooting</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "documentation",
+        "maintenance"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data staff <b>produce and regularly maintain systems facing documentation</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "documentation",
+        "processes"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data staff have <b>documented processes, procedures, and policies for infrastructure management</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "planning",
+        "security-compliance"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data <b>planning processes include/incorporate security and compliance </b>considerations?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "planning",
+        "procurement"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data staff follow a <b>formal process for procuring research computing, data, networking, etc. resources</b>?",
+      "help_text": "For example, noting requirements, benchmarks, cost analysis, acceptance plans, terms and conditions, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "planning",
+        "lifecycle"
+      ],
+      "language": "en",
+      "text": "Is a <b>systems and infrastructure lifecycle plan </b>defined and maintained?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "planning",
+        "user-engagement"
+      ],
+      "language": "en",
+      "text": "Are <b>researchers and governance roles engaged</b> to explore gaps and to address emerging needs and technologies?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "planning",
+        "emerging-technologies"
+      ],
+      "language": "en",
+      "text": "Are <b>systems-facing staff engaged</b> with exploring, testing, and deploying <b>emerging or advanced technologies</b> to help research?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "security",
+        "governance"
+      ],
+      "language": "en",
+      "text": "Is Research Computing and Data (RCD) <b>security coordinated with institutional IT Security and Compliance</b>?",
+      "help_text": "For example: <ul><li>   Is the institutional IT security team leveraged for training and education?</li> <li>  Do RCD staff leverage institutional compliance resources/offices?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "security",
+        "best-practices"
+      ],
+      "language": "en",
+      "text": "Are <b>Security Best practices implemented</b> (such as those from NIST, trusted CI, CVE, and others)?",
+      "help_text": "Example practices include: <ul><li>   Are <b>security zones</b> defined for different data sets and science workflows?</li> <li>  Is <b>monitoring </b>in use for <b>intrusion detection, malware</b>, and other threats?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "security",
+        "incident-response"
+      ],
+      "language": "en",
+      "text": "Is there a <b>security incident response plan</b>, and an associated response team?",
+      "help_text": "Example practices include: <ul><li>  Are the associated procedures followed when incidents arise?</li> <li> Are the plan and team membership reviewed on a regular basis (e.g., annually)?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "alignment",
+        "strategic-plan"
+      ],
+      "language": "en",
+      "text": "Does your Research Computing and Data (RCD) team/group have <b>a strategic plan</b>, and is this strategic plan <b>updated on a regular basis</b>?",
+      "help_text": "For example, is there an annual or bi-annual review of your plan?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "alignment",
+        "campus-plans"
+      ],
+      "language": "en",
+      "text": "Is your Research Computing and Data (RCD) <b>strategic plan aligned to campus plans</b>?",
+      "help_text": "For example: <ul><li>   Does the RCD plan connect/relate to an institutional (campus-wide) strategic IT plan?</li> <li>  Does the RCD plan connect/relate to an overall institutional (campus-wide) strategic plan?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "alignment",
+        "research-initiatives"
+      ],
+      "language": "en",
+      "text": "Do the Research Computing and Data (RCD) service and support community and underlying IT service providers have a good <b>awareness and understanding of major research efforts/initiatives across the institution</b>?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "alignment",
+        "research-priorities"
+      ],
+      "language": "en",
+      "text": "Are research priorities, and <b>Research Computing and Data (RCD) strategic priorities well-understood by your institution&#39;s management</b> and planning groups?",
+      "help_text": "Example measures may include: <ul><li>   Are the institution&#39;s research priorities well-understood by campus leadership?</li> <li>  Are RCD strategic priorites understood and supported by campus leadership?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "alignment",
+        "faculty-advisory-group"
+      ],
+      "language": "en",
+      "text": "Is there a <b>Faculty Advisory Group</b> (or equivalent) that provides review and advice on priorities for the Research Computing and Data (RCD) program?",
+      "help_text": "<ul><li>Does this group meet regularly (e.g., quarterly or once a semester) to review and advise?</li> <li>This is generally a dedicated group for RCD, although it may be part of a larger research or IT advisory body.</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "alignment",
+        "recognition"
+      ],
+      "language": "en",
+      "text": "Does institution-level <b>management and planning recognize and value the impact</b> of Research Computing and Data (including return/value on investment)?",
+      "help_text": "For example, are research computing and data services valued at the same level as or higher than other enterprise services when discussing of prioritization of campus (budget) resources?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "alignment",
+        "awareness"
+      ],
+      "language": "en",
+      "text": "Are researchers effectively <b>informed and made aware</b> of Research Computing and Data (RCD) <b>resources and services</b>?",
+      "help_text": "For example: <ul><li>   Is there an institutionally defined role that includes responsibility to create awareness of RCD resources and services available on campus or externally?</li> <li>  Are RCD services documented in an accessible platform, such as an IT service catalog?</li> <li> Is the importance of outreach and training recognized by campus leadership?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "alignment",
+        "pedagogy"
+      ],
+      "language": "en",
+      "text": "Are Research Computing and Data (RCD) <b>resources and services available in support of instruction</b> or other pedagogical uses?",
+      "help_text": "For example: <ul><li>   Can and do instructors leverage research computing resources for instruction?</li> <li>  Are instructors effectively informed about available resources?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "culture",
+        "rcd-understanding"
+      ],
+      "language": "en",
+      "text": "Is there an <b>understanding </b>across the IT organization, research community, and institutional leadership of the <b>distinction between Research Computing and Data services and standard (enterprise) IT services</b>?",
+      "help_text": "Note: This does not imply greater importance of one or the other, nor is it meant to imply how an organization should support each. Rather, it is a recognition that the goals, constraints, metrics, and support models tend to be quite different."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "culture",
+        "rcd-importance"
+      ],
+      "language": "en",
+      "text": "Is <b>facilitation</b> of Research Computing and Data services <b>recognized as an important role</b> to the campus?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "culture",
+        "metrics"
+      ],
+      "language": "en",
+      "text": "Are Research Computing and Data <b>operating metrics captured and reported</b> to leadership?",
+      "help_text": "For example, is this data shared with IT leadership, Office of Research, or other institutional leadership)?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "funding",
+        "sustainable"
+      ],
+      "language": "en",
+      "text": "Are Research Computing and Data <b>services funded in a sustainable manner</b>?",
+      "help_text": "For example: <ul><li>   Is there recurring program budget for the staff and services operations (i.e., not primarily dependent upon grants or other non-recurring funding)?</li> <li>  Are campus funding partnerships formalized with an MOU or equivalent agreement?</li> <li> For activities funded from contracts and grants, is there a strong track-record of renewed funding?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "funding",
+        "opportunities"
+      ],
+      "language": "en",
+      "text": "Are <b>new funding opportunities proactively identified and assessed</b> at an institutional level, for relevance to institutional mission and alignment to Research Computing and Data needs and priorities?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "funding",
+        "research-funding"
+      ],
+      "language": "en",
+      "text": "Do <b>research funding activities actively integrate the Research Computing and Data</b> (RCD) services group?",
+      "help_text": "For example: <ul><li>   Do RCD groups/teams collaborate with the Contracts and Grants groups/teams?</li> <li>   Do RCD staff assist Principle Investigators (PIs) with proposal preparation?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "funding",
+        "extramural-grants"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data (RCD) services groups/teams <b>submit</b> (extramural) <b>grant proposals</b> for RCD investments and innovations?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "funding",
+        "awarded-grants"
+      ],
+      "language": "en",
+      "text": "Have Research Computing and Data (RCD) services groups/teams been <b>awarded </b>(extramural) <b>grants they applied for</b>, in support of RCD investments and innovation?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "partnerships",
+        "regional-national"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data (RCD) services groups/teams <b>actively engage with regional and/or national Research Computing and Data peers/communities</b>?",
+      "help_text": "For example, regional research network providers, CaRCC, CASC, Internet2, Campus Champions, NSF regional Big Data Hub, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "partnerships",
+        "external-users"
+      ],
+      "language": "en",
+      "text": "Are institutional Research Computing and Data <b>services provided to external users</b>, such as hosting data repositories, providing computing resources, etc.?",
+      "help_text": "For example, are you a provider to XSEDE or the Open Science Grid (OSG)?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "partnerships",
+        "external-partnerships"
+      ],
+      "language": "en",
+      "text": "Is there a practice of <b>active engagement</b> of your institution in <b>external partnerships</b> (for funding, or for advancing Research Computing and Data activities and interests?",
+      "help_text": "For example, are there regional partnerships, and/or active industry partnerships?"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "professionalization",
+        "training"
+      ],
+      "language": "en",
+      "text": "Are Research Computing and Data (RCD) <b>staff provided with professional training opportunities</b>?",
+      "help_text": "For example: <ul><li>   Do RCD staff have access to funding for training?</li> <li>  Does each RCD staff member have a professional development plan?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "professionalization",
+        "career-advancement"
+      ],
+      "language": "en",
+      "text": "Are Research Computing and Data <b>staff provided with opportunities for career advancement</b>?",
+      "help_text": "For example: <ul><li>   Are there clear career paths defined for each role?</li> <li>  Are staff encouraged/supported in pursuing career advancement opportunities?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "professionalization",
+        "community-engagement"
+      ],
+      "language": "en",
+      "text": "Are Research Computing and Data (RCD) <b>staff permitted to use staff time to engage in regional or national community efforts</b>?",
+      "help_text": "For example: <ul><li>   Do RCD staff participate in regional networks, Campus Champions work, Linux user groups, CaRCC, etc.?</li> <li>  Do RCD staff contribute to the Carpentries work (training materials or activities)?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "diversity",
+        "policy-practice"
+      ],
+      "language": "en",
+      "text": "Is there a <b>policy and practice</b> to ensure (and if necessary, improve) <b>diversity, equity, and inclusion</b>, on the Research Computing and Data (RCD) staff?",
+      "help_text": "For example: <ul><li>   Are RCD staff regularly surveyed on engagement, cultural climate, etc.?</li> <li>  Does RCD management track this over time?</li> <li> Are the results used to develop ongoing strategies to improve diversity, equity, and inclusion?</li></ul>"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "diversity",
+        "inclusive-language"
+      ],
+      "language": "en",
+      "text": "Are Research Computing and Data <b>recruitments</b> (job listings) reviewed for <b>inclusive language</b> to attract a broad range of applicants?",
+      "help_text": " "
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "diversity",
+        "training"
+      ],
+      "language": "en",
+      "text": "Do Research Computing and Data staff have <b>access to diversity, equity, and inclusion training</b>?",
+      "help_text": "For example, on unconscious bias, communication styles, multicultural awareness, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "domain-support",
+        "arts-and-humanities"
+      ],
+      "language": "en",
+      "text": "Do you support research in the arts and humanities?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "domain-support",
+        "cs-and-engineering"
+      ],
+      "language": "en",
+      "text": "Do you support research in computer science and engineering?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "domain-support",
+        "health-and-life-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the health and life sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "domain-support",
+        "physical-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the physical sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "domain-support",
+        "social-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the social sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "domain-support",
+        "arts-and-humanities"
+      ],
+      "language": "en",
+      "text": "Do you support research in the arts and humanities?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "domain-support",
+        "cs-and-engineering"
+      ],
+      "language": "en",
+      "text": "Do you support research in computer science and engineering?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "domain-support",
+        "health-and-life-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the health and life sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "domain-support",
+        "physical-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the physical sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "domain-support",
+        "social-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the social sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "domain-support",
+        "arts-and-humanities"
+      ],
+      "language": "en",
+      "text": "Do you support research in the arts and humanities?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "domain-support",
+        "cs-and-engineering"
+      ],
+      "language": "en",
+      "text": "Do you support research in computer science and engineering?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "domain-support",
+        "health-and-life-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the health and life sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "domain-support",
+        "physical-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the physical sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "domain-support",
+        "social-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the social sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "domain-support",
+        "arts-and-humanities"
+      ],
+      "language": "en",
+      "text": "Do you support research in the arts and humanities?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "domain-support",
+        "cs-and-engineering"
+      ],
+      "language": "en",
+      "text": "Do you support research in computer science and engineering?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "domain-support",
+        "health-and-life-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the health and life sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "domain-support",
+        "physical-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the physical sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "domain-support",
+        "social-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the social sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "domain-support",
+        "arts-and-humanities"
+      ],
+      "language": "en",
+      "text": "Do you support research in the arts and humanities?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "domain-support",
+        "cs-and-engineering"
+      ],
+      "language": "en",
+      "text": "Do you support research in computer science and engineering?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "domain-support",
+        "health-and-life-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the health and life sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "domain-support",
+        "physical-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the physical sciences?",
+      "help_text": ""
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "domain-support",
+        "social-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the social sciences?",
+      "help_text": ""
+    }
+  }
+]

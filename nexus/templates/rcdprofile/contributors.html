@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    main h2 {
+        margin-bottom: 0;
+    }
+
+    main div.uigrid {
+        display: grid;
+        width: 80%;
+        max-width: 600px;
+    }
+
+    section.fields div.field-head {
+        padding-right: 10px;
+    }
+
+    section.fields div label {
+        position: relative;
+        top: 10px;
+        left: 10px;
+    }
+
+    main section.actions {
+        margin-top: 0;
+    }
+
+    #rolemgmnt, #reqmgmnt {
+        display: grid;
+        max-width: 580px;
+        grid-template-columns: 70% 30%;
+        align-items: start;
+        margin: 2px 8px 8px 8px;
+        padding: 0px 20px;
+    }
+
+    #rolemgmnt p, #reqmgmnt p {
+        margin: 3px 0 3px 0;
+        font-size: 0.9em;
+    }
+
+    #rolemgmnt p span.creator {
+        font-weight:bold;
+        color: #333;
+    }
+
+    #rolemgmnt p.title, #reqmgmnt p.title {
+        font-weight: bold;
+        font-size: 1em;
+        margin-left:10px;
+    }
+
+    #rolemgmnt p.entry, #reqmgmnt p.entry {
+        padding: 4px;
+    }
+
+    main section p.info, main section p.info {
+        margin-top: 8px;
+        margin-bottom: 4px;
+    }
+
+    main #rolemgmnt p:has(button) {
+        padding-top: 10px;
+        grid-column: 1 / span 2;
+        margin: auto;
+    }
+    main button {
+        padding: 0 1em;
+        min-height: 2em;
+    }
+
+    main #reqmgmnt button {
+        display:inline;
+        min-height: 1.5em;
+        min-width: 3.5em;
+    }
+
+    p.help {
+        display: flex;
+    }
+
+    p.help span {
+        margin: 10px 0 0 8px;
+    }
+
+    p span.note {
+        font-size: 0.8em;
+        font-style: italic;
+    }
+
+    button.true {
+        background-color: var(--success-off);
+    }
+
+    button.false {
+        background-color: var(--primary-fg-off);
+    }
+
+    td {
+        padding: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<h2>Contributor management for {{profile}}</h2>
+<div class="uigrid">
+
+    {% if profile.membership_requests.exists %}
+    <section>
+        <h3>Contribution requests</h3>
+        <p class="info">The following user(s) have requested to contribute:
+            <br/> <span class="note">If you approve for access, you must then given them a role (e.g., <strong>Contributor</strong>) in the section below to allow them to contribute to an assessment.</span>
+        </p>
+        <div id="reqmgmnt">
+            <p class="title">User</p>
+            <p class="title">Approve or Deny</p>
+            {% for membership_request in profile.membership_requests.all %}
+            <p class="entry {% cycle 'odd-field' 'even-field' as fieldcycle %}">{{membership_request.requested_by}}</p>
+            <form action="handle-requests" method="post">
+                {% csrf_token %}
+                <button type="submit" name="action" value="approve {{membership_request.requested_by_id}}">✔</button>
+                <button type="submit" name="action" value="deny {{membership_request.requested_by_id}}">✘</button>
+            </form>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section>
+        <h3>Manage roles</h3>
+            <p class="info"><span class="note">Each successive role has the rights of those before it in the list 
+                (e.g., <strong>Manager</strong> is also a <strong>Contributor</strong>)</span></p>
+            <form action="" method="post">
+                <div id="rolemgmnt">
+                <p class="title">User</p>
+                <p class="title">Role</p>
+                {% for membership in memberships %}
+                    <p class="entry {% cycle 'odd-field' 'even-field' as fieldcycle %}">{{membership.user}}</p>
+                    <p class="entry {% cycle 'odd-field' 'even-field' as fieldcycle %}">{% if membership.user_id == profile.created_by_id %}
+                        <span class="creator">Creator</span>
+                        {%else%}
+                        <select name="role {{membership.user_id}}">
+                            {% for value, display in role_choices %}
+                            <option value="{{value}}" {% if membership.role == value %}selected{%endif%}>{{display}}
+                            </option>
+                            {% endfor %}
+                            <option value="__delete__">--remove--</option>
+                        </select>
+                        {%endif%}
+                    </p>
+                {% endfor %}
+                {% csrf_token %}
+                <p><button type="submit">Update</button></p>
+            </div>
+        </form>
+    </section>
+
+    <section>
+        <h3>Invite contributors</h3>
+        <p>Enter emails of people you would like to add as contributors. <br>
+            Clicking <b>Invite</b> will create a temporary invite token that may be shared.</p>
+        <form action="invite" method="post">
+            {% csrf_token %}
+            {{ invite_form }}
+            <section class="actions">
+                <button type="submit">Invite</button>
+            </section>
+        </form>
+    </section>
+</div>
+
+{% endblock %}

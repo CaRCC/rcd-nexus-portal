@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Edit Institution</h1>
+<h2>{{form.instance}}</h2>
+<form method="post">
+    {% csrf_token %}
+    {% if not can_edit %}
+    <fieldset disabled>
+    {% endif %}
+    {{ form }}
+    {% if can_edit %}
+    <section class="actions">
+        <button type="submit">Save</button>
+    </section>
+    {% else %}
+    </fieldset>
+    {% endif %}
+</form>
+
+{% endblock %}

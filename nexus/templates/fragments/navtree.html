@@ -1,0 +1,14 @@
+<ul>
+    {% for node in navtree %}
+    <li>
+        {% if node.children %}
+        <details open>
+            <summary>{{ node.as_html | safe}}</summary>
+        {% include "fragments/navtree.html" with navtree=node.children %}
+        </details>
+        {% else %}
+        {{ node.as_html | safe}}
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>

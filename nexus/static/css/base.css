@@ -1,0 +1,566 @@
+:root {
+    --primary: #777777;
+    --secondary: #0693e3;
+    --secondary-emphasis: #0084d1;
+    --accent: #444444;
+    --primary-fg: #fff;
+    --primary-fg-off: #f0f0f0;
+
+    --error: red;
+    --error-off: salmon;
+    --warning: orange;
+    --warning-off: lightsalmon;
+    --success: green;
+    --success-off: lightgreen;
+    --info: skyblue;
+    --info-off: lightblue;
+
+    --links: #9900bb;
+    --linksrgb: 153,0,187;
+
+    --header-height: 95px;
+
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+    position: relative;
+    display: block;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+body {
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "nav main"
+        "footer footer";
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: fit-content(40%) 1fr;
+}
+
+header {
+    grid-area: header;
+    padding-top: 2px;
+    margin: auto;
+    max-width: calc(1380px - 4em);
+    width: 80%;
+}
+
+.messages {
+    width: 100%;
+    margin-top: 0em;
+    padding: 0em;
+    list-style: none;
+    text-align: center;
+    background-color: grey;
+}
+
+.messages .error {
+    background-color: var(--error-off);
+}
+
+.messages .warning {
+    background-color: var(--warning-off);
+}
+
+.messages .success {
+    background-color: var(--success-off);
+}
+
+.messages .info {
+    background-color: var(--info-off);
+}
+
+ul.errorlist {
+    color: var(--error);
+    font-size: 14px;
+    list-style: none;
+    padding-left: 1em;
+}
+
+
+
+main {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: calc(1380px - 4em);
+    min-width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10em;
+}
+
+main h1 {
+    text-align: center;
+}
+
+main section {
+    padding: 5px;
+    margin: 20px;
+    min-width: 30%;
+    align-self: center;
+    background-color: #f8f8f8;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+main section>h2 {
+    background-color: #eee;
+    margin: 0px;
+    padding: 5px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+}
+
+main section>h3 {
+    background-color: #eee;
+    margin: 0px;
+    padding: 5px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+}
+
+main section>p {
+    padding: 0px 10px;
+}
+
+main section section {
+    box-shadow: none;
+}
+
+main ul {
+    list-style: none;
+    padding-left: 1em;
+}
+
+main li {
+    margin-bottom: 4px;
+}
+
+main table {
+    text-align: left;
+    border-spacing: 0px;
+    /* width: 100%; */
+}
+
+main table tr {
+    vertical-align: top;
+    text-align: left;
+}
+
+main table tr th:first-of-type,
+main table tr td:first-of-type {
+    text-align: left;
+}
+
+a {
+    outline: none;
+    text-decoration: none;
+    padding: 2px 1px 0;
+}
+
+a.current {
+    font-weight: bold;
+    text-decoration: dotted;
+}
+
+a:link {
+    color: var(--links);
+}
+
+a:visited {
+    color: var(--links);
+}
+
+a:focus {
+    background: lightcyan;
+}
+
+a:hover {
+    background: lightcyan;
+}
+
+a:active {
+    background: #c0ffff;
+    color: gray;
+}
+
+
+
+header>nav {
+    grid-area: header;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    height: 95px;
+    padding: 1em;
+    color: rgb(71, 71, 73);
+    font-size: 17px;
+    border-bottom: 1px solid gray;
+}
+
+header>nav .logo {
+    margin-left: 0;
+}
+
+header>nav .logo img {
+    vertical-align: middle;
+}
+
+body>nav {
+    grid-area: nav;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    border-right: solid dimgrey;
+}
+
+body>nav ul {
+    list-style: circle;
+    max-width: 12em;
+    padding-left: 0em;
+}
+
+body>nav details ul {
+    padding-left: 1.5em;
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+.menu>li {
+    margin: 0 1rem;
+}
+
+.menu>li button {
+    border: none;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+    cursor: pointer;
+    color: darkred;
+}
+
+.menu>li ul li {
+    display: none;
+}
+
+.menu>li a,
+.menu>li a:visited {
+    color: inherit;
+    text-decoration: none;
+}
+
+.menu>li a:hover,
+.menu>li a:active {
+    color: var(--accent);
+}
+
+
+.menu-button-container {
+    display: none;
+    height: 100%;
+    width: 30px;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#menu-toggle {
+    display: none;
+}
+
+.menu-button,
+.menu-button::before,
+.menu-button::after {
+    display: block;
+    background-color: var(--accent);
+    position: absolute;
+    height: 4px;
+    width: 30px;
+    transition: transform 400ms cubic-bezier(0.23, 1, 0.32, 1);
+    border-radius: 2px;
+}
+
+.menu-button::before {
+    content: "";
+    margin-top: -8px;
+}
+
+.menu-button::after {
+    content: "";
+    margin-top: 8px;
+}
+
+#menu-toggle:checked+.menu-button-container .menu-button::before {
+    margin-top: 0px;
+    transform: rotate(45deg);
+}
+
+#menu-toggle:checked+.menu-button-container .menu-button {
+    background: rgba(255, 255, 255, 0);
+}
+
+#menu-toggle:checked+.menu-button-container .menu-button::after {
+    margin-top: 0px;
+    transform: rotate(-45deg);
+}
+
+/* On small screens e.g. mobile devices, collapse the navbar into a hamburger menu icon on the left-side. */
+@media (max-width: 700px) {
+    header>nav {
+        flex-direction: row-reverse;
+    }
+
+    .menu-button-container {
+        display: flex;
+    }
+
+    .menu {
+        position: absolute;
+        top: 0;
+        margin-top: var(--header-height);
+        left: 0;
+        flex-direction: column;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #menu-toggle~.menu li {
+        display: none;
+        height: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        transition: height 400ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    #menu-toggle:checked~.menu li {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #333;
+        height: 100%;
+        padding: 0.5em;
+        transition: height 400ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    #menu-toggle:checked~.menu li ul li {
+        border: none;
+        height: 2.5em;
+    }
+
+    .menu>li {
+        display: flex;
+        justify-content: left;
+        margin: 0;
+        padding: 0.5em 0;
+        width: 100%;
+        color: var(--primary);
+        background-color: var(--primary-fg);
+    }
+
+    .menu>li:not(:last-child) {
+        border-bottom: 1px solid #444;
+    }
+}
+
+main button,
+main a.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25em 0.75em;
+    margin: 0.25em;
+    min-width: 4em;
+    min-height: 2.5em;
+
+    color: var(--primary-fg);
+    font-family: inherit;
+    font-size: inherit;
+    text-align: center;
+    line-height: 1.1;
+
+    background-color: var(--secondary);
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+
+    cursor: pointer;
+    transition: 220ms all ease-in-out;
+}
+
+main a.button.center {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 30%;
+}
+
+main button:hover,
+main a.button:hover {
+    background-color: var(--secondary-emphasis);
+}
+
+main button:focus,
+main a.button:focus {
+    outline-style: solid;
+    outline-color: transparent;
+    box-shadow: 0 0 0 4px var(--accent);
+}
+
+main .danger {
+    background-color: var(--error-off);
+}
+
+main .danger:hover {
+    background-color: var(--error);
+}
+
+/*
+p {
+    max-width: 30em;
+}
+*/
+
+p.help {
+    font-size: 12px;
+    margin: 0px 0px 1px 0px;
+}
+
+p.footnote {
+    font-size: 12px;
+    text-align: center;
+    max-width: 100%;
+}
+
+main form {
+    max-width: 700px;
+}
+
+form section.fields {
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
+form section.fields>div {
+    padding: 5px;
+}
+
+form section.fields>div>span {
+    display: inline-block;
+}
+
+form section.actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+td.answer-field .errorlist {
+    padding: 0px;
+    margin: 0px;
+}
+
+td.answer-field #id_priority {
+    max-width: 3.5em;
+}
+
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+  }
+  
+  /* Tooltip text */
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    min-width: 400px;
+    max-width: 600px;
+    width: auto;
+    background-color: lightyellow;
+    color: black;
+    text-align: center;
+    padding: 7px;
+    border-radius: 5px;
+    border-style: groove;
+   
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    right: 110%;
+  }
+  
+  /* Show the tooltip text when you mouse over the tooltip container */
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+
+#id_institution_subunit {
+    width: 100%;
+}
+
+.odd-field {
+    background-color: var(--primary-fg-off);
+}
+
+.error-field {
+    border-left: 1px dotted var(--error);
+}
+
+span.avoidwrap { display:inline-block; }
+
+footer {
+    grid-area: footer;
+    background-color: var(--info);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0.25em;
+    margin: auto;
+    max-width: calc(1380px - 4em);
+    font-size: 0.8em;
+    font-style:italic;
+}
+footer p {
+    margin: 2px 10px;
+}
+
+footer a,
+footer a:link,
+footer a:visited {
+    text-decoration:underline;
+    color: inherit;
+    background-color: inherit;
+}
+
+footer a:hover,
+footer a:focus {
+    text-decoration: solid;
+    color: inherit;
+    background-color: var(--info);
+}

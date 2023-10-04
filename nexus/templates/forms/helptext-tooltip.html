@@ -1,0 +1,17 @@
+<table>
+    {% for field in form %}
+    <tr class="answer-field">
+        <td class="answer-field-label">
+            {{ field.label_tag }}
+        </td>
+        <td class="answer-field">
+            {{ field.errors }}
+            {{ field }}
+        </td>
+        <td class="answer-field-help tooltip">
+            <img class="tooltip" src="/static/images/help.png" alt="help icon">
+            <span class="tooltiptext">{{ field.help_text }}</span>                
+        </td> 
+    </tr>
+    {% endfor %}
+</table>

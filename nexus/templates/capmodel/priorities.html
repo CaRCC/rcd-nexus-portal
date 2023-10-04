@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block main %}
+<a href="{% url 'capmodel:assessment' profile.pk %}">Back to assessment overview</a>
+<h2>RCD Capabilities Assessment for {{ profile }}</h2>
+<h3>Priorities</h3>
+
+<section>
+<ol>
+    {% for answer in answers %}
+    <li value="{{ answer.priority }}">
+        <a href="{% url 'capmodel:answer' answer.assessment.profile_id answer.question_id %}"
+            title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
+    {% endfor %}
+</ol>
+</section>
+
+{% endblock %}

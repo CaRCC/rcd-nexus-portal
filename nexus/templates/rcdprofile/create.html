@@ -1,0 +1,175 @@
+{% extends base_template %}
+{% load nexus_extras %}
+{% block head %}
+<style>
+    h2 {
+        color: dimgray;
+    }
+    span.Instname {
+        color: black;
+        font-size: 1.1em;
+    }
+
+    form section.fields div.field-head {
+        height: 100%;
+    }
+    form section.fields div.field-head label {
+        position:relative;
+        top: .5em;
+        left: .5em;
+    }
+
+    div#id_mission label {
+        display: block;
+        margin-left: 30px;
+        text-indent: -30px;
+        font-size: 0.9em;
+        padding-bottom: 6px;
+    }
+    div#id_mission + span {
+        display: none;
+    }
+
+    div.field-body p{
+        margin: 10px;
+    }
+    div.field-body p.help span {
+        font-size: 1.2em;
+    }
+    form section.fields {
+    display: grid;
+    grid-template-columns: 1fr .7fr;
+    }
+    form section.fields div.field-body p select,
+    form section.fields div.field-body p input,
+    form section.fields div.field-body p textarea {
+        width: 30em;
+        margin-bottom: 5px;
+    }
+    p.intro {
+        margin:0px;
+        max-width: 700px;
+        text-align: center;
+    }
+    div.IPEDS {
+        min-width: 400px;
+        max-width: 700px;
+    }
+
+    div.IPEDS section.fields {
+        display: grid;
+        grid-template-columns: auto 1fr;
+    }
+    div.IPEDS section.fields>div {
+        padding: 5px;
+    }
+    div.IPEDS div.fields-head {
+        text-align: right;
+    }
+    div.IPEDShdr {
+        grid-column: 1/-1;
+        background-color: #eee;
+        margin: 0 0 6px 0;
+        padding: 5px 20px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    div.IPEDShdr h3 {
+        margin:0;
+    }
+</style>
+{% endblock %}
+
+
+
+{% block main %}
+<h2>New RCD Nexus Profile for: <span class="Instname">{{institution}}</span></h2>
+{% if importable_profiles.exists %}
+<h3>Import data from an existing profile</h3>
+<form action="import" method="post">
+    <section>
+        {% csrf_token %}
+        <label for="imported-profile">Import from:</label>
+        <select name="imported-profile" id="imported-profile">
+            {% for profile in importable_profiles %}
+            <option value="{{profile.pk}}">{{profile}}</option>
+            {% endfor %}
+        </select>
+    </section>
+    <section class="actions">
+        <button type="submit">Import</button>
+    </section>
+</form>
+
+<h3>...or create a new profile for {{institution}}</h3>
+{% endif %}
+<p class="intro">Please tell us a little about your institution. 
+    This will provide valuable context in the Community datasets.</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <section class="actions">
+        <button type="submit">Create</button>
+    </section>
+</form>
+<div class="IPEDS">
+    <section class="fields">
+        <div class="IPEDShdr">
+            <h3>IPEDS Data for Institution</h3>
+        </div>
+        <div class="fields-head even-field">
+            <label>{% get_verbose_name institution 'carnegie_classification' %}:</label>
+        </div>
+        <div class="fields-body even-field">
+            <label>{{ institution.carnegie_longname }}</label>
+        </div>
+        <div class="fields-head odd-field">
+            <label>{% get_verbose_name institution 'research_expenditure' %}:</label>
+        </div>
+        <div class="fields-body odd-field">
+            <label>{{ institution.research_mdollars }}</label>
+        </div>
+        <div class="fields-head even-field">
+            <label>{% get_verbose_name institution 'ipeds_sector' %}:</label>
+        </div>
+        <div class="fields-body even-field">
+            <label>{{ institution.get_ipeds_sector_display }}</label>
+        </div>
+        <div class="fields-head odd-field">
+            <label>{% get_verbose_name institution 'student_pop' %}:</label>
+        </div>
+        <div class="fields-body odd-field">
+            <label>{{ institution.student_thous }}</label>
+        </div>
+        <div class="fields-head even-field">
+            <label>Location:</label>
+        </div>
+        <div class="fields-body even-field">
+            <label>{{ institution.country }} - {{ institution.get_ipeds_region_display }} ({{ institution.state_or_province }})</label>
+        </div>
+        {% if institution.ipeds_land_grant == 1 %}
+            <div class="fields-head odd-field">
+                <label></label>
+            </div>
+            <div class="fields-body odd-field">
+                <label>{{ institution.get_ipeds_land_grant_display }}</label>
+            </div>
+        {% endif %}
+        {% if institution.ipeds_tcu == 1 %}
+            <div class="fields-head odd-field">
+                <label></label>
+            </div>
+            <div class="fields-body odd-field">
+                <label>{% get_verbose_name institution 'ipeds_tcu' %}</label>
+            </div>
+        {% endif %}
+        {% if institution.ipeds_hbcu == 1 %}
+            <div class="fields-head odd-field">
+                <label></label>
+            </div>
+            <div class="fields-body odd-field">
+                <label>{% get_verbose_name institution 'ipeds_hbcu' %}</label>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

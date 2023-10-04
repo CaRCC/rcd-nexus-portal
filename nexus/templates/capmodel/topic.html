@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block main %}
+<style>
+    div.assessment-nav {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    div.assessment-nav>p {
+        margin: 1em;
+    }
+
+    span.navtname {
+        font-weight: bold;
+    }
+
+    h3>span.facing {
+        font-weight: normal;
+        font-style: italic;
+    }
+
+    section.topicblock {
+        text-align: left;
+        align-self: center;
+        width: 80%;
+        max-width: 700px;
+        padding: 4px;
+        margin: 10px;
+    }
+
+    section.topicblock h3 {
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 20px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+
+    section.topicblock>table {
+        margin: 10px;
+        border-collapse: separate;
+        border-spacing: 0 5px;
+    }
+
+    td.cov {
+        font-weight: bold;
+        text-align: right;
+    }
+
+    td.nocov {
+        font-style: italic;
+        text-align: right;
+    }
+
+    td.question.NA {
+        font-style: italic;
+        text-decoration: line-through;
+    }
+
+    td.question,
+    td.cov,
+    td.nocov {
+        padding: 4px 6px 4px 6px;
+    }
+
+    td.question>a:link {
+        color: #222;
+    }
+
+    td.question>a:visited {
+        color: #222;
+    }
+
+    th {
+        text-align: center;
+        vertical-align: middle;
+        padding: 0px 0px 0px 5px;
+    }
+
+    th.cov {
+        font-size: smaller;
+        text-align: right;
+    }
+</style>
+
+<div class="assessment-nav">
+    {% if prev_topic %}<p><a href="{% url 'capmodel:topic' assessment.profile_id prev_topic.facing.slug prev_topic.slug %}">⬅ Previous topic</a></p>{% endif %}
+    <p><a href="{% url 'capmodel:assessment' assessment.profile_id %}">Up to Facings/Assessment home</a></p>
+    {% if next_topic %}<p><a href="{% url 'capmodel:topic' assessment.profile_id next_topic.facing.slug next_topic.slug %}">Next topic ➡</a></p>{% endif %}
+</div>
+<section class="topicblock">
+    <h3>{{ topic.display_name }} &nbsp;&nbsp;<span class="facing">({{ facing.display_name }}-Facing)</span></h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Questions in topic</th>
+                <th class="cov">Computed Coverage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for answer in answers %}
+            <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
+                <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                    <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
+                        title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
+                </td>
+                <td {% if answer.coverage_color %} class="cov" {% else %} class="nocov" {% endif %}>
+                    {{answer.coverage_percent}}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

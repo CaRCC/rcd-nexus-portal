@@ -1,0 +1,9 @@
+<div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
+	<div class="modal-underlay" _="on click trigger closeModal"></div>
+	<section class="modal-content">
+        {% block content %}
+        <p>This modal is blank.</p>
+        <button _="on click trigger closeModal">Close</button>
+        {% endblock %}
+    </section>
+</div>

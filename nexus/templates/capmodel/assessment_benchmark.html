@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% for label, data in benchmarks.items %}
+{% regroup data by question__entity__xattrs__facing as by_facing %}
+<h2>{{ label }}</h2>
+<table>
+    {% for facing, topics in by_facing %}
+    <tbody>
+    <tr><th colspan="2">{{ facing }}</th></tr>
+      {% for topic in topics %}
+      <tr><td>{{ topic.question__entity__xattrs__topic }}</td><td>{% widthratio topic.percentile 1 100 %}%</td></tr>
+      {% endfor %}
+    </tbody>
+    {% endfor %}
+</table>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block main %}
+<h1>Contribute to RCD Nexus</h1>
+<form method="get">
+    <section class="fields">
+        <div>
+            <label for="invite-token">Invite token:</label>
+            <input type="text" name="token" id="invite-token"></input>
+        </div>
+    </section>
+    <section class="actions">
+        <button type="submit">Submit</button>
+    </section>
+</form>
+{% endblock %}

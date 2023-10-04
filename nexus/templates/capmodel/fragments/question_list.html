@@ -1,0 +1,9 @@
+{% extends base_template %}
+
+{% block main %}
+<ul>
+    {% for answer in answers %}
+    <li><a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}" title="{{ answer.tooltip }}">{{ answer.html_display }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

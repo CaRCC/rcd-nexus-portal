@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+<!-- This is an initial prototype for integrating our data API with d3.js -->
+
+{% block main %}
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<div id="my_dataviz"></div>
+
+<script>
+//    // set the dimensions and margins of the graph
+//    var margin = {top: 10, right: 30, bottom: 20, left: 50},
+//        width = 460 - margin.left - margin.right,
+//        height = 400 - margin.top - margin.bottom;
+//    
+//    // append the svg object to the body of the page
+//    var svg = d3.select("#my_dataviz_example")
+//      .append("svg")
+//        .attr("width", width + margin.left + margin.right)
+//        .attr("height", height + margin.top + margin.bottom)
+//      .append("g")
+//        .attr("transform",
+//              "translate(" + margin.left + "," + margin.top + ")");
+//    
+//    // Parse the Data
+//    d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_stacked.csv", function(data) {
+//    
+//      // List of subgroups = header of the csv files = soil condition here
+//      var subgroups = data.columns.slice(1)
+//    
+//      // List of groups = species here = value of the first column called group -> I show them on the X axis
+//      var groups = d3.map(data, function(d){return(d.group)}).keys()
+//    
+//      // Add X axis
+//      var x = d3.scaleBand()
+//          .domain(groups)
+//          .range([0, width])
+//          .padding([0.2])
+//      svg.append("g")
+//        .attr("transform", "translate(0," + height + ")")
+//        .call(d3.axisBottom(x).tickSize(0));
+//    
+//      // Add Y axis
+//      var y = d3.scaleLinear()
+//        .domain([0, 40])
+//        .range([ height, 0 ]);
+//      svg.append("g")
+//        .call(d3.axisLeft(y));
+//    
+//      // Another scale for subgroup position?
+//      var xSubgroup = d3.scaleBand()
+//        .domain(subgroups)
+//        .range([0, x.bandwidth()])
+//        .padding([0.05])
+//    
+//      // color palette = one color per subgroup
+//      var color = d3.scaleOrdinal()
+//        .domain(subgroups)
+//        .range(['#e41a1c','#377eb8','#4daf4a'])
+//    
+//      // Show the bars
+//      svg.append("g")
+//        .selectAll("g")
+//        // Enter in data = loop group per group
+//        .data(data)
+//        .enter()
+//        .append("g")
+//          .attr("transform", function(d) { return "translate(" + x(d.group) + ",0)"; })
+//        .selectAll("rect")
+//        .data(function(d) { return subgroups.map(function(key) { return {key: key, value: d[key]}; }); })
+//        .enter().append("rect")
+//          .attr("x", function(d) { return xSubgroup(d.key); })
+//          .attr("y", function(d) { return y(d.value); })
+//          .attr("width", xSubgroup.bandwidth())
+//          .attr("height", function(d) { return height - y(d.value); })
+//          .attr("fill", function(d) { return color(d.key); });
+//    
+//    })
+</script>
+
+<style>
+  div.tooltip {
+    position: absolute;
+    text-align: center;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  // set the dimensions and margins of the graph
+  var margin = { top: 10, right: 30, bottom: 50, left: 50 },
+    width = 600 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+  // append the svg object to the body of the page
+  var svg = d3.select("#my_dataviz")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform",
+      "translate(" + margin.left + "," + margin.top + ")");
+
+  var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+
+  // Parse the Data
+  //d3.json("https://portal-test.rcd-nexus.org/capabilities/api/data?facet=section&qfilter=facing:software", (data) => {
+  d3.json("https://portal-dev.rcd-nexus.org:8443/capabilities/api/data?facet=carnegie-classification,topic&qfilter=facing:software", (data) => {
+
+    //console.log(data)
+
+    var levels = new Array();
+    var level_labels = new Array();
+    for (const label of Object.keys(data)) {
+      for (const [index, tag] of label.split("&").entries()) {
+        if (levels[index] === undefined) {
+          levels[index] = new Set();
+          level_labels[index] = tag.split(':')[0];
+        }
+        levels[index].add(tag);
+      }
+    }
+
+    console.log(level_labels);
+
+    var scaleBands = new Array();
+    var range = [0, width];
+    var bandwidth;
+    for (const level of levels) {
+      scale = d3.scaleBand().domain(Array.from(level)).range(range).paddingInner(0.2);
+      scaleBands.push(scale);
+      bandwidth = scale.bandwidth();
+      range = [0, bandwidth];
+    }
+
+    const labelToX = (label) => {
+      var x = 0;
+      for (const [index, tag] of label.split("&").entries()) {
+        x += scaleBands[index](tag);
+      }
+      return x;
+    }
+
+    const recordToTooltip = (d) => {
+      var lines = d[0].split("&");
+      lines.push((d[1].average * 100).toFixed(2) + "% coverage");
+      return lines.join("</br>");
+    }
+
+    // List of subgroups = header of the csv files = soil condition here
+    //var subgroups = data.columns.slice(1)
+
+    // List of groups = species here = value of the first column called group -> I show them on the X axis
+    //var groups = d3.map(data, function(d){return(d.group)}).keys()
+
+    // Add X axis
+    //var x = d3.scaleBand()
+    //    .domain(groups)
+    //    .range([0, width])
+    //    .padding([0.2])
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(scaleBands[0]).tickSize(0))
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "2.5em")
+      .attr("dy", "1.25em")
+      .attr("transform", "rotate(-15)");
+
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+      .domain([0, 1])
+      .range([height, 0]);
+    svg.append("g")
+      .call(d3.axisLeft(y));
+
+
+    // color palette = one color per subgroup
+    var color = d3.scaleOrdinal(d3.schemeCategory10)
+      .domain(Array.from(levels[levels.length - 1]))
+    //.range(['#e41a1c','#377eb8','#4daf4a'])
+
+    const labelToColor = (label) => {
+      tags = label.split("&");
+      return color(tags[tags.length - 1]);
+    }
+
+    // Show the bars
+    data_array = Object.entries(data)
+    svg.append("g")
+      .selectAll("g")
+      // Enter in data = loop group per group
+      .data(data_array)
+      .enter()
+      .append("g")
+      //  .attr("transform", function(d) { return "translate(" + x(d.group) + ",0)"; })
+      .selectAll("rect")
+      .data(data_array)
+      .enter().append("rect")
+      .attr("x", d => labelToX(d[0]))
+      .attr("y", d => y(d[1].average))
+      .attr("width", bandwidth)
+      .attr("height", function (d) { return height - y(d[1].average); })
+      .attr("fill", d => labelToColor(d[0]))
+      .on("mouseover", function (d) {
+        div.transition()
+          .duration(200)
+          .style("opacity", .9);
+        div.html(recordToTooltip(d))
+          .style("left", (d3.event.pageX) + "px")
+          .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", function (d) {
+        div.transition()
+          .duration(500)
+          .style("opacity", 0);
+      });
+
+    var size = 20
+    svg.selectAll("mydots")
+      .data(Array.from(levels[levels.length - 1]))
+      .enter()
+      .append("rect")
+      .attr("x", 480)
+      .attr("y", function (d, i) { return 10 + i * (size + 5) }) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("width", size)
+      .attr("height", size)
+      .style("fill", d => labelToColor(d));
+
+    // Add one dot in the legend for each name.
+    svg.selectAll("mylabels")
+      .data(Array.from(levels[levels.length - 1]))
+      .enter()
+      .append("text")
+      .attr("x", 480 + size * 1.2)
+      .attr("y", function (d, i) { return 10 + i * (size + 5) + (size / 2) }) // 100 is where the first dot appears. 25 is the distance between dots
+      .style("fill", d => labelToColor(d))
+      .text(function (d) { return d.split(":")[1] })
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle");
+  })
+</script>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Institutional Affiliation Request</h1>
+<p>
+    If your institution is not part of the <a href="https://www.cilogon.org/faq">CILogon federation</a>, you can still
+    affiliate with it inside RCD Nexus.
+    Enter your valid institutional email (e.g. ending with .edu) below and we will send you an email with a link
+    to confirm your affiliation.
+</p>
+<p>
+    If you are the first user from your institution on RCD Nexus, and your institution does not support CILogon, you may
+    need to <a href="{% url 'institutions:request' %}">request a new institution</a> instead.
+</p>
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

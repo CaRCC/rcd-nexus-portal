@@ -1,0 +1,12 @@
+<section class="fields">
+{% for field in form %}
+<div class="field-head {% cycle 'odd-field' 'even-field' as fieldcycle %} {% if field.errors %}error-field{% endif %}">
+    {{ field.label_tag }}
+    {{ field.errors }}
+</div>
+<div class="field-body {{ fieldcycle }}">
+    <p class="help">{{ field }} <span>{{ field.help_text }}</span></p>
+</div>
+</body>
+{% endfor %}
+</section>

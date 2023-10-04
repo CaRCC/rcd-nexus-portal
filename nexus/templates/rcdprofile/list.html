@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+main {
+    width: 80%;
+}
+main section {
+    align-self: center;
+    width: 40em;
+}
+</style>
+{% endblock %}
+
+{% block main %}
+<section>
+    <h2>Current profiles</h2>
+    {% if current_profiles.exists %}
+    <ul>
+        {% for profile in current_profiles %}
+        <li><a href="{% url 'rcdprofile:detail' profile.pk %}">{{profile}}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>You are not a contributor to any RCD profiles for the current year.</p>
+
+    {% if request.user.institutions.count == 0 %}
+    <p class="footnote">You are not affiliated with any RCD Nexus institutions. Please <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a> to begin using RCD Nexus tools.</p>
+    {% else %}
+    {% for institution in request.user.institutions.all %}
+    <a class="button" href="{% url 'rcdprofile:create' institution.pk %}">Start a new RCD profile for {{institution}}</a>
+    {% endfor %}
+    {% endif %}
+
+
+    {% endif %}
+</section>
+{% if past_profiles.exists %}
+<section>
+    <h2>Past profiles</h2>
+    <ul>
+        {% for profile in past_profiles %}
+        <li><a href="{% url 'rcdprofile:detail' profile.pk %}">{{profile}}</a></li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+{% endblock %}

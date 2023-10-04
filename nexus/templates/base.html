@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}RCD Nexus portal{% endblock %}</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicons/carcc.ico' %}"/>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}"/>
+
+    <script src="{% static 'js/htmx.min.js' %}"></script>
+    <script src="{% static 'js/_hyperscript.min.js' %}"></script>
+    {% block head %}
+    <style>
+    </style>
+    {% endblock %}
+</head>
+
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <header>{% include "base/header.html" %}</header>
+    <nav>{% include "base/nav.html" %}</nav>
+    <main>
+      {% include "base/messages.html" %}
+      {% include "base/breadcrumbs.html" %}
+      {% block main %}<p>This page is blank.</p>{% endblock %}
+    </main>
+    <footer>
+      {% include "base/footer.html" %}
+    </footer>
+</body>
+</html>

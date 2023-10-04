@@ -1,0 +1,19 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/postgres
+{
+	"name": "Python 3 & PostgreSQL",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// This can be used to network with other containers or the host.
+	// 5432 for PostgreSQL
+	// 8000 for Django `runserver`
+	"forwardPorts": [
+		5432,
+		8000
+	],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// Set up a virtual environment and install dependencies, then run Django database migrations.
+	"postCreateCommand": "pip install poetry && poetry install --with=dev && poetry run python manage.py migrate"
+}

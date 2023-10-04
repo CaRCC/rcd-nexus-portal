@@ -1,0 +1,26 @@
+{% extends base_template %}
+
+{% block main %}
+<h1>RCD Nexus Community Datasets</h1>
+<p>This section is under construction.</p>
+
+<section>
+    <h2>RCD Capabilities Model</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Completed Assessments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for year, count in annual_count.items %}
+            <tr>
+                <td>{{year}}</td>
+                <td>{{count}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

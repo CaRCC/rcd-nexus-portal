@@ -1,0 +1,92 @@
+[
+  {
+    "model": "nexus.facing",
+    "fields": {
+      "slug": "researcher",
+      "index": 0
+    }
+  },
+  {
+    "model": "nexus.facing",
+    "fields": {
+      "slug": "data",
+      "index": 1
+    }
+  },
+  {
+    "model": "nexus.facing",
+    "fields": {
+      "slug": "software",
+      "index": 2
+    }
+  },
+  {
+    "model": "nexus.facing",
+    "fields": {
+      "slug": "systems",
+      "index": 3
+    }
+  },
+  {
+    "model": "nexus.facing",
+    "fields": {
+      "slug": "strategy",
+      "index": 4
+    }
+  },
+  {
+    "model": "nexus.facingcontent",
+    "fields": {
+      "facing": [
+        "researcher"
+      ],
+      "language": "en",
+      "display_name": "Researcher",
+      "description": "Includes research computing and data staffing, outreach, and advanced support, as well as support in the management of the research lifecycle."
+    }
+  },
+  {
+    "model": "nexus.facingcontent",
+    "fields": {
+      "facing": [
+        "data"
+      ],
+      "language": "en",
+      "display_name": "Data",
+      "description": "Includes data creation; data discovery and collection; data analysis and visualization; research data curation, storage, backup, preservation, and transfer; and research data policy compliance."
+    }
+  },
+  {
+    "model": "nexus.facingcontent",
+    "fields": {
+      "facing": [
+        "software"
+      ],
+      "language": "en",
+      "display_name": "Software",
+      "description": "Includes software package management, research software development, research software optimization or troubleshooting, workflow engineering, containers and cloud computing, securing access to software, and software associated with physical specimens."
+    }
+  },
+  {
+    "model": "nexus.facingcontent",
+    "fields": {
+      "facing": [
+        "systems"
+      ],
+      "language": "en",
+      "display_name": "Systems",
+      "description": "Includes infrastructure systems, systems operations, and systems security and compliance."
+    }
+  },
+  {
+    "model": "nexus.facingcontent",
+    "fields": {
+      "facing": [
+        "strategy"
+      ],
+      "language": "en",
+      "display_name": "Strategy and Policy",
+      "description": "Includes RCD leadership, institutional alignment, culture for research support, funding, and partnerships and engagement with external communities."
+    }
+  }
+]

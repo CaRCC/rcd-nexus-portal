@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    div.assessment-nav {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 25em;
+        margin-top: 1em;
+    }
+
+    section.question {
+        text-align: left;
+        align-self: center;
+        width: 80%;
+        padding: 0px 20px 10px 20px;
+    }
+
+    section.question>h3 {
+        text-align: center;
+    }
+
+    p.question {
+        font-size: 16px;
+        margin-bottom: 0em;
+        white-space: pre-wrap;
+        max-width: 90%;
+    }
+
+    div.question-help {
+        font-size: 14px;
+        white-space: pre-wrap;
+        max-width: 85%;
+        font-style: italic;
+        padding-left: 10px;
+    }
+
+    div.question-help p {
+        margin-bottom: 5px;
+    }
+
+    div.question-help ul {
+        list-style: disc outside;
+        margin-top: 0px;
+        margin-left: 20px;
+        white-space: normal;
+    }
+
+    form.capabilities-answer-form {
+        display: flex;
+        flex-direction: column;
+        margin: 1em;
+        padding-top: 10px;
+    }
+
+    form.capabilities-answer-form .fieldWrapper {
+        margin-bottom: 1em;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    form.capabilities-answer-form input {
+        margin: auto;
+    }
+
+    tr.answer-field>td {
+        padding-bottom: 10px;
+        vertical-align: middle;
+    }
+
+    main table tr td.answer-field-label {
+        text-align: right;
+        padding-right: 10px;
+    }
+
+    td.answer-field select {
+        width: 100%;
+        padding: 4px;
+        font-size: 0.85em;
+    }
+
+    td.answer-field input {
+        padding: 3px 5px;
+        margin-top:6px;
+        font-size: 0.95em;
+    }
+
+    td.answer-field textarea {
+        width: 100%;
+        height: 6em;
+        padding: 8px;
+        font-size: 0.9em;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    h1,
+    h2,
+    h3 {
+        margin: 0.5em 0em 0em 0em;
+    }
+
+    h3>span.facing {
+        font-weight: normal;
+        font-style: italic;
+    }
+
+    p.modify_note, p.noEdit {
+        font-style: italic;
+        color: grey;
+        text-align: center;
+    }
+    #notApplicableWarning {
+        max-width:520px;
+        background-color: lightyellow;
+        border-radius: 5px;
+        border-style: groove;
+    }
+    #notApplicableWarning form {
+        text-align: center;
+    }
+    #notApplicableWarning form button {
+        padding: 0 12px;
+        min-height: 1.8em;
+    }
+    #notApplicableWarning form button:focus {
+        box-shadow: 0 0 0 1px var(--accent);
+    }
+    #notApplicableWarning p {
+        margin: 0 0 10px 0;
+    }
+</style>
+
+<script>
+    var formSubmitting = false;
+    setFormSubmitting = function() { formSubmitting = true; };
+</script>
+
+{% endblock %}
+
+{% block main %}
+<div class="assessment-nav">
+    <span><a href="{% url 'capmodel:answer' answer.assessment.profile_id prev_question_pk %}">&larr; Previous
+            Question</a></span>
+    <span><a href="{% url 'capmodel:topic' answer.assessment.profile_id facing.facing.slug topic.topic.slug %}">Up to
+            Topic</a></span>
+    <span><a href="{% url 'capmodel:answer' answer.assessment.profile_id next_question_pk %}">Next Question
+            &rarr;</a></span>
+</div>
+<section class="question" data-qid="{{question.qid|safe}}">
+    <h3><span style="font-weight: normal;">Topic:</span> {{ topic.display_name }} &nbsp;<span
+        class="facing">({{facing.display_name}}-Facing)</span></h3>
+    <p class="question"><b>Question:</b><br>{{ question.text|safe }}</p>
+    <p class="question-help">{{ question.help_text|safe }}</p>
+
+    <form id="AnswerForm" class="capabilities-answer-form" action="" method="post"  onsubmit="setFormSubmitting()">
+        {% if answer.assessment.is_frozen or not can_edit %}
+            <fieldset style='border: none' disabled="disabled">
+        {% else %}
+            {% csrf_token %}
+        {% endif %}
+        {{ form }}
+        {% if answer.assessment.is_frozen or not can_edit  %} 
+            </fieldset>
+        {% else %}
+            <input type="submit" value="Save" {% if answer.assessment.is_frozen %}disabled{%endif%}>
+        {% endif %}
+    </form>
+    {% if not can_edit  %} 
+        <p class="noEdit">You do not have edit rights for this assessment.
+            <br>Select the profile (in the left navbar) to request access. </p>
+    {% endif %}
+    {% if not answer.is_modified %}
+    <p class="modify_note">This answer has not been modified from the original.</p>
+    {% else %}
+    <p class="modify_note">Recorded coverage: {{ coverage }}</p>
+    {% endif %}
+</section>
+
+<dialog id="notApplicableWarning">
+    <p>This is intended for use (only) when support for a given aspect/factor makes no sense at your institution.
+         The associated question/row will not contribute to the computed coverage value.
+         <br/>Note: <strong>This value should only be used in exceptional cases</strong>,
+          and not simply when there is little or no support simply because it has not been
+           deemed important or strategic (e.g., due to resource constraints).
+    </p>
+    <form method="dialog">
+      <button>OK</button>
+    </form>
+</dialog>
+{% if facing.facing.slug == "strategy" %}
+    <script>
+        // Hack the label on SOL for SPF to be "Support level"
+        {
+            let labelSOL = document.querySelector("label[for=id_score_supportlevel]");
+            if(labelSOL)
+                labelSOL.innerHTML = labelSOL.innerHTML.replace("Service operating","Support");
+            else
+                console.log("Couldn't find label for SOL.")
+        }
+    </script>
+{% endif %}
+
+<script>
+    const notAppCB = document.getElementById("id_not_applicable");
+    const deploySel = document.getElementById("id_score_deployment");
+    const supportSel = document.getElementById("id_score_supportlevel");
+    const collabSel = document.getElementById("id_score_collaboration");
+    const prioCB = document.getElementById("id_priority");
+    const warnDialog = document.getElementById("notApplicableWarning");
+
+    function setFormForApplicable(disable) {
+        deploySel.disabled = disable;
+        supportSel.disabled = disable;
+        collabSel.disabled = disable;
+        prioCB.disabled = disable;
+
+    }
+
+    if(notAppCB!=null) {
+        notAppCB.addEventListener("click", function () {
+            if (notAppCB.checked == true){
+                setFormForApplicable(true);
+                warnDialog.showModal();
+            } else {
+                setFormForApplicable(false);
+            }
+        });
+    }
+    if(deploySel!=null) {
+        deploySel.addEventListener("change", function () {
+            if(deploySel.selectedIndex == 0) {
+                if(supportSel.selectedIndex == 5) {
+                    supportSel.selectedIndex = 0;
+                }
+                if(collabSel.selectedIndex == 5) {
+                    collabSel.selectedIndex = 0;
+                }
+            }
+        });
+    }
+
+    const prioField = document.getElementById("id_priority");
+    if(prioField!=null) {
+        if(prioField.value == 0) {
+            prioField.value = "";
+        }
+        prioField.max = 99;
+    }
+
+    var formEl = document.getElementById("AnswerForm");
+    var i;
+    formChanged = false;
+    formEl.addEventListener("change", () => formChanged = true );
+    window.addEventListener('beforeunload', (event) => {
+        if (formChanged && !formSubmitting) {
+            event.returnValue = 'You have unsaved changes!';
+        }
+    });
+</script>
+{% if answer.not_applicable %}
+<script>
+    setFormForApplicable(true);
+</script>
+{% endif %}
+
+
+{% endblock %}

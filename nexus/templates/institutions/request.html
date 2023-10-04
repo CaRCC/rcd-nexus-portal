@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>New Institution Request</h1>
+<p>
+    Fill out the form below to request a new institution. We will review your request and get back to you as soon as possible.
+</p>
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}
