@@ -23,7 +23,9 @@ This project uses Visual Studio Dev Containers to provide easy-to-setup, isolate
 
 ### Loading questions and historical data for Capabilities Model
 
-After your environment is built and activated, run `./manage.py loaddata facings capmodel_v1` followed by `./manage.py load_nexus_data` from the top of the repository. This may take a couple minutes.
+After your environment is built and activated, run `./manage.py loaddata facings legacy_capmodel`. 
+
+To load historical data, first copy the legacy datasets into `data/sensitive/` then run `./manage.py load_nexus_data` from the top of the repository. This may take a couple minutes.
 
 ### CILogon integration
 
