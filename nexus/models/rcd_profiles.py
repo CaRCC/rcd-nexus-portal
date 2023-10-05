@@ -318,7 +318,7 @@ class RCDProfileMemberRequest(models.Model):
         """
         membership = self.profile.memberships.get_or_create(
             user=self.requested_by,
-            defaults=dict(role=RCDProfileMember.Role.VIEWER),
+            defaults=dict(role=RCDProfileMember.Role.CONTRIBUTOR),
         )
         self.delete()
         return membership
