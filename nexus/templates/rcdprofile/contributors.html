@@ -160,7 +160,7 @@
     <section>
         <h3>Invite contributors</h3>
         <p>Enter emails of people you would like to add as contributors. <br>
-            Clicking <b>Invite</b> will create a temporary invite token that may be shared.</p>
+            Clicking <b>Invite</b> will send them a link to become a contributor.</p>
         <form action="invite" method="post">
             {% csrf_token %}
             {{ invite_form }}

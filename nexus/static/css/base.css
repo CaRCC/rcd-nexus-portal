@@ -20,6 +20,14 @@
 
     --header-height: 95px;
 
+    /* Set up the palette for the answers heat map.
+        Colors are defined for the quintiles with 1 the lowest. */
+    --heatmap-quint-1: #ffc3cf;
+    --heatmap-quint-2: #ffe2d1;
+    --heatmap-quint-3: #fef0c8;
+    --heatmap-quint-4: #bfdbc4;
+    --heatmap-quint-5: #9be0ec;
+
 }
 
 * {

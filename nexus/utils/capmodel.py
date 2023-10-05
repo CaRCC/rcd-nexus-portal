@@ -8,15 +8,15 @@ def compute_answer_color(value: float):
 
     value = min(1.0, max(0.0, value))
     if value < 0.2 :
-        rgbcolor = "#f4cccc"
+        rgbcolor = "var(--heatmap-quint-1)"
     elif  value < 0.4 :
-        rgbcolor = "#fce5cd"
+        rgbcolor = "var(--heatmap-quint-2)"
     elif  value < 0.6 :
-        rgbcolor = "#fff2cc"
+        rgbcolor = "var(--heatmap-quint-3)"
     elif  value < 0.8 :
-        rgbcolor = "#d7eec5"
+        rgbcolor = "var(--heatmap-quint-4)"
     else :
-        rgbcolor = "#b6d7a8"
+        rgbcolor = "var(--heatmap-quint-5)"
     return rgbcolor
 
 def html_highlight(string, value: float):
