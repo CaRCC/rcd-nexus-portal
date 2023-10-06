@@ -96,7 +96,7 @@ def assessment(request, profile_id):
     domain_support_averages = assessment.answers.filter(question__topic__slug="domain-support").annotate_coverage().values("question__slug").annotate(avg_coverage=Avg("coverage"), count=Count("coverage"))
 
     # only show domain coverage if all 5 facing questions have been answered for that domain
-    domains = {domain_lookup[d["question__slug"]]: d["avg_coverage"] if d["count"] == 5 else None for d in domain_support_averages}
+    domains = {domain_lookup[d["question__slug"]]: format(d["avg_coverage"], ".1%" if d["avg_coverage"]<1.0 else ".0%") if d["count"] == 5 else None for d in domain_support_averages}
 
 
     total_questions = assessment.answers.count()
