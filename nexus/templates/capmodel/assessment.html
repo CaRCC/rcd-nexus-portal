@@ -394,7 +394,7 @@
             <p class="tcov topicheader">Support level</p>
             {% for domain, coverage in domains.items %}
             <p class="domainname {% cycle 'odd-field' 'even-field' as fieldcycle %}">{{domain}}</p>
-            <p class="tcov  {% cycle 'odd-field' 'even-field' as fieldcycle %}">{{ coverage }}</p>
+            <p class="tcov  {% cycle 'odd-field' 'even-field' as fieldcycle %}">{{ coverage|default_if_none:"(WIP)" }}</p>
             {% endfor %}
         </div>
     </section>
