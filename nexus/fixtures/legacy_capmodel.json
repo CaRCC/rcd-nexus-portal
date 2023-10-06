@@ -828,7 +828,7 @@
       ],
       "language": "en",
       "display_name": "Domain support",
-      "description": ""
+      "description": "Note: This does not impact the overall computed coverage for the Researcher-Facing."
     }
   },
   {
@@ -840,7 +840,7 @@
       ],
       "language": "en",
       "display_name": "Domain support",
-      "description": ""
+      "description": "Note: This does not impact the overall computed coverage for the Data-Facing."
     }
   },
   {
@@ -852,7 +852,7 @@
       ],
       "language": "en",
       "display_name": "Domain support",
-      "description": ""
+      "description": "Note: This does not impact the overall computed coverage for the Software-Facing."
     }
   },
   {
@@ -864,7 +864,7 @@
       ],
       "language": "en",
       "display_name": "Domain support",
-      "description": ""
+      "description": "Note: This does not impact the overall computed coverage for the Systems-Facing."
     }
   },
   {
@@ -876,7 +876,7 @@
       ],
       "language": "en",
       "display_name": "Domain support",
-      "description": ""
+      "description": "Note: This does not impact the overall computed coverage for the Strategy and Policy-Facing."
     }
   },
   {
@@ -3344,12 +3344,68 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "cs-and-engineering",
+      "slug": "social-sciences",
       "topic": [
         "researcher",
         "domain-support"
       ],
       "index": 1,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "bio-life-sciences",
+      "topic": [
+        "researcher",
+        "domain-support"
+      ],
+      "index": 2,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "chem-phys-sciences",
+      "topic": [
+        "researcher",
+        "domain-support"
+      ],
+      "index": 3,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "earth-geo-sciences",
+      "topic": [
+        "researcher",
+        "domain-support"
+      ],
+      "index": 4,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cs-and-infosci",
+      "topic": [
+        "researcher",
+        "domain-support"
+      ],
+      "index": 5,
       "attrs": {},
       "valid_after": "2023-10-03T21:30:12.852Z",
       "valid_before": null
@@ -3358,26 +3414,12 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "health-and-life-sciences",
+      "slug": "engineering",
       "topic": [
         "researcher",
         "domain-support"
       ],
-      "index": 2,
-      "attrs": {},
-      "valid_after": "2023-10-03T21:30:12.859Z",
-      "valid_before": null
-    }
-  },
-  {
-    "model": "nexus.capabilitiesquestion",
-    "fields": {
-      "slug": "physical-sciences",
-      "topic": [
-        "researcher",
-        "domain-support"
-      ],
-      "index": 3,
+      "index": 6,
       "attrs": {},
       "valid_after": "2023-10-03T21:30:12.867Z",
       "valid_before": null
@@ -3386,14 +3428,14 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "social-sciences",
+      "slug": "med-school",
       "topic": [
         "researcher",
         "domain-support"
       ],
-      "index": 4,
+      "index": 7,
       "attrs": {},
-      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_after": "2023-10-03T21:30:12.859Z",
       "valid_before": null
     }
   },
@@ -3414,12 +3456,68 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "cs-and-engineering",
+      "slug": "social-sciences",
       "topic": [
         "data",
         "domain-support"
       ],
       "index": 1,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.911Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "bio-life-sciences",
+      "topic": [
+        "data",
+        "domain-support"
+      ],
+      "index": 2,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "chem-phys-sciences",
+      "topic": [
+        "data",
+        "domain-support"
+      ],
+      "index": 3,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "earth-geo-sciences",
+      "topic": [
+        "data",
+        "domain-support"
+      ],
+      "index": 4,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cs-and-infosci",
+      "topic": [
+        "data",
+        "domain-support"
+      ],
+      "index": 5,
       "attrs": {},
       "valid_after": "2023-10-03T21:30:12.889Z",
       "valid_before": null
@@ -3428,26 +3526,12 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "health-and-life-sciences",
+      "slug": "engineering",
       "topic": [
         "data",
         "domain-support"
       ],
-      "index": 2,
-      "attrs": {},
-      "valid_after": "2023-10-03T21:30:12.896Z",
-      "valid_before": null
-    }
-  },
-  {
-    "model": "nexus.capabilitiesquestion",
-    "fields": {
-      "slug": "physical-sciences",
-      "topic": [
-        "data",
-        "domain-support"
-      ],
-      "index": 3,
+      "index": 6,
       "attrs": {},
       "valid_after": "2023-10-03T21:30:12.903Z",
       "valid_before": null
@@ -3456,14 +3540,14 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "social-sciences",
+      "slug": "med-school",
       "topic": [
         "data",
         "domain-support"
       ],
-      "index": 4,
+      "index": 7,
       "attrs": {},
-      "valid_after": "2023-10-03T21:30:12.911Z",
+      "valid_after": "2023-10-03T21:30:12.896Z",
       "valid_before": null
     }
   },
@@ -3484,12 +3568,68 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "cs-and-engineering",
+      "slug": "social-sciences",
       "topic": [
         "software",
         "domain-support"
       ],
       "index": 1,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.947Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "bio-life-sciences",
+      "topic": [
+        "software",
+        "domain-support"
+      ],
+      "index": 2,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "chem-phys-sciences",
+      "topic": [
+        "software",
+        "domain-support"
+      ],
+      "index": 3,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "earth-geo-sciences",
+      "topic": [
+        "software",
+        "domain-support"
+      ],
+      "index": 4,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cs-and-infosci",
+      "topic": [
+        "software",
+        "domain-support"
+      ],
+      "index": 5,
       "attrs": {},
       "valid_after": "2023-10-03T21:30:12.925Z",
       "valid_before": null
@@ -3498,26 +3638,12 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "health-and-life-sciences",
+      "slug": "engineering",
       "topic": [
         "software",
         "domain-support"
       ],
-      "index": 2,
-      "attrs": {},
-      "valid_after": "2023-10-03T21:30:12.932Z",
-      "valid_before": null
-    }
-  },
-  {
-    "model": "nexus.capabilitiesquestion",
-    "fields": {
-      "slug": "physical-sciences",
-      "topic": [
-        "software",
-        "domain-support"
-      ],
-      "index": 3,
+      "index": 6,
       "attrs": {},
       "valid_after": "2023-10-03T21:30:12.940Z",
       "valid_before": null
@@ -3526,14 +3652,14 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "social-sciences",
+      "slug": "med-school",
       "topic": [
         "software",
         "domain-support"
       ],
-      "index": 4,
+      "index": 7,
       "attrs": {},
-      "valid_after": "2023-10-03T21:30:12.947Z",
+      "valid_after": "2023-10-03T21:30:12.932Z",
       "valid_before": null
     }
   },
@@ -3554,12 +3680,68 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "cs-and-engineering",
+      "slug": "social-sciences",
       "topic": [
         "systems",
         "domain-support"
       ],
       "index": 1,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.985Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "bio-life-sciences",
+      "topic": [
+        "systems",
+        "domain-support"
+      ],
+      "index": 2,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "chem-phys-sciences",
+      "topic": [
+        "systems",
+        "domain-support"
+      ],
+      "index": 3,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "earth-geo-sciences",
+      "topic": [
+        "systems",
+        "domain-support"
+      ],
+      "index": 4,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cs-and-infosci",
+      "topic": [
+        "systems",
+        "domain-support"
+      ],
+      "index": 5,
       "attrs": {},
       "valid_after": "2023-10-03T21:30:12.961Z",
       "valid_before": null
@@ -3568,26 +3750,12 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "health-and-life-sciences",
+      "slug": "engineering",
       "topic": [
         "systems",
         "domain-support"
       ],
-      "index": 2,
-      "attrs": {},
-      "valid_after": "2023-10-03T21:30:12.969Z",
-      "valid_before": null
-    }
-  },
-  {
-    "model": "nexus.capabilitiesquestion",
-    "fields": {
-      "slug": "physical-sciences",
-      "topic": [
-        "systems",
-        "domain-support"
-      ],
-      "index": 3,
+      "index": 6,
       "attrs": {},
       "valid_after": "2023-10-03T21:30:12.977Z",
       "valid_before": null
@@ -3596,14 +3764,14 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "social-sciences",
+      "slug": "med-school",
       "topic": [
         "systems",
         "domain-support"
       ],
-      "index": 4,
+      "index": 7,
       "attrs": {},
-      "valid_after": "2023-10-03T21:30:12.985Z",
+      "valid_after": "2023-10-03T21:30:12.969Z",
       "valid_before": null
     }
   },
@@ -3624,12 +3792,68 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "cs-and-engineering",
+      "slug": "social-sciences",
       "topic": [
         "strategy",
         "domain-support"
       ],
       "index": 1,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:13.021Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "bio-life-sciences",
+      "topic": [
+        "strategy",
+        "domain-support"
+      ],
+      "index": 2,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "chem-phys-sciences",
+      "topic": [
+        "strategy",
+        "domain-support"
+      ],
+      "index": 3,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "earth-geo-sciences",
+      "topic": [
+        "strategy",
+        "domain-support"
+      ],
+      "index": 4,
+      "attrs": {},
+      "valid_after": "2023-10-03T21:30:12.874Z",
+      "valid_before": null
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestion",
+    "fields": {
+      "slug": "cs-and-infosci",
+      "topic": [
+        "strategy",
+        "domain-support"
+      ],
+      "index": 5,
       "attrs": {},
       "valid_after": "2023-10-03T21:30:12.999Z",
       "valid_before": null
@@ -3638,26 +3862,12 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "health-and-life-sciences",
+      "slug": "engineering",
       "topic": [
         "strategy",
         "domain-support"
       ],
-      "index": 2,
-      "attrs": {},
-      "valid_after": "2023-10-03T21:30:13.007Z",
-      "valid_before": null
-    }
-  },
-  {
-    "model": "nexus.capabilitiesquestion",
-    "fields": {
-      "slug": "physical-sciences",
-      "topic": [
-        "strategy",
-        "domain-support"
-      ],
-      "index": 3,
+      "index": 6,
       "attrs": {},
       "valid_after": "2023-10-03T21:30:13.014Z",
       "valid_before": null
@@ -3666,14 +3876,14 @@
   {
     "model": "nexus.capabilitiesquestion",
     "fields": {
-      "slug": "social-sciences",
+      "slug": "med-school",
       "topic": [
         "strategy",
         "domain-support"
       ],
-      "index": 4,
+      "index": 7,
       "attrs": {},
-      "valid_after": "2023-10-03T21:30:13.021Z",
+      "valid_after": "2023-10-03T21:30:13.007Z",
       "valid_before": null
     }
   },
@@ -5675,8 +5885,8 @@
         "arts-and-humanities"
       ],
       "language": "en",
-      "text": "Do you support research in the arts and humanities?",
-      "help_text": ""
+      "text": "Do you support research in the Arts and Humanities?",
+      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc."
     }
   },
   {
@@ -5685,11 +5895,11 @@
       "question": [
         "researcher",
         "domain-support",
-        "cs-and-engineering"
+        "earth-geo-sciences"
       ],
       "language": "en",
-      "text": "Do you support research in computer science and engineering?",
-      "help_text": ""
+      "text": "Do you support research in the Earth and Geosciences?",
+      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc."
     }
   },
   {
@@ -5698,11 +5908,11 @@
       "question": [
         "researcher",
         "domain-support",
-        "health-and-life-sciences"
+        "cs-and-infosci"
       ],
       "language": "en",
-      "text": "Do you support research in the health and life sciences?",
-      "help_text": ""
+      "text": "Do you support research in Computer and Information Sciences?",
+      "help_text": "This can include Computer Science, Information Science, etc."
     }
   },
   {
@@ -5711,11 +5921,24 @@
       "question": [
         "researcher",
         "domain-support",
-        "physical-sciences"
+        "med-school"
       ],
       "language": "en",
-      "text": "Do you support research in the physical sciences?",
-      "help_text": ""
+      "text": "Do you support research in a Medical School?",
+      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Not Applicable.”)"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "domain-support",
+        "engineering"
+      ],
+      "language": "en",
+      "text": "Do you support research in Engineering?",
+      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc."
     }
   },
   {
@@ -5727,8 +5950,34 @@
         "social-sciences"
       ],
       "language": "en",
-      "text": "Do you support research in the social sciences?",
-      "help_text": ""
+      "text": "Do you support research in the Social, Behavioral, and Economic Sciences?",
+      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "domain-support",
+        "bio-life-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the Biological and Life Sciences?",
+      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "researcher",
+        "domain-support",
+        "chem-phys-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in Chemistry, Physics, and Astronomy/Space Sciences?",
+      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc."
     }
   },
   {
@@ -5740,8 +5989,8 @@
         "arts-and-humanities"
       ],
       "language": "en",
-      "text": "Do you support research in the arts and humanities?",
-      "help_text": ""
+      "text": "Do you support research in the Arts and Humanities?",
+      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc."
     }
   },
   {
@@ -5750,11 +5999,11 @@
       "question": [
         "data",
         "domain-support",
-        "cs-and-engineering"
+        "earth-geo-sciences"
       ],
       "language": "en",
-      "text": "Do you support research in computer science and engineering?",
-      "help_text": ""
+      "text": "Do you support research in the Earth and Geosciences?",
+      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc."
     }
   },
   {
@@ -5763,11 +6012,11 @@
       "question": [
         "data",
         "domain-support",
-        "health-and-life-sciences"
+        "cs-and-infosci"
       ],
       "language": "en",
-      "text": "Do you support research in the health and life sciences?",
-      "help_text": ""
+      "text": "Do you support research in Computer and Information Sciences?",
+      "help_text": "This can include Computer Science, Information Science, etc."
     }
   },
   {
@@ -5776,11 +6025,24 @@
       "question": [
         "data",
         "domain-support",
-        "physical-sciences"
+        "med-school"
       ],
       "language": "en",
-      "text": "Do you support research in the physical sciences?",
-      "help_text": ""
+      "text": "Do you support research in a Medical School?",
+      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Not Applicable.”)"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "domain-support",
+        "engineering"
+      ],
+      "language": "en",
+      "text": "Do you support research in Engineering?",
+      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc."
     }
   },
   {
@@ -5792,8 +6054,34 @@
         "social-sciences"
       ],
       "language": "en",
-      "text": "Do you support research in the social sciences?",
-      "help_text": ""
+      "text": "Do you support research in the Social, Behavioral, and Economic Sciences?",
+      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "domain-support",
+        "bio-life-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the Biological and Life Sciences?",
+      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "data",
+        "domain-support",
+        "chem-phys-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in Chemistry, Physics, and Astronomy/Space Sciences?",
+      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc."
     }
   },
   {
@@ -5805,8 +6093,8 @@
         "arts-and-humanities"
       ],
       "language": "en",
-      "text": "Do you support research in the arts and humanities?",
-      "help_text": ""
+      "text": "Do you support research in the Arts and Humanities?",
+      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc."
     }
   },
   {
@@ -5815,11 +6103,11 @@
       "question": [
         "software",
         "domain-support",
-        "cs-and-engineering"
+        "earth-geo-sciences"
       ],
       "language": "en",
-      "text": "Do you support research in computer science and engineering?",
-      "help_text": ""
+      "text": "Do you support research in the Earth and Geosciences?",
+      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc."
     }
   },
   {
@@ -5828,11 +6116,11 @@
       "question": [
         "software",
         "domain-support",
-        "health-and-life-sciences"
+        "cs-and-infosci"
       ],
       "language": "en",
-      "text": "Do you support research in the health and life sciences?",
-      "help_text": ""
+      "text": "Do you support research in Computer and Information Sciences?",
+      "help_text": "This can include Computer Science, Information Science, etc."
     }
   },
   {
@@ -5841,11 +6129,24 @@
       "question": [
         "software",
         "domain-support",
-        "physical-sciences"
+        "med-school"
       ],
       "language": "en",
-      "text": "Do you support research in the physical sciences?",
-      "help_text": ""
+      "text": "Do you support research in a Medical School?",
+      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Not Applicable.”)"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "domain-support",
+        "engineering"
+      ],
+      "language": "en",
+      "text": "Do you support research in Engineering?",
+      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc."
     }
   },
   {
@@ -5857,8 +6158,34 @@
         "social-sciences"
       ],
       "language": "en",
-      "text": "Do you support research in the social sciences?",
-      "help_text": ""
+      "text": "Do you support research in the Social, Behavioral, and Economic Sciences?",
+      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "domain-support",
+        "bio-life-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the Biological and Life Sciences?",
+      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "software",
+        "domain-support",
+        "chem-phys-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in Chemistry, Physics, and Astronomy/Space Sciences?",
+      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc."
     }
   },
   {
@@ -5870,8 +6197,8 @@
         "arts-and-humanities"
       ],
       "language": "en",
-      "text": "Do you support research in the arts and humanities?",
-      "help_text": ""
+      "text": "Do you support research in the Arts and Humanities?",
+      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc."
     }
   },
   {
@@ -5880,11 +6207,11 @@
       "question": [
         "systems",
         "domain-support",
-        "cs-and-engineering"
+        "earth-geo-sciences"
       ],
       "language": "en",
-      "text": "Do you support research in computer science and engineering?",
-      "help_text": ""
+      "text": "Do you support research in the Earth and Geosciences?",
+      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc."
     }
   },
   {
@@ -5893,11 +6220,11 @@
       "question": [
         "systems",
         "domain-support",
-        "health-and-life-sciences"
+        "cs-and-infosci"
       ],
       "language": "en",
-      "text": "Do you support research in the health and life sciences?",
-      "help_text": ""
+      "text": "Do you support research in Computer and Information Sciences?",
+      "help_text": "This can include Computer Science, Information Science, etc."
     }
   },
   {
@@ -5906,11 +6233,24 @@
       "question": [
         "systems",
         "domain-support",
-        "physical-sciences"
+        "med-school"
       ],
       "language": "en",
-      "text": "Do you support research in the physical sciences?",
-      "help_text": ""
+      "text": "Do you support research in a Medical School?",
+      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Not Applicable.”)"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "domain-support",
+        "engineering"
+      ],
+      "language": "en",
+      "text": "Do you support research in Engineering?",
+      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc."
     }
   },
   {
@@ -5922,8 +6262,34 @@
         "social-sciences"
       ],
       "language": "en",
-      "text": "Do you support research in the social sciences?",
-      "help_text": ""
+      "text": "Do you support research in the Social, Behavioral, and Economic Sciences?",
+      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "domain-support",
+        "bio-life-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the Biological and Life Sciences?",
+      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "systems",
+        "domain-support",
+        "chem-phys-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in Chemistry, Physics, and Astronomy/Space Sciences?",
+      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc."
     }
   },
   {
@@ -5935,8 +6301,8 @@
         "arts-and-humanities"
       ],
       "language": "en",
-      "text": "Do you support research in the arts and humanities?",
-      "help_text": ""
+      "text": "Do you support research in the Arts and Humanities?",
+      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc."
     }
   },
   {
@@ -5945,11 +6311,11 @@
       "question": [
         "strategy",
         "domain-support",
-        "cs-and-engineering"
+        "earth-geo-sciences"
       ],
       "language": "en",
-      "text": "Do you support research in computer science and engineering?",
-      "help_text": ""
+      "text": "Do you support research in the Earth and Geosciences?",
+      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc."
     }
   },
   {
@@ -5958,11 +6324,11 @@
       "question": [
         "strategy",
         "domain-support",
-        "health-and-life-sciences"
+        "cs-and-infosci"
       ],
       "language": "en",
-      "text": "Do you support research in the health and life sciences?",
-      "help_text": ""
+      "text": "Do you support research in Computer and Information Sciences?",
+      "help_text": "This can include Computer Science, Information Science, etc."
     }
   },
   {
@@ -5971,11 +6337,24 @@
       "question": [
         "strategy",
         "domain-support",
-        "physical-sciences"
+        "med-school"
       ],
       "language": "en",
-      "text": "Do you support research in the physical sciences?",
-      "help_text": ""
+      "text": "Do you support research in a Medical School?",
+      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Not Applicable.”)"
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "domain-support",
+        "engineering"
+      ],
+      "language": "en",
+      "text": "Do you support research in Engineering?",
+      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc."
     }
   },
   {
@@ -5987,8 +6366,34 @@
         "social-sciences"
       ],
       "language": "en",
-      "text": "Do you support research in the social sciences?",
-      "help_text": ""
+      "text": "Do you support research in the Social, Behavioral, and Economic Sciences?",
+      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "domain-support",
+        "bio-life-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in the Biological and Life Sciences?",
+      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc."
+    }
+  },
+  {
+    "model": "nexus.capabilitiesquestioncontent",
+    "fields": {
+      "question": [
+        "strategy",
+        "domain-support",
+        "chem-phys-sciences"
+      ],
+      "language": "en",
+      "text": "Do you support research in Chemistry, Physics, and Astronomy/Space Sciences?",
+      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc."
     }
   }
 ]

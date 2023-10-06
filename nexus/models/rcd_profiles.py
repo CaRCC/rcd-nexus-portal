@@ -272,7 +272,7 @@ class RCDProfileMemberInvite(models.Model):
     role = models.CharField(
         max_length=32,
         choices=RCDProfileMember.Role.choices,
-        default=RCDProfileMember.Role.VIEWER,
+        default=RCDProfileMember.Role.CONTRIBUTOR,
     )
     invited_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,

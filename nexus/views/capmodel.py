@@ -85,15 +85,18 @@ def assessment(request, profile_id):
     # TODO can lookup from CapabilitiesQuestion?
     domain_lookup = {
         "arts-and-humanities": "Arts and Humanities",
-        "cs-and-engineering": "Computer Science and Engineering",
-        "health-and-life-sciences": "Health and Life Sciences",
-        "physical-sciences": "Physical Sciences",
-        "social-sciences": "Social Sciences",
+        "social-sciences": "Social, Behavioral, and Economic Sciences",
+        "bio-life-sciences": "Biological and Life Sciences",
+        "chem-phys-sciences": "Chemistry, Physics, and Astronomy/Space Sciences",
+        "earth-geo-sciences" : "Earth and Geosciences",
+        "cs-and-infosci": "Computer and Information Sciences",
+        "engineering": "Engineering",
+        "med-school": "Medical School", 
     }
     domain_support_averages = assessment.answers.filter(question__topic__slug="domain-support").annotate_coverage().values("question__slug").annotate(avg_coverage=Avg("coverage"), count=Count("coverage"))
 
     # only show domain coverage if all 5 facing questions have been answered for that domain
-    domains = {domain_lookup[d["question__slug"]]: d["avg_coverage"] if d["count"] == 5 else None for d in domain_support_averages}
+    domains = {domain_lookup[d["question__slug"]]: format(d["avg_coverage"], ".1%" if d["avg_coverage"]<1.0 else ".0%") if d["count"] == 5 else None for d in domain_support_averages}
 
 
     total_questions = assessment.answers.count()

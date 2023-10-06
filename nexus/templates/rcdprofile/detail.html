@@ -20,7 +20,7 @@
         <a style="text-align:center" class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Begin</a>
         {% endif %}
       </section>
-      {% else %}
+  {% else %}
       <section>
         <h2>Limited access</h2>
         <p>You are not currently listed as a contributor for this profile.</p>
@@ -33,23 +33,29 @@
   {% endif %}
 
   {% if can_manage %}
-  <section>
-    <h2>View or Edit Institutional Profile</h2>
-    <p>Click the button below to review or edit your institutional profile attributes. </p>
-    <a class="button center" href="{% url 'rcdprofile:edit' profile.pk %}">Review/Edit</a>
-  </section>
+    <section>
+      <h2>Review/Edit Institutional Profile</h2>
+      <p>Click the button below to review and/or edit your institutional profile attributes. </p>
+      <a class="button center" href="{% url 'rcdprofile:edit' profile.pk %}">Review/Edit</a>
+    </section>
+  {% else %}
+    <section>
+      <h2>View Institutional Profile</h2>
+      <p>Click the button below to review your institutional profile attributes. </p>
+      <a class="button center" href="{% url 'rcdprofile:edit' profile.pk %}">View Profile</a>
+    </section>
   {% endif %}
 
-{% if can_edit %}
+  {% if can_manage %}
       <section>
         {% if not profile.archived %}
         <h2>Delete Institutional Profile</h2>
         <p>Click the button below to delete this profile. It can be restored if necessary.</p>
-        <a class="button center" href="{% url 'rcdprofile:archive' profile.pk %}">Delete</a>
+        <a class="button center" href="{% url 'rcdprofile:archive' profile.pk %}">Delete Profile</a>
         {% else %}
         <h2>Restore Institutional Profile</h2>
         <p>This profile is currently archived. Click below to restore it.</p>
-        <a class="button center" href="{% url 'rcdprofile:recovery' profile.pk %}">Restore</a>
+        <a class="button center" href="{% url 'rcdprofile:recovery' profile.pk %}">Restore Profile</a>
         {% endif %}
       </section>
   {% endif %}

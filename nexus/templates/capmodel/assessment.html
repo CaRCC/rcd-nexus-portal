@@ -170,6 +170,14 @@
         padding-right: 2px;
     }
 
+    div.topics p.domaincov {
+        border-top: .13em solid var(--primary);
+    }
+
+    div.topics p.tname.domaincov {
+        font-style: italic;
+    }
+
     div.topics p.tcov span {
         display: block;
     }
@@ -366,13 +374,13 @@
             <p class="tname topicheader">Topic</p>
             <p class="tcov topicheader">Computed Coverage</p>
             {% for topic, answers in topics.items %}
-            <p class="tname {% cycle 'odd-field' 'even-field' as fieldcycle %}" {%if answers.coverage_color%}
-                style="background-color: {{answers.coverage_color}}"{%endif%}>
+            <p class="tname {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}"
+             {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}"{%endif%}>
                 <a
                     href="{% url 'capmodel:topic' profile.pk facing.slug topic.slug %}">{{topic.content.display_name}}</a>
             </p>
-            <p class="tcov  {% cycle 'odd-field' 'even-field' as fieldcycle %}" {%if answers.coverage_color%}
-                style="background-color: {{answers.coverage_color}}" {%endif%}>
+            <p class="tcov  {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}" 
+                {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}" {%endif%}>
                 {{answers.coverage_pct}}</p>
             {% endfor %}
         </div>
