@@ -209,6 +209,9 @@ def rcd_profile_edit(request, pk):
     context = {
         "form": form,
         "navtree": navtree(profile, re.escape(str(profile))),
+        "can_manage": request.user.rcd_profile_memberships.filter(
+            profile=profile, role__in=manage_roles
+        ).exists(),
     }
 
     return render(request, "rcdprofile/edit.html", context)

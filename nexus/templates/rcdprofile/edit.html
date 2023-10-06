@@ -89,15 +89,21 @@
 {% endblock %}
 
 {% block main %}
-<h2>Edit Institutional Profile for: <span class="Instname">{{form.instance}}</span></h2>
-<p class="intro">Please tell us a little about your institution. 
-    This will provide valuable context in the Community datasets.</p>
-<form id="EditForm" method="post" onsubmit="setFormSubmitting()">
+<h2>{% if can_manage %}Edit{% else %}View{% endif %} Institutional Profile for: <span class="Instname">{{form.instance}}</span></h2>
+{% if can_manage %}
+    <p class="intro">Please tell us a little about your institution. 
+        This will provide valuable context in the Community datasets.</p>
+{% else %}
+    <p class="intro">You can view but do not have rights to change this information about your institution.</p>
+{% endif %}
+    <form id="EditForm" method="post" onsubmit="setFormSubmitting()">
     {% csrf_token %}
     {{ form }}
+    {% if can_manage %}
     <section class="actions">
         <button type="submit">Save your answers</button>
     </section>
+    {% endif %}
 </form>
 <div class="IPEDS">
     <section class="fields">
@@ -171,6 +177,13 @@
             event.returnValue = 'You have unsaved changes!';
         }
     });
+    {% if not can_manage %}
+    var elements = formEl.elements;
+    for (var i = 0, len = elements.length; i < len; ++i) {
+        elements[i].disabled = true;
+    }
+    {% endif %}
+
  </script>
 
 {% endblock %}
