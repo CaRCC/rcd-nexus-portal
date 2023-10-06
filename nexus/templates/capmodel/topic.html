@@ -37,6 +37,13 @@
         box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
     }
 
+    section.topicblock p.topicDesc {
+        color: grey;
+        font-size: 0.95em;
+        font-style: italic;
+        margin: 10px 10px 0px 10px;
+    }
+
     section.topicblock>table {
         margin: 10px;
         border-collapse: separate;
@@ -91,6 +98,7 @@
 </div>
 <section class="topicblock">
     <h3>{{ topic.display_name }} &nbsp;&nbsp;<span class="facing">({{ facing.display_name }}-Facing)</span></h3>
+    {%if topic.description %}<p class="topicDesc">{{topic.description}}</p>{%endif%}
     <table>
         <thead>
             <tr>

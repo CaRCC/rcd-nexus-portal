@@ -85,10 +85,13 @@ def assessment(request, profile_id):
     # TODO can lookup from CapabilitiesQuestion?
     domain_lookup = {
         "arts-and-humanities": "Arts and Humanities",
-        "cs-and-engineering": "Computer Science and Engineering",
-        "health-and-life-sciences": "Health and Life Sciences",
-        "physical-sciences": "Physical Sciences",
-        "social-sciences": "Social Sciences",
+        "social-sciences": "Social, Behavioral, and Economic Sciences",
+        "bio-life-sciences": "Biological and Life Sciences",
+        "chem-phys-sciences": "Chemistry, Physics, and Astronomy/Space Sciences",
+        "earth-geo-sciences" : "Earth and Geosciences",
+        "cs-and-infosci": "Computer and Information Sciences",
+        "engineering": "Engineering",
+        "med-school": "Medical School", 
     }
     domain_support_averages = assessment.answers.filter(question__topic__slug="domain-support").annotate_coverage().values("question__slug").annotate(coverage=Avg("coverage"))
     domains = {domain_lookup[d["question__slug"]]: d["coverage"] for d in domain_support_averages}
