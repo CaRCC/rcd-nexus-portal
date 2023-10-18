@@ -101,9 +101,10 @@ class RCDProfile(models.Model):
     )
     class MissionChoices(models.TextChoices): 
         RESEARCHESSENTIAL = "rsrchess", mark_safe("<b>Research Essential</b>: Research is the primary or exclusive mission, \
-            and teaching does not significantly factor into faculty and institutional success.")
+            and teaching does not significantly factor into faculty and institutional success \
+                                                  (Research Labs, National Supercomputing Centers, etc.).")
         RESEARCHFAVORED = "rsrchfav", mark_safe("<b>Research Favored</b>: Research and teaching are the primary missions, \
-            but research is what really drives faculty and institutional success.")
+            but research is what really drives faculty and institutional success (e.g., Research-driven Universities).")
         BALANCED = "balanced", mark_safe("<b>Balanced</b>: Research and teaching are both primary missions, \
             and they are equally important for faculty and institutional success.")
         TEACHINGFAVORED = "teachfav", mark_safe("<b>Teaching Favored</b>: Teaching is the primary mission, \
