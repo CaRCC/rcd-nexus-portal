@@ -36,8 +36,10 @@ class QuestionAdmin(admin.ModelAdmin):
 @admin.register(CapabilitiesAssessment)
 class AssessmentAdmin(admin.ModelAdmin):
     list_display = ["profile", "review_status", "review_note", "review_time"]
+    list_filter = ["review_status"]
+    search_fields = ["review_note", "profile__institution__name"]
     readonly_fields = ["profile"]
-    inlines = [AnswerInline]
+#    inlines = [AnswerInline]
     actions = ["approve"]
 
     def approve(self, request, queryset):
