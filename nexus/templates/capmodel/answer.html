@@ -23,8 +23,19 @@
 
     p.question {
         font-size: 16px;
+        margin-left: .5em;
         margin-bottom: 0em;
         max-width: 90%;
+        padding-left: 1.2em ;
+        text-indent: -.2em ;
+    }
+
+    p.question span.qprompt {
+        display: inline-block;
+        font-size: .9em;
+        font-weight: bold;
+        color:var(--primary);
+        margin-bottom: .2em;
     }
 
     div.question-help {
@@ -35,13 +46,13 @@
     }
 
     div.question-help p {
-        margin: 5px 0 0 1em;
+        margin: 5px 0 0 1.4em;
     }
 
     div.question-help ul {
         list-style: disc outside;
         margin-top: 0px;
-        margin-left: 2em;
+        margin-left: 2.2em;
         white-space: normal;
     }
 
@@ -148,7 +159,7 @@
 <section class="question" data-qid="{{question.qid|safe}}">
     <h3><span style="font-weight: normal;">Topic:</span> {{ topic.display_name }} &nbsp;<span
         class="facing">({{facing.display_name}}-Facing)</span></h3>
-    <p class="question"><b>Question:</b><br>{{ question.text|safe }}</p>
+    <p class="question"><span class="qprompt">Question:</span><br>{{ question.text|safe }}</p>
     <div class="question-help">
         <p>{{ question.help_text|safe }}</p>
     </div>

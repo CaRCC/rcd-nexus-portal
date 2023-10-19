@@ -260,7 +260,7 @@ class CapabilitiesAnswer(models.Model):
             # Based on 2021 formula: average the deployment and supportlevel scores, then scale by 90%-100% based on collaboration score
             # This function is smooth unlike the 2021 formula
             # If we want a non-linear scaling on the collaboration factor, we should raise the order of the function instead of making it piecewise
-            "2023": ((F("score_deployment") + F("score_supportlevel")) / 2) * (0.9 + 0.1*F("score_collaboration"))
+            "2023": ((F("score_deployment") + F("score_supportlevel")) / 2) * (0.9 + 0.2*F("score_collaboration"))
 
             ## PRE-NORMALIZATION FORMULAE -- DO NOT USE WITHOUT ADJUSTING
             # "2020": 1
