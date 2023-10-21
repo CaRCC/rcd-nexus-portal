@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    body>nav {
+        display:none;
+    }
+    body {
+        grid-template-areas:
+            "header"
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+    }
+    section.helpdocs {
+        width: 80%;
+        max-width: 800px;
+        margin:10px 10px 10px 10px;
+        padding:1em .7in .7in .7in;
+    }
+    section.helpdocs h1, section.helpdocs h2, section.helpdocs h3 {
+        box-shadow: none;
+        background: none;
+    }
+    section.helpdocs h1.title {
+        font-size: 1.7em;
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 0px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    section.helpdocs ul {
+        list-style: disc outside;
+        margin-left: 1.5em;
+    }
+    section.helpdocs ul li{
+        padding:5px;
+    }
+    p.content {
+        font-size: 0.9em;
+    }
+    p.content.note {
+        margin-left: 1em;
+    }
+    p.footnote {
+        font-size: 0.85em;
+        text-align: left;
+    }
+
+    p.step {
+        font-size: 0.95em;
+        font-weight: bold;
+        margin-bottom: 0;
+    }
+    span.topic {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+    ol.outer {
+        list-style-type: upper-alpha;
+        font-size: 0.9em;
+        margin-top: 0;
+    }
+    ol.outer>li {
+        margin-top: 6px;
+    }
+    ol.outer ul li {
+        margin-top: 4px;
+        padding: 0;
+    }
+    ol ol {
+        list-style-type: lower-alpha;
+    }
+    ol ol li {
+        margin-top: 4px;
+    }
+    sup {
+        font-size: 0.75em;
+        vertical-align: .35em;
+    }
+    sup a:link, sup a:visited {
+        color: inherit;
+    }
+</style>
+
+<script>
+</script>
+
+{% endblock %}
+{% block title %}RCD-Nexus Capabilities Model Quick Start guide{% endblock %}
+
+{% block main %}
+<section class="helpdocs" >
+    <h1 class="title">Capabilities Model Quick Start guide</h1>
+    <p class="subtitle">A Step-by-Step Use of the Assessment Tool at your Institution</h2>
+    <p class="step">Step 1) Log on to the portal</p>
+    <ol class="outer">
+        <li>If you have not yet logged in, go to <a href="https://portal.rcd-nexus.org">https://portal.rcd-nexus.org</a> 
+            and follow the instructions to log on with your institutional credentials (e.g., your university).
+            <br>If your university is not listed in the CILogon list:
+            <ol>
+                <li>Use one of the social logon options like Google or Microsoft.</li>
+                <li>You will be prompted to verify your affiliation to an institution through email.</li>
+            </ol>
+        </li>
+    </ol>
+    <p class="step">Step 2) Create an RCD Profile for your institution</p>
+    <ol class="outer">
+        <li>Answer the questions about your institution. If your institution is among those covered by 
+            IPEDS,<sup><a href="#ftnt1" id="ftnt_ref1">[1]</a></sup> note that the associated data for your institution
+             is presented in the RCD Profile.</li>
+        <li>The typical case is for a profile and assessment is for the whole institution (e.g., your University). 
+            If that is your intent, you can skip the Organizational scope question.
+             If you are completing an assessment for just one college or other unit within your institution,
+              provide a name for that (and make that clear to your team!). </li>
+        <li>Begin your assessment - you can review the sections, browse the questions, etc. </li>
+    </ol>
+    <p class="step">Step 3) Invite a team who can provide different perspectives</p>
+    <ol class="outer">
+        <li>
+            Ideally, you should identify one or more people for each of the facings, to include that perspective in the
+             assessment. However, in some small organizations, the different roles may be filled by just a few people
+              and so one or a few people may fill out the assessment. 
+              <ol>
+                <li>Click on <em>Manage Contributors</em> in the left sidebar, and invite people with their email addresses. </li>
+                <li>Once they log on and are listed as contributors, you can adjust the roles each one has. </li>
+                <li>If you want to transfer the role of assessment manager to someone else, just make them a manager, and 
+                    they can then make you a contributor.</li>
+                <li>Choose someone to have the Submitter role, unless that will be you (as the creator).
+                     This is the only role that can submit the assessment when your work is complete.</li>
+            </ol>
+        </li>
+        <li>Consider including participants from areas outside the core Research Computing and Data teams, 
+            including the library, departmental support, institutes or centers, central IT partners, etc. 
+            Much of the assessment is based upon a researcher-centric view of support, and not a provider-centric
+             view of services. Additional perspectives will help in understanding all the questions, and ensuring
+              a balanced assessment of support.
+            <ul>
+                <li>It may be useful to review the questions in advance to determine who can best answer them.
+                    A summary list of questions is available in <a>RCD Capabilities Model v2.0 Questions by Facing</a>.</li>
+               <li>Some institutions also review the tool with a focus group of researchers, to get their perspective on the model.</li>
+            </ul>
+        </li>
+    </ol>
+    <p class="content note">Note: Some institutions choose to do a simpler assessment their first time,
+            and just include a few key participants (e.g., an RCD support lead or equivalent plus someone from the library).
+            The resulting assessment data may not be completely accurate and complete, but this can be a quick way to learn
+            about the RCD Capabilities Model and explore how the resulting data, benchmarking reports, etc. can inform 
+            strategic planning, etc. at your institution. 
+    </p>
+    <p class="step">Step 4) Ensure everyone understands the exercise</p>
+    <ol class="outer">
+        <li>Discuss the goals in completing the assessment tool, whether this is for peer benchmarking or
+                for brainstorming ideas for strategic opportunities. While this should not influence the answers,
+                it may impact the discussions as the team goes through the questions.</li>
+        <li>Provide everyone involved with a link to (or copy of) the
+                <a href="/helpdocs/intro_and_guide">Introduction and Guide to Use</a>, and discuss the
+                <em>Key Aspects of the Model</em> together to ensure consistent use of the levels.
+            <ul>
+                <li>If you are not assessing your whole institution, discuss the organization scope with your team. Review the 
+                    note on the scope of the Institution, in the section on <em>Availability across institution</em>.</li>
+            </ul>
+        </li>
+        <li>Emphasize that the focus of the assessment is on Research Computing and Data
+            support, and not on campus IT generally, teaching and learning IT, research administration, etc.</li>
+    </ol>
+    <p class="step">Step 5) Divide up the work and fill in the assessment questions</p>
+    <ol class="outer">
+        <li>Note that the RCD-Nexus platform is designed to support collaboration; different teams
+             can safely work independently of one another in different areas of the same assessment.</li>
+        <li>As your team completes the questions for each topic, the computed total for that topic will update;
+             once all topics are complete for a given Facing, the computed total for the Facing will update on 
+             the summary assessment page. 
+             <ul>
+                <li>Questions with partial answers will be indicated as <em>(WIP)</em> (i.e., a work in progress)
+                     on the associated Topic page.</li>
+                <li>Topics will show progress on the associated questions, e.g., <em>(WIP: 1 of 3)</em>; once all
+                     the questions are completed the computed coverage for that topic will be shown.</li>
+            </ul>
+        </li>
+        <li>You can capture questions or comments as you work, in the <em>Work notes</em>
+            field for each capability. These are for use by your team, and are not included in the community dataset.</li>
+        <li>If you wish to designate a particular capability/question as a priority for your team in the near term, 
+            you can assign it a priority using the <em>Local Priority</em>field.
+             The range is from 1 to 99, where 1 is your highest priority. 
+            <ul>
+                <li>Some institutions work with their advisory group to select priorities, in a second pass through the assessment. </li>
+                <li>However you choose to use the priorities feature, the values do not impact the computed coverage.</li>
+            </ul>
+        </li>
+    </ol>
+    <p class="step">Step 6) Gather the team when the initial work is complete</p>
+    <ol class="outer">
+        <li>Discuss any questions or observations, and in particular try to ensure that the different 
+            teams used a common, consistent approach and interpretation of the aspects of the assessment tool. </li>
+    </ol>
+    <p class="step">Step 7) Submit your assessment and review your benchmarking report</p>
+    <ol class="outer">
+        <li>Once you are done with your work and are ready to submit your assessment, a user
+             with the <em>Submitter</em> role can click the <em>Submit</em> button on the main assessment page.
+            <ol>
+                <li>The RCD Capabilities Model data steward will review your assessment to ensure we 
+                    communicated the intended use effectively, and raise any potential issues with you.
+                    If none are found (or when these have been resolved), the data steward will accept 
+                    the submission into the Community Dataset. </li>
+                <li>Once your assessment has been accepted, you will be able to go to the Data Portal 
+                    and view benchmarking reports. You can configure the set of peers for comparison, 
+                    and download reports and visualizations. <br>
+                    <em>[Note that this functionality is not yet released]</em>.
+                </li>
+            </ol>
+        </li>
+    </ol>
+
+    <hr>
+    <p class="footnote" id="ftnt1"><sup>1</sup>  The Integrated Postsecondary Education Data System. 
+        See <a href="https://nces.ed.gov/ipeds">https://nces.ed.gov/ipeds</a>.
+   </p>
+</section>
+
+{% endblock %}

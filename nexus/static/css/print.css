@@ -1,0 +1,51 @@
+    body {
+        margin: .3in;
+        margin-bottom: .8in;
+        overflow: visible;
+    }
+
+    header {
+        display: none;
+    }
+
+    footer span.noprint, span.avoidwrap.noprint {
+        display: none;
+    }
+
+    footer {
+        background-color: white;
+        font-size: .8em;
+        margin: 0;
+        padding: 0;
+    }
+
+    main section.helpdocs {
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+        box-sizing: content-box;
+        box-shadow: none;
+        background-color: white;
+        font-size: 90%;
+    }
+
+    main {
+        max-width: 100%;
+    }
+
+    main section {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .noprint, p.totop a {
+        display: none;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group;
+    }

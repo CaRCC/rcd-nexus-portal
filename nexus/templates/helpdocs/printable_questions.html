@@ -1,0 +1,820 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    body>nav {
+        display:none;
+    }
+    body {
+        grid-template-areas:
+            "header"
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+    }
+    section.helpdocs {
+        width: 80%;
+        max-width: 800px;
+        margin:10px 10px 10px 10px;
+        padding:1em .7in .7in .7in;
+    }
+    section.helpdocs h1.title {
+        font-size: 1.7em;
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 0px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    section.helpdocs h2 {
+        page-break-before: always;
+        font-size: 1.1em;
+        margin-bottom: .7em;
+    }
+    section.helpdocs ul {
+        list-style: disc outside;
+        margin: .1em 0 0 1em;
+    }
+    section.helpdocs ul li{
+        font-size: 0.9em;
+        padding: 2.5px;
+        line-height: 1.15;
+        margin:0;
+    }
+    p.copyright {
+        border: solid var(--primary) 2px;
+        padding: 10px;
+        margin: 20px;
+        font-size: .85em;
+    }
+    p.content {
+        font-size: 0.9em;
+    }
+    p.content.note {
+        margin-left: 1em;
+    }
+    p.footnote {
+        font-size: 0.85em;
+        text-align: left;
+    }
+    table.content {
+        font-size: 0.9em;
+        border: solid thin var(--primary-fg);
+    }
+    table.content th {
+        border: solid thin var(--primary-fg);
+        background-color: lightgray;
+    }
+    table.content td {
+        border: solid thin var(--primary-fg);
+        background-color: var(--primary-fg-off);
+        vertical-align: middle;
+    }
+    table.content td a {
+        font-weight: bold;
+    }
+    table.content td p {
+        margin:4px;
+    }
+    table.content th p {
+        margin:4px;
+        font-weight: bold;
+        text-align: center;
+    }
+    p.caption {
+        font-size: 0.8em;
+        font-style:italic;
+        text-align: center;
+        font-weight: bold;
+        color: var(--accent);
+    }
+
+    p.topics {
+        font-size: 0.95em;
+        font-weight: bold;
+        margin-top: .5em;
+        margin-bottom: 0;
+        break-after: avoid;
+    }
+    span.topic {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+    ol.outer {
+        list-style-type: upper-alpha;
+        font-size: 0.9em;
+        margin-top: 0;
+    }
+    ol.outer>li {
+        margin-top: 6px;
+    }
+    ol.outer ul li {
+        margin-top: 4px;
+        padding: 0;
+    }
+    ol ol {
+        list-style-type: lower-alpha;
+    }
+    ol ol li {
+        margin-top: 4px;
+    }
+    sup {
+        font-size: 0.75em;
+        vertical-align: .35em;
+    }
+    sup a:link, sup a:visited {
+        color: inherit;
+    }
+    p.totop {
+        padding:0;
+        margin:0 0 10px 0;
+        border-bottom: 1px solid var(--primary);
+        position:relative;
+        top: -5px;
+    }
+    a.totop {
+        float:right;
+        margin: 0;
+        padding: 0 10px 0 0;
+        font-style:italic;
+        font-size:.85em;
+        position:relative;
+        top: -2px;
+    }
+</style>
+
+<script>
+</script>
+
+{% endblock %}
+{% block title %}RCD-Nexus Capabilities Model Printable Questions{% endblock %}
+
+{% block main %}
+<section class="helpdocs" >
+    <h1 class="title">RCD Capabilities Model v2.0 Questions by Facing</h1>
+    <p class="content">
+        This document includes the main text for the questions in each Facing, grouped by topic.<sup><a href="#ftnt1" id="ftnt_ref1">[1]</a></sup>
+        This is intended for use by institutions that are discussing who may contribute to an assessment using 
+        the Research Computing and Data (RCD) Capabilities Model, and want to share the type of questions that will be asked.
+    </p>
+    <p class="content">The RCD Capabilities Model is organized into sections that reflect different roles that staff fill in supporting 
+        Research Computing and Data, and are named to reflect <em>who</em> or <em>what</em>  role is &ldquo;facing&rdquo; 
+        (i.e., focused on). Within each facing, the model poses questions about aspects of research computing and data for
+        the associated role; the questions are grouped into Topics.
+    </p>
+    <p class="content">Larger organizations may have a team associated with each facing role, while smaller organizations may 
+        have just a few people who cover these different roles. In filling out the assessment tool, you will likely want to involve people who work 
+        in the different roles; they can work to fill out their respective section of the assessment.
+    </p>
+    <p class="content">Table 1 presents an introduction to the Facings, and links to the associated questions below. </p>
+    <table class="content">
+        <thead>
+            <tr>
+                <th><p>Facing Area</p></th>
+                <th><p>Description</p></th>
+                <th><p>Example roles</p></th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><p><a href="#rftopics">Researcher-<br>Facing Topics</a></p></td>
+            <td><p>Includes research computing and data staffing, outreach, and advanced support,
+                as well as support in the management of the research lifecycle.</p>
+            </td>
+            <td><p>Research IT User Support, Research Facilitators, 
+                CI engineers<sup><a href="#ftnt2" id="ftnt_ref2">[2]</a></sup>, etc.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><a href="#dftopics">Data-Facing Topics</a></p></td>
+            <td>
+                <p>Includes data creation; data discovery and collection; data analysis and
+                    visualization; research data curation, storage, backup, and transfer; 
+                    and research data policy compliance.</p>
+            </td>
+            <td>
+                <p>Research Data Management specialists, Data Librarians, Data Scientists, etc.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><a href="#swftopics">Software- Facing Topics</a></p></td>
+            <td>
+                <p>Includes software package management, research software development, research software 
+                    optimization or troubleshooting, workflow engineering, containers and cloud computing,
+                    securing access to software, and software associated with physical specimens.</p>
+            </td>
+            <td>
+                <p>Research Software Engineers, Applications Specialist, Research Computing support, etc.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><a href="#syftopics">Systems- Facing Topics</a></p></td>
+            <td>
+                <p>Includes infrastructure systems, systems operations, and systems security and compliance.</p>
+            </td>
+            <td>
+                <p>HPC systems engineers, Storage Engineers, Network specialists, etc.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><a href="#spftopics">Strategy and Policy-Facing Topics</a></p></td>
+            <td>
+                <p>Includes institutional alignment, culture for research support,
+                    funding, and partnerships and engagement with external communities. </p>
+            </td>
+            <td>
+                <p>Research IT leadership: Director, Assistant/Associate Director, etc.</p>
+            </td>
+        </tr>
+        </tbody>
+	</table>
+    <p class="caption">Table 1 - Description and examples for the Five Facings</p>
+    <p class="copyright"><b>Copyright &copy; 2023 Internet2 and CaRCC</b>, and licensed for use under 
+        <a>Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
+         usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
+    <div>
+        <p class="footnote"><a href="#ftnt_ref1" id="ftnt1">[1]</a>This is a supplement to the 
+            RCD Capabilities Model v2.0 Introduction and Guide to Use.</p>
+        <p class="footnote"><a href="#ftnt_ref2" id="ftnt2">[2]</a>&ldquo;CI Engineers&rdquo; have different roles
+             at different institutions, and some might (also) be in the Systems Facing roles.</p>
+    </div>
+    <a id="rftopics"></a>
+    <h2>Researcher-Facing Topics and Associated Capabilities</h2>
+    <p class="topics">Research Computing and Data Staffing</p>
+    <ul>
+        <li>
+            Do researchers have access to introductory user support and training related to the use of research computing and data resources available at local, regional, and national level?
+        </li>
+        <li>
+            Are researcher-facing staff provided with professional development and networking opportunities?
+        </li>
+        <li>
+            Do researcher-facing staff have the skills and capacity to broadly support researchers across levels (graduate students to PIs) and across domains with information about the use and effectiveness of new technologies?
+        </li>
+        <li>
+            Can researcher-facing staff effectively serve as advocates for the research community to leadership and IT governance?
+        </li>
+        <li>
+            To what extent is there a clear vision, effective guidance, and strategy for the allocation and prioritization of support resources/personnel?
+        </li>
+    </ul>
+    <p class="topics">Research Computing and Data Outreach (Initial Contact)</p>
+    <ul>
+        <li>
+            Is there an institutional practice to proactively reach out to researchers, new faculty, or prospective faculty to explain research support services and help with computing beyond the desktop?
+        </li>
+        <li>
+            Do researcher-facing staff have the skills and capacity to effectively engage in community outreach and broader impacts?
+        </li>
+        <li>
+            Are researchers made aware of research computing and data related resources?
+        </li>
+        <li>
+            Does your institution have a process to assess researcher awareness, satisfaction, and engagement related to Research Computing and Data services and support?
+        </li>
+        <li>
+            Does your institution have a process to assess the impact of research computing and data support?
+        </li>
+        <li>
+            Does your institution have marketing/communication resources (staff) with the skills and capacity to help publicize and explain research support services?
+        </li>
+    </ul>
+    <p class="topics">Research Computing and Data Advanced Support</p>
+    <ul>
+        <li>
+            Do researchers have access to application support (training, help) for standard software packages, middleware, libraries, and modules?
+        </li>
+        <li>
+            Do researcher-facing staff have the skills and capacity to diagnose inefficiencies, monitor usage, and advise on policies and optimizations to make for more efficient utilization of research computing and data resources?
+        </li>
+        <li>
+            Are researcher-facing staff engaged with exploring, testing, and deploying emerging or advanced technologies to help research?
+        </li>
+        <li>
+            Do researcher-facing staff regularly and effectively document processes, policies, and resources both internally and for the user community?
+        </li>
+    </ul>
+    <p class="topics">Research Computing Management of the Research Lifecycle</p>
+    <ul>
+        <li>
+            Are researchers supported across the full research lifecycle?
+        </li>
+        <li>
+            Do researchers have access to advice on research compute and data compliance, security, management, and governance?
+        </li>
+    </ul>
+    <p class="totop noprint"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <a id="dftopics"></a>
+    <h2>Data-Facing Topics and Associated Capabilities</h2>
+    <p class="topics">Data Creation</p>
+    <ul>
+        <li>
+            Do researchers have access to consulting or other resources on data lifecycle requirements during data creation?
+        </li>
+    </ul>
+    <p class="topics">Data Discovery and Collection</p>
+    <ul>
+        <li>
+            Do researchers have access to consulting or other resources supporting data discovery?
+        </li>
+        <li>
+            Do researchers have access to expertise about common Terms of Service for frequently crawled websites/data repositories and best practices guidance?
+        </li>
+        <li>
+            Do researchers have access to software supporting data collection?
+        </li>
+        <li>
+            Do researchers have access to resources (e.g., staff) to develop software supporting data discovery and collection?
+        </li>
+    </ul>
+    <p class="topics">Data Analysis</p>
+    <ul>
+        <li>
+            Do researchers have access to consulting, expertise, or other resources on data wrangling/manipulation and data analysis?
+        </li>
+        <li>
+            Do researchers have access to software that supports data wrangling/manipulation and data analysis?
+        </li>
+        <li>
+            Do researchers have access to dedicated resources (e.g., staff) who can perform data wrangling/manipulation and data analysis?
+        </li>
+        <li>
+            Do researchers have access to resources (e.g., staff) for software development of tools that support data wrangling/manipulation and data analysis?
+        </li>
+    </ul>
+    <p class="topics">Data Visualization</p>
+    <ul>
+        <li>
+            Do researchers have access to consulting, expertise, or other resources on data visualization?
+        </li>
+        <li>
+            Do researchers have access to software that supports data visualization?
+        </li>
+        <li>
+            Do researchers have access to dedicated resources (e.g., staff) who can perform data wrangling/manipulation and data analysis?
+        </li>
+        <li>
+            Do researchers have access to resources (e.g., staff) for software development of tools that support data visualization?
+        </li>
+    </ul>
+    <p class="topics">Research Data Curation, Storage, Backup, and Transfer</p>
+    <ul>
+        <li>
+            Do researchers have access to consulting, expertise, or other resources to help them identify appropriate data repositories (on campus, in domains, and more generally) to place their data?
+        </li>
+        <li>
+            Do researchers have access to resources (e.g., staff) who can advise and assist with database creation and data organization?
+        </li>
+        <li>
+            Do researchers have access to tools/software that supports data backup, storage, and integrity checking?
+        </li>
+        <li>
+            Do researchers have access to resources (e.g., staff) who will develop tools/software that supports data backup, storage, and integrity checking?
+        </li>
+        <li>
+            Do researchers have access to software and/or environments to deal with datasets that exceed what is generally available to individuals on a workstation or personal storage subscription?
+        </li>
+        <li>
+            Do researchers have access to consulting, expertise, or other resources on metadata design and use?
+        </li>
+        <li>
+            Do researchers have access to tools, consulting, expertise, or other resources on good practices for use of identifiers?
+        </li>
+    </ul>
+    <p class="topics">Research Data Policy Compliance</p>
+    <ul>
+        <li>
+            Does your institution have research data governance processes in place to establish data policies for research data?
+        </li>
+        <li>
+            Do researchers have access to information and training on research data policy?
+        </li>
+        <li>
+            Do researchers have access to support for analysis of research data sensitivity?
+        </li>
+        <li>
+            Do researchers have access to expertise and policy infrastructure to manage and use sensitive data?
+        </li>
+        <li>
+            Has your institution defined and deployed a process for identifying which research data to archive, preserve, or discard?
+        </li>
+        <li>
+            Do researchers have access to planning expertise for storing, archival and preservation of research data beyond the term of grant funding?
+        </li>
+    </ul>
+    <p class="topics">Data Security/Sensitive Data Support</p>
+    <ul>
+        <li>
+            Do researchers have access to compute and data environments to manage and use moderately sensitive data?
+        </li>
+        <li>
+            Do researchers have access to compute and data environments to manage and use &ldquo;notice triggering&rdquo; data?
+        </li>
+        <li>
+            Do researchers have access to compute and data environments to manage and use extremely sensitive data?
+        </li>
+    </ul>
+    <p class="totop noprint"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <a id="swftopics"></a>
+    <h2>Software-Facing Topics and Associated Capabilities</h2>
+    <p class="topics">Software Package Management (installation, documentation, validation, and retirement/removal)</p>
+    <ul>
+        <li>
+            Do researchers have access to support for research software package compilation and installation?
+        </li>
+        <li>
+            Do researchers have access to support, facilitation or training on how to compile, install, and deploy research software?
+        </li>
+        <li>
+            Do researchers have access to support for research software package assessment, documentation, and validation?
+        </li>
+    </ul>
+    <p class="topics">Research Software Development</p>
+    <ul>
+        <li>
+            Do researchers have access to resources (e.g., staff) who can develop research software?
+        </li>
+        <li>
+            Do researchers have access to resources (e.g., staff) who can develop software for wide usage?
+        </li>
+        <li>
+            Do researchers have access to security validation for research software?
+        </li>
+        <li>
+            Do researchers have access to usability testing for research software developed on campus?
+        </li>
+        <li>
+            Do researchers have access to software or website accessibility consulting, assessment tools, etc.?
+        </li>
+    </ul>
+    <p class="topics">Research Software Optimization or Troubleshooting</p>
+    <ul>
+        <li>
+            Do researchers have access to performance optimizing tools?
+        </li>
+        <li>
+            Do researchers have access to support and consulting to optimize software?
+        </li>
+        <li>
+            Do researchers have access to diagnostic and troubleshooting software?
+        </li>
+        <li>
+            Do researchers have access to support and consulting for diagnosing and troubleshooting software?
+        </li>
+    </ul>
+    <p class="topics">Workflow Engineering</p>
+    <ul>
+        <li>
+            Do researchers have access to support for research workflow packages?
+        </li>
+        <li>
+            Do researchers have access to expertise and basic support to develop or script data workflows?
+        </li>
+        <li>
+            Do researchers have access to dedicated staff resources to develop or script data workflows?
+        </li>
+    </ul>
+    <p class="topics">Software Portability, Containers, and Cloud Computing</p>
+    <ul>
+        <li>
+            Do researchers have access to support for making software portable?
+        </li>
+        <li>
+            Do researchers have access to guidance or training for cloud computing?
+        </li>
+        <li>
+            Do researchers have access to dedicated resources (e.g., staff) for architecting and deploying cloud solutions?
+        </li>
+    </ul>
+    <p class="topics">Securing Access to Software</p>
+    <ul>
+        <li>
+            Do researchers have access to credential systems as an element of software security?
+        </li>
+        <li>
+            Do researchers have access to support for utilizing licensed software on shared resources?
+        </li>
+        <li>
+            Do researchers have access to support for managing export controlled software?
+        </li>
+        <li>
+            Are processes defined and adhered to for educating, monitoring, and auditing Research Computing and Data staff, other IT professionals, and researchers, to comply with software license agreements?
+        </li>
+    </ul>
+    <p class="topics">Software Associated with Physical Specimens (e.g., samples, research / museum collections)</p>
+    <ul>
+        <li>
+            Do researchers have access to management software for physical collections?
+        </li>
+        <li>
+            Do researchers have access to software for discovery and research use of physical collections?
+        </li>
+        <li>
+            Do researchers have access to resources (e.g., staff) for software development for discovery and research use of physical collections?
+        </li>
+    </ul>
+    <p class="totop noprint"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <a id="syftopics"></a>
+    <h2>Systems-Facing Topics and Associated Capabilities</h2>
+    <p class="topics">Infrastructure Support</p>
+    <ul>
+        <li>
+            Do your systems-facing staff have access to a fully functional and reliable data center?
+        </li>
+        <li>
+            Is the data center professionally managed?
+        </li>
+        <li>
+            Are there institutional resources for leveraging commercial cloud services for research computing and researchers?
+        </li>
+        <li>
+            Are deployment, operations, and maintenance of your infrastructure automated?
+        </li>
+        <li>
+            Do systems staff have the skills and capacity to support container deployment and orchestration?
+        </li>
+    </ul>
+    <p class="topics">Compute Infrastructure</p>
+    <ul>
+        <li>
+            Do researchers have access to high performance (batch) computing (HPC)?
+        </li>
+        <li>
+            Do researchers have access to high throughput computing (HTC)?
+        </li>
+        <li>
+            Do researchers have access to a production-level compute, storage, and network environment?
+        </li>
+        <li>
+            Do researchers have access to specialized hardware capabilities, such as accelerators?
+        </li>
+        <li>
+            Do researchers have access to interactive computing services?
+        </li>
+        <li>
+            Is a standardized set of operating systems supported for HPC, workstations, and/or virtual machines?
+        </li>
+    </ul>
+    <p class="topics">Storage Infrastructure</p>
+    <ul>
+        <li>
+            Do researchers have access to active data storage services (a.k.a., &quot;scratch&quot; storage, often a parallel filesystem) sufficient for HTC/HPC?
+        </li>
+        <li>
+            Do researchers have access to sufficient storage to support researchers&rsquo; data intensive computing needs?
+        </li>
+        <li>
+            Do researchers have access to mechanisms for isolated and secure support for storage of sensitive/secure data?
+        </li>
+        <li>
+            Do researchers have access to policies and technologies that facilitate management and wide access to data?
+        </li>
+        <li>
+            Do researchers have access to data archival and preservation services (e.g. tape, cloud)?
+        </li>
+        <li>
+            Do researchers have access to a place to store final research data to address institutional policy and/or funding agency requirements?
+        </li>
+        <li>
+            Do researchers have access to support for collaborative data grids and/or data repositories?
+        </li>
+    </ul>
+    <p class="topics">Network and Data Movement Infrastructure</p>
+    <ul>
+        <li>
+            Do researchers have access to a high-performance network that supports research within campus?
+        </li>
+        <li>
+            Do researchers have access to a protected subnet or Science DMZ?
+        </li>
+        <li>
+            Do researchers have access to support for high performance data movement with dedicated data transfer nodes (DTN) and associated data movement software?
+        </li>
+        <li>
+            Do researchers have access to infrastructure for data buffering between high I/O lab instruments and the data center, and/or external resources?
+        </li>
+        <li>
+            Do researchers have access to mechanisms for isolated and secure support for movement of sensitive/secure data?
+        </li>
+        <li>
+            Do researchers have access to virtualized networking techniques such as Software Defined Networks, overlays, etc.?
+        </li>
+    </ul>
+    <p class="topics">Specialized Infrastructure</p>
+    <ul>
+        <li>
+            Do researchers have access to support for edge computing and data resources?
+        </li>
+        <li>
+            Do researchers have access to support for sensors, internet of things?
+        </li>
+        <li>
+            Do researchers have access to support for researcher workstations or laptops?
+        </li>
+        <li>
+            Do researchers have access to support for special science instruments?
+        </li>
+        <li>
+            Do researchers have access to specialized compute capability?
+        </li>
+    </ul>
+    <p class="topics">Infrastructure Software</p>
+    <ul>
+        <li>
+            Do researchers have access to resource management and/or queuing software for managing access to resources (e.g. SLURM, Torque)?
+        </li>
+        <li>
+            Can researchers leverage institutional-level Identity and Access Management?
+        </li>
+        <li>
+            Do researchers have access to 2-factor authentication (where prudent)?
+        </li>
+        <li>
+            Is researcher access to systems and data managed with a common, project-based or role-based tool?
+        </li>
+        <li>
+            Are researchers&#39; external collaborators able to use their home organization credentials (or ORCID IDs, etc.) to access systems and data?
+        </li>
+        <li>
+            Do researchers have access to modules support to provide access to system-wide software libraries and applications?
+        </li>
+    </ul>
+    <p class="topics">Monitoring and Measurement</p>
+    <ul>
+        <li>
+            Is there a practice in place for monitoring infrastructure at the node (individual unit) level for resources that support research?
+        </li>
+        <li>
+            Is there a practice in place utilizing active network measurement tools (i.e. perfSONAR) for the research-supporting network, DMZ, DTN etc.?
+        </li>
+        <li>
+            Is there a practice in place for whole system testing (e.g./chaos monkey) on resources that support research?
+        </li>
+        <li>
+            Is there a practice in place for both active and passive measurement of infrastructure that supports research?
+        </li>
+        <li>
+            Do researchers have access to monitoring tools as part of their workflow?
+        </li>
+        <li>
+            Is performance data (on resources that support research) analyzed and used for operational decision making?
+        </li>
+        <li>
+            Is a method in place to track and report resource usage at the researcher/project level?
+        </li>
+    </ul>
+    <p class="topics">Change Mngmnt, version control, administration, and ticketing</p>
+    <ul>
+        <li>
+            Do Research Computing and Data staff follow a documented change management process?
+        </li>
+        <li>
+            Do Research Computing and Data staff utilize version control repositories of services and infrastructure data?
+        </li>
+        <li>
+            Do Research Computing and Data staff leverage a ticketing system for user support?
+        </li>
+        <li>
+            Do Research Computing and Data staff follow an established procedure for privileged account management among the administrators, including tracking of elevated privileges?
+        </li>
+        <li>
+            Have Research Computing and Data staff established a workflow environment to support end-to-end network performance troubleshooting?
+        </li>
+    </ul>
+    <p class="topics">Documentation</p>
+    <ul>
+        <li>
+            Do Research Computing and Data staff produce and regularly maintain systems facing documentation?
+        </li>
+        <li>
+            Do Research Computing and Data staff have documented processes, procedures, and policies for infrastructure management?
+        </li>
+    </ul>
+    <p class="topics">Planning</p>
+    <ul>
+        <li>
+            Do Research Computing and Data planning processes include/incorporate security and compliance considerations?
+        </li>
+        <li>
+            Do Research Computing and Data staff follow a formal process for procuring research computing, data, networking, etc. resources?
+        </li>
+        <li>
+            Is a systems and infrastructure lifecycle plan defined and maintained?
+        </li>
+        <li>
+            Are researchers and governance roles engaged to explore gaps and to address emerging needs and technologies?
+        </li>
+        <li>
+            Are systems-facing staff engaged with exploring, testing, and deploying emerging or advanced technologies to help research?
+        </li>
+    </ul>
+    <p class="topics">Best security practices for open environments</p>
+    <ul>
+        <li>
+            Is Research Computing and Data (RCD) security coordinated with institutional IT Security and Compliance?
+        </li>
+        <li>
+            Are Security Best practices implemented (such as those from NIST, trusted CI, CVE, and others)?
+        </li>
+        <li>
+            Is there a security incident response plan, and an associated response team?
+        </li>
+    </ul>
+    <p class="totop noprint"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <a id="spftopics"></a>
+    <h2>Strategy and Policy-Facing Topics and Associated Capabilities</h2>
+    <p class="topics">Institutional Alignment (How policies and priorities are set)</p>
+    <ul>
+        <li>
+            Does your Research Computing and Data (RCD) team/group have a strategic plan, and is this strategic plan updated on a regular basis?
+        </li>
+        <li>
+            Is your Research Computing and Data (RCD) strategic plan aligned to campus plans?
+        </li>
+        <li>
+            Do the Research Computing and Data (RCD) service and support community and underlying IT service providers have a good awareness and understanding of major research efforts/initiatives across the institution?
+        </li>
+        <li>
+            Are research priorities, and Research Computing and Data (RCD) strategic priorities well-understood by your institution&#39;s management and planning groups?
+        </li>
+        <li>
+            Does institution-level management and planning recognize and value the impact of Research Computing and Data (including return/value on investment)?
+        </li>
+        <li>
+            Are researchers effectively informed and made aware of Research Computing and Data (RCD) resources and services?
+        </li>
+        <li>
+            Are Research Computing and Data (RCD) resources and services available in support of instruction or other pedagogical uses?
+        </li>
+    </ul>
+    <p class="topics">Institutional Culture for Research Support</p>
+    <ul>
+        <li>
+            Is there an understanding across the IT organization, research community, and institutional leadership of the distinction between Research Computing and Data services and standard (enterprise) IT services?
+        </li>
+        <li>
+            Is facilitation of Research Computing and Data services recognized as an important role to the campus?
+        </li>
+        <li>
+            Are Research Computing and Data operating metrics captured and reported to leadership?
+        </li>
+    </ul>
+    <p class="topics">Funding</p>
+    <ul>
+        <li>
+            Are Research Computing and Data services funded in a sustainable manner?
+        </li>
+        <li>
+            Are new funding opportunities proactively identified and assessed at an institutional level, for relevance to institutional mission and alignment to Research Computing and Data needs and priorities?
+        </li>
+        <li>
+            Do research funding activities actively integrate the Research Computing and Data (RCD) services group?
+        </li>
+        <li>
+            Do Research Computing and Data (RCD) services groups/teams submit (extramural) grant proposals for RCD investments and innovations?
+        </li>
+        <li>
+            Have Research Computing and Data (RCD) services groups/teams been awarded (extramural) grants they applied for, in support of RCD investments and innovation?
+        </li>
+    </ul>
+    <p class="topics">Partnerships / Engagement with External Communities</p>
+    <ul>
+        <li>
+            Do Research Computing and Data (RCD) services groups/teams actively engage with regional and/or national Research Computing and Data peers/communities?
+        </li>
+        <li>
+            Are institutional Research Computing and Data services provided to external users, such as hosting data repositories, providing computing resources, etc.? 
+        </li>
+        <li>
+            Is there a practice of active engagement of your institution in external partnerships (for funding, or for advancing Research Computing and Data activities and interests?
+        </li>
+    </ul>
+    <p class="topics">Professional Development of Research Computing and Data Staff</p>
+    <ul>
+        <li>
+            Are Research Computing and Data (RCD) staff provided with professional training opportunities?
+        </li>
+        <li>
+            Are Research Computing and Data staff provided with opportunities for career advancement?
+        </li>
+        <li>
+            Are Research Computing and Data (RCD) staff permitted to use staff time to engage in regional or national community efforts?
+        </li>
+    </ul>
+    <p class="topics">Diversity, Equity, and Inclusion</p>
+    <ul>
+        <li>
+            Is there a policy and practice to ensure (and if necessary, improve) diversity, equity, and inclusion, on the Research Computing and Data (RCD) staff?
+        </li>
+        <li>
+            Are Research Computing and Data recruitments (job listings) reviewed for inclusive language to attract a broad range of applicants?
+        </li>
+        <li>
+            Do Research Computing and Data staff have access to diversity, equity, and inclusion training?
+        </li>
+    </ul>
+    <br>
+    <p class="totop noprint"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    section.helpdocs {
+        min-width: 40%;
+    }
+    p.doc {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+    p.content {
+        font-size: 1em;
+    }
+    div.helpgrid {
+        display: grid;
+        width: 80%;
+        max-width: 600px;
+    }
+    body>nav {
+        display:none;
+    }
+    body {
+        grid-template-areas:
+            "header"
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+    }
+</style>
+
+<script>
+</script>
+
+{% endblock %}
+
+{% block title %}RCD-Nexus Capabilities Model Help Documentation{% endblock %}
+{% block main %}
+<div class="helpgrid">
+    <section class="helpdocs" >
+        <h2>Capabilities Model Documentation</h2>
+        <p class="doc"><a href="/helpdocs/intro_and_guide">Introduction and Guide to Use</a></p>
+        <p class="doc"><a href="/helpdocs/quickstart">Quick Start Guide</a></p>
+        <p class="doc"><a href="/helpdocs/faq">Frequently Asked Questions (FAQ)</a></p>
+        <p class="doc"><a href="/helpdocs/printable_questions">Printable list of Questions by Facing</a></p>
+    </section>
+
+    <section class="helpdocs" >
+        <h2>Getting Help and providing Feedback</h2>
+        <p class="content"><b>Join the discussion!</b>  You can email the RCD CM working group at 
+            <a href="mailto:capsmodel-help@carcc.org">capsmodel-help@carcc.org</a>, 
+            or subscribe to the <a href="https://groups.google.com/a/carcc.org/g/capsmodel-discuss">capsmodel-discuss@carcc.org</a>
+            discussion list to hear how other institutions are 
+            completing their assessments, and using them as part of strategic planning. 
+        </p>
+        <p class="content">If you have additional questions about how to use the assessment tool, 
+            how to understand specific questions, etc., please share your questions with the working group
+            by emailing <a href="mailto:capsmodel-help@carcc.org">capsmodel-help@carcc.org</a>.
+            You are also welcome to join us for Office Hours; 
+            see the <a href="https://carcc.org/rcdcm/">Research Computing and Data Capabilities Model working group website</a>
+            for the schedule, or subscribe to the <a href="https://groups.google.com/a/carcc.org/g/capsmodel-discuss">capsmodel-discuss@carcc.org</a>
+            discussion list for announcements about this and more related activities. 
+        </p>
+    </section>
+</div>
+{% endblock %}

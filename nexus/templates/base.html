@@ -7,6 +7,7 @@
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicons/carcc.ico' %}"/>
     <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="{% static 'css/base.css' %}"/>
+    <link rel="stylesheet" media="print" href="{% static 'css/print.css' %}" />
 
     <script src="{% static 'js/htmx.min.js' %}"></script>
     <script src="{% static 'js/_hyperscript.min.js' %}"></script>
@@ -17,7 +18,7 @@
 </head>
 
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <header>{% include "base/header.html" %}</header>
+    <header id="pagetop">{% include "base/header.html" %}</header>
     <nav>{% include "base/nav.html" %}</nav>
     <main>
       {% include "base/messages.html" %}
