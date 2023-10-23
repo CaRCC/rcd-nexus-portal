@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block main %}
+{% block head %}
 <style>
     div.assessment-nav {
         display: flex;
@@ -90,6 +90,9 @@
         text-align: right;
     }
 </style>
+{% endblock %}
+{% block title %}RCD-Nexus Capabilities Model Topic: {{ topic.display_name }}{% endblock %}
+{% block main %}
 
 <div class="assessment-nav">
     {% if prev_topic %}<p><a href="{% url 'capmodel:topic' assessment.profile_id prev_topic.facing.slug prev_topic.slug %}">⬅ Previous topic</a></p>{% endif %}

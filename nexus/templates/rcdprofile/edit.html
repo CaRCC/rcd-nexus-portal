@@ -88,6 +88,7 @@
 
 {% endblock %}
 
+{% block title %}RCD-Nexus Edit Profile: {{form.instance}}{% endblock %}
 {% block main %}
 <h2>{% if can_manage %}Edit{% else %}View{% endif %} Institutional Profile for: <span class="Instname">{{form.instance}}</span></h2>
 {% if can_manage %}

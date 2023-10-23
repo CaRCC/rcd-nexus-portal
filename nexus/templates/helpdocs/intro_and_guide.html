@@ -1,0 +1,620 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    body>nav {
+        display:none;
+    }
+    body {
+        grid-template-areas:
+            "header"
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+    }
+    section.helpdocs {
+        width: 80%;
+        max-width: 800px;
+        margin:10px 10px 10px 10px;
+        padding:1em .7in .7in .7in;
+    }
+    section.helpdocs h1, section.helpdocs h2, section.helpdocs h3 {
+        box-shadow: none;
+        background: none;
+    }
+    section.helpdocs h1.title {
+        font-size: 1.7em;
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 0px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    section.helpdocs ul {
+        list-style: disc outside;
+        margin-left: 1.5em;
+    }
+    section.helpdocs ul li{
+        padding:5px;
+        font-size: 0.9em;
+    }
+    p.content {
+        font-size: 0.9em;
+    }
+    span.topic {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+    p.content.emphasis {
+        background-color: #cbdcc3;
+        text-align: center;
+        padding:8px;
+        font-style: italic;
+        font-weight: bold;
+        font-size: 1.1em;
+        margin:15px 40px;
+    }
+    p.caption {
+        font-size: 0.8em;
+        font-style:italic;
+        text-align: center;
+        font-weight: bold;
+        color: var(--accent);
+    }
+    table.content {
+        font-size: 0.9em;
+        border: solid thin var(--primary-fg);
+    }
+    table.content th {
+        border: solid thin var(--primary-fg);
+        background-color: lightgray;
+    }
+    table.content td {
+        border: solid thin var(--primary-fg);
+        background-color: var(--primary-fg-off);
+        vertical-align: middle;
+    }
+    table.content td p {
+        margin:4px;
+    }
+    table.content th p {
+        margin:4px;
+        font-weight: bold;
+        text-align: center;
+    }
+    p.update {
+        font-size: 0.85em;
+        font-style: italic;
+        color:var(--accent);
+    }
+    p.copyright {
+        border: solid black 2px;
+        padding: 10px;
+        margin: 20px;
+        font-size: .9em;
+    }
+    p.footnote {
+        margin: 10px;
+        text-align: left;
+        padding-left: 1.2em ;
+        text-indent: -1em ;
+    }
+    sup {
+        font-size: 0.75em;
+        vertical-align: .35em;
+    }
+    sup a:link, sup a:visited {
+        color: inherit;
+    }
+    span.tocentry {
+        display:block;
+        padding-left: 20px;
+    }
+    span.tocsubentry {
+        display:block;
+        padding-left: 40px;
+    }
+    p.totop {
+        padding:0;
+        margin:0 0 10px 0;
+        border-bottom: 1px solid var(--primary);
+        position:relative;
+        top: -5px;
+    }
+    a.totop {
+        float:right;
+        margin: 0;
+        padding: 0 10px 0 0;
+        font-style:italic;
+        font-size:.85em;
+        position:relative;
+        top: -2px;
+    }
+</style>
+
+<script>
+</script>
+
+{% endblock %}
+{% block title %}RCD-Nexus Capabilities Model Intro and Guide to Use{% endblock %}
+
+{% block main %}
+<a id="top"></a>
+<section class="helpdocs" >
+    <h1 class="title">Capabilities Model Introduction and Guide to Use</h1>
+	<p class="update">Updated for V2.0, Oct 2023</p>
+	<p><b>Table of Contents</b>:
+        <span class="tocentry"><a href="#WhatIs">What is a Capabilities Model, and why do we need one?</a></span>
+        <span class="tocentry"><a href="#KeyAspects">Understanding Key Aspects of the Model:</a></span>
+        <span class="tocsubentry"><a href="#FiveFacings">The Five Facings</a></span>
+        <span class="tocsubentry"><a href="#Availability">Availability across institution</a></span>
+        <span class="tocsubentry"><a href="#SOL">Service Operating Level</a></span>
+        <span class="tocsubentry"><a href="#CommunityEngagement">Community engagement and collaboration</a></span>
+        <span class="tocsubentry"><a href="#NotRelevant">Not relevant or applicable</a></span>
+        <span class="tocsubentry"><a href="#LocalPrio">Local Priority</a></span>
+        <span class="tocsubentry"><a href="#DomainSupport">Domain support levels</a></span>
+    </p>
+	<hr>
+    <h2 id="WhatIs"> What is a Capabilities Model, and why do we need one?  </h2>
+    <p class="content"> Research Computing and Data<sup><a href="#ftnt1" id="ftnt_ref1">[1]</a></sup>
+        &nbsp;(computing, data, and related infrastructure and services) is changing at an accelerating rate, 
+        while the range of academic fields and disciplines depending on this infrastructure is expanding and 
+        becoming increasingly diverse. This Capabilities Model was developed to identify the variety of relevant
+        approaches taken to support the sector, and the key factors for providing this support, with a focus on 
+        the front lines of Research Computing and Data infrastructure. The Model is designed for use as an input 
+        to strategic decision making and organizational planning, and is intended to be inclusive across types of 
+        institutions (large and small, public and private, etc.), as well as different organizational models 
+        (e.g., centralized or decentralized).
+    </p>
+    <h3>Who should use the Capabilities Model?</h3>
+    <p class="content">This Model is designed to be useful to a diverse mix of stakeholders, including campus research computing 
+        and data practitioners, along with the principal investigators and research team members (faculty, staff) 
+        with whom they work, as well as key partners (e.g., central IT), and campus leadership.
+    </p>
+    <h3>What are common uses for the Model?</h3>
+    <ul>
+        <li>To identify and understand areas of strength and weakness in an institution's support, e.g., as 
+            when conducting strategic planning and prioritization exercises. 
+        </li>
+        <li>To benchmark your institution's support against peers, e.g., when making an argument for increased 
+            funding to remain competitive on faculty recruitment and retention.
+        </li>
+        <li>To compare local institutional approaches for supporting Research Computing and Data to a common community model
+             (i.e., a shared vocabulary), to facilitate communications and collaboration. 
+        </li>
+    </ul>
+    <h3>What is the format for the Model?</h3>
+    <p class="content">An assessment tool is provided, formatted as a questionnaire, that allows institutions to conduct a self-assessment on a series of factors across a range of perspectives. The assessment tool is provided as a web-based spreadsheet to facilitate collaboration among individuals or teams involved in Research Computing and Data, who can work together to assess the current capabilities. The next section lays out key aspects of the Model assessment, and how organizations can go about using the tool.  </p>
+    <p class="content">Some institutions consider this assessment work to be a measure of maturity, and are very much
+         interested in ranking/benchmarking against their peers. Others prefer to focus on the capabilities 
+        that are broadly understood to constitute Research Computing and Data, as an inspiration for next steps.
+         In any case, it will not generally be realistic for an institution to achieve 100% across the full range
+          of support areas, nor would it necessarily make strategic sense to do so. 
+    </p>
+    <h3>Our research computing and data effort is still emerging. Is this assessment for me? </h3>
+    <p class="content">Some institutions choose to do a simpler assessment their first time, and just include a 
+        few key participants (e.g., an RCD support lead or equivalent plus someone from the library).
+         The resulting assessment data may not be completely accurate and complete, but this can be a
+          quick way to learn about the RCD Capabilities Model and explore how the resulting data, 
+          benchmarking reports, etc. can inform strategic planning, etc. at your institution.
+        </p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <h2>Acknowledgements</h2>
+    <p class="content">The RCD Capabilities Model was developed through a collaboration of the Campus Research Computing Consortium 
+        (<a href="https://www.carcc.org">CaRCC</a> ), <a href="https://internet2.edu">Internet2</a>, and 
+        <a href="https://educause.edu">EDUCAUSE</a>. This work is supported in part by National Science Foundation by an 
+        NSF RCN grant (<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1620695">OAC-1620695</a>,
+         PI: Alex Feltus, "RCN: Advancing Research and Education through a national network of campus 
+         research computing infrastructures &ndash; The CaRCC Consortium"), and by an 
+         NSF Cyberinfrastructure Centers of Excellence (CI CoE) pilot award 
+         (<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2100003">OAC-2100003</a> , 
+         PI Dana Brunson, "Advancing Research Computing and Data: Strategic Tools, Practices, and Professional Development"). 
+    </p>
+    <p class="content">The Assessment tool, this guide, and the other associated resources were developed with the generous contributions
+         of time and expertise from the 2018 workshop participants, and the working group members: Alex Feltus, Ana Hunsinger,
+          Cathy Chaplin, Claire Mizumoto, Dana Brunson, Deborah Dent, Doug Jennewein, Gail Krovitz, Galen Collier, Jackie Milhans,
+           James Deaton, Jen Leasure, Jill Gemmill, Jim Bottum, Joe Breen, Joel Gershenfeld, John Hicks, John Moore, Karen Wetzel,
+            Mike Erickson, Patrick Schmitz, Preston Smith, Timothy Middelkoop, and Tom Cheatham. 
+            In addition, individuals at a number of Universities provided valuable feedback on earlier versions, 
+            for which the working group is very grateful.</p>
+    <p class="copyright"><b>Copyright &copy; 2023 Internet2 and CaRCC</b>, and licensed for use under 
+        <a>Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
+         usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
+
+    <h2 id="KeyAspects">Understanding Key Aspects of the Model</h2>
+    <p>There are six key concepts that underlie the Model, around which the tool is organized. These are:</p>
+    <ol class="copyright">
+        <li><a href="#FiveFacings">The Five Facings</a></li>
+        <li><a href="#Availability">Availability across institution</a></li>
+        <li><a href="#SOL">Service Operating Level</a></li>
+        <li><a href="#CommunityEngagement">Community engagement and collaboration</a></li>
+        <li><a href="#NotRelevant">Not relevant or applicable</a></li>
+        <li><a href="#LocalPrio">Local Priority</a></li>
+    </ol>
+    <p class="content" id="FiveFacings"><b>The Five Facings</b>: The Model is organized into sections that reflect different roles that staff fill in supporting
+         Research Computing and Data, and are named to reflect who or what each role is "facing" 
+         (i.e., focused on).<sup>&nbsp;<a href="#ftnt2" id="ftnt_ref2">[2]</a></sup>
+        Within each facing, the model poses questions about aspects of research computing and data for the associated role;
+         the questions are grouped into Topics.
+    </p>
+    <p class="content">Larger organizations may have a team associated with each facing role, while smaller organizations may have
+         just a few people who cover these different roles. In filling out the assessment tool, you will likely want
+          to involve people who work in the different roles; they can work to fill out their respective section of the assessment.
+    </p>
+    <table class="content">
+        <thead>
+            <tr>
+                <th><p>Facing Area</p></th>
+                <th><p>Description</p></th>
+                <th><p>Example roles</p></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><p><b>Researcher-<br>Facing Topics</b></p></td>
+                <td><p>Includes research computing and data staffing, outreach, and advanced support, as well as support
+                    in the management of the research lifecycle.</p>
+                </td>
+                <td>
+                    <p>Research IT User Support, Research Facilitators, CI engineers,<sup><a href="#ftnt3" id="ftnt_ref3">[3]</a></sup>; etc.</p>
+                </td>
+            </tr>
+            <tr>
+                <td><p><b>Data-Facing Topics</b></p></td>
+                <td>
+                    <p>Includes data creation; data discovery and collection; data analysis and visualization; 
+                        research data curation, storage, backup, and transfer; and research data policy compliance.
+                    </p>
+                </td>
+                <td>
+                    <p>Research Data Management specialists, Data Librarians, Data Scientists, etc.</p>
+                </td>
+            </tr>
+            <tr>
+                <td><p><b>Software- Facing Topics</b></p></td>
+                <td>
+                    <p>Includes software package management, research software development, research software optimization 
+                        or troubleshooting, workflow engineering, containers and cloud computing, securing access to software,
+                        and software associated with physical specimens.
+                    </p>
+                </td>
+                <td>
+                    <p>Research Software Engineers, Applications Specialist, Research Computing support, etc.</p>
+                </td>
+            </tr>
+            <tr>
+                <td><p><b>Systems- Facing Topics</b></p></td>
+                <td>
+                    <p>Includes infrastructure systems, systems operations, and systems security and compliance.</p>
+                </td>
+                <td><p>HPC systems engineers, Storage Engineers, Network specialists, etc.</p></td>
+            </tr>
+            <tr>
+                <td><p><b>Strategy and Policy-Facing Topics</b></p></td>
+                <td>
+                    <p>Includes institutional alignment, culture for research support, funding, and partnerships and 
+                        engagement with external communities. </p>
+                </td>
+                <td><p>Research IT leadership: Director, Assistant/Associate Director, etc.</p></td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="caption">Table 1 - Description and examples for the Five Facings</p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+
+    <h2>Questions for each Capability</h2>
+    <p class="content" id="Availability"><b>Availability across institution</b>: The Model assessment tool asks organizations 
+    to rate the level of availability across their institution, for each capability associated with supporting
+        Research Computing and Data. Note that it should not matter how or where support is implemented 
+        (a lab, a central campus facility, a national facility, or the cloud). The point is whether 
+        researchers have access, and are supported for effective use. Broadly speaking, availability 
+        is a rating of the level and especially the breadth of support across the institution. 
+    </p>
+    <p class="content">The scope of an "institution" is primarily intended to be a given University campus 
+        (e.g., Clemson University, UC Berkeley, Oklahoma State University - Stillwater). 
+        However, the tool can also be used with a narrower scope, such as a given school or
+            college (e.g., a College of Engineering, a Medical School, etc.). <br>
+            The rating levels should be interpreted given the scope for which you are using the assessment tool.
+        </p>
+    <table class="content">
+        <thead>
+        <tr>
+            <th><p>Availability Level</p></th>
+            <th><p>Description</p></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><p><b>Availability/supported institution-wide</b></p></td>
+            <td>
+                <p>Full production-quality technical capability or service is in place, with equitable access institution-wide. 
+                    <br>Note that if the local cost model makes access challenging for some groups (e.g., schools or departments),
+                    or if support staff lack skills or capacity for the full range of institutional domains, this may not 
+                    constitute an institution-wide deployment.
+                    </p>
+                </td>
+        </tr>
+        <tr>
+            <td><p><b>Availability/supported for parts of the institution</b></p></td>
+            <td>
+                <p>Full, production-quality technical capability or service is in place with access available to 
+                    selected users, to specific areas or groups (e.g., departments), but not institution-wide.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>Planning, piloting, and initial deployment</b></p></td>
+            <td><p>This technology or service is not yet available (in production mode) to users,
+                    but meaningful planning for availability is under way. A plan for availability is
+                    either in development or in place. Staff are investing significant time and resources
+                    planning to deploy this technology or service. This includes evaluating options 
+                    (e.g., specific technologies, vendors, team members, etc.) with an expectation of
+                    production availability within a defined timeframe. Evaluation involves at least
+                        multiple person-weeks of staff time developing options, a proposal for required
+                        funding, and can include piloting, or an initial deployment of the technology or service.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>Tracking potential use</b></p></td>
+            <td><p>Staff are assigned but are restricted to monitoring and understanding this technology or
+                    service (i.e., there is active work in understanding, and generally more than just reading
+                    articles or occasional discussions).</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>No availability or support</b><sup><a href="#ftnt4" id="ftnt_ref4">[4]</a></sup></p></td>
+            <td><p>None of this technology or service is in place and no work is under way or resources 
+                committed for this technology or service.</p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p class="caption">Table 2 - Levels of Deployment at Institution</p>
+    <p class="content">The notion of <em>Availability across Institution</em> is easiest to understand for things 
+        like researchers' access to consulting, or to compute resources. Where the assessment capabilities focus 
+        on aspects like systems management or security practices, 
+        <em>Availability/supported institution-wide</em> should be understood to mean that all researchers in
+            the institution can benefit from this, and/or all teams supporting the function within the institution
+            follow or support the practice; if only some have access, or only some teams follow a practice, 
+            <em>Availability/supported for parts of the institution</em>
+        is the appropriate response. For capabilities concerning understanding or alignment,
+            this can be understood to mean the existence of the understanding, or the level of alignment.
+        </p>        
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <p class="content" id="SOL"><b>Service Operating Level</b>: As organizations and services mature, support transitions
+         from ad hoc projects, to repeatable and defined services, and eventually to managed
+        activities that work to optimize the service operations and functionality. A common 
+        model for describing and structuring this activity is known as IT Service Management (ITSM),
+         and is characterized in this context by adopting a process approach towards management, 
+         focusing on researcher needs and IT services for researchers rather than IT systems, and 
+         stressing continual improvement.<sup>&nbsp;<a href="#ftnt5" id="ftnt_ref5">[5]</a></sup>
+        The Capabilities Model includes this dimension to let organizations assess the robustness,
+         resilience, and sustainability of the support for a given capability of Research Computing and Data.
+    </p>
+    <table class="content">
+        <thead>
+        <tr>
+            <th><p>Service Operating Level</p></th>
+            <th><p>Description for capabilities<br> of the nature of services</p></th>
+            <th><p>Description for capabilities<br>that are activities and/or practices</p></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><p><b>Strong support, awareness, &amp; commitment</b></p></td>
+            <td><p>The capability or service has a high level of operations and support 
+                (24x7 support), maintains a high level of customer response, and/or has 
+                sufficient resources for regular, significant new service development.</p>
+            </td>
+            <td><p>There is a high level of support and awareness of this practice,
+                 with a high-level of response to requests, and associated staff have
+                  sufficient resources and commitment/buy-in for regular, significant extensions of the practice.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>Basic sustained service/support &amp; awareness</b></p></td>
+            <td><p>The capability or service has good support for operations and some ongoing significant
+                 development or enhancement. Staff are able to respond to special customer demands for 
+                 extensions or enhancements to the capability or service.</p>
+            </td>
+            <td><p>There is good support and awareness of this practice and there is ongoing significant development or
+                 enhancement. Associated staff are able to respond to some special requests, or extensions of the practice.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>Minimal resources &amp; commitment</b></p></td>
+            <td><p>The capability or service only supports operations and absolutely necessary enhancements to
+                 keep the service operating. There is no significant development or enhancement. While the 
+                 capability or service is not at a significant risk of failure, any reductions in required 
+                 funding could reduce the level to <em>Very limited support and/or at risk</em>.</p>
+            </td>
+            <td><p>There is support or awareness of this practice at a minimum viable level.
+                 There is no significant investment in developing or growing the practice. 
+                 While support for the practice is not at a significant risk of failure, any
+                  reductions in required funding or leadership commitment could reduce the level
+                   to <em>Very limited support and/or at risk</em>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>Very limited support and/or at risk</b></p></td>
+            <td><p>The capability or service only supports basic operations, with no meaningful development or improvement.
+                 The capability or service is at significant risk of failure, generally due to insufficient resources to 
+                 anticipate and eliminate operational, security, or other failures.</p>
+            </td>
+            <td><p>There is very little support or awareness of this practice, and no meaningful
+                 development or improvement. The support/awareness is at significant risk, generally
+                  due to insufficient resources, but perhaps as well due to lack of commitment or buy-in.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>No existing service/support or awareness<a href="#ftnt7" id="ftnt_ref7">[7]</a></b></p></td>
+            <td><p>No capability or service support is in place and no work is under way and/or no resources
+                 are committed to support the capability or service.</p>
+            </td>
+            <td><p>No support is in place, and/or there is no awareness of this practice; no work is
+                 under way and/or no resources are committed to provide or develop this support/awareness.</p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p class="caption">Table 3 - Service Operating Level Descriptions</p>
+    <p class="content">While not all capabilities are easily understood as "services", the concept may be mapped
+         to "activity" or "practice", to translate the Service Operating Level to each activity or factor.</p>
+    <p class="content">Note that many organizations providing Research Computing and Data support lack the resources
+         to operate at the <em>Strong support, awareness, &amp; commitment level</em> for many of their capabilities.
+          It is not uncommon to support many capabilities at the <em></em>Minimal resources &amp; commitment</em>, or 
+          <em>Basic sustained service/support &amp; awareness</em> levels. </p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <p class="content" id="CommunityEngagement"><b>Community engagement and collaboration</b>: The Model assessment tool also asks
+         organizations to rate the level of Community engagement and collaboration, for each of the capabilities
+          for Research Computing and Data. This recognizes that research is often collaborative across institutions
+           (and even whole communities), and so the RCD teams supporting them should also be engaged outside your organization. 
+        Engagement and collaboration can range from participation in structured community forums to grant-funded regional 
+        projects, and should involve engagement with other institutions and/or communities to develop and share leading 
+        practices, get advice and training, etc. Examples of communities include the 
+        <a href="https://carcc.org/people-network/">CaRCC People Network</a>, 
+            <a href="https://www.xsede.org/community-engagement/campus-champions">Campus Champions</a>, 
+            and various open source projects related to RCD, as well as regional network collaborations like the         
+            <a href="https://www.greatplains.net/">The Great Plains Network</a>
+            and the <a href="https://www.ernrp.org/">Ecosystem for Research Networking</a>.<sup><a href="#ftnt6" id="ftnt_ref6">[6]</a></sup>
+    </p>
+    <table class="content">
+        <thead>
+        <tr>
+            <th><p>Engagement and collaboration Level</p></th>
+            <th><p>Description</p></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><p><b>Leading a community collaboration</b></p></td>
+            <td><p>Your institution is leading/coordinating collaboration and engagement among multiple institutions, 
+                and is a recognized leader. (You're going above and beyond!)</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>Supporting a community collaboration</b></p></td>
+            <td><p>One or more collaborations and/or engagements are ongoing, have support and momentum,
+                 and are likely to continue. Partnerships are well-established, have clearly defined goals
+                  and outcomes, and have an established model for sustainability. 
+                    (RCD teams are well connected to established communities and/or involved in formal collaborations). </p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>Engaging a community collaboration</b></p></td>
+            <td><p>An initial or early collaboration and engagement is underway to explore the issues, or to build relationships. 
+                A plan for collaboration is either in development or in place. Staff are 
+                    investing significant time and resources planning for this collaboration (or engaging with a new community), 
+                    partners have been identified, and are actively engaged.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>Exploring a community collaboration</b></p></td>
+            <td><p>There is interest in collaborating with others, and initial discussions may be underway.
+                 This involves active engagement and/or planning, exploratory discussions with potential partners,
+                  and represents more than simply reading articles, documents, or occasional meetings.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p><b>No engagement with community collaboration<sup><a href="#ftnt7" id="ftnt_ref7">[7]</a></sup></b></p>
+            </td>
+            <td><p>No collaboration is in place and no work is under way or resources committed to form or engage such a collaboration. 
+                    (Your team is inward focused). </p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p class="caption">Table 4 - Levels of Collaboration across multiple Institutions</p>
+    <p class="content"><em>Community engagement and collaboration</em> may be more easily understood by some roles/teams than others.
+         For certain activities, the technology or service itself may be part of a collaboration (directly sharing resources among 
+         collaborating partners). For others, the staff supporting the service may be part of a community of practice/expertise 
+         that develops or shares resources like documentation, training materials, etc. Even for activities that are very locally
+          or inwardly focused (e.g., aspects of data center operation), there can be collaboration on everything from the 
+          development and management of the data center, to defining the standards and best practices for staff who perform
+           key functions. <em>Community engagement and collaboration</em> is included as a factor in the model to recognize
+            the importance of working with peers, ensuring awareness of, and even active engagement in the development of 
+            community best practices. Few institutions have the capacity to be collaboration leaders across many capabilities.</p>
+    <p class="content">Impact on the Computed Coverage: This question has less weight in the computed coverage than the 
+        <em>Availability</em> and <em>Service operating level</em> questions. If you select 
+        <em>No engagement with community collaboration</em> or 
+        <em>Exploring a community collaboration</em>, the computed coverage for the associated capability will be slightly decreased. 
+        If you select <em>Engaging a community collaboration</em>, this will have a neutral impact on the computed coverage and if 
+        you select <em>Supporting</em> or <em>Leading a community collaboration</em>, 
+        the computed coverage for the associated capability will be slightly boosted in recognition of the significance of that effort.
+    </p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <p class="content" id="NotRelevant"><span class="topic">Not relevant or applicable</span>: For each capability, you have the option to mark it as 
+        <em>Not relevant or applicable</em>. This is intended for use only when support for a given capability makes no sense at your
+         institution. The capability is effectively removed from the model and will not contribute to the computed coverage 
+         values for the Topic and Facing. When this value is chosen, the other values for the answer form will disabled and 
+         grayed out to indicate this, although you can add <em>Work notes</em> to annotate your decision to mark this 
+        <em>Not relevant or applicable</em>. 
+    </p>
+    <p class="content">Note: This value should only be used in exceptional cases, and not simply when there
+         is little or no support because it has not been deemed important or strategic (e.g., due to resource constraints).</p>
+    <p class="content">As an example of where this may make sense is the <em>Domain support</em> topic for each facing:
+         If your institution does not have a Medical School, you can mark that as <em>Question not applicable</em>. </p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <p class="content" id="LocalPrio"><span class="topic">Local Priority</span>: As you complete the assessment
+         (or in a review session with your advisory groups) your team can optionally mark each capability
+          as a priority for your organization. This can be used, e.g., to mark items you want to address 
+          in your strategic planning. The range of priority values is from 1 to 99 (where 1 is your top priority).
+           Leave this empty or set it to &quot;0&quot; if this is not a priority.</p>
+    <p class="content">Note that this question (and any answers you fill in) are for your own use, and any 
+        <em>Local Priority</em> values have no impact on the calculated coverage. However, you can view the top 10
+         priorities you marked in the main Assessment page; the full list is available in a view linked from that page.</p>
+    <p class="content">A good practice is to mark as a priority only those capabilities that you can reasonably expect to 
+        devote meaningful resources to improving or expanding in the near term (e.g., in the next few years). </p>
+    <p class="content emphasis">If everything is a priority, nothing is a priority!</p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <p class="content"><a id="DomainSupport"></a><span class="topic">Domain support levels</span>: Each Facing includes the special topic 
+        Domain support. The questions in this topic allow you to assess the level of support across a range of 
+        different domains at your institution. Note that these are high-level categories, that Universities and
+         colleges vary in where a given field or discipline might be located, and that there are countless 
+         interdisciplinary units. The aim here is a high level of aggregation that roughly corresponds to 
+         domains with relatively similar functional needs. While each Facing includes this topic, for some 
+         Facings at some institutions there may be less distinction or variation in support across domains.</p>
+    <p class="content">The summary assessment page averages support levels for each domain across all five Facings.
+         The average Domain support will indicate <em>&ldquo;(WIP)&rdquo;</em> until the questions are answered in each Facing. 
+    </p>
+    <p class="content">Note that you can mark a domain as <em>Not relevant or applicable</em>, if that domain is not
+         at all represented at your institution. This value should only be used if there are no researchers in that domain
+        at your institution; it should not be used simply because the support is weak or there is a perception that 
+        researchers in that domain have little need for research computing and data resources.<sup><a href="#ftnt8" id="ftnt_ref8">[8]</a></sup>
+    </p>
+    <p class="content">Note also that users at institutions that have worked with earlier versions of the 
+        RCD Capabilities Model assessment tools may notice that the v2.0 support for assessing Domain 
+        support is quite different than in earlier versions. One aspect of the new support model is that
+         support for a given domain can be assigned a priority. </p>
+    <p class="content">Requesting an additional domain: If you would like to include an
+         assessment for a domain that is not represented in this list, please send your suggested addition to 
+            <a>capsmodel-help@carcc.org</a> for our review. </p>
+
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <h3>Footnotes</h3>
+    <p class="footnote" id="ftnt1"><sup>1</sup> "Research computing and data" (abbreviated as RCD) includes technology,
+        services, and people supporting the needs of researchers and research, and is intended as a broad, 
+        inclusive term covering computing, data, networking, security, and software. The National Science Foundation (NSF)
+         uses the term “cyberinfrastructure,” and others use "Research IT." 
+   </p>
+   <p class="footnote" id="ftnt2"><sup>2</sup> For more about the roles associated with these areas, see the initial draft 
+    of a "Research Computing and Data Professionals Job Elements and Career Guide", available at: 
+    <a href="https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf">
+        https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf</a>
+    </p>
+    <p class="footnote" id="ftnt3"><sup>3</sup>"CI Engineers" have different roles at different institutions, 
+        and some might (also) be in the Systems Facing roles.</p>
+    <p class="footnote" id="ftnt4"><sup>4</sup>When this value is chosen, the model will default to the 
+        corresponding values for the other questions in the form.</p>
+    <p class="footnote" id="ftnt5"><sup>5</sup>See also <a href="https://en.wikipedia.org/wiki/IT_service_management">
+        https://en.wikipedia.org/wiki/IT_service_management</a></p>
+    <p class="footnote" id="ftnt6"><sup>6</sup>(ERN, formerly the Eastern Regional Network)</p>
+    <p class="footnote" id="ftnt7"><sup>7</sup>The assessment tool will default to this value for a given aspect/factor, 
+        when <em>No availability or support</em> is chosen as the level for <em>Availability across institution</em>.
+    </p>
+    <p class="footnote" id="ftnt8"><sup>8</sup>Researchers in the Arts and Humanities and in the Social Sciences 
+        may have more modest requirements, but research computing and data resources are having a significant 
+        impact on scholarship. It has been noted that Social Sciences researchers use as much computing resources
+         today as Physical Sciences researchers used just a decade ago.</p>
+</section>
+
+{% endblock %}
