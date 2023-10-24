@@ -78,6 +78,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "nexus.context_processors.base_template",
+                "nexus.context_processors.motd_message",
             ],
         },
     },

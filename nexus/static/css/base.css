@@ -28,6 +28,20 @@
     --heatmap-quint-4: #bfdbc4;
     --heatmap-quint-5: #9be0ec;
 
+    /* Set up the main logo palette */
+    --logo-dark-purple: #861E90;
+    --logo-med-purple: #A7148E;
+    --logo-red-violet: #CE098D;
+    --logo-dk-blue: #4E84CE;
+    --logo-dk-blue-shadow: rgba(78, 132, 206, 0.3);
+    --logo-lt-blue: #99DEF9;
+    --nexus-light-text: #504D4D;
+    --nexus-dark-text: #000;
+    --nexus-dark-colored-text: #6453AF;
+    --nexus-white-text: #F5F5F5;
+    --nexus-disabled: #CCCBCB;
+    --nexus-filled-button:#861E90;
+    --nexus-filled-button-hover:#dd80e5;
 }
 
 * {
@@ -94,6 +108,40 @@ ul.errorlist {
     font-size: 14px;
     list-style: none;
     padding-left: 1em;
+}
+
+#motdPopup {
+    max-width:520px;
+    min-width:200px;
+    margin-top: 100px;
+    background-color: var(--logo-lt-blue);
+    border-color: var(--logo-dk-blue);
+    box-shadow: 0 3px 5px var(--logo-dk-blue-shadow);
+}
+#motdPopup form {
+    text-align: center;
+}
+#motdPopup form button {
+    padding: 0 12px;
+    min-height: 1.8em;
+    background-color: var(--logo-dk-blue-shadow);
+    color: var(--nexus-white-text);
+}
+#motdPopup form button:focus {
+    background-color: var(--logo-dk-blue);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+#motdPopup div#noshow {
+    margin-top: 15px;
+    color: var(--nexus-light-text);
+    font-style: italic;
+    font-size: 0.95em;
+}
+#motdPopup p {
+    margin: 0 0 10px 0;
+}
+#motdPopup p span.intro {
+    font-weight: bold;
 }
 
 
@@ -224,6 +272,14 @@ header>nav .logo {
     margin-left: 0;
 }
 
+header>nav .username {
+    text-align: right;
+    font-size: 0.8em;
+    font-weight: normal;
+    max-width: 14em;
+    margin:auto 1rem;
+}
+
 header>nav .logo img {
     vertical-align: middle;
 }
@@ -257,7 +313,7 @@ body>nav details ul {
 }
 
 .menu>li {
-    margin: 0 1rem;
+    margin: auto 1rem;
 }
 
 .menu>li button {
@@ -267,7 +323,8 @@ body>nav details ul {
     font-size: inherit;
     padding: 0;
     cursor: pointer;
-    color: darkred;
+    color: inherit;
+    font-weight: bold;
 }
 
 .menu>li ul li {
@@ -336,10 +393,17 @@ body>nav details ul {
     transform: rotate(-45deg);
 }
 
-/* On small screens e.g. mobile devices, collapse the navbar into a hamburger menu icon on the left-side. */
+/* On small screens e.g. mobile devices, collapse the navbar into a hamburger menu icon on the left-side. Hide the login id*/
 @media (max-width: 700px) {
     header>nav {
         flex-direction: row-reverse;
+    }
+
+    header>nav .username {
+        text-align: left;
+        font-size: 0.8em;
+        font-weight: normal;
+        max-width:none;
     }
 
     .menu-button-container {
