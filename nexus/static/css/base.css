@@ -332,6 +332,10 @@ body>nav details ul {
     font-weight: bold;
 }
 
+.menu>li button:hover, .menu>li button:focus  {
+    background: lightcyan;
+}
+
 .menu>li ul li {
     display: none;
 }
