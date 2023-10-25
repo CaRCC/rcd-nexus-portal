@@ -262,7 +262,7 @@ header>nav {
     background-color: white;
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     height: 95px;
-    padding: 1em;
+    padding: 1em 1em 1em 5px;
     color: rgb(71, 71, 73);
     font-size: 17px;
     border-bottom: 1px solid gray;
@@ -274,6 +274,7 @@ header>nav .logo {
 
 header>nav li {
     text-align: center;
+    text-transform:uppercase;
 }
 
 header>nav .username {
@@ -283,6 +284,7 @@ header>nav .username {
     font-weight: bold;
     max-width: 14em;
     margin:auto 1rem;
+    text-transform: none;
 }
 
 header>nav .logo img {
@@ -319,6 +321,7 @@ body>nav details ul {
 
 .menu>li {
     margin: auto 1rem;
+    text-transform: uppercase;
 }
 
 .menu>li button {
@@ -330,6 +333,7 @@ body>nav details ul {
     cursor: pointer;
     color: inherit;
     font-weight: bold;
+    text-transform: uppercase;
 }
 
 .menu>li button:hover, .menu>li button:focus  {
