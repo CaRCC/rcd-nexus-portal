@@ -645,3 +645,10 @@ footer a:focus {
     color: inherit;
     background-color: var(--info);
 }
+
+[inert] {
+    opacity: .3;
+    pointer-events: none;
+    cursor: default;
+    user-select: none;
+  }

@@ -27,11 +27,12 @@
             <li class="username">Logged in as: {{ request.user.name }}<br>({{ request.user.username }})</li>
             {% endif %}
         </ul>
-    {% if motd %}
+    </nav>
+{% if motd %}
     <dialog id="motdPopup">
         <p><span class="intro">Please note</span>: <br><br><span class="message">{{motd}}</span></p>
         <form method="dialog">
-            <button onclick="dismissMOTD()">OK</button>
+            <button id="motdOKBtn" onclick="dismissMOTD(event)">OK</button>
             <div id="noshow">
                 <input type="checkbox" id="motd_noshow" value="Bike">
                 <label for="motd_noshow">Don't show this again (today).</label>
@@ -40,16 +41,19 @@
     </dialog>
     
     <script>
-        // var RESET_MOTD_COOKIE = false;  // for debugging only
+        // var RESET_MOTD_COOKIE = true;  // for debugging only
         var SHOWN ="1";
         var HIDDEN = "0";
         var MOTD_COOKIE = "MOTDSH";
         var COOKIE_LIFE = 1*24*60*60*1000;  // Save state for a day
         const motdNoShowCB = document.getElementById("motd_noshow");
         const motdDialog = document.getElementById("motdPopup");
+        var systemDown = false;
 
-        function dismissMOTD() {
-            if(motdNoShowCB.checked == true) {
+        function dismissMOTD(evt) {
+            if(systemDown) {    // don't dismiss the dialog
+                evt.preventDefault();
+            } else if(motdNoShowCB.checked == true) {
                 setMOTDCookie(HIDDEN);
             }
         }
@@ -79,12 +83,37 @@
             return SHOWN;   // If can't find the cookie, show MOTD
         }
 
+        function setSystemDown() {
+            systemDown = true;
+            let mainEl = document.getElementsByTagName("main")[0];
+            mainEl.inert = true;
+            let navEls = document.getElementsByTagName("nav");
+            for( nav of navEls) {
+                nav.inert = true;
+            }
+            // Modify the dialog to hide the inputs and button
+            let noShowEl = document.getElementById("noshow");
+            noShowEl.style.display = "none";
+            let motdOKBtnEl = document.getElementById("motdOKBtn");
+            motdOKBtnEl.style.display = "none";
+            let motdPopupEl = document.getElementById("motdPopup");
+            motdPopupEl.style.width = "60%";
+            motdPopupEl.style.height = "30%";
+            let msgEl = motdPopupEl.getElementsByTagName("p")[0];
+            msgEl.style.textAlign = "center";
+        }
+
         window.addEventListener('load', (event) => {
-            //if(RESET_MOTD_COOKIE)
-            //    setMOTDCookie(SHOWN);
-            if(checkMOTDCookie())
+            if( "{{motd}}".startsWith("System Down:")) {
+                setMOTDCookie(SHOWN);
+                setSystemDown();
                 motdDialog.showModal();
+            } else {
+//              if(RESET_MOTD_COOKIE) setMOTDCookie(SHOWN);
+                if(checkMOTDCookie()) {
+                    motdDialog.showModal();
+                }
+            }
         });
     </script>
-    {% endif %}
-</nav>
+{% endif %}
