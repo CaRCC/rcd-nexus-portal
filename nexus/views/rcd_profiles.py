@@ -31,6 +31,7 @@ roles = RCDProfileMember.Role
 view_roles = {roles.VIEWER, roles.CONTRIBUTOR, roles.MANAGER, roles.SUBMITTER}
 edit_roles = {roles.CONTRIBUTOR, roles.MANAGER, roles.SUBMITTER}
 manage_roles = {roles.MANAGER, roles.SUBMITTER}
+submit_roles = {roles.SUBMITTER}
 
 
 def index(request):
@@ -83,19 +84,29 @@ navtree.CONTRIBUTORS = "Manage Contributors"
 navtree.CAPABILITIES = "RCD Capabilities Model Assessment"
 
 
-def access_profile(request, pk, *roles, allow_archive=False):
-    """
-    Perform authentication and authorization checks and return the requested RCDProfile if permitted.
-    """
+def access_profile(request, pk, action="view", allow_archive=False):
     if not request.user.is_authenticated:
         raise PermissionDenied
+    
+    profiles = RCDProfile.objects if not allow_archive else RCDProfile.objects_archive
+    profile = profiles.get(pk=pk)
 
-    if (
-        not request.user.is_staff
-        and not request.user.rcd_profile_memberships.filter(
-            profile_id=pk, role__in=roles
-        ).exists()
-    ):
+    if request.user.is_staff:
+        return profile
+
+    match action:
+        case "view":
+            allowed = profile.users.filter(pk=request.user.pk).exists() or (profile.open_access and profile.institution.users.filter(pk=request.user.pk).exists())
+        case "edit":
+            allowed = profile.memberships.filter(user=request.user, role__in=edit_roles).exists()
+        case "manage":
+            allowed = profile.memberships.filter(user=request.user, role__in=manage_roles).exists()
+        case "submit":
+            allowed = profile.memberships.filter(user=request.user, role__in=submit_roles).exists()
+        case _:
+            messages.error(request, f"Invalid action '{action}'")
+
+    if not allowed:
         join_note = (
             f"<a href='{reverse('rcdprofile:request-access', kwargs={'pk': pk})}'>Request access</a>"
             if RCDProfile.objects.filter_can_view(request.user).filter(pk=pk).exists()
@@ -103,16 +114,13 @@ def access_profile(request, pk, *roles, allow_archive=False):
         )
         raise PermissionDenied(
             mark_safe(
-                f"""You are not permitted to access this RCD Profile.
+                f"""You are not permitted to {action} this RCD Profile.
                 {join_note}
-                <a href='{reverse('rcdprofile:detail', kwargs={'pk': pk})}'>Return</a>
                 """
             )
         )
-
-    manager = RCDProfile.objects if not allow_archive else RCDProfile.objects_archive
-
-    return manager.get(pk=pk)
+    
+    return profile
 
 
 def rcd_profile_default(request):
@@ -131,7 +139,7 @@ def rcd_profile_default(request):
         membership = request.user.rcd_profile_memberships.filter(
             profile__year=settings.RCD_DEFAULT_YEAR, role__in=roles
         ).first()
-    if membership is None:
+    if membership is None or membership.profile.archived:
         # Otherwise, redirect to the profile list, which includes a "Create new profile" button
         return redirect("rcdprofile:list")
 
@@ -201,7 +209,7 @@ def rcd_profile_create(request, institution_pk):
 
 
 def rcd_profile_edit(request, pk):
-    profile = access_profile(request, pk, *edit_roles)
+    profile = access_profile(request, pk, "edit")
 
     form = RCDProfileForm(request.POST or None, instance=profile)
     form.customize_choices(request, profile.institution)
@@ -226,7 +234,7 @@ def rcd_profile_edit(request, pk):
 def rcd_profile_import(request):
     if request.method == "POST":
         profile = access_profile(
-            request, request.POST.get("imported-profile"), *edit_roles
+            request, request.POST.get("imported-profile"), "edit"
         )
         new_profile = RCDProfile.objects.copy(profile, request.user)
         return redirect("rcdprofile:detail", new_profile.pk)
@@ -235,7 +243,7 @@ def rcd_profile_import(request):
 
 
 def rcd_profile_detail(request, pk):
-    profile = access_profile(request, pk, *roles, allow_archive=True)
+    profile = access_profile(request, pk, "view", allow_archive=True)
 
     if profile.membership_requests.filter(requested_by=request.user).exists():
         request.user.has_requested_access = True
@@ -259,7 +267,7 @@ def rcd_profile_detail(request, pk):
 
 
 def rcd_profile_archive(request, pk):
-    profile = access_profile(request, pk, roles.SUBMITTER)
+    profile = access_profile(request, pk, "submit")
 
     profile.archived = True
     profile.save(update_fields=["archived"])
@@ -296,7 +304,7 @@ def rcd_profile_members(request, pk):
     """
     Profile Managers can edit roles, approve requests, and create invite codes.
     """
-    profile = access_profile(request, pk, *manage_roles)
+    profile = access_profile(request, pk, "manage")
 
     if request.method == "POST":
         messages.success(request, "Updated member roles.")
@@ -304,8 +312,8 @@ def rcd_profile_members(request, pk):
         for key, value in request.POST.items():
             if key.startswith("role "):
                 _, user_id = key.split()
-                if user_id == str(profile.created_by_id):
-                    messages.error(request, "Cannot modify the creator's role.")
+                if user_id == request.user.pk:
+                    messages.error(request, "You cannot change your own role.")
                 elif value == "__delete__":
                     removal_count += 1
                     profile.memberships.filter(user_id=user_id).delete()
@@ -327,7 +335,7 @@ def rcd_profile_members(request, pk):
     return render(request, "rcdprofile/contributors.html", context)
 
 def rcd_profile_invite(request, pk):
-    profile = access_profile(request, pk, *manage_roles)
+    profile = access_profile(request, pk, "manage")
 
     if request.method == "POST":
         invite_form = RCDProfileMemberInviteForm(request.POST)
@@ -352,45 +360,6 @@ def rcd_profile_invite(request, pk):
             return redirect("rcdprofile:members", pk)
 
 
-def rcd_profile_change_role(request, pk, user_id, role):
-    profile = access_profile(request, pk, *manage_roles)
-
-    is_valid_user = user_id not in (profile.created_by_id, request.user.pk)
-    if role == roles.SUBMITTER and not request.user.rcd_profile_memberships.filter(
-        profile=profile, role=roles.SUBMITTER
-    ):
-        is_valid_user = False
-
-    if role not in roles:
-        return HttpResponseBadRequest(f"Unknown role '{role}'")
-
-    if is_valid_user:
-        status = 200
-        if request.method == "PUT":
-            membership, _ = profile.memberships.get_or_create(
-                user_id=user_id, role=role
-            )
-        elif request.method == "DELETE":
-            profile.memberships.filter(user_id=user_id, role=role).delete()
-        else:
-            return HttpResponseBadRequest("PUT or DELETE expected")
-    else:
-        status = 403
-
-    return render(
-        request,
-        "rcdprofile/fragments/profile_role_checkbox.html",
-        {
-            "member_id": user_id,
-            "member_roles": profile.memberships.filter(user_id=user_id).values_list(
-                "role", flat=True
-            ),
-            "role": role,
-        },
-        status=status,
-    )
-
-
 def rcd_profile_request_membership(http_request, pk):
     if not RCDProfile.objects.filter_can_view(http_request.user).filter(pk=pk).exists():
         raise PermissionDenied
@@ -405,7 +374,7 @@ def rcd_profile_handle_membership_request(http_request, pk):
     """
     Approves or denies a profile membership request according to the HTTP method (PUT = approve, DELETE = deny).
     """
-    profile = access_profile(http_request, pk, *manage_roles)
+    profile = access_profile(http_request, pk, "manage")
 
     if http_request.method == "POST":
         action, user_id = http_request.POST.get("action").split()
