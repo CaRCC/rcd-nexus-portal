@@ -5,3 +5,4 @@ from .rcd_profiles import *
 from .users import *
 from .capmodel import *
 from .facings import *
+from .motd import *

@@ -8,3 +8,8 @@ class User(AbstractUser):
             return self.username
     
         return f"{self.first_name} {self.last_name} ({self.username})"
+
+    def name(self):
+        if not self.first_name:
+            return ""
+        return f"{self.first_name} {self.last_name}"

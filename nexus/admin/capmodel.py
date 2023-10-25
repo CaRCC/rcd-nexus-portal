@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib import admin
+from django.core.mail import send_mail
 from django.utils import timezone
 
 from nexus.models import (
@@ -43,8 +45,27 @@ class AssessmentAdmin(admin.ModelAdmin):
     actions = ["approve"]
 
     def approve(self, request, queryset):
-        queryset.update(
-            review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED,
-            review_user=request.user,
-            review_time=timezone.now(),
-        )
+#        queryset.update(
+#            review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED,
+#            review_user=request.user,
+#            review_time=timezone.now(),
+#        )
+        for assmnt in queryset:
+            submitter = assmnt.update_user
+            profile = assmnt.profile
+            assmnt.review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED
+            assmnt.review_user=request.user
+            assmnt.review_time=timezone.now()
+            assmnt.save()
+            if(submitter):
+                send_mail(
+                    subject=f"RCD Nexus Capabilities Model Assessment Approved",
+                    message=f"""Your recently submitted assessment for Profile: {profile} has been approved.
+
+Your assessment data will be added to the community dataset, benefitting the entire community.
+
+On behalf of the CaRCC Capabilities Model working group - Thanks!
+""",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[submitter.email],
+                )

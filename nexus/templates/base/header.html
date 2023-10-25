@@ -8,23 +8,112 @@
     <label class='menu-button-container' for="menu-toggle">
         <div class='menu-button'></div>
     </label>
-    <ul class="menu">
-        <li><a href="/helpdocs">Help</a></li>
-        <!--<li><a href="{ url 'nexus:explore' }">Explore</a></li>-->
-        {% if not request.user.is_authenticated %}
-        <li><a href="{% url 'oidc_authentication_init' %}">Login</a></li>
-        {% else %}
-        <li><a href="{% url 'rcdprofile:list' %}">Contribute</a></li>
-        {% if request.user.is_staff %}
-        <li><a href="{% url 'admin:index' %}">Admin</a></li>
-        {% endif %}
-        <li><a href="">{{ request.user }}</a></li>
-        <li>
-            <form action="{% url 'oidc_logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Logout</button>
-            </form>
-        </li>
-        {% endif %}
-    </ul>
-</nav>
+        <ul class="menu">
+            <li><a href="/helpdocs">Help</a></li>
+            <!--<li><a href="{ url 'nexus:explore' }">Explore</a></li>-->
+            {% if not request.user.is_authenticated %}
+            <li><a href="{% url 'oidc_authentication_init' %}">Login</a></li>
+            {% else %}
+            <li><a href="{% url 'rcdprofile:list' %}">My RCD Profiles</a></li>
+            {% if request.user.is_staff %}
+            <li><a href="{% url 'admin:index' %}">Admin</a></li>
+            {% endif %}
+            <li>
+                <form action="{% url 'oidc_logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            </li>
+            <li class="username">Logged in as: {{ request.user.name }}<br>({{ request.user.username }})</li>
+            {% endif %}
+        </ul>
+    </nav>
+{% if motd %}
+    <dialog id="motdPopup">
+        <p><span class="intro">Please note</span>: <br><br><span class="message">{{motd}}</span></p>
+        <form method="dialog">
+            <button id="motdOKBtn" onclick="dismissMOTD(event)">OK</button>
+            <div id="noshow">
+                <input type="checkbox" id="motd_noshow" value="Bike">
+                <label for="motd_noshow">Don't show this again (today).</label>
+            </div>
+        </form>
+    </dialog>
+    
+    <script>
+        // var RESET_MOTD_COOKIE = true;  // for debugging only
+        var SHOWN ="1";
+        var HIDDEN = "0";
+        var MOTD_COOKIE = "MOTDSH";
+        var COOKIE_LIFE = 1*24*60*60*1000;  // Save state for a day
+        const motdNoShowCB = document.getElementById("motd_noshow");
+        const motdDialog = document.getElementById("motdPopup");
+        var systemDown = false;
+
+        function dismissMOTD(evt) {
+            if(systemDown) {    // don't dismiss the dialog
+                evt.preventDefault();
+            } else if(motdNoShowCB.checked == true) {
+                setMOTDCookie(HIDDEN);
+            }
+        }
+
+        function setMOTDCookie(shown) {
+            const d = new Date();
+            d.setTime(d.getTime() + COOKIE_LIFE);
+            let expires = "expires="+ d.toUTCString();
+            let cname = MOTD_COOKIE;
+            document.cookie = cname + "=" + shown + ";" + expires + ";path=/";
+        }
+
+        function checkMOTDCookie() {
+            let name = MOTD_COOKIE;
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i <ca.length; i++) {
+                let c = ca[i];
+                let cpair = c.split('=');
+                if (cpair[0].trim() == name) {
+                    var shown = cpair[1].trim();
+                    // console.log("Cookie found for MOTD; value: "+shown);
+                    return shown != HIDDEN;
+                }
+            }
+            // console.log("No Cookie found for MOTD...");
+            return SHOWN;   // If can't find the cookie, show MOTD
+        }
+
+        function setSystemDown() {
+            systemDown = true;
+            let mainEl = document.getElementsByTagName("main")[0];
+            mainEl.inert = true;
+            let navEls = document.getElementsByTagName("nav");
+            for( nav of navEls) {
+                nav.inert = true;
+            }
+            // Modify the dialog to hide the inputs and button
+            let noShowEl = document.getElementById("noshow");
+            noShowEl.style.display = "none";
+            let motdOKBtnEl = document.getElementById("motdOKBtn");
+            motdOKBtnEl.style.display = "none";
+            let motdPopupEl = document.getElementById("motdPopup");
+            motdPopupEl.style.width = "60%";
+            motdPopupEl.style.height = "30%";
+            let msgEl = motdPopupEl.getElementsByTagName("p")[0];
+            msgEl.style.textAlign = "center";
+        }
+
+        window.addEventListener('load', (event) => {
+            if( "{{motd}}".startsWith("System Down:")) {
+                setMOTDCookie(SHOWN);
+                setSystemDown();
+                motdDialog.showModal();
+            } else {
+//              if(RESET_MOTD_COOKIE) setMOTDCookie(SHOWN);
+                if(checkMOTDCookie()) {
+                    motdDialog.showModal();
+                }
+            }
+        });
+    </script>
+{% endif %}

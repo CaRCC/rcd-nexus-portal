@@ -181,6 +181,12 @@ def rcd_profile_create(request, institution_pk):
                 institution=institution, created_by=request.user, **form.cleaned_data
             )
             messages.success(request, f"Created RCD profile for {profile}")
+            send_mail(
+                subject=f"RCD Nexus Profile Created for {profile}",
+                message=f"A new RCD Profile: {profile} was just created for Institution: {institution}, by creator: {request.user}.",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.SUPPORT_EMAIL],
+            )
             return redirect("rcdprofile:detail", profile.pk)
 
     context = {

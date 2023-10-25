@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -50,7 +51,13 @@ def assessment(request, profile_id):
                     request,
                     f"Your RCD Capabilities Assessment for {profile} has been submitted for final review.",
                 )
-                return HttpResponseRedirect("")
+                send_mail(
+                    subject=f"RCD Nexus Assessment Submitted for {profile}",
+                    message=f"An assessment for RCD Profile: {profile} was just submitted from Institution: {profile.institution}, by: {request.user}.",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.CURATOR_EMAIL],
+                )
+                return redirect("capmodel:assessment", profile_id)
     else:
         submit_form = None
 
@@ -127,6 +134,8 @@ def assessment_unsubmit(request, profile_id):
 
     profile = access_profile(request, profile_id, roles.SUBMITTER)
 
+    assessment = profile.capabilities_assessment
+
     if assessment.review_status != CapabilitiesAssessment.ReviewStatusChoices.PENDING:
         messages.error(
             request,
@@ -134,7 +143,6 @@ def assessment_unsubmit(request, profile_id):
         )
         return redirect("capmodel:assessment", profile_id)
 
-    assessment = profile.capabilities_assessment
     assessment.review_status = CapabilitiesAssessment.ReviewStatusChoices.NOT_SUBMITTED
     assessment.update_time = timezone.now()
     assessment.update_user = request.user
@@ -143,6 +151,13 @@ def assessment_unsubmit(request, profile_id):
         request,
         f"Your RCD Capabilities Assessment for {profile} has been unsubmitted.",
     )
+    send_mail(
+        subject=f"RCD Nexus Assessment Un-Submitted for {profile}",
+        message=f"An assessment for RCD Profile: {profile} was just unsubmitted (withdrawn) from Institution: {profile.institution}, by: {request.user}.",
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[settings.CURATOR_EMAIL],
+    )
+
     return redirect("capmodel:assessment", profile_id)
 
 

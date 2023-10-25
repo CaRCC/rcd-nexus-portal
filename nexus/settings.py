@@ -78,6 +78,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "nexus.context_processors.base_template",
+                "nexus.context_processors.motd_message",
             ],
         },
     },
@@ -169,6 +170,8 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 LOGOUT_REDIRECT_URL = "/"
 
 DEFAULT_FROM_EMAIL = "admin@portal.rcd-nexus.org"
+SUPPORT_EMAIL = "capsmodel-help@carcc.org"
+CURATOR_EMAIL = "capsmodel-owner@carcc.org"
 
 # These options should be set in production.py
 OIDC_OP_AUTHORIZATION_ENDPOINT = "https://cilogon.org/authorize"
