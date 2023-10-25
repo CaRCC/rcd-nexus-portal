@@ -139,9 +139,7 @@
                 <p class="title">Role</p>
                 {% for membership in memberships %}
                     <p class="entry {% cycle 'odd-field' 'even-field' as fieldcycle %}">{{membership.user}}</p>
-                    <p class="entry {% cycle 'odd-field' 'even-field' as fieldcycle %}">{% if membership.user_id == profile.created_by_id %}
-                        <span class="creator">Creator</span>
-                        {%else%}
+                    <p class="entry {% cycle 'odd-field' 'even-field' as fieldcycle %}">
                         <select name="role {{membership.user_id}}">
                             {% for value, display in role_choices %}
                             <option value="{{value}}" {% if membership.role == value %}selected{%endif%}>{{display}}
@@ -149,7 +147,6 @@
                             {% endfor %}
                             <option value="__delete__">--remove--</option>
                         </select>
-                        {%endif%}
                     </p>
                 {% endfor %}
                 {% csrf_token %}

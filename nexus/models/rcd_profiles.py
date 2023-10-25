@@ -53,8 +53,10 @@ class RCDProfile(models.Model):
 
         def filter_can_view(self, user):
             return self.filter(
-                models.Q(institution__in=user.institutions.all())
-                | models.Q(memberships__user=user)
+                models.Q(memberships__user=user) | (
+                    models.Q(institution__in=user.institutions.all())
+                    & models.Q(open_access=True)
+                )
             ).distinct()
 
         def filter_can_edit(self, user):
@@ -203,6 +205,12 @@ class RCDProfile(models.Model):
         settings.AUTH_USER_MODEL,
         through="RCDProfileMember",
         related_name="rcd_profiles",
+    )
+
+    open_access = models.BooleanField(
+        default=True,
+        blank=True,
+        help_text="Open access profiles are visible to all users belonging to its primary institution (recommended).",
     )
 
     archived = models.BooleanField(

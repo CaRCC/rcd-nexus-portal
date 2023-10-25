@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 def assessment(request, profile_id):
-    profile = access_profile(request, profile_id, *view_roles)
+    profile = access_profile(request, profile_id, "view")
 
     try:
         assessment = profile.capabilities_assessment
@@ -102,8 +102,8 @@ def assessment(request, profile_id):
     }
     domain_support_averages = assessment.answers.filter(question__topic__slug="domain-support").annotate_coverage().values("question__slug").annotate(avg_coverage=Avg("coverage"), count=Count("coverage"))
 
-    # only show domain coverage if all 5 facing questions have been answered for that domain
-    domains = {domain_lookup[d["question__slug"]]: format(d["avg_coverage"], ".1%" if d["avg_coverage"]<1.0 else ".0%") if d["count"] == 5 else None for d in domain_support_averages}
+    # only show domain coverage if all facing questions have been answered or marked N/A for that domain
+    domains = {domain_lookup[d["question__slug"]]: format(d["avg_coverage"], ".1%" if d["avg_coverage"]<1.0 else ".0%") if d["count"] == assessment.answers.filter(question__slug=d["question__slug"], not_applicable=False).count() else None for d in domain_support_averages}
 
 
     total_questions = assessment.answers.count()
@@ -132,7 +132,7 @@ def assessment_unsubmit(request, profile_id):
     if request.method != "POST":
         return HttpResponseBadRequest("Invalid method.")
 
-    profile = access_profile(request, profile_id, roles.SUBMITTER)
+    profile = access_profile(request, profile_id, "submit")
 
     assessment = profile.capabilities_assessment
 
@@ -161,40 +161,8 @@ def assessment_unsubmit(request, profile_id):
     return redirect("capmodel:assessment", profile_id)
 
 
-# def question_list(request, profile_id):
-#     profile = access_profile(request, profile_id, *roles)
-#     assessment = profile.capabilities_assessment
-
-#     filters_raw = request.GET.get("filters")
-#     answers = assessment.answers.all()
-#     if filters_raw:
-#         filters = dict()
-#         for f in filters_raw.split(","):
-#             k, v = f.split(":")
-#             filters[k] = v
-#         questions = CapabilitiesQuestion.objects.filter(**filters)
-#         answers = answers.filter(question__in=questions)
-
-#     answers = answers.annotate_coverage().order_by("-coverage")
-
-#     for answer in answers:
-#         answer.html_display = (
-#             html_highlight(str(answer.question), answer.coverage)
-#             if answer.coverage != None
-#             else mark_safe(f"<b>{answer.question}</b>")
-#         )
-#         session_language = "en"  # TODO get session language
-#         answer.tooltip = f"{answer.question.contents.get(language=session_language).text}\n\nCurrent coverage: {answer.coverage * 100 if answer.coverage else 0:.2f}%"
-
-#     return render(
-#         request,
-#         "capmodel/fragments/question_list.html",
-#         {"answers": answers, "assessment": assessment},
-#     )
-
-
 def topic(request, profile_id, facing, topic):
-    profile = access_profile(request, profile_id, *view_roles)
+    profile = access_profile(request, profile_id, "view")
     assessment = profile.capabilities_assessment
 
     facing = Facing.objects.get(slug=facing)
@@ -252,7 +220,7 @@ def topic(request, profile_id, facing, topic):
 
 def answer(request, profile_id, question_pk):
 #def answer(request, profile_id, facing_slug, topic_slug, question_slug):
-    profile = access_profile(request, profile_id, *view_roles)
+    profile = access_profile(request, profile_id, "view")
     answer = CapabilitiesAnswer.objects.annotate_coverage().get(
         assessment=profile.capabilities_assessment, question_id=question_pk
         #assessment=profile.capabilities_assessment, question__slug=question_slug, question__topic__slug=topic_slug, question__topic__facing__slug=facing_slug
@@ -294,7 +262,6 @@ def answer(request, profile_id, question_pk):
     session_language = "en"  # TODO get session language
     question = answer.question.contents.get(language=session_language)
     question.slug = answer.question.slug
-    #question.qid = answer.question.legacy.qid if hasattr(answer.question, "legacy") else None
 
     match answer.state:
         case CapabilitiesAnswer.State.ANSWERED:
@@ -379,7 +346,7 @@ def legacy_benchmark_report(request, profile_id):
 
 
 def priorities(request, profile_id):
-    profile = access_profile(request, profile_id, *view_roles)
+    profile = access_profile(request, profile_id, "view")
 
     assessment = profile.capabilities_assessment
 

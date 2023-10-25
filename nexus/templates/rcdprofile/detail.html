@@ -4,34 +4,22 @@
 {% block main %}
 <h1>Profile: {{profile}}</h1>
 <div>
-  {% if can_edit %}
-      <section>
-        <h2>RCD Capabilities Model Assessment</h2>
-        {% if profile.capabilities_assessment %}
-        {% if not profile.capabilities_assessment.is_frozen %}
-        <p>Your RCD Capabilities Model Assessment has not been submitted yet.</p>
-        <p>Click the button below to continue working on the assessment.</p>
-        <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Continue Working</a>
-        {% else %}
-        <p>Your RCD Capabilities Model Assessment has been submitted.</p>
-        <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
-        {% endif %}
-        {% else %}
-        <p>You have not started a RCD Capabilities Model Assessment.</p>
-        <a style="text-align:center" class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Begin</a>
-        {% endif %}
-      </section>
-  {% else %}
-      <section>
-        <h2>Limited access</h2>
-        <p>You are not currently listed as a contributor for this profile.</p>
-        {% if request.user.has_requested_access %}
-        <p>Your access request is being processed.</p>
-        {% else %}
-        <p style="text-align: center; font-weight: bold;">{{ join_note }}</p>
-        {% endif %}
-      </section>
-  {% endif %}
+    <section>
+      <h2>RCD Capabilities Model Assessment</h2>
+      {% if profile.capabilities_assessment %}
+      {% if not profile.capabilities_assessment.is_frozen %}
+      <p>Your RCD Capabilities Model Assessment has not been submitted yet.</p>
+      <p>Click the button below to continue working on the assessment.</p>
+      <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Continue Working</a>
+      {% else %}
+      <p>Your RCD Capabilities Model Assessment has been submitted.</p>
+      <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+      {% endif %}
+      {% else %}
+      <p>You have not started a RCD Capabilities Model Assessment.</p>
+      <a style="text-align:center" class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Begin</a>
+      {% endif %}
+    </section>
 
   {% if can_manage %}
     <section>
