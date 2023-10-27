@@ -4,7 +4,7 @@
         overflow: visible;
     }
 
-    header {
+    header, body>nav {
         display: none;
     }
 
@@ -19,7 +19,7 @@
         padding: 0;
     }
 
-    main section.helpdocs {
+    main section.helpdocs, main section.priorities {
         width: 100%;
         max-width: 100%;
         padding: 0;
@@ -31,6 +31,7 @@
 
     main {
         max-width: 100%;
+        margin-bottom: 2em;
     }
 
     main section {
