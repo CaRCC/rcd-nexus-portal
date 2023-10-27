@@ -61,7 +61,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "nexus.middleware.htmx",
 ]
 
 ROOT_URLCONF = "nexus.routes"
@@ -170,6 +169,7 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 LOGOUT_REDIRECT_URL = "/"
 
 DEFAULT_FROM_EMAIL = "admin@portal.rcd-nexus.org"
+DEBUG_EMAILS = ["p.fischer@utah.edu"]
 SUPPORT_EMAIL = "capsmodel-help@carcc.org"
 CURATOR_EMAIL = "capsmodel-owner@carcc.org"
 

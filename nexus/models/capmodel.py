@@ -319,7 +319,6 @@ class CapabilitiesAnswer(models.Model):
                 result = self.aggregate(
                     **CapabilitiesAnswer.QuerySet.scoring[scoring_method]
                 )
-                print(result)
                 if result["samples"] < min_samples:
                     for key in result:
                         if key != "samples":
