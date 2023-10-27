@@ -20,6 +20,10 @@ from nexus.models.facings import Facing
 
 logger = logging.getLogger(__name__)
 
+class aggDomainInfo():
+    def __init__(self, coverage_pct, coverage_color):
+        self.pct = coverage_pct
+        self.color = coverage_color
 
 
 def assessment(request, profile_id):
@@ -65,6 +69,7 @@ def assessment(request, profile_id):
 
     session_language = "en"  # TODO get session language
 
+    nFacings = len(categories.keys())
     for facing, topics in categories.items():
         facing.content = facing.contents.get(language=session_language)
         for topic, answers in topics.items():
@@ -100,11 +105,31 @@ def assessment(request, profile_id):
         "engineering": "Engineering",
         "med-school": "Medical School", 
     }
-    domain_support_averages = assessment.answers.filter(question__topic__slug="domain-support").annotate_coverage().values("question__slug").annotate(avg_coverage=Avg("coverage"), count=Count("coverage"))
 
-    # only show domain coverage if all facing questions have been answered or marked N/A for that domain
-    domains = {domain_lookup[d["question__slug"]]: format(d["avg_coverage"], ".1%" if d["avg_coverage"]<1.0 else ".0%") if d["count"] and d["count"] == assessment.answers.filter(question__slug=d["question__slug"], not_applicable=False).count() else None for d in domain_support_averages}
-
+    domains = {}
+    for d in domain_lookup.keys():
+        domaincovs = assessment.answers.filter(question__slug=d, not_applicable=False)
+        ndomaincovs = domaincovs.count() - domaincovs.filter_unanswered().count()
+        nadomains = assessment.answers.filter(question__slug=d, not_applicable=True).count()
+        coverage_color = None                   # default
+        if nadomains == nFacings:               # All Facings marked the domain N/A
+            coverage_pct = "N/A"
+        elif ndomaincovs == 0:                  # None of the applicable domains are answered
+            coverage_pct = "-"
+        elif ndomaincovs != nFacings-nadomains: # Some applicable domains are unanswered
+            coverage_pct = mark_safe("<span class=\"wip\">(WIP: "+str(ndomaincovs+nadomains)
+                                                +" of "+str(nFacings)+")</span>")
+        else:                                   # All applicable domains are answered
+            agg = domaincovs.aggregate_score()
+            avgCoverage = agg["average"]
+            if avgCoverage == None:
+                logger.error("Got unexpected None as average of Domains for Profile: "+ str(profile_id))
+                coverage_pct = "-"
+            else:
+                covstring = format(avgCoverage, ".1%" if avgCoverage<1.0 else ".0%")
+                coverage_pct = mark_safe(f"{covstring}")
+                coverage_color = compute_answer_color(avgCoverage)
+        domains[domain_lookup[d]] = aggDomainInfo(coverage_pct,coverage_color)
 
     total_questions = assessment.answers.count()
     completed_questions = total_questions - assessment.answers.filter_unanswered().count()
