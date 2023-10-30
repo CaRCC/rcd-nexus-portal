@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block main %}
-<h1>Not found</h1>
-{{ exception }}
+<h1><br>Oops - we cannot find that page!</h1>
+<h3>Perhaps you should go back to <a href="{% url 'index' %}">the portal home</a> and try again...</h3>
+<p style="display: none;">{{ exception }}</p>
 {% endblock %}

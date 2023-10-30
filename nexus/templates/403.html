@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block main %}
-<h1>Forbidden</h1>
-{{ exception }}
+<h1>Sorry - You do not have access to this page!</h1>
+<h3>{{ exception }}</h3>
+<h4>Depending on what you were trying to access, you may have to contact your institutional manager to get rights.</h4> 
+<h4>If you think this is an error in the portal system, please send a note to 
+    <a href="mailto:capsmodel-help@carcc.org?subject=Question or problem with access error on the Portal">capsmodel-help@carcc.org</a></h4>
 {% endblock %}
