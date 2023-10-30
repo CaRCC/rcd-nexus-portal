@@ -94,6 +94,12 @@ def assessment(request, profile_id):
                     answers.coverage_pct = "-"
                     answers.coverage_color = None
 
+    # compute facing coverages
+    facing_coverages = dict()
+    for facing, answers in assessment.answers.group_by_facing().items():
+        facing_coverages[facing] = answers.aggregate_score()["average"]
+
+
     # TODO can lookup from CapabilitiesQuestion?
     domain_lookup = {
         "arts-and-humanities": "Arts and Humanities",
@@ -141,6 +147,7 @@ def assessment(request, profile_id):
     context = {
         "profile": profile,
         "submit_form": submit_form,
+        "facing_coverages": facing_coverages,
         "categories": categories,
         "domains": domains,
         "completed_questions": completed_questions,
