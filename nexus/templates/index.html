@@ -2,9 +2,44 @@
 
 {% block head %}
 <style>
+body>nav {
+    display: none;
+}
 main {
-    width: 80%;
+    width: 95%;
     position: relative;
+}
+main div.cardblock {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    grid-auto-rows: 1fr;
+    padding-top:2em;
+}
+main div.cardblock section.card {
+    min-height: 300px;
+    height: 100%;
+    max-height: 400px;
+    flex-basis: 30%;
+    min-width:250px;
+    padding:auto;
+    margin:10px auto;
+}
+section.card h2 {
+    padding-left: 10px;
+    text-align: center;
+    font-size: 1.3em;
+}
+section.card p {
+    padding: 0px 10px;
+}
+section.card p.center {
+    text-align: center;
+}
+section.card ul {
+    list-style-type: disc;
+    padding-left: 2em;
 }
 
 img.main-bg {
@@ -19,10 +54,6 @@ img.main-bg {
     object-position: 80%;
 }
 
-main section {
-    align-self: center;
-    width: 30em;
-}
 main div.button { 
     margin-left: auto;
     margin-right: auto; 
@@ -42,31 +73,39 @@ main a.button.NYI {
     color: var(--info-off);
 }
 
-section.card h2 {
-    padding-left: 10px;
-}
-section.card p {
-    padding: 0px 10px;
-}
 </style>
 {% endblock %}
 
 {% block main %}
 <img class="main-bg" src="/static/images/cropped-CaRCC-Banner-new-v4.png" alt="">
 <h1>Welcome to the RCD Nexus user portal!</h1>
-<section class="card">
-<h2>Login</h2>
-<p>To access Nexus tools (including the RCD Capabitlities Model), you need to login and create an institutional profile.<br><br>
-    Click the button below and find your institution in the list of CILogon providers, and then log in as you normally do.<br><br>
-    If your institution is not listed, you can choose another identity provider like Google or Microsoft.</p>
-<div class="button"><a class="button" href="{% url 'oidc_authentication_init' %}">Institutional login</a></div>
-</section>
-<section class="card">
-<h2>Browse Data</h2>
-<p>You may also view our limited public datasets without logging in <em>(coming soon)</em>.</p>
-<div class="button">
-    <!-- <a class="button" href="{ url 'capabilities:explore' }">Explore public data</a> -->
-    <a class="button NYI" href="">Explore public data</a>
+<div class="cardblock">
+    <section class="card">
+        <h2>Login</h2>
+        <p>To access Nexus tools (including the RCD Capabitlities Model), you need to login and create an institutional
+            profile.<br><br>
+            Click the button below and find your institution in the list of CILogon providers, and then log in as you
+            normally do.<br><br>
+            If your institution is not listed, you can choose another identity provider like Google or Microsoft.</p>
+        <div class="button"><a class="button" href="{% url 'oidc_authentication_init' %}">Institutional login</a></div>
+    </section>
+    <section class="card">
+        <h2>New to the Capabilities Model?</h2>
+        <p>The Research Computing and Data Capabilities Model allows institutions to:
+            <ul>
+                <li>Assess their support for computationally- and data-intensive research,</li>
+                <li>Identify potential areas for improvement, and</li>
+                <li>Understand how the broader community views Research Computing and Data support.</li>
+            </ul></p>
+            <p class="center">Click <a href="{% url 'helpdocs:main' %}">HELP</a> in the menu to learn more.</p>
+    </section>
+    <section class="card">
+        <h2>Browse Data</h2>
+        <p>You may also view our limited public datasets without logging in <em>(coming soon)</em>.</p>
+        <div class="button">
+            <!-- <a class="button" href="{ url 'capabilities:explore' }">Explore public data</a> -->
+            <a class="button NYI" href="">Explore public data</a>
+        </div>
+    </section>
 </div>
-</section>
 {% endblock %}
