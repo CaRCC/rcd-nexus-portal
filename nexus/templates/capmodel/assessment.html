@@ -401,9 +401,11 @@
         <div class="topics domains">
             <p class="tname topicheader">Domain</p>
             <p class="tcov topicheader">Support level</p>
-            {% for domain, coverage in domains.items %}
-            <p class="domainname {% cycle 'odd-field' 'even-field' as fieldcycle %}">{{domain}}</p>
-            <p class="tcov  {% cycle 'odd-field' 'even-field' as fieldcycle %}">{{ coverage|default_if_none:"(WIP)" }}</p>
+            {% for domain, domainInfo in domains.items %}
+            <p class="domainname {% cycle 'odd-field' 'even-field' as fieldcycle %}"
+            {%if domainInfo.color %} style="background-color: {{domainInfo.color}}" {%endif%}>{{domain}}</p>
+            <p class="tcov  {% cycle 'odd-field' 'even-field' as fieldcycle %}"
+            {%if domainInfo.color %} style="background-color: {{domainInfo.color}}" {%endif%}>{{ domainInfo.pct }}</p>
             {% endfor %}
         </div>
     </section>
