@@ -367,6 +367,16 @@ class CapabilitiesAnswer(models.Model):
 
             return results
 
+        def group_by_facing(self):
+            results = dict()
+
+            for facing in Facing.objects.all():
+                answers = self.filter(question__topic__facing=facing)
+                if answers:
+                    results[facing] = answers
+
+            return results
+
     objects = Manager.from_queryset(QuerySet)()
 
     assessment = models.ForeignKey(
