@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Oops - something went wrong...</h1>
+<h4>Please try again and hopefully it won't happen again.</h4> 
+<p style="text-align:center">Note that the system admins will get a notification of this, but if you want to send us a note we'd be
+    happy to know what you were trying to do when you got this error. <br>
+    Please email us at: <a href="mailto:capsmodel-help@carcc.org?subject=More info on a System error">capsmodel-help@carcc.org</a></p>
+<p style="display: none;">{{ exception }}</p>
+{% endblock %}
