@@ -154,7 +154,7 @@ class IPEDSMixin(models.Model):
             or self.carnegie_classification > self.CarnegieClassificationChoices.TRIBAL_COLLEGES :
             return "Other"
         if self.carnegie_classification >= self.CarnegieClassificationChoices.BACC_ARTS_AND_SCI :
-            return self.carnegie_classification.choices.__getitem__(self.carnegie_classification)
+            return self.get_carnegie_classification_display()
         # self.carnegie_classification is between 15 and 20 inclusive (one of 6 values)
         return self.carnegie_longnames[self.carnegie_classification - self.CarnegieClassificationChoices.R1]
 
