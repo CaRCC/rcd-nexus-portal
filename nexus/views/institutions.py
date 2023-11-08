@@ -88,11 +88,11 @@ def affiliation_request(request: HttpRequest, token=None):
     if token:
         try:
             aff_req = AffiliationRequest.objects.get(token=token, expires__gte=timezone.now(), user=request.user)
-        except AffiliationRequest.DoesNotExist:
-            messages.error(request, "Invalid token.")
-        finally:
             aff_req.approve()
             messages.success(request, f"Your affiliation with {aff_req.institution} has been confirmed.")
+        except AffiliationRequest.DoesNotExist:
+            messages.error(request, "Invalid token.")
+
         return redirect("index")
 
     if request.method == "POST":
