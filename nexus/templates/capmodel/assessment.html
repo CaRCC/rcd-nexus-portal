@@ -41,6 +41,20 @@
         box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
     }
 
+    section.topicblock div.facinghdr span.facingcov {
+        font-size: 0.75em;
+        font-weight: normal;
+        letter-spacing: -0.7px;
+        float: right;
+        position: relative;
+        top: 0.2em;
+    }
+
+    section.topicblock div.facinghdr span.facingcov span.facingcovpcnt {
+        font-weight: bold;
+        letter-spacing: normal;
+        }    
+
     section.topicblock div.facinghdr.priorities h3 {
         font-style: italic;
     }
@@ -364,8 +378,10 @@
 <div class="topicgrid">
     {% for facing, topics in categories.items %}
     <section class="topicblock">
-        <div class="facinghdr">
-            <h3>{{facing.content.display_name}}-Facing Topics</h3>
+        <div class="facinghdr" {%if facing.coverage_color %} style="background-color: {{facing.coverage_color}}" {%endif%}>
+            <h3>
+            {{facing.content.display_name}}-Facing Topics 
+            {%if facing.coverage_pct %}<span class="facingcov">Avg. Coverage:&nbsp;&nbsp;<span class="facingcovpcnt">{{facing.coverage_pct}}</span></span>{% endif %}</h3>
             <p id="{{facing.slug}}SH" class="toggle" onclick="toggleSection(this, '{{facing.slug}}')"><span>Show Topics</span></p>
         </div>
         <div class="facingdesc" style="display:block;">

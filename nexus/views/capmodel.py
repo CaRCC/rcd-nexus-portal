@@ -69,9 +69,17 @@ def assessment(request, profile_id):
 
     session_language = "en"  # TODO get session language
 
+     # compute facing coverages - this does not work
+#    facing_coverages = dict()
+#    for facing, answers in assessment.answers.group_by_facing().items():
+#        facing_coverages[facing] = answers.aggregate_score()["average"]
+
     nFacings = len(categories.keys())
     for facing, topics in categories.items():
         facing.content = facing.contents.get(language=session_language)
+        nTopics = len(topics.keys())
+        nTopicsComplete = 0
+        aggSum = 0
         for topic, answers in topics.items():
             topic.content = topic.contents.get(language=session_language)
             if answers.filter_unanswered().exists():
@@ -90,15 +98,22 @@ def assessment(request, profile_id):
                     covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
                     answers.coverage_pct = mark_safe(f"{covstring}")
                     answers.coverage_color = compute_answer_color(coverage)
+                    nTopicsComplete += 1
+                    aggSum += coverage
                 else:
                     answers.coverage_pct = "-"
                     answers.coverage_color = None
-
-    # compute facing coverages
-    facing_coverages = dict()
-    for facing, answers in assessment.answers.group_by_facing().items():
-        facing_coverages[facing] = answers.aggregate_score()["average"]
-
+        if nTopicsComplete == nTopics:
+            facingCov = aggSum/nTopics
+            covstring = format(facingCov, ".1%" if facingCov<1.0 else ".0%")
+            facing.coverage_pct = mark_safe(f"{covstring}")
+            facing.coverage_color = compute_answer_color(facingCov)
+#        elif nTopicsComplete == 0:
+#            facing.coverage_pct = "-"
+#        else:
+#            facing.coverage_pct = mark_safe("<span class=\"wip\">WIP: "+str(nTopicsComplete)
+#                                                +" of "+str(nTopics)+"</span>")
+            
 
     # TODO can lookup from CapabilitiesQuestion?
     domain_lookup = {
@@ -147,7 +162,7 @@ def assessment(request, profile_id):
     context = {
         "profile": profile,
         "submit_form": submit_form,
-        "facing_coverages": facing_coverages,
+#        "facing_coverages": facing_coverages,
         "categories": categories,
         "domains": domains,
         "completed_questions": completed_questions,
