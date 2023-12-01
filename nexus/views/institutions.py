@@ -90,6 +90,17 @@ def affiliation_request(request: HttpRequest, token=None):
             aff_req = AffiliationRequest.objects.get(token=token, expires__gte=timezone.now(), user=request.user)
             aff_req.approve()
             messages.success(request, f"Your affiliation with {aff_req.institution} has been confirmed.")
+            send_mail(
+                subject="RCD Nexus Affiliation Request Confirmed",
+                message=f"""
+{request.user}'s request to be affiliated with {aff_req.institution} via {aff_req.email} was approved.
+
+They can now create an assessment, so should probably be added to the capsModel-discuss list. 
+""",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.SUPPORT_EMAIL],
+                fail_silently=False,
+            )
         except AffiliationRequest.DoesNotExist:
             messages.error(request, "Invalid token.")
 
