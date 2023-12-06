@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import HttpRequest
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
 
 from nexus.forms.institutions import (
@@ -120,6 +121,9 @@ They can now create an assessment, so should probably be added to the capsModel-
                 },
             )
             print(aff_req, aff_req.token, aff_req.expires)
+            req_link = request.build_absolute_uri(reverse("institutions:affiliation-request-approve", args=[aff_req.token]))
+            email_in_html = render_to_string('institutions/affiliation_req_email.html', 
+                                      {'user': request.user, 'institution':institution, 'email':email, 'req_link':req_link})
             send_mail(
                 subject="RCD Nexus Affiliation Request",
                 message=f"""
@@ -127,8 +131,9 @@ They can now create an assessment, so should probably be added to the capsModel-
 
 To approve this request, please visit the following link:
 
-{request.build_absolute_uri(reverse("institutions:affiliation-request-approve", args=[aff_req.token]))}
+{req_link}
 """,
+                html_message=email_in_html,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
                 fail_silently=False,
