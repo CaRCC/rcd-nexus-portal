@@ -18,6 +18,9 @@ class CapabilitiesTopic(models.Model):
     """
     Facing topic.
     """
+    # This must match the definition in the questions fixture json. 
+    domain_coverage_slug = "domain-support"
+
     class Manager(models.Manager):
         def get_by_natural_key(self, facing: str, topic: str):
             return self.get(slug=topic, facing__slug=facing)
@@ -78,6 +81,18 @@ class CapabilitiesTopicContent(models.Model):
         ]
 
 class CapabilitiesQuestion(models.Model):
+    # TODO can lookup from CapabilitiesQuestion?
+    domain_lookup = {
+        "arts-and-humanities": "Arts and Humanities",
+        "social-sciences": "Social, Behavioral, and Economic Sciences",
+        "bio-life-sciences": "Biological and Life Sciences",
+        "chem-phys-sciences": "Chemistry, Physics, and Astronomy/Space Sciences",
+        "earth-geo-sciences" : "Earth and Geosciences",
+        "cs-and-infosci": "Computer and Information Sciences",
+        "engineering": "Engineering",
+        "med-school": "Medical School", 
+    }
+
     class QuerySet(models.QuerySet):
         def get_by_natural_key(self, facing: str, topic: str, question: str):
             return self.get(slug=question, topic__slug=topic, topic__facing__slug=facing)
@@ -221,7 +236,8 @@ class CapabilitiesAssessment(AssessmentBase):
 
     @property
     def state(self) -> "CapabilitiesAssessment.State":
-        answers = self.answers.filter(not_applicable=False)
+        # Filter the domain coverage questions when calculating whether assessment is complete
+        answers = self.answers.filter(not_applicable=False).exclude(question__slug__in=CapabilitiesQuestion.domain_lookup.keys())
         total = answers.count()
         answered = answers.filter(score_deployment__isnull=False, score_collaboration__isnull=False, score_supportlevel__isnull=False).count()
 

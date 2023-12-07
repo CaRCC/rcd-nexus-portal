@@ -101,7 +101,7 @@
 </div>
 <section class="topicblock">
     <h3>{{ topic.display_name }} &nbsp;&nbsp;<span class="facing">({{ facing.display_name }}-Facing)</span></h3>
-    {%if topic.description %}<p class="topicDesc">{{topic.description}}</p>{%endif%}
+    {%if topic.description %}<p class="topicDesc">{{topic.description|safe}}</p>{%endif%}
     <table>
         <thead>
             <tr>

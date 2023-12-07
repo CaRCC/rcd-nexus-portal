@@ -828,7 +828,7 @@
       ],
       "language": "en",
       "display_name": "Domain support",
-      "description": "Note: This does not impact the overall computed coverage for the Researcher-Facing."
+      "description": "Note: The answers to these questions do not contribute to the overall computed coverage for the Researcher-Facing, and while these questions are not required to submit your assessment you are encouraged to answer them (e.g., so you can benchmark your support relative to others)."
     }
   },
   {
@@ -840,7 +840,7 @@
       ],
       "language": "en",
       "display_name": "Domain support",
-      "description": "Note: This does not impact the overall computed coverage for the Data-Facing."
+      "description": "Note: The answers to these questions do not contribute to the overall computed coverage for the Data-Facing, and while these questions are not required to submit your assessment you are encouraged to answer them (e.g., so you can benchmark your support relative to others)."
     }
   },
   {
@@ -852,7 +852,7 @@
       ],
       "language": "en",
       "display_name": "Domain support",
-      "description": "Note: This does not impact the overall computed coverage for the Software-Facing."
+      "description": "Note: The answers to these questions do not contribute to the overall computed coverage for the Software-Facing, and while these questions are not required to submit your assessment you are encouraged to answer them (e.g., so you can benchmark your support relative to others)."
     }
   },
   {
@@ -864,7 +864,7 @@
       ],
       "language": "en",
       "display_name": "Domain support",
-      "description": "Note: This does not impact the overall computed coverage for the Systems-Facing."
+      "description": "Note: The answers to these questions do not contribute to the overall computed coverage for the Systems-Facing, and while these questions are not required to submit your assessment you are encouraged to answer them (e.g., so you can benchmark your support relative to others)."
     }
   },
   {
@@ -876,7 +876,7 @@
       ],
       "language": "en",
       "display_name": "Domain support",
-      "description": "Note: This does not impact the overall computed coverage for the Strategy and Policy-Facing."
+      "description": "Note: The answers to these questions do not contribute to the overall computed coverage for the Strategy and Policy-Facing, and while these questions are not required to submit your assessment you are encouraged to answer them (e.g., so you can benchmark your support relative to others)."
     }
   },
   {
