@@ -16,9 +16,8 @@
         font-weight: bold;
     }
 
-    h3>span.facing {
-        font-weight: normal;
-        font-style: italic;
+    span.facing {
+        font-weight: bold;
     }
 
     section.topicblock {
@@ -33,7 +32,7 @@
     section.topicblock h3 {
         background-color: #eee;
         margin: 0px;
-        padding: 5px 20px;
+        padding: 5px 15px 5px 20px;;
         box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
     }
 
@@ -89,6 +88,19 @@
         font-size: smaller;
         text-align: right;
     }
+
+    section.topicblock h3 span.tcov {
+        font-size: 0.85em;
+        font-weight: normal;
+        letter-spacing: -0.7px;
+        float: right;
+    }
+
+    section.topicblock h3 span.tcov span.tcovpcnt {
+        font-weight: bold;
+        letter-spacing: normal;
+        }    
+
 </style>
 {% endblock %}
 {% block title %}RCD-Nexus Capabilities Model Topic: {{ topic.display_name }}{% endblock %}
@@ -96,11 +108,13 @@
 
 <div class="assessment-nav">
     {% if prev_topic %}<p><a href="{% url 'capmodel:topic' assessment.profile_id prev_topic.facing.slug prev_topic.slug %}">⬅ Previous topic</a></p>{% endif %}
-    <p><a href="{% url 'capmodel:assessment' assessment.profile_id %}">Up to Facings/Assessment home</a></p>
+    <p><a href="{% url 'capmodel:assessment' assessment.profile_id %}#{{facing.facing}}">Up to <span class="facing">{{facing.display_name}}-Facing</span>/Assessment home</a></p>
     {% if next_topic %}<p><a href="{% url 'capmodel:topic' assessment.profile_id next_topic.facing.slug next_topic.slug %}">Next topic ➡</a></p>{% endif %}
 </div>
 <section class="topicblock">
-    <h3>{{ topic.display_name }} &nbsp;&nbsp;<span class="facing">({{ facing.display_name }}-Facing)</span></h3>
+    <h3{%if coverage_color %} style="background-color: {{coverage_color}}"{%endif%}>
+        {{ topic.display_name }}
+        {%if coverage_pct %}<span class="tcov">Avg:&nbsp;&nbsp;<span class="tcovpcnt">{{coverage_pct}}</span></span>{% endif %}</h3>
     {%if topic.description %}<p class="topicDesc">{{topic.description|safe}}</p>{%endif%}
     <table>
         <thead>

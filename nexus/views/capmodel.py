@@ -206,6 +206,7 @@ def topic(request, profile_id, facing, topic):
     answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk).annotate_coverage().order_by("question_id")
 
     session_language = "en"  # TODO get session language
+    all_answered = True
     for answer in answers:
         #answer.qid = {answer.question.legacy.qid if hasattr(answer.question, "legacy") else 'Q'}
         answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
@@ -220,11 +221,23 @@ def topic(request, profile_id, facing, topic):
             case CapabilitiesAnswer.State.PARTIALLY_ANSWERED:
                 answer.coverage_percent = "(WIP)"
                 answer.cssclass = "WIP"
+                all_answered = False
             case CapabilitiesAnswer.State.UNANSWERED:
                 answer.coverage_percent = "-"
+                all_answered = False
             case CapabilitiesAnswer.State.NOT_APPLICABLE:
                 answer.coverage_percent = "N/A"
                 answer.cssclass = "NA"
+
+    coverage_pct = None
+    coverage_color = None
+    if all_answered:
+        agg = answers.aggregate_score()
+        coverage = agg["average"]
+        if coverage != None:
+            covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
+            coverage_pct = mark_safe(f"{covstring}")
+            coverage_color = compute_answer_color(coverage)
 
 
     prev_topic = CapabilitiesTopic.objects.filter(
@@ -245,6 +258,8 @@ def topic(request, profile_id, facing, topic):
             "assessment": assessment,
             "facing": facing.contents.get(language=session_language),
             "topic": topic.contents.get(language=session_language),
+            "coverage_pct": coverage_pct,
+            "coverage_color": coverage_color,
             "prev_topic": prev_topic,
             "next_topic": next_topic,
             "navtree": rcdprofile_navtree(profile, rcdprofile_navtree.CAPABILITIES),

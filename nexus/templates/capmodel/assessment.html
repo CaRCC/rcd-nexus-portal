@@ -379,7 +379,7 @@
     {% for facing, topics in categories.items %}
     <section class="topicblock">
         <div class="facinghdr" {%if facing.coverage_color %} style="background-color: {{facing.coverage_color}}" {%endif%}>
-            <h3>
+            <h3 id="{{facing.slug}}">
             {{facing.content.display_name}}-Facing Topics 
             {%if facing.coverage_pct %}<span class="facingcov">Avg. Coverage:&nbsp;&nbsp;<span class="facingcovpcnt">{{facing.coverage_pct}}</span></span>{% endif %}</h3>
             <p id="{{facing.slug}}SH" class="toggle" onclick="toggleSection(this, '{{facing.slug}}')"><span>Show Topics</span></p>
@@ -474,5 +474,14 @@
 
 <script>
     initSectionsFromCookies();
+    // Kind of an ugly hack, but since we're bouncing the layout we need to wait a bit and then ensure
+    // any hash element is actually in view. 
+    if(window.location.hash) {
+        window.setTimeout(function() {
+            hash = window.location.hash.substring(1)
+            document.getElementById(hash).scrollIntoView(); 
+        }, 100);
+    }
+
 </script>
 {% endblock %}
