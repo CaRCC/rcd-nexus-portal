@@ -237,7 +237,7 @@ class CapabilitiesAssessment(AssessmentBase):
     @property
     def state(self) -> "CapabilitiesAssessment.State":
         # Filter the domain coverage questions when calculating whether assessment is complete
-        answers = self.answers.filter(not_applicable=False).exclude(question__slug__in=CapabilitiesQuestion.domain_lookup.keys())
+        answers = self.answers.filter(not_applicable=False).exclude(question__topic__slug='domain-support')
         total = answers.count()
         answered = answers.filter(score_deployment__isnull=False, score_collaboration__isnull=False, score_supportlevel__isnull=False).count()
 

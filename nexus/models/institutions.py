@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.core.mail import send_mail
 from django.db import models, transaction
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 import math
@@ -125,6 +126,7 @@ class NewInstitutionRequest(models.Model):
     )
 
     def approve(self):
+        user = self.requester.name()
         with transaction.atomic():
             institution = Institution.objects.create(
                 name=self.name,
@@ -139,14 +141,16 @@ class NewInstitutionRequest(models.Model):
             )
             self.delete()
 
-        inst_link = settings.BASE_URL+'/institutions/'+ str(institution.pk)
+        inst_link = settings.BASE_URL+reverse("institutions:edit", args=[institution.pk])
         email_in_html = render_to_string('institutions/inst_added_email.html', 
-                            {'user': self.requester.name(), 'institution': self.name, 'inst_link':inst_link})
+                            {'user': user, 'institution': institution, 'inst_link':inst_link})
         send_mail(
             subject=f"RCD Nexus institution added",
-            message=f"""Your institution request for {self.name} has been approved, and you have been added as a manager.
+            message=f"""Hello {user} - 
+            
+Your institution request for {institution} has been approved, and you have been added as a manager.
 
-You can manage it at: {settings.BASE_URL}/institutions/{institution.pk}/
+You can manage it at: {inst_link}
 
 Please add as much institutional information as possible to improve the community datasets.
 
