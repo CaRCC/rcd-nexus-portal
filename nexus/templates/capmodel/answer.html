@@ -178,7 +178,9 @@
             <input type="submit" value="Save" {% if answer.assessment.is_frozen %}disabled{%endif%}>
         {% endif %}
     </form>
-    {% if not can_edit  %} 
+    {% if answer.assessment.is_frozen  %} 
+    <p class="noEdit">This assessment has been submitted and included in community datasets and can no longer be modified.</p>
+    {% elif not can_edit  %} 
         <p class="noEdit">You do not have edit rights for this assessment.
             <br>Select the profile (in the left navbar) to request access. </p>
     {% endif %}

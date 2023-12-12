@@ -1,0 +1,7 @@
+{% extends "base_email.html" %}
+{% block main %}
+    <p>
+        Hello - <br><br>Your request to join {{profile}} has been approved.<br><br>
+        <a href="{{profile_link}}">Click here to get started</a>.
+    </p>
+{% endblock %}

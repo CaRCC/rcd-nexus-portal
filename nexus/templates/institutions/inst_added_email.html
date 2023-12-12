@@ -1,0 +1,9 @@
+{% extends "base_email.html" %}
+{% block main %}
+    <p>
+        Hello {{user}} - <br><br>Your institution request for <b>{{institution}}</b> has been approved, and you have been added as a manager.<br><br>
+        <a href="{{inst_link}}">Click here to manage the new institution</a>.
+        Please add as much institutional information as possible to improve the community datasets.<br><br>
+        You may now begin using the RCD Nexus assessment tools for your institution!
+    </p>
+{% endblock %}
