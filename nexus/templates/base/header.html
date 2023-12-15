@@ -10,6 +10,7 @@
     </label>
         <ul class="menu">
             {% if not request.user.is_authenticated %}
+            <li><a href="{% url 'index' %}">Home</a></li>
             <li><a href="/dataviz">Data Viewer</a></li>
             <li><a href="/helpdocs">Help</a></li>
             <li><a href="{% url 'oidc_authentication_init' %}">Login</a></li>

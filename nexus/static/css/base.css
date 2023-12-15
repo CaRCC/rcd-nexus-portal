@@ -211,7 +211,7 @@ main div.cardblock section.card {
     padding:auto;
     margin:10px auto;
 }
-main div.cardblock section.card div {
+main div.cardblock section.card div.imgcard {
     display:flex;
     justify-content: center;
     align-items: center;
@@ -388,6 +388,10 @@ header>nav .logo {
     margin-left: 0;
 }
 
+header>nav .logo a {
+    display:inline-block;
+}
+
 header>nav li {
     text-align: center;
     text-transform:uppercase;
@@ -443,8 +447,12 @@ body>nav details ul {
 }
 
 .menu>li {
-    margin: auto 1rem;
+    margin: auto 0.3rem;
     text-transform: uppercase;
+}
+
+.menu>li a {
+    padding: 0 0.5rem;
 }
 
 .menu>li button {
@@ -452,7 +460,7 @@ body>nav details ul {
     background-color: transparent;
     font-family: inherit;
     font-size: inherit;
-    padding: 0;
+    padding: 0 0.5rem;
     cursor: pointer;
     color: inherit;
     font-weight: bold;
