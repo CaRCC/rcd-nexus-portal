@@ -9,12 +9,14 @@
         <div class='menu-button'></div>
     </label>
         <ul class="menu">
-            <li><a href="/helpdocs">Help</a></li>
-            <!--<li><a href="{ url 'nexus:explore' }">Explore</a></li>-->
             {% if not request.user.is_authenticated %}
+            <li><a href="/dataviz">Data Viewer</a></li>
+            <li><a href="/helpdocs">Help</a></li>
             <li><a href="{% url 'oidc_authentication_init' %}">Login</a></li>
             {% else %}
-            <li><a href="{% url 'rcdprofile:list' %}">My RCD Profiles</a></li>
+            <li><a href="{% url 'rcdprofile:list' %}">Home</a></li>
+            <li><a href="/dataviz">Data Viewer</a></li>
+            <li><a href="/helpdocs">Help</a></li>
             {% if request.user.is_staff %}
             <li><a href="{% url 'admin:index' %}">Admin</a></li>
             {% endif %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+body>nav {
+    display: none;
+}
+main {
+    width: 95%;
+    position: relative;
+}
+
+</style>
+{% endblock %}
+
+{% block title %}RCD-Nexus Capabilities Model Community Demographics Visualizations{% endblock %}
+
+{% block main %}
+<div class="cardblock">
+    <section class="card">
+        <h2>Map Views</h2>
+        <div>
+            <a href="{% url 'dataviz:demographics_mapviews' %}">
+                <img class="cardcontent" src="/static/images/demogMapCardImg.png" alt="Map showing distribution of community contributors">
+            </a>
+        </div>
+    </section>
+    <section class="card">
+        <h2>Demographic Charts</h2>
+        <div>
+            <a href="{% url 'dataviz:demographics_chartviews' %}">
+                <img class="cardcontent" src="/static/images/demogChartCardImg.png" alt="Map showing distribution of community contributors">
+            </a>
+        </div>
+    </section>
+    <section class="card">
+        <h2>Scatter Plots</h2>
+        <div>
+            <a href="{% url 'dataviz:demographics_scatterplots' %}">
+                <img class="cardcontent" src="/static/images/scatterCardImg.png" alt="Map showing distribution of community contributors">
+            </a>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

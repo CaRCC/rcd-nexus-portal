@@ -211,6 +211,17 @@ main div.cardblock section.card {
     padding:auto;
     margin:10px auto;
 }
+main div.cardblock section.card div {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height: 90%;
+    width: 100%;
+}
+main div.cardblock section.card div img {
+    width: 95%;
+}
+
 section.card h2 {
     padding-left: 10px;
     text-align: center;
@@ -394,6 +405,13 @@ header>nav .username {
 
 header>nav .logo img {
     vertical-align: middle;
+}
+
+main>nav.breadcrumbs {
+    align-self: flex-start;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.9em;
 }
 
 body>nav {

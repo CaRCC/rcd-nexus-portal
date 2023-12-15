@@ -10,16 +10,6 @@ main {
     position: relative;
 }
 
-main div.cardblock section.card div {
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    height: 90%;
-    width: 100%;
-}
-main div.cardblock section.card div img {
-    width: 95%;
-}
 </style>
 {% endblock %}
 
@@ -30,7 +20,7 @@ main div.cardblock section.card div img {
     <section class="card">
         <h2>Community Demographics</h2>
         <div>
-            <a href="{% url 'helpdocs:main' %}">
+            <a href="{% url 'dataviz:demographics' %}">
                 <img class="cardcontent" src="/static/images/demogMapCardImg.png" alt="Map showing distribution of community contributors">
             </a>
         </div>
@@ -38,13 +28,17 @@ main div.cardblock section.card div img {
     <section class="card">
         <h2>Capabilities Data and Benchmarking</h2>
         <div>
-            <img class="cardcontent" src="/static/images/epscor_DFTopicsCardImg.png" alt="Map showing distribution of community contributors">
+            <a href="{% url 'dataviz:capsmodeldata' %}">
+                <img class="cardcontent" src="/static/images/epscor_DFTopicsCardImg.png" alt="Map showing distribution of community contributors">
+            </a>
         </div>
     </section>
     <section class="card">
         <h2>Priorities Data</h2>
         <div>
-            <img class="cardcontent" src="/static/images/prioDistCardImg.png" alt="Map showing distribution of community contributors">
+            <a href="{% url 'dataviz:prioritiesdata' %}">
+                <img class="cardcontent" src="/static/images/prioDistCardImg.png" alt="Map showing distribution of community contributors">
+            </a>
         </div>
     </section>
 
