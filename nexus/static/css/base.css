@@ -432,6 +432,7 @@ body>nav ul {
     list-style: circle;
     max-width: 12em;
     padding-left: 0em;
+    margin:0;
 }
 
 body>nav details ul {
@@ -484,6 +485,22 @@ nav>ul.filter>li span.clearall {
 nav>ul.filter>li span.setall:hover, nav>ul.filter>li span.clearall:hover {
     color:var(--secondary);
     cursor: pointer;
+}
+
+nav>p.FilterTitle {
+    margin:0 0 0.3em 0;
+}
+
+nav span.FilterTitle {
+    font-weight: bold;
+    font-size: 1em;
+}
+
+nav button#UpdateView {
+    font-size: 0.8em;
+    display:inline;
+    margin:0 auto;
+    float: right;
 }
 
 canvas.viz {
