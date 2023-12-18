@@ -486,6 +486,11 @@ nav>ul.filter>li span.setall:hover, nav>ul.filter>li span.clearall:hover {
     cursor: pointer;
 }
 
+canvas.viz {
+    width: 80%;
+    height: 500px;
+    border:1px solid var(--logo-dark-purple);
+}
 
 .menu {
     display: flex;
