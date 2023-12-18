@@ -416,6 +416,7 @@ main>nav.breadcrumbs {
     text-transform: uppercase;
     font-weight: bold;
     font-size: 0.9em;
+    padding-left: 10px;
 }
 
 body>nav {
@@ -423,7 +424,7 @@ body>nav {
     background-color: white;
     display: flex;
     flex-direction: column;
-    margin: 10px;
+    padding: 10px;
     border-right: solid dimgrey;
 }
 
@@ -436,6 +437,55 @@ body>nav ul {
 body>nav details ul {
     padding-left: 1.5em;
 }
+
+body>nav>ul.filter {
+    font-size:0.9em;
+}
+
+body>nav ul.filter {
+    list-style:none;
+    padding: 0;
+}
+
+nav>ul.filter>li {
+    padding-bottom: 8px;
+    padding-right: 2em;
+}
+
+nav>ul.filter>li summary {
+    position: relative;
+}
+
+nav>ul.filter>li span.filterlabel {
+    font-weight: bold;
+}
+nav>ul.filter>li input.longLabel {
+    float: left;
+    margin-right: 0.4em;
+}
+
+nav>ul.filter>li span.setall {
+    font-size: 1.9em;
+    font-weight: bold;
+    position: absolute;
+    top: -0.15em;
+    right: -0.7em;
+}
+
+nav>ul.filter>li span.clearall {
+    font-weight: bold;
+    font-family: 'Consolas', 'Menlo', fixed;
+    font-size: 1.1em;
+    position: absolute;
+    right: -2em;
+    bottom: 0.1em;
+}
+
+nav>ul.filter>li span.setall:hover, nav>ul.filter>li span.clearall:hover {
+    color:var(--secondary);
+    cursor: pointer;
+}
+
 
 .menu {
     display: flex;

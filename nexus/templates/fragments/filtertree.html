@@ -1,0 +1,14 @@
+<ul class="filter">
+    {% for node in filtertree %}
+    <li>
+        {% if node.children %}
+        <details {% if not node.collapsed %}open{% endif %}>
+            <summary>{{ node.as_html | safe}}</summary>
+        {% include "fragments/filtertree.html" with filtertree=node.children %}
+        </details>
+        {% else %}
+        {{ node.as_html | safe}}
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
