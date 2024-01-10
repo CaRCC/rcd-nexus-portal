@@ -3,12 +3,33 @@
 {% block title %}RCD-Nexus New Institution request{% endblock %}
 {% block main %}
 <h1>New Institution Request</h1>
-<p>
-    Fill out the form below to request a new institution. We will review your request and get back to you as soon as possible.
-</p>
+<p>Fill out the form below to request a new institution. We will review your request and get back to you as soon as possible.</p>
+<p>Before submitting, <b>please verify</b> that your institution isn't already included in RCD Nexus, using the table at the bottom. If it is, you should login to it via CILogon, or <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a>to it.</p>
 <form method="post" action="">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit">
 </form>
+
+<label for="inst-filter">Filter existing institutions:</label>
+<input id="inst-filter" _="on input show <tbody>tr/> in <table.results/> when its textContent.toLowerCase() contains my value.toLowerCase()"/>
+{% if institutions %}
+<table class="results">
+    <thead>
+        <tr>
+            <th>Institution</th>
+        </tr>
+    </thead>
+    <tbody style="display:block; max-height:20em; overflow:scroll">
+        {% for inst in institutions %}
+        <tr>
+            <td>{{ inst.name }}</td>
+            <td>{{ inst.internet_domain }}</td>
+        </tr>
+        {% endfor %}
+</table>
+{% else %}
+<p>No institutions found.</p>
+{% endif %}
+
 {% endblock %}
