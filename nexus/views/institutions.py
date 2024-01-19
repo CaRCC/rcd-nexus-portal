@@ -47,6 +47,7 @@ def institution_request(request: HttpRequest):
         "institutions/request.html",
         {
             "form": form,
+            "institutions": Institution.objects.all(),
         },
     )
 
@@ -112,6 +113,12 @@ They can now create an assessment, so should probably be added to the capsModel-
             email = form.cleaned_data["email"]
             name, domain = email.split("@")
             institution = Institution.objects.get(internet_domain=domain)
+            if institution.has_cilogon_idp():
+                messages.error(
+                    request,
+                    f"Access to {institution} is supported via CILogon. Please logout and login to this institution via CILogon.",
+                )
+                return redirect("index")
             aff_req, created = AffiliationRequest.objects.update_or_create(
                 user=request.user,
                 institution=institution,
