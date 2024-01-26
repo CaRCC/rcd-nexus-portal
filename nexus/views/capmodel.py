@@ -139,7 +139,7 @@ def assessment(request, profile_id):
         domains[CapabilitiesQuestion.domain_lookup[d]] = aggDomainInfo(coverage_pct,coverage_color)
 
     # Filter the domain coverage questions when calculating progress 
-    filtered_answers = assessment.answers.exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug) 
+    filtered_answers = assessment.filtered_answers(excludeNotApplicable=False) 
     total_questions = filtered_answers.count()
     completed_questions = total_questions - filtered_answers.filter_unanswered().count()
 
