@@ -37,8 +37,8 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(CapabilitiesAssessment)
 class AssessmentAdmin(admin.ModelAdmin):
-    list_display = ["profile", "review_status", "review_note", "review_time"]
-    list_filter = ["review_status"]
+    list_display = ["profile", "completed_percent", "review_status", "review_note", "review_time"]
+    list_filter = ["review_status", "profile__year"]
     search_fields = ["review_note", "profile__institution__name"]
     readonly_fields = ["profile"]
 #    inlines = [AnswerInline]

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.conf import settings
+from django.contrib import admin
 from django.db import models
 from django.db.models import Avg, Count, F, StdDev, Window
 from django.db.models.functions import  Least, PercentRank
@@ -234,10 +235,25 @@ class CapabilitiesAssessment(AssessmentBase):
         IN_PROGRESS = "in_progress"
         COMPLETE = "complete"
 
+    def filtered_answers(self, excludeNotApplicable=True):
+        answers = self.answers.exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug)
+        if(excludeNotApplicable):
+            answers = answers.filter(not_applicable=False)
+        return answers
+
+    @property
+    @admin.display(description="%Done")
+    def completed_percent(self):
+        filtered_answers = self.filtered_answers()
+        total_questions = filtered_answers.count()
+        completed_questions = total_questions - filtered_answers.filter_unanswered().count()
+        pct = completed_questions/total_questions if total_questions else 0
+        return f"{pct:.0%}"
+
     @property
     def state(self) -> "CapabilitiesAssessment.State":
         # Filter the domain coverage questions when calculating whether assessment is complete
-        answers = self.answers.filter(not_applicable=False).exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug)
+        answers = self.filtered_answers()
         total = answers.count()
         answered = answers.filter(score_deployment__isnull=False, score_collaboration__isnull=False, score_supportlevel__isnull=False).count()
 
