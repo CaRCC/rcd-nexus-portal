@@ -33,7 +33,12 @@ def load_ipeds_data(path):
                     "ipeds_control": row["Pub_Priv"],
                     "ipeds_level": row["Level"],
                     "ipeds_hbcu": row["HBCU"],
+                    "ipeds_pbi": row["PBI"],
                     "ipeds_tcu": row["TCU"],
+                    "ipeds_hsi": row["HSI"],
+                    "ipeds_aanapisi_annh": row["AANAPISI_ANNH"],
+                    "ipeds_msi": row["MSI"],
+                    "ipeds_epscor": row["EPSCoR"],
                     "ipeds_land_grant": row["Land_Grant"],
                     "ipeds_urbanization": row["Urbnzn"],
                     "ipeds_size": row["Size_Cat "]

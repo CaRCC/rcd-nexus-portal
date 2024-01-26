@@ -6,7 +6,7 @@ from nexus.utils.data import (
     load_ipeds_data,
 )
 
-IPEDS_DATA = "data/ipeds_2023-02-09.csv"
+IPEDS_DATA = "data/ipeds_2024-01-16.csv"
 #QUESTIONS_DATA = "data/capmodel_questions2.json"
 #QUESTIONS_DATA = "data/capmodel_questions3.json"
 #ASSESSMENTS_DATA = "data/capmodel_2020-21.csv"

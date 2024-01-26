@@ -4260,7 +4260,7 @@
         "resources"
       ],
       "language": "en",
-      "text": "Do researchers have access to <b>dedicated resources</b> (e.g., staff) who can <b>perform data wrangling/manipulation and data analysis</b>?",
+      "text": "Do researchers have access to <b>dedicated resources</b> (e.g., staff) who can <b>perform data visualization</b>?",
       "help_text": " "
     }
   },
