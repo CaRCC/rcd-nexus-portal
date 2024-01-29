@@ -45,7 +45,7 @@
         var SHOWN ="1";
         var HIDDEN = "0";
         var MOTD_COOKIE = "MOTDSH";
-        var COOKIE_LIFE = 1*24*60*60*1000;  // Save state for a day
+        var COOKIE_LIFE = {{ motdtimeout }}*24*60*60*1000;  // Save state for specified # of days
         const motdNoShowCB = document.getElementById("motd_noshow");
         const motdDialog = document.getElementById("motdPopup");
         var systemDown = false;
