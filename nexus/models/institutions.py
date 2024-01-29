@@ -28,7 +28,7 @@ class Institution(IPEDSMixin, models.Model):
     )
     internet_domain = models.CharField(
         max_length=255,
-        unique=True,
+        #unique=True,
     )
 
     undergrad_pop = models.PositiveIntegerField(
@@ -110,7 +110,7 @@ class NewInstitutionRequest(models.Model):
     )
     internet_domain = models.CharField(
         max_length=255,
-        unique=True,
+        unique=False,
     )
     comment = models.TextField(
         null=True,

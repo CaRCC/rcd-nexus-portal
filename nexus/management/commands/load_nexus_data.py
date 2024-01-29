@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 from nexus.utils.data import (
     load_capmodel_data,
-    load_ipeds_data,
+    initial_load_ipeds_data,
 )
 
 IPEDS_DATA = "data/ipeds_2024-01-16.csv"
@@ -23,12 +23,12 @@ class Command(BaseCommand):
         if options["loadcmds"]:
             for loadcmd in options["loadcmds"]:
                 if loadcmd == "ipeds":
-                    load_ipeds_data(IPEDS_DATA)
+                    initial_load_ipeds_data(IPEDS_DATA)
                 elif loadcmd == "data":
                     load_capmodel_data( ASSESSMENTS_DATA, CONTRIBUTORS_DATA )
                 else:
                     raise CommandError(
                         'Unknown load command specified to load_nexus_data: "%s"' % loadcmd)
         else:
-            load_ipeds_data(IPEDS_DATA)
+            initial_load_ipeds_data(IPEDS_DATA)
             load_capmodel_data(ASSESSMENTS_DATA, CONTRIBUTORS_DATA)

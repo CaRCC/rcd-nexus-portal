@@ -13,6 +13,14 @@ class IPEDSMixin(models.Model):
     class Meta:
         abstract = True
 
+    ipeds_unitid = models.BigIntegerField(
+        "IPEDS Unit ID",
+        unique=True,
+        null=True,
+        blank=True,
+        help_text="IPEDS UnitID primarily for joining new data."
+    )
+
     class SectorChoices(models.IntegerChoices):
         PUBLIC_4_YR = 1, "Public 4-yr"
         PRIVATE_4_YR = 2, "Private 4-yr"

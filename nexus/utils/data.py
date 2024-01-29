@@ -1,8 +1,10 @@
 import csv
 import json
+from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.db import IntegrityError
 
 from nexus.models import (
     CapabilitiesAssessment,
@@ -14,7 +16,8 @@ from nexus.models.facings import Facing
 DEBUGMODE = False
 
 
-def load_ipeds_data(path):
+
+def initial_load_ipeds_data(path):
     institutions_loaded = 0
     print("Loading institutions...")
     with open(path, "r") as f:
@@ -22,39 +25,115 @@ def load_ipeds_data(path):
         for row in reader:
             if DEBUGMODE:
                 print(row)
-            institution, created = Institution.objects.get_or_create(
-                internet_domain=row["Trimmed URL"],
-                defaults={
-                    "name": row["Institution Name"],
-                    "country": "USA",
-                    "state_or_province": row["State Full"],
-                    "ipeds_region": row["Region"],
-                    "ipeds_sector": row["Sector"],
-                    "ipeds_control": row["Pub_Priv"],
-                    "ipeds_level": row["Level"],
-                    "ipeds_hbcu": row["HBCU"],
-                    "ipeds_pbi": row["PBI"],
-                    "ipeds_tcu": row["TCU"],
-                    "ipeds_hsi": row["HSI"],
-                    "ipeds_aanapisi_annh": row["AANAPISI_ANNH"],
-                    "ipeds_msi": row["MSI"],
-                    "ipeds_epscor": row["EPSCoR"],
-                    "ipeds_land_grant": row["Land_Grant"],
-                    "ipeds_urbanization": row["Urbnzn"],
-                    "ipeds_size": row["Size_Cat "]
-                    if row["Size_Cat "] != "-2"
-                    else None,  # Want to translate -2 to None
-                    "carnegie_classification": row["Carneg_Class"],
-                    "undergrad_pop": row["# of UG students"].replace(",", "") or 0,
-                    "grad_pop": row["# of Grad students"].replace(",", "") or 0,
-                    "student_pop": row["Total Students"].replace(",", ""),
-                    "research_expenditure": row["Research $ Expend"].replace(",", ""),
-                },
-            )
+            try:
+                institution, created = Institution.objects.get_or_create(
+                    ipeds_unitid=row["UnitID"],
+                    defaults={
+                        "name": row["Institution Name"],
+                        "internet_domain":row["Trimmed URL"],
+                        "country": "USA",
+                        "state_or_province": row["State Full"],
+                        "ipeds_unitid": row["UnitID"],
+                        "ipeds_region": row["Region"],
+                        "ipeds_sector": row["Sector"],
+                        "ipeds_control": row["Pub_Priv"],
+                        "ipeds_level": row["Level"],
+                        "ipeds_hbcu": row["HBCU"],
+                        "ipeds_pbi": row["PBI"],
+                        "ipeds_tcu": row["TCU"],
+                        "ipeds_hsi": row["HSI"],
+                        "ipeds_aanapisi_annh": row["AANAPISI_ANNH"],
+                        "ipeds_msi": row["MSI"],
+                        "ipeds_epscor": row["EPSCoR"],
+                        "ipeds_land_grant": row["Land_Grant"],
+                        "ipeds_urbanization": row["Urbnzn"],
+                        "ipeds_size": row["Size_Cat "]
+                        if row["Size_Cat "] != "-2"
+                        else None,  # Want to translate -2 to None
+                        "carnegie_classification": row["Carneg_Class"],
+                        "undergrad_pop": row["# of UG students"].replace(",", "") or 0,
+                        "grad_pop": row["# of Grad students"].replace(",", "") or 0,
+                        "student_pop": row["Total Students"].replace(",", ""),
+                        "research_expenditure": row["Research $ Expend"].replace(",", ""),
+                    },
+                )
+            except IntegrityError as e:
+                print(e, row)
+                continue
             institutions_loaded += 1
             if DEBUGMODE:
                 print(institution, created)
     print("Loaded {} institutions.".format(institutions_loaded))
+
+
+def update_ipeds_data(path):
+    institutions_loaded = 0
+    print("Updating institutions...")
+    with open(path, "r") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if DEBUGMODE:
+                print(row)
+            try:
+                institution, created = Institution.objects.update_or_create(
+                    ipeds_unitid=row["UnitID"],
+                    defaults={
+                        "name": row["Institution Name"],
+                        "internet_domain":row["Trimmed URL"],
+                        "country": "USA",
+                        "state_or_province": row["State Full"],
+                        "ipeds_unitid": row["UnitID"],
+                        "ipeds_region": row["Region"],
+                        "ipeds_sector": row["Sector"],
+                        "ipeds_control": row["Pub_Priv"],
+                        "ipeds_level": row["Level"],
+                        "ipeds_hbcu": row["HBCU"],
+                        "ipeds_pbi": row["PBI"],
+                        "ipeds_tcu": row["TCU"],
+                        "ipeds_hsi": row["HSI"],
+                        "ipeds_aanapisi_annh": row["AANAPISI_ANNH"],
+                        "ipeds_msi": row["MSI"],
+                        "ipeds_epscor": row["EPSCoR"],
+                        "ipeds_land_grant": row["Land_Grant"],
+                        "ipeds_urbanization": row["Urbnzn"],
+                        "ipeds_size": row["Size_Cat "]
+                        if row["Size_Cat "] != "-2"
+                        else None,  # Want to translate -2 to None
+                        "carnegie_classification": row["Carneg_Class"],
+                        "undergrad_pop": row["# of UG students"].replace(",", "") or 0,
+                        "grad_pop": row["# of Grad students"].replace(",", "") or 0,
+                        "student_pop": row["Total Students"].replace(",", ""),
+                        "research_expenditure": row["Research $ Expend"].replace(",", ""),
+                    },
+                )
+            except IntegrityError as e:
+                print(e)
+                continue
+
+def link_ipeds_unitids(path):
+    print("Updating institutions...")
+    with open(path, "r") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if DEBUGMODE:
+                print(row)
+            try:
+                institution = Institution.objects.get(
+                    internet_domain=row["Trimmed URL"],
+                )
+            except Institution.DoesNotExist:
+                try:
+                    institution = Institution.objects.get(
+                        name=row["Institution Name"],
+                        country="USA",
+                        state_or_province=row["State Full"],
+                    )
+                except Institution.DoesNotExist:
+                    print("Could not find institution for {}".format(row))
+                    continue
+
+            institution.ipeds_unitid = row["UnitID"]
+            institution.save()
 
 
 def load_capmodel_questions(path):
@@ -116,12 +195,12 @@ def load_capmodel_data(path, institution_path):
                 year=line["YEAR"], defaults={"created_by": user}
             )
             if created:
-                assessment = CapabilitiesAssessment.objects.create(profile=profile)
+                assessment = CapabilitiesAssessment.objects.create(profile=profile, override_create_time=datetime(int(profile.year), 6, 1, tzinfo=timezone.utc))
 
                 assessment.review_status = (
                     CapabilitiesAssessment.ReviewStatusChoices.APPROVED
                 )
-                assessment.review_time = timezone.now()
+                assessment.review_time = datetime(int(profile.year), 1, 1, tzinfo=timezone.utc)
                 assessment.review_user = user
                 assessment.review_note = "Loaded from legacy dataset"
                 assessment.save()

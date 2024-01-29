@@ -195,12 +195,12 @@ class CapabilitiesQuestionContent(models.Model):
 
 class CapabilitiesAssessment(AssessmentBase):
     class QuerySet(models.QuerySet):
-        def create(self, *args, **kwargs):
+        def create(self, override_create_time=None, *args, **kwargs):
             """
             Create an assessment with answer stubs for all currently valid questions.
             """
             assessment = super().create(*args, **kwargs)
-            for question in CapabilitiesQuestion.objects.filter_valid():
+            for question in CapabilitiesQuestion.objects.filter_valid(at=override_create_time):
                 assessment.answers.create(question=question)
             return assessment
 
