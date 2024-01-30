@@ -196,6 +196,7 @@ class IPEDSMixin(models.Model):
             "4yr: Other Special Focus Institutions",
         )
         TRIBAL_COLLEGES = 33, "Tribal Colleges"
+        __empty__ = "Other"
 
     carnegie_classification = models.IntegerField(
         "Carnegie Classification",
