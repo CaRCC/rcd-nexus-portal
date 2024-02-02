@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.conf import settings
+from django.contrib import admin
 from django.db import models
 from django.db.models import Avg, Count, F, StdDev, Window
 from django.db.models.functions import  Least, PercentRank
@@ -18,6 +19,9 @@ class CapabilitiesTopic(models.Model):
     """
     Facing topic.
     """
+    # This must match the definition in the questions fixture json. 
+    domain_coverage_slug = "domain-support"
+
     class Manager(models.Manager):
         def get_by_natural_key(self, facing: str, topic: str):
             return self.get(slug=topic, facing__slug=facing)
@@ -78,6 +82,18 @@ class CapabilitiesTopicContent(models.Model):
         ]
 
 class CapabilitiesQuestion(models.Model):
+    # TODO can lookup from CapabilitiesQuestion?
+    domain_lookup = {
+        "arts-and-humanities": "Arts and Humanities",
+        "social-sciences": "Social, Behavioral, and Economic Sciences",
+        "bio-life-sciences": "Biological and Life Sciences",
+        "chem-phys-sciences": "Chemistry, Physics, and Astronomy/Space Sciences",
+        "earth-geo-sciences" : "Earth and Geosciences",
+        "cs-and-infosci": "Computer and Information Sciences",
+        "engineering": "Engineering",
+        "med-school": "Medical School", 
+    }
+
     class QuerySet(models.QuerySet):
         def get_by_natural_key(self, facing: str, topic: str, question: str):
             return self.get(slug=question, topic__slug=topic, topic__facing__slug=facing)
@@ -179,12 +195,12 @@ class CapabilitiesQuestionContent(models.Model):
 
 class CapabilitiesAssessment(AssessmentBase):
     class QuerySet(models.QuerySet):
-        def create(self, *args, **kwargs):
+        def create(self, override_create_time=None, *args, **kwargs):
             """
             Create an assessment with answer stubs for all currently valid questions.
             """
             assessment = super().create(*args, **kwargs)
-            for question in CapabilitiesQuestion.objects.filter_valid():
+            for question in CapabilitiesQuestion.objects.filter_valid(at=override_create_time):
                 assessment.answers.create(question=question)
             return assessment
 
@@ -219,9 +235,25 @@ class CapabilitiesAssessment(AssessmentBase):
         IN_PROGRESS = "in_progress"
         COMPLETE = "complete"
 
+    def filtered_answers(self, excludeNotApplicable=True):
+        answers = self.answers.exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug)
+        if(excludeNotApplicable):
+            answers = answers.filter(not_applicable=False)
+        return answers
+
+    @property
+    @admin.display(description="%Done")
+    def completed_percent(self):
+        filtered_answers = self.filtered_answers()
+        total_questions = filtered_answers.count()
+        completed_questions = total_questions - filtered_answers.filter_unanswered().count()
+        pct = completed_questions/total_questions if total_questions else 0
+        return f"{pct:.0%}"
+
     @property
     def state(self) -> "CapabilitiesAssessment.State":
-        answers = self.answers.filter(not_applicable=False)
+        # Filter the domain coverage questions when calculating whether assessment is complete
+        answers = self.filtered_answers()
         total = answers.count()
         answered = answers.filter(score_deployment__isnull=False, score_collaboration__isnull=False, score_supportlevel__isnull=False).count()
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rcd-nexus-portal"
-version = "0.2.8"
+version = "2.1.0"
 description = ""
 authors = ["Paul Fischer <p.fischer@utah.edu>", "Patrick Schmitz <patrick@sempercogito.com>"]
 readme = "README.md"

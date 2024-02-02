@@ -26,7 +26,12 @@ class InstitutionAdmin(admin.ModelAdmin):
         "ipeds_sector",
         "ipeds_control",
         "ipeds_size",
+        "ipeds_hbcu",
+        "ipeds_pbi",
         "ipeds_tcu",
+        "ipeds_hsi",
+        "ipeds_aanapisi_annh",
+        "ipeds_msi",
     ]
     inlines = [InstitutionAffiliationInline]
     fieldsets = (
@@ -63,7 +68,11 @@ class InstitutionAdmin(admin.ModelAdmin):
                     "ipeds_level",
                     "ipeds_control",
                     "ipeds_hbcu",
+                    "ipeds_pbi",
                     "ipeds_tcu",
+                    "ipeds_hsi",
+                    "ipeds_aanapisi_annh",
+                    "ipeds_msi",
                     "ipeds_urbanization",
                     "ipeds_land_grant",
                     "carnegie_classification",

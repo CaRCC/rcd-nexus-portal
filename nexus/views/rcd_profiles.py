@@ -13,6 +13,7 @@ from django.http import (
     HttpResponseRedirect,
 )
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
@@ -344,11 +345,14 @@ def rcd_profile_invite(request, pk):
             invitation = profile.invitations.create(invited_by=request.user)
             invite_link = request.build_absolute_uri(
                 reverse("rcdprofile:accept-invite")
-            )
+            )+'?token='+str(invitation.token)
+            email_in_html = render_to_string('rcdprofile/collab_invite_email.html', 
+                                {'invby': invitation.invited_by, 'profile':profile, 'invite_link':invite_link})
             if email_recipients:
                 send_mail(
                     subject="RCD Nexus collaboration invite",
-                    message=f"{invitation.invited_by} is inviting you to collaborate on RCD Nexus assessments for {profile}.\n\nInvite link: {invite_link}?token={invitation.token}",
+                    message=f"{invitation.invited_by} is inviting you to collaborate on RCD Nexus assessments for {profile}.\n\nClick here to accept this invitation: {invite_link}",
+                    html_message=email_in_html,
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=email_recipients,
                 )
@@ -363,10 +367,39 @@ def rcd_profile_invite(request, pk):
 def rcd_profile_request_membership(http_request, pk):
     if not RCDProfile.objects.filter_can_view(http_request.user).filter(pk=pk).exists():
         raise PermissionDenied
-    RCDProfileMemberRequest.objects.get_or_create(
+    profile_request = RCDProfileMemberRequest.objects.get_or_create(
         profile_id=pk, requested_by=http_request.user
     )
-    messages.success(http_request, "Membership request sent. When a profile manager reviews your request, you will be notified by email.")
+    # We need to notify the profile owner
+    # print("Need to notify a profile manager about request from "+str(http_request.user))
+    profile = RCDProfile.objects.get(id=pk)
+    mgr = profile.memberships.filter(
+                role__in={
+                    RCDProfileMember.Role.MANAGER,
+                    RCDProfileMember.Role.SUBMITTER,
+                }).first()
+    if(mgr==None):
+        send_mail(
+                subject="RCD Nexus Membership request to Profile with no Manager!!!",
+                message=f"{http_request.user} has requested membership to collaborate on profile: {profile}, but no manager was found.",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.SUPPORT_EMAIL],
+                fail_silently=False,
+            )
+        messages.error(http_request, "There appears to be no manager for the requested Profile. RCD Nexus Admins have been notified.")
+    else:
+        profile_link = http_request.build_absolute_uri(reverse("rcdprofile:members", kwargs={"pk": profile.pk}))
+        email_in_html = render_to_string('rcdprofile/membership_request_email.html', 
+                                      {'mgr': mgr.user.name(), 'user': http_request.user, 'profile':profile, 'profile_link':profile_link})
+        send_mail(
+            subject="RCD Nexus Profile Membership request",
+            message=f"Hello {mgr.user.name()} - \n\n{http_request.user} has requested membership to collaborate on RCD Nexus assessments for {profile}.\n\nYou can review (and approve or deny) these requests at: {profile_link}",
+            html_message=email_in_html,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[mgr.user.email],
+        )
+        messages.success(http_request, "Membership request sent. When a profile manager reviews your request, you will be notified by email.")
+
     return redirect("rcdprofile:list")
 
 
@@ -389,18 +422,23 @@ def rcd_profile_handle_membership_request(http_request, pk):
             profile_link = http_request.build_absolute_uri(
                 reverse("rcdprofile:detail", kwargs={"pk": profile.pk})
             )
+            email_in_html = render_to_string('rcdprofile/membership_req_approved_email.html', 
+                                      {'profile':profile, 'profile_link':profile_link})
             send_mail(
                 subject="RCD Nexus membership request approved",
-                message=f"Your request to join {profile} has been approved. Link: {profile_link}",
+                message=f"Your request to join {profile} has been approved. Click here to get started: {profile_link}",
+                html_message=email_in_html,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[profile_request.requested_by.email],
             )
         elif action == "deny":
             profile_request.deny()
             messages.warning(http_request, f"Denied membership request from {profile_request.requested_by}")
+            email_in_html = render_to_string('rcdprofile/membership_req_denied_email.html', {'profile':profile} )
             send_mail(
                 subject="RCD Nexus membership request denied",
                 message=f"Your request to join {profile} has been denied.",
+                html_message=email_in_html,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[profile_request.requested_by.email],
             )

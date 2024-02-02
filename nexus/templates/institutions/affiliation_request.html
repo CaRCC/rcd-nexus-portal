@@ -1,20 +1,42 @@
 {% extends "base.html" %}
+{% block head %}
+<style>
+        main section {
+        width: 80%;
+        max-width: 650px;
+        padding: 10px;
+    }
+    main section form {
+        text-align: center;
+        padding-bottom: 20px;
+    }
 
+
+</style>
+{% endblock %}
+{% block title %}RCD-Nexus Institutional Affiliation request{% endblock %}
 {% block main %}
+
 <h1>Institutional Affiliation Request</h1>
-<p>
-    If your institution is not part of the <a href="https://www.cilogon.org/faq">CILogon federation</a>, you can still
-    affiliate with it inside RCD Nexus.
-    Enter your valid institutional email (e.g. ending with .edu) below and we will send you an email with a link
-    to confirm your affiliation.
-</p>
-<p>
-    If you are the first user from your institution on RCD Nexus, and your institution does not support CILogon, you may
-    need to <a href="{% url 'institutions:request' %}">request a new institution</a> instead.
-</p>
-<form method="post" action="">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit">
-</form>
+<section>
+    <p>
+        If your institution is not part of the <a href="https://www.cilogon.org/faq">CILogon federation</a>, you can still
+        affiliate with it on the RCD Nexus, and use the tools here.
+    </p>
+    <p>
+        If you are the first user from your institution on RCD Nexus, and your institution does not support CILogon, 
+        the first step is to <a href="{% url 'institutions:request' %}">request a new institution</a>.
+    </p>
+    <p>
+        If someone has already set up your institution enter your valid institutional email (e.g. ending with .edu) 
+        below and we will send you an email with a link to confirm your affiliation.
+        <br><em>Note: If you do not have an institutional email, you will need to contact someone at the institution who 
+            is managing the associated RCD Profile, and ask them to invite you directly.</em> 
+        </p><br>
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
+</section>
 {% endblock %}

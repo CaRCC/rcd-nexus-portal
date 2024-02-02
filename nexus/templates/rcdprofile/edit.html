@@ -36,9 +36,17 @@
     div.field-body p.help span {
         font-size: 1.2em;
     }
+    div.field-body p.help input[type=checkbox] {
+        width: auto;
+        float: left;
+        margin-right: 0.8em;
+        vertical-align: middle;
+        position: relative;
+        top: 0.5em;
+    }
     form section.fields {
-    display: grid;
-    grid-template-columns: 1fr .7fr;
+        display: grid;
+        grid-template-columns: 1fr .7fr;
     }
     form section.fields div.field-body p select,
     form section.fields div.field-body p input,
@@ -62,7 +70,7 @@
         grid-template-columns: auto 1fr;
     }
     div.IPEDS section.fields>div {
-        padding: 5px;
+        padding: 10px;
     }
     div.IPEDS div.fields-head {
         text-align: right;
@@ -105,68 +113,102 @@
         <button type="submit">Save your answers</button>
     </section>
     {% endif %}
+    <div class="IPEDS">
+        <section class="fields">
+            <div class="IPEDShdr">
+                <h3>Institutional data from Carnegie/IPEDS/Dept of Education (2022)</h3>
+            </div>
+            <div class="fields-head even-field">
+                <label>{% get_verbose_name form.instance.institution 'carnegie_classification' %}:</label>
+            </div>
+            <div class="fields-body even-field">
+                <label>{{ form.instance.institution.carnegie_longname }}</label>
+            </div>
+            <div class="fields-head odd-field">
+                <label>{% get_verbose_name form.instance.institution 'research_expenditure' %}:</label>
+            </div>
+            <div class="fields-body odd-field">
+                <label>{{ form.instance.institution.research_mdollars }}</label>
+            </div>
+            <div class="fields-head even-field">
+                <label>{% get_verbose_name form.instance.institution 'ipeds_sector' %}:</label>
+            </div>
+            <div class="fields-body even-field">
+                <label>{{ form.instance.institution.get_ipeds_sector_display }}</label>
+            </div>
+            <div class="fields-head odd-field">
+                <label>{% get_verbose_name form.instance.institution 'student_pop' %}:</label>
+            </div>
+            <div class="fields-body odd-field">
+                <label>{{ form.instance.institution.student_thous }}</label>
+            </div>
+            <div class="fields-head even-field">
+                <label>Location:</label>
+            </div>
+            <div class="fields-body even-field">
+                <label>{{ form.instance.institution.country }} - {{ form.instance.institution.get_ipeds_region_display }} ({{ form.instance.institution.state_or_province }})</label>
+            </div>
+            {% setvar "odd-field" as next_row %}
+            {% if form.instance.institution.ipeds_land_grant == 1 %}
+                <div class="fields-head {{ next_row }}">
+                    <label></label>
+                </div>
+                <div class="fields-body {{ next_row }}">
+                    <label>{{ form.instance.institution.get_ipeds_land_grant_display }}</label>
+                </div>
+                {% if next_row == "odd-field" %}
+                    {% setvar "even-field" as next_row %}
+                {% else %}
+                    {% setvar "odd-field" as next_row %}
+                {% endif %}
+            {% endif %}
+            {% if form.instance.institution.ipeds_epscor == 1 %}
+                <div class="fields-head {{ next_row }}">
+                    <label></label>
+                </div>
+                <div class="fields-body {{ next_row }}">
+                    <label>{% get_verbose_name form.instance.institution 'ipeds_epscor' %}</label>
+                </div>
+                {% if next_row == "odd-field" %}
+                    {% setvar "even-field" as next_row %}
+                {% else %}
+                    {% setvar "odd-field" as next_row %}
+                {% endif %}
+            {% endif %}
+            <div class="fields-head {{ next_row }}">
+                <label>Minority-Serving Status:</label>
+            </div>
+            {% if form.instance.institution.ipeds_msi != 1 %}
+                <div class="fields-body {{ next_row }}">
+                    <label>Not a minority-serving institution</label>
+                </div>
+            {% else %}
+                <div class="fields-body {{ next_row }}">
+                {% if form.instance.institution.ipeds_tcu == 1 %}
+                    <label>{% get_verbose_name form.instance.institution 'ipeds_tcu' %}</label><br>
+                {% endif %}
+                {% if form.instance.institution.ipeds_hbcu == 1 %}
+                    <label>{% get_verbose_name form.instance.institution 'ipeds_hbcu' %}</label><br>
+                {% endif %}
+                {% if form.instance.institution.ipeds_hsi == 1 %}
+                    <label>{% get_verbose_name form.instance.institution 'ipeds_hsi' %}</label><br>
+                {% endif %}
+                {% if form.instance.institution.ipeds_aanapisi_annh == 1 %}
+                    <label>{% get_verbose_name form.instance.institution 'ipeds_aanapisi_annh' %}</label>
+                {% endif %}
+                </div>
+            {% endif %}
+            {% comment %}
+            Uncomment this sectionif you add more rows to this section.
+            {% if next_row == "odd-field" %}
+                {% setvar "even-field" as next_row %}
+            {% else %}
+                {% setvar "odd-field" as next_row %}
+            {% endif %}
+            {% endcomment %}
+        </section>
+    </div>
 </form>
-<div class="IPEDS">
-    <section class="fields">
-        <div class="IPEDShdr">
-            <h3>Institutional data from Carnegie & IPEDS (2021)</h3>
-        </div>
-        <div class="fields-head even-field">
-            <label>{% get_verbose_name form.instance.institution 'carnegie_classification' %}:</label>
-        </div>
-        <div class="fields-body even-field">
-            <label>{{ form.instance.institution.carnegie_longname }}</label>
-        </div>
-        <div class="fields-head odd-field">
-            <label>{% get_verbose_name form.instance.institution 'research_expenditure' %}:</label>
-        </div>
-        <div class="fields-body odd-field">
-            <label>{{ form.instance.institution.research_mdollars }}</label>
-        </div>
-        <div class="fields-head even-field">
-            <label>{% get_verbose_name form.instance.institution 'ipeds_sector' %}:</label>
-        </div>
-        <div class="fields-body even-field">
-            <label>{{ form.instance.institution.get_ipeds_sector_display }}</label>
-        </div>
-        <div class="fields-head odd-field">
-            <label>{% get_verbose_name form.instance.institution 'student_pop' %}:</label>
-        </div>
-        <div class="fields-body odd-field">
-            <label>{{ form.instance.institution.student_thous }}</label>
-        </div>
-        <div class="fields-head even-field">
-            <label>Location:</label>
-        </div>
-        <div class="fields-body even-field">
-            <label>{{ form.instance.institution.country }} - {{ form.instance.institution.get_ipeds_region_display }} ({{ form.instance.institution.state_or_province }})</label>
-        </div>
-        {% if form.instance.institution.ipeds_land_grant == 1 %}
-            <div class="fields-head odd-field">
-                <label></label>
-            </div>
-            <div class="fields-body odd-field">
-                <label>{{ form.instance.institution.get_ipeds_land_grant_display }}</label>
-            </div>
-        {% endif %}
-        {% if form.instance.institution.ipeds_tcu == 1 %}
-            <div class="fields-head odd-field">
-                <label></label>
-            </div>
-            <div class="fields-body odd-field">
-                <label>{% get_verbose_name form.instance.institution 'ipeds_tcu' %}</label>
-            </div>
-        {% endif %}
-        {% if form.instance.institution.ipeds_hbcu == 1 %}
-            <div class="fields-head odd-field">
-                <label></label>
-            </div>
-            <div class="fields-body odd-field">
-                <label>{% get_verbose_name form.instance.institution 'ipeds_hbcu' %}</label>
-            </div>
-        {% endif %}
-    </section>
-</div>
 
 <script>
     var formEl = document.getElementById("EditForm");

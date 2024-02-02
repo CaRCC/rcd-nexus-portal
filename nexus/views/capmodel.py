@@ -72,6 +72,10 @@ def assessment(request, profile_id):
     nFacings = len(categories.keys())
     for facing, topics in categories.items():
         facing.content = facing.contents.get(language=session_language)
+        # Ignore the domain coverage topic in each facing
+        nTopicsRequired = len(topics.keys())-1  
+        nTopicsComplete = 0
+        aggSum = 0
         for topic, answers in topics.items():
             topic.content = topic.contents.get(language=session_language)
             if answers.filter_unanswered().exists():
@@ -90,30 +94,27 @@ def assessment(request, profile_id):
                     covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
                     answers.coverage_pct = mark_safe(f"{covstring}")
                     answers.coverage_color = compute_answer_color(coverage)
+                    # Do not include domain coverage in the aggregated Facing coverage
+                    if(topic.slug!=CapabilitiesTopic.domain_coverage_slug) :
+                        nTopicsComplete += 1
+                        aggSum += coverage
                 else:
                     answers.coverage_pct = "-"
                     answers.coverage_color = None
-
-    # compute facing coverages
-    facing_coverages = dict()
-    for facing, answers in assessment.answers.group_by_facing().items():
-        facing_coverages[facing] = answers.aggregate_score()["average"]
-
-
-    # TODO can lookup from CapabilitiesQuestion?
-    domain_lookup = {
-        "arts-and-humanities": "Arts and Humanities",
-        "social-sciences": "Social, Behavioral, and Economic Sciences",
-        "bio-life-sciences": "Biological and Life Sciences",
-        "chem-phys-sciences": "Chemistry, Physics, and Astronomy/Space Sciences",
-        "earth-geo-sciences" : "Earth and Geosciences",
-        "cs-and-infosci": "Computer and Information Sciences",
-        "engineering": "Engineering",
-        "med-school": "Medical School", 
-    }
+        if nTopicsComplete == nTopicsRequired:
+            facingCov = aggSum/nTopicsRequired
+            covstring = format(facingCov, ".1%" if facingCov<1.0 else ".0%")
+            facing.coverage_pct = mark_safe(f"{covstring}")
+            facing.coverage_color = compute_answer_color(facingCov)
+#        elif nTopicsComplete == 0:
+#            facing.coverage_pct = "-"
+#        else:
+#            facing.coverage_pct = mark_safe("<span class=\"wip\">WIP: "+str(nTopicsComplete)
+#                                                +" of "+str(nTopics)+"</span>")
+            
 
     domains = {}
-    for d in domain_lookup.keys():
+    for d in CapabilitiesQuestion.domain_lookup.keys():
         domaincovs = assessment.answers.filter(question__slug=d, not_applicable=False)
         ndomaincovs = domaincovs.count() - domaincovs.filter_unanswered().count()
         nadomains = assessment.answers.filter(question__slug=d, not_applicable=True).count()
@@ -135,10 +136,12 @@ def assessment(request, profile_id):
                 covstring = format(avgCoverage, ".1%" if avgCoverage<1.0 else ".0%")
                 coverage_pct = mark_safe(f"{covstring}")
                 coverage_color = compute_answer_color(avgCoverage)
-        domains[domain_lookup[d]] = aggDomainInfo(coverage_pct,coverage_color)
+        domains[CapabilitiesQuestion.domain_lookup[d]] = aggDomainInfo(coverage_pct,coverage_color)
 
-    total_questions = assessment.answers.count()
-    completed_questions = total_questions - assessment.answers.filter_unanswered().count()
+    # Filter the domain coverage questions when calculating progress 
+    filtered_answers = assessment.filtered_answers(excludeNotApplicable=False) 
+    total_questions = filtered_answers.count()
+    completed_questions = total_questions - filtered_answers.filter_unanswered().count()
 
     top_priorities = assessment.answers.filter(priority__gt=0).order_by("priority")[:10]
     for answer in top_priorities:
@@ -147,7 +150,7 @@ def assessment(request, profile_id):
     context = {
         "profile": profile,
         "submit_form": submit_form,
-        "facing_coverages": facing_coverages,
+#        "facing_coverages": facing_coverages,
         "categories": categories,
         "domains": domains,
         "completed_questions": completed_questions,
@@ -203,6 +206,7 @@ def topic(request, profile_id, facing, topic):
     answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk).annotate_coverage().order_by("question_id")
 
     session_language = "en"  # TODO get session language
+    all_answered = True
     for answer in answers:
         #answer.qid = {answer.question.legacy.qid if hasattr(answer.question, "legacy") else 'Q'}
         answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
@@ -217,11 +221,23 @@ def topic(request, profile_id, facing, topic):
             case CapabilitiesAnswer.State.PARTIALLY_ANSWERED:
                 answer.coverage_percent = "(WIP)"
                 answer.cssclass = "WIP"
+                all_answered = False
             case CapabilitiesAnswer.State.UNANSWERED:
                 answer.coverage_percent = "-"
+                all_answered = False
             case CapabilitiesAnswer.State.NOT_APPLICABLE:
                 answer.coverage_percent = "N/A"
                 answer.cssclass = "NA"
+
+    coverage_pct = None
+    coverage_color = None
+    if all_answered:
+        agg = answers.aggregate_score()
+        coverage = agg["average"]
+        if coverage != None:
+            covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
+            coverage_pct = mark_safe(f"{covstring}")
+            coverage_color = compute_answer_color(coverage)
 
 
     prev_topic = CapabilitiesTopic.objects.filter(
@@ -242,6 +258,8 @@ def topic(request, profile_id, facing, topic):
             "assessment": assessment,
             "facing": facing.contents.get(language=session_language),
             "topic": topic.contents.get(language=session_language),
+            "coverage_pct": coverage_pct,
+            "coverage_color": coverage_color,
             "prev_topic": prev_topic,
             "next_topic": next_topic,
             "navtree": rcdprofile_navtree(profile, rcdprofile_navtree.CAPABILITIES),
