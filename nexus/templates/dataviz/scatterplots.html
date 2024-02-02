@@ -1,7 +1,18 @@
 {% extends "base.html" %}
 {% block title %}RCD-Nexus Capabilities Model Demographics Data Visualizations{% endblock %}
 
+{% block nav %}
+    <form id="filtertree" method="post" action="">
+        <p class="FilterTitle"><span class="FilterTitle">Filters: </span><input type="submit" id="UpdateView" value="UpdateView"></p>
+        {% csrf_token %}
+        {% include "fragments/filtertree.html" %}
+    </form>
+{% endblock %}
+
 {% block main %}
 <h2>Scatter Plots</h2>
 <canvas class="viz"></canvas>
+<script>
+    initDetailsFromStorage();
+</script>
 {% endblock %}

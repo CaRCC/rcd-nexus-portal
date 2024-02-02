@@ -1,14 +1,21 @@
 <ul class="filter">
-    {% for node in filtertree %}
-    <li>
-        {% if node.children %}
-        <details {% if not node.collapsed %}open{% endif %}>
-            <summary>{{ node.as_html | safe}}</summary>
-        {% include "fragments/filtertree.html" with filtertree=node.children %}
-        </details>
-        {% else %}
-        {{ node.as_html | safe}}
-        {% endif %}
-    </li>
+    {% for field in filterform %}
+            <li {% if field.label == "skip" %}class="skip"{% endif %}>
+                <div class="fieldWrapper">
+                    <details id="{{ field.auto_id }}_d" {% if field.errors %}open{% endif %} onToggle="saveToggleState(this)">
+                        <summary>{{ field.label_tag | safe}}
+                            {% if field.help_text %}
+                                <span class="filtertip">?
+                                    <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
+                                        {{ field.help_text|safe }}
+                                    </span>
+                                </span>
+                            {% endif %}
+                        </summary>
+                        <span class="fielderror">{{ field.errors }}</span>
+                        {{ field }}
+                    </details>
+                </div>
+            </li>
     {% endfor %}
 </ul>
