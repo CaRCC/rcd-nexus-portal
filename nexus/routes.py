@@ -31,4 +31,5 @@ urlpatterns = [
     path("institutions/", include("nexus.urls.institutions")),
     path("accounts/profile/", lambda request: redirect("index")),
     path("helpdocs/", include("nexus.urls.helpdocs")),
+    path("viz/", include("nexus.urls.viz")),
 ]
