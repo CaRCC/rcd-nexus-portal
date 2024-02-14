@@ -439,24 +439,73 @@ body>nav details ul {
     padding-left: 1.5em;
 }
 
+#filtertree {
+    min-width: 15em;
+}
+#filtertree input#UpdateView {
+    font-size: 0.9em;
+    font-weight: bold;
+    background-color: var(--logo-dk-blue-shadow);
+    display:inline;
+    margin:0 auto;
+    float: right;
+    border-width: 1px;
+    padding: 3px 10px
+}
+
+#filtertree input#UpdateView:hover {
+    background-color: var(--logo-lt-blue);
+}
+
 #filtertree span.helptext {
     display: none;
 }
-#filtertree li.skip {
+#filtertree li.skip, #filtertree li.skipFilter, #filtertree div.skip {
     display: none;
 }
-#filtertree summary {
-    font-weight: bold;
+#filtertree div.viewChoices {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+#filtertree summary, #filtertree div.viewselect {
     margin-top: 5px;
 }
+
+#filtertree div.viewselect input[type='checkbox']{
+    position:relative;
+    top: 0.15em;
+}
+
+#filtertree summary, #filtertree div.viewselect select{
+    margin-left: 5px;
+    padding:1px;
+    font-weight: bold;
+    width: 16em;
+}
+
 #filtertree label {
+    font-weight: bold;
     font-size: .9em;
 }
 #filtertree details summary label {
     pointer-events: none;
 }
+#filtertree details label[for] {
+    margin-left:10px;
+}
+
 #filtertree label input:checked {
     accent-color: var(--logo-dk-blue);
+}
+
+#filtertree span.showAllNone {
+    font-size: .8em;
+    padding-left: .1em;
+}
+
+#filtertree details:not([open]) span.showAllNone {
+    display:none;
 }
 
 /* FilterTooltip container */
@@ -473,7 +522,8 @@ body>nav details ul {
     box-shadow: 0px 0px 3px 3px #FFFFFF;
     color: var(--nexus-dark-colored-text);
     text-align: left;
-    font-size: 0.8em;
+    font-size: 0.9em;
+    font-weight: bold;
     padding: 1px;
 
     /* Position the filtertip text - see examples below! */
@@ -545,13 +595,6 @@ nav p.FilterTitle {
 nav span.FilterTitle {
     font-weight: bold;
     font-size: 1em;
-}
-
-nav button#UpdateView {
-    font-size: 0.8em;
-    display:inline;
-    margin:0 auto;
-    float: right;
 }
 
 canvas.viz {

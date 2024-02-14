@@ -442,7 +442,6 @@ def rcd_profile_handle_membership_request(http_request, pk):
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[profile_request.requested_by.email],
             )
-            # TODO send email
         else:
             return HttpResponseBadRequest()
 

@@ -67,6 +67,7 @@ class InstitutionAdmin(admin.ModelAdmin):
                     "ipeds_sector",
                     "ipeds_level",
                     "ipeds_control",
+                    "ipeds_size",
                     "ipeds_hbcu",
                     "ipeds_pbi",
                     "ipeds_tcu",

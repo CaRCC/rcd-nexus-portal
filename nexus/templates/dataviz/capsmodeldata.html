@@ -3,7 +3,6 @@
 
 {% block nav %}
     <form id="filtertree" method="post" action="">
-        <p class="FilterTitle"><span class="FilterTitle">Filters: </span><input type="submit" id="UpdateView" value="UpdateView"></p>
         {% csrf_token %}
         {% include "fragments/filtertree.html" %}
     </form>
@@ -14,5 +13,6 @@
 <canvas class="viz"></canvas>
 <script>
     initDetailsFromStorage();
+    document.getElementById("id_chart_views").addEventListener("change", hideFiltersForChartView );
 </script>
 {% endblock %}

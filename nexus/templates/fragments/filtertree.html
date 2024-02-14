@@ -1,9 +1,38 @@
+{% if filterform.hasViewChoices %}
+    <p class="FilterTitle"><span class="FilterTitle">Views: </span><input type="submit" id="UpdateView" value="UpdateView"></p>
+    <div class="viewChoices">
+        {% for field in filterform %}
+            {% if field.label in filterform.NOT_FILTERS %}
+                <div class="viewselect">
+                    {{ field.label_tag | safe}}
+                    {% if field.help_text %}
+                        <span class="filtertip">?
+                            <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
+                                {{ field.help_text|safe }}
+                            </span>
+                        </span>
+                    {% endif %}
+                    {% comment %} Can't get errors with a fixed set of choices 
+                        <span class="fielderror">{{ field.errors }}</span>{% endcomment %}
+                    {% if not field.field.widget.input_type == "checkbox" %}<br>{% endif %}
+                    {{ field }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+<p class="FilterTitle"><span class="FilterTitle">Filters: </span>
+    {% if not filterform.hasViewChoices %}<input type="submit" id="UpdateView" value="UpdateView">{% endif %}</p>
 <ul class="filter">
     {% for field in filterform %}
-            <li {% if field.label == "skip" %}class="skip"{% endif %}>
+        {% if not field.label in filterform.NOT_FILTERS %}
+            <li id="{{ field.auto_id }}_fli"{% if "skip" in field.label %}class="skip"{% endif %}>
                 <div class="fieldWrapper">
                     <details id="{{ field.auto_id }}_d" {% if field.errors %}open{% endif %} onToggle="saveToggleState(this)">
                         <summary>{{ field.label_tag | safe}}
+                            {% if field.field.showAllNone %}
+                                <span class="showAllNone"><a href="#" onclick="setAll('{{ field.auto_id }}')">All</a>|<a href="#"  onclick="clearAll('{{ field.auto_id }}')">None</a></span>
+                            {% endif %}
                             {% if field.help_text %}
                                 <span class="filtertip">?
                                     <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
@@ -17,5 +46,6 @@
                     </details>
                 </div>
             </li>
+        {% endif %}
     {% endfor %}
 </ul>
