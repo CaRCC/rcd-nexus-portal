@@ -49,16 +49,19 @@
             setAll(id);
         }
     }
-    function hideFiltersForChartView(evt) {
+    function handleChartViewSelection(evt) {
         var value = evt.target.value;
         console.log("ChartView selected: "+value);
-        switch(value) {
+        hideFiltersForChartView(value)
+    }
+    function hideFiltersForChartView(view) {
+        switch(view) {
             case "cc":
             case "pub_priv":
             case "mission":
             case "epscor":
             case "msi":
-                toHide = "id_"+value+"_fli";
+                toHide = "id_"+view+"_fli";
                 break;
             default:
                 toHide = "";    // Just clear any skipFilter classes

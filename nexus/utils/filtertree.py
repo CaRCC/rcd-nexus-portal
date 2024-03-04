@@ -1,5 +1,7 @@
 from enum import Enum
 
+# THIS IS OBSOLETE - verify and remove this file
+
 class ChoiceType(Enum):
     CHECKBOX = 1
     RADIO = 2

@@ -9,10 +9,20 @@
 {% endblock %}
 
 {% block main %}
-<h2>Charts</h2>
-<canvas class="viz"></canvas>
+<h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}Demographic Charts{%endif%}</h2>
+<div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
 <script>
     initDetailsFromStorage();
-    document.getElementById("id_chart_views").addEventListener("change", hideFiltersForChartView );
+    document.getElementById("id_chart_views").addEventListener("change", handleChartViewSelection );
+    // There is no summary sematic for charts, so just hide that here. Also set disabled for older browsers. 
+    if( sumoption = document.querySelector("select#id_chart_views").options[0] ) {
+        sumoption.disabled = true;
+        sumoption.hidden = true;
+    } else {
+        console.log("Couldn't find the summary option element in the chart select!!")
+    }
+{%if chart %}
+    hideFiltersForChartView("{{chart}}");
+{%endif%}
 </script>
 {% endblock %}

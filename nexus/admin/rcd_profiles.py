@@ -24,6 +24,6 @@ class RCDProfileMemberInline(admin.TabularInline):
 @admin.register(RCDProfile)
 class RCDProfileAdmin(admin.ModelAdmin):
     list_display = ["__str__", "year", "created_by"]
-    list_filter = ["archived", "year"]
+    list_filter = ["archived", "year", "mission"]
     search_fields = ["institution__name", "institution_subunit"]
     inlines = [RCDProfileMemberInline]

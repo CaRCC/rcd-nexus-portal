@@ -418,6 +418,10 @@ main>nav.breadcrumbs {
     font-size: 0.9em;
     padding-left: 10px;
 }
+main>nav.breadcrumbs>p.breadcrumbs {
+    margin-top: 0.7em;
+    margin-bottom: 0.2em;
+}
 
 body>nav {
     grid-area: nav;
@@ -597,10 +601,27 @@ nav span.FilterTitle {
     font-size: 1em;
 }
 
-canvas.viz {
+#canvas.viz {
     width: 80%;
-    height: 500px;
-    border:1px solid var(--logo-dark-purple);
+    height: 600px;
+    display:flex;
+    /* border:1px solid var(--logo-dark-purple); */
+}
+#canvas.viz>div {
+    margin:auto;
+}
+h3.graphNYI {
+    margin:3em auto;
+    font-style: italic;
+    color:var(--nexus-dark-colored-text);
+}
+.plotly .hoverlayer .hovertext rect {
+    fill-opacity: 1 !important;
+}
+
+#CMGraphTitle {
+    margin-top: 0;
+    margin-bottom: 0.2em;
 }
 
 .menu {

@@ -9,10 +9,13 @@
 {% endblock %}
 
 {% block main %}
-<h2>CapsModel Data</h2>
-<canvas class="viz"></canvas>
+<h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}CapsModel Data{%endif%}</h2>
+<div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
 <script>
     initDetailsFromStorage();
-    document.getElementById("id_chart_views").addEventListener("change", hideFiltersForChartView );
+    document.getElementById("id_chart_views").addEventListener("change", handleChartViewSelection );
+    {%if chart %}
+        hideFiltersForChartView("{{chart}}");
+    {%endif%}
 </script>
 {% endblock %}

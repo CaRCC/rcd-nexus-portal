@@ -162,6 +162,7 @@ class DataFilterForm(forms.Form):
     INCLUDE_ALL_CONTRIBS={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP}
     # Omit the "Population" choice when viewing contributor data, and add the detail views
     CAPS_DATA_INCLUDE_ALL={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP, CHART_VIEWS, FACINGS, CAPS_FEATURE, BENCHMARK}
+    CAPS_DATA_EXCLUDE_NO_DATA_CONTRIB={CAPS_FEATURE, BENCHMARK}
 
     population = forms.ChoiceField(
         label=POPULATION,
@@ -313,6 +314,8 @@ class DataFilterForm(forms.Form):
             self.fields['msi'].label = "skip"+self.fields['msi'].label
 
         # Handle the view choices. Note that we will never "restore" Views on the fly so just replace vs. prefix labels, with "skip"
+        # TODO - handle removing 'sum' from the CHART_VIEWS for Demographic Charts
+            # Mark the option as hidden and disabled (for older browsers)
         self.hasViewChoices = False  # default, unless we have ANY of the view choices
         if (includes and self.CHART_VIEWS not in includes) or (excludes and self.CHART_VIEWS in excludes):
             self.fields['chart_views'].label = "skip"
