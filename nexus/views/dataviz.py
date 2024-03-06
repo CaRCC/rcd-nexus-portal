@@ -93,31 +93,31 @@ def data_viz_demographics_charts(request):
             institutions, instCount = cmgraphs.filterInstitutions(cleaned_dict)
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
-                graphtitle = 'Too Few Institutions ('+str(instCount)+') to Chart!'
+                graphtitle = f'Too Few Institutions ({instCount}) to Chart!'
             else:
                 match chart:
                     # Note that sum makes no sense for Charts, and will be hidden/disabled in the template
                     case "cc" :
                         if graph := cmgraphs.demographicsChartByCC(institutions) :
-                            graphtitle = f'Carnegie Classification of {instCount} (filtered) {popName}'
+                            graphtitle = f'Carnegie Classification of {instCount} {popName}'
                     case "mission" :
                         if graph := cmgraphs.demographicsChartByMission(institutions) :
-                            graphtitle = f'Mission of {instCount} (filtered) {popName}'
+                            graphtitle = f'Mission of {instCount} {popName}'
                     case "pub_priv" :
                         if graph := cmgraphs.demographicsChartByPubPriv(institutions) :
-                            graphtitle = f'Control (Public/Private) of {instCount} (filtered) {popName}'
+                            graphtitle = f'Control (Public/Private) of {instCount} {popName}'
                     case "epscor" :
                         if graph := cmgraphs.demographicsChartByEPSCoR(institutions) :
-                            graphtitle = f'EPSCoR status of {instCount} (filtered) {popName}'
+                            graphtitle = f'EPSCoR status of {instCount} {popName}'
                     case "msi" :
                         if graph := cmgraphs.demographicsChartByMSI(institutions) :
-                            graphtitle = f'Minority-serving status of {instCount} (filtered) {popName}'
+                            graphtitle = f'Minority-serving status of {instCount} {popName}'
                     case "orgmodel" :
                         if graph := cmgraphs.demographicsChartByOrgModel(institutions) :
-                            graphtitle = f'Organizational Model of {instCount} (filtered) {popName}'
+                            graphtitle = f'Organizational Model of {instCount} {popName}'
                     case "reporting" :
                         if graph := cmgraphs.demographicsChartByReporting(institutions) :
-                            graphtitle = f'Reporting Structure of {instCount} (filtered) {popName}'
+                            graphtitle = f'Reporting Structure of {instCount} {popName}'
                     case _ :
                         send_mail(
                                 subject="Unrecognized Chart Option: "+chart,
@@ -155,12 +155,35 @@ def data_viz_demographics_scatter(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            print("FilterForm valid ",posted.cleaned_data)
-        else:
-            print("FilterForm not valid!")
+            qs = urlencode(posted.cleaned_data)
+            return redirect(reverse('dataviz:demographics_scatterplots') + '?'+qs)
+        #else:
+        #    print("FilterForm not valid!")
         filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
     else: 
-        filter_form = DataFilterForm()
+        if(request.GET) :
+            dict = request.GET.dict()
+            cleaned_dict = fixMultiSelectDictEntries(dict)
+            filter_form = DataFilterForm(cleaned_dict)
+            #print( "Cleaned dict: ",cleaned_dict)
+            # Note we need the answers (not institutions) to group into facings for the scatter graph
+            answers, instCount = cmgraphs.filterAssessmentData(cleaned_dict)
+            if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
+                graph = None
+                graphtitle = f'Too Few Institutions ({instCount}) to Chart!'
+            elif graph := cmgraphs.scatterChart(answers, instCount) :
+                graphtitle = f'Scatter Graph of {instCount} Contributors'
+
+            if graph is None:
+                graphtitle = 'No Data to Graph!'
+
+        else :
+            #print( "GET with no params ")
+            filter_form = DataFilterForm()
+            answers, instCount = cmgraphs.getAllAnswers()
+            graph = cmgraphs.scatterChart(answers, instCount)
+            graphtitle = f'Scatter Graph of All {instCount} Contributors'
+
     filter_form.filtertree(includes=DataFilterForm.INCLUDE_ALL_CONTRIBS)
     context = {
         "filterform":filter_form,
@@ -209,7 +232,7 @@ def data_viz_capsmodeldata(request):
             answers, instCount = cmgraphs.filterAssessmentData(cleaned_dict)
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
-                graphtitle = 'Too Few Institutions ('+str(instCount)+') to Graph!'
+                graphtitle = f'Too Few Institutions ({instCount}) to Graph!'
             else:
                 facing = cleaned_dict.get('facings')
                 facingname = [item for item in DataFilterForm.FACINGS_CHOICES if item[0] == facing]
@@ -221,7 +244,7 @@ def data_viz_capsmodeldata(request):
                         else:
                             graph = cmgraphs.facingSummaryDataGraph(answers, facing)
                         if graph : 
-                            graphtitle = facingname[0][1]+' ('+str(instCount)+' Institutions)'
+                            graphtitle = f'{facingname[0][1]} ({instCount} Institutions)'
 
                     case "cc" :
                         if facing == 'all':
@@ -229,49 +252,49 @@ def data_viz_capsmodeldata(request):
                         else:
                             graph = cmgraphs.facingCapsDataGraphByCC(answers, facing)
                         if graph : 
-                            graphtitle = facingname[0][1]+' by Carnegie Classification ('+str(instCount)+' Institutions)'
+                            graphtitle = f'{facingname[0][1]} by Carnegie Classification ({instCount} Institutions)'
                     case "mission" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByMission(answers)
                         else:
                             graph = cmgraphs.facingCapsDataGraphByMission(answers, facing)
                         if graph : 
-                            graphtitle = facingname[0][1]+' by Mission ('+str(instCount)+' Institutions)'
+                            graphtitle = f'{facingname[0][1]} by Mission ({instCount} Institutions)'
                     case "pub_priv" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByPubPriv(answers)
                         else:
                             graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facing)
                         if graph : 
-                            graphtitle = facingname[0][1]+' by Control (Public/Private) ('+str(instCount)+' Institutions)'
+                            graphtitle = f'{facingname[0][1]} by Control (Public/Private) ({instCount} Institutions)'
                     case "epscor" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByEPSCoR(answers)
                         else:
                             graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facing)
                         if graph : 
-                            graphtitle = facingname[0][1]+' by EPSCoR status ('+str(instCount)+' Institutions)'
+                            graphtitle = f'{facingname[0][1]} by EPSCoR status ({instCount} Institutions)'
                     case "msi" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByMSI(answers)
                         else:
                             graph = cmgraphs.facingCapsDataGraphByMSI(answers, facing)
                         if graph : 
-                            graphtitle = facingname[0][1]+' by Minority-serving status ('+str(instCount)+' Institutions)'
+                            graphtitle = f'{facingname[0][1]} by Minority-serving status ({instCount} Institutions)'
                     case "orgmodel" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByOrgModel(answers)
                         else:
                             graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facing)
                         if graph : 
-                            graphtitle = facingname[0][1]+' by Organizational Model ('+str(instCount)+' Institutions)'
+                            graphtitle = f'{facingname[0][1]} by Organizational Model ({instCount} Institutions)'
                     case "reporting" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByReporting(answers)
                         else:
                             graph = cmgraphs.facingCapsDataGraphByReporting(answers, facing)
                         if graph : 
-                            graphtitle = facingname[0][1]+' by Reporting Structure ('+str(instCount)+' Institutions)'
+                            graphtitle = f'{facingname[0][1]} by Reporting Structure ({instCount} Institutions)'
                     case _ :
                         send_mail(
                                 subject="Unrecognized Chart Option: "+chart,
@@ -286,8 +309,11 @@ def data_viz_capsmodeldata(request):
         else :
             #print( "GET with no params ")
             filter_form = DataFilterForm()
-            graphtitle = 'All Data Summary Graph By Facings'
-            graph = cmgraphs.allSummaryDataGraph()
+            graph, instCount = cmgraphs.allSummaryDataGraph()
+            if graph is None:
+                graphtitle = 'No Data to Graph!'
+            else:
+                graphtitle = f'All Data Summary Graph By Facings ({instCount} Institutions)'
 
     # TODO: This should be changed to be request.user.is_data_contributor once that is implemented. 
     excludes = None if request.user.is_authenticated else DataFilterForm.CAPS_DATA_EXCLUDE_NO_DATA_CONTRIB
