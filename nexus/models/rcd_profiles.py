@@ -101,6 +101,7 @@ class RCDProfile(models.Model):
         on_delete=models.RESTRICT,
         related_name="profiles",
     )
+
     class MissionChoices(models.TextChoices): 
         RESEARCHESSENTIAL = "rsrchess", mark_safe("<b>Research Essential</b>: Research is the primary or exclusive mission, \
             and teaching does not significantly factor into faculty and institutional success \
@@ -113,6 +114,10 @@ class RCDProfile(models.Model):
                                                 but faculty research is rewarded.")
         TEACHINGESSENTIAL = "teachess", mark_safe("<b>Teaching Essential</b>: Teaching is the primary mission, \
             and faculty research does not factor heavily in faculty and institutional success.")
+
+    def getShortMissionChoice(label):
+        #The Choices all have the main label marked in <b> tags, at the start. We just extract that
+        return label[3:label.find("</b>")]
 
     mission = models.CharField(
         "Institutional Mission",

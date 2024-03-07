@@ -608,7 +608,7 @@ nav span.FilterTitle {
     /* border:1px solid var(--logo-dark-purple); */
 }
 #canvas.viz>div {
-    margin:auto;
+    margin:20px auto;
 }
 h3.graphNYI {
     margin:3em auto;

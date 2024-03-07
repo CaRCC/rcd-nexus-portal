@@ -14,12 +14,18 @@
 <script>
     initDetailsFromStorage();
     document.getElementById("id_chart_views").addEventListener("change", handleChartViewSelection );
-    // There is no summary sematic for charts, so just hide that here. Also set disabled for older browsers. 
-    if( sumoption = document.querySelector("select#id_chart_views").options[0] ) {
-        sumoption.disabled = true;
-        sumoption.hidden = true;
-    } else {
-        console.log("Couldn't find the summary option element in the chart select!!")
+    // There is no summary semantic for charts, so just hide that here. Also set disabled for older browsers. 
+    if( chartselect = document.querySelector("select#id_chart_views")) {
+        if( sumoption = chartselect.options[0] ) {
+            sumoption.disabled = true;
+            sumoption.hidden = true;
+        } else {
+            console.log("Couldn't find the summary option element in the chart select!!")
+        }
+        // If set to (disabled) summary, change to next option (CC)
+        if(chartselect.selectedIndex == 0 ) {
+            chartselect.selectedIndex = 1;
+        }
     }
 {%if chart %}
     hideFiltersForChartView("{{chart}}");

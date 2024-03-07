@@ -14,13 +14,23 @@ from django.db.models import Q
 DEFAULT_WIDTH = 800
 DEFAULT_HEIGHT = 600
 
+VALUE_UNKNOWN = "unknown"
+VALUE_UNKNOWN_LABEL = "Unknown"
+
 colorPalette = {'allData':'#9F9F9F', 'EPSCoR':'#5ab4ac', 'nonEPSCoR':'#d8b365', 
                 'errBars':'#bbb', 'lightErrBars':'#f5f5f5', 'bgColor':'#555',
                 'RF':'#40bad2', 'DF': '#fab900', 'SWF':'#90bb23', 'SYF':'#ee7008', 'SPF':'#d5393d',
-                'R1':'#2e75b6','R2':'#8bb8e1','AllButR1':'#d1e3f3','OtherAcad':'#d1e3f3','Other':'#e9f0f7',
+                'R1':'#2e75b6','R2':'#8bb8e1','R3':'#d1e3f3','AllButR1':'#d1e3f3','OtherAcad':'#d1e3f3','Other':'#e9f0f7',
+                'M1':'#95A472','M2':'#C8E087','M3':'#DDFCAD','Bacc':'#F7EF81',
                 'Centralized':'#A37C40','School':'#98473E','Decentralized':'#B49082','None':'#D6C3C9',
                 'Public':'#ffd966','Private':'#ec7728',
-                'NotMSI':'#FFE699','HSI':'#C5E0B4','otherMSI':'#8FAADC',
+                'NotMSI':'#8FB8DE','HSI':'#586F6B','HBCU':'#CFE795','AA':'#F7EF81','TCU':'#D4C685','otherMSI':'#D0CFEC',
+                RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label):'#e29578',
+                RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label):'#ffddd2',
+                RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label):'#edf6f9',
+                RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label):'#83c5be',
+                RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label):'#006d77',
+                VALUE_UNKNOWN_LABEL:'#8d99ae',
                 '2022':'#ffba5a', '2021':'#6aaa96', '2020':'#ada3d3'}
 
 scatterPlotcolorMap = {'RT':colorPalette['RF'],'DT':colorPalette['DF'], 'SWT':colorPalette['SWF'],
@@ -30,15 +40,44 @@ scatterPlotColorSeq = [colorPalette['RF'],colorPalette['DF'],colorPalette['SWF']
 # QUESTION Why does this work?  Facings fixture defines the indices as 0-4, not 1-5
 Facing_mapping = { 1: '<b>Researcher-<br>Facing</b>', 2: '<b>Data-<br>Facing</b>', 3: '<b>Software-<br>Facing</b>', 4 : '<b>System-<br>Facing</b>', 5: '<b>Strategy & Policy-<br>Facing</b>'}
 
+CC_OTHER = 0
+CC_OTHERACAD = 99
+CC_MISC = 100
+CC_BACC = 98
+
 def initCCMapping():
     mapping = {}
-    mapping[0] = 'Other'
-    mapping[99] = 'OtherAcad'
+    mapping[CC_MISC] = 'Other'
+    mapping[CC_OTHER] = 'Other'
+    mapping[CC_OTHERACAD] = 'OtherAcad'
+    mapping[CC_BACC] = 'Bacc'
     for val in Institution.CarnegieClassificationChoices:
         mapping[int(val)] = val.label
     return mapping
 
 cc_mapping = initCCMapping()
+
+simple_cc_palette = {'R1':colorPalette['R1'], 'R2':colorPalette['R2'], 'R3':colorPalette['R3'],
+                      'M1':colorPalette['M1'], 'M2':colorPalette['M2'], 'M3':colorPalette['M3'],
+                      'Bacc':colorPalette['Bacc'],'Other':'white'}
+
+MSI_NOT = 0
+MSI_HSI = 1
+MSI_HBCU_PBI = 2
+MSI_AA = 3
+MSI_TCU = 4
+MSI_OTHER = 9
+
+simple_msi_mapping = {
+    MSI_NOT: 'Not an MSI',
+    MSI_HSI: 'Hispanic-Serving',
+    MSI_HBCU_PBI: 'HBCU/PBI',
+    MSI_AA: 'AANAPISI or ANNH',
+    MSI_TCU: 'Tribal College',
+    MSI_OTHER: 'Other MSI',
+}
+simple_msi_palette = {'Not an MSI': colorPalette['NotMSI'], 'Hispanic-Serving': colorPalette['HSI'], 'HBCU/PBI': colorPalette['HBCU'], 
+                    'AANAPISI or ANNH': colorPalette['AA'], 'Tribal College': colorPalette['TCU'], 'Other MSI': colorPalette['otherMSI'] }
 
 # Define a dictionary to map Pub/Priv (control) values to names
 # We are simplifying the PRIVATE group for now since we have no for-profits using the tools
@@ -46,6 +85,7 @@ pubpriv_mapping = {
     Institution.ControlChoices.PUBLIC: Institution.ControlChoices.PUBLIC.label,
     Institution.ControlChoices.PRIVATE_NON_PROFIT: 'Private'    
     }
+pub_priv_palette = {'Public':colorPalette['Public'], 'Private':colorPalette['Private'],}
 
 # Define a dictionary to map EPSCoR values to names
 epscor_mapping = {
@@ -53,13 +93,48 @@ epscor_mapping = {
     Institution.EPSCORChoices.NOT_EPSCOR: Institution.EPSCORChoices.NOT_EPSCOR.label,    
     }
 
+# Define a dictionary to map MSI values to names
+msi_mapping = {
+    Institution.MSIChoices.MSI: Institution.MSIChoices.MSI.label,
+    Institution.MSIChoices.NOT_AN_MSI: Institution.MSIChoices.NOT_AN_MSI.label,    
+    }
+
+# Define a dictionary to map Mission values to names
+mission_mapping = {
+    RCDProfile.MissionChoices.RESEARCHESSENTIAL: RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label),
+    RCDProfile.MissionChoices.RESEARCHFAVORED: RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label),
+    RCDProfile.MissionChoices.BALANCED: RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label),
+    RCDProfile.MissionChoices.TEACHINGFAVORED: RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label),
+    RCDProfile.MissionChoices.TEACHINGESSENTIAL: RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label),
+    VALUE_UNKNOWN: VALUE_UNKNOWN_LABEL
+    }
+mission_palette = {RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label):
+                    colorPalette[RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label)],
+                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label):
+                    colorPalette[RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label)],
+                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label):
+                    colorPalette[RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label)],
+                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label):
+                    colorPalette[RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label)],
+                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label):
+                    colorPalette[RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label)],
+                    VALUE_UNKNOWN_LABEL:colorPalette[VALUE_UNKNOWN_LABEL]
+}
+
 # Define a dictionary to map Structure values to names
 structure_mapping = {
     RCDProfile.StructureChoices.STANDALONE: 'Centralized',
     RCDProfile.StructureChoices.EMBEDDED: 'In a School/Dept.',
     RCDProfile.StructureChoices.DECENTRALIZED: 'Decentralized across units',
     RCDProfile.StructureChoices.NONE: 'No organized support',
+    VALUE_UNKNOWN: VALUE_UNKNOWN_LABEL
     }
+structure_palette = {'Centralized':'#dda15e',
+                    'In a School/Dept.':'#fefae0',
+                    'Decentralized across units':'#283618',
+                    'No organized support': '#606c38',
+                    VALUE_UNKNOWN_LABEL:colorPalette[VALUE_UNKNOWN_LABEL]
+}
 
 
 
@@ -87,104 +162,6 @@ def getAllAnswers(years=None) :
     instCount = answers.values('assessment__id').distinct().count()
 
     return answers, instCount
-
-def getAllInstitutions() :
-    # Any restrictions??? We need some kind of marker for test institutions
-    # We need to find all the profiles and then get the associated institutions, not just get
-    # all the institutions (most of which are imported from IPEDS data)
-    return None
-
-def filterInstitutions(dict):
-    # TODO filter by population (contributor status: all vs contrib only)
-    # TODO filter by cc
-    # TODO filter by mission
-    # TODO filter by pubpriv
-    # TODO filter by region?? Have map, why do this? May allow reidentification
-    # TODO filter by SIZE
-    # TODO filter by epscor
-    # TODO filter by msi???
-    # TODO filter by year
-    print("filterInstitutions NYI")
-    return None, 81
-
-def demographicsChartByCC(institutions, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This chart is Not Yet Implemented</h3>'
-
-def demographicsChartByMission(institutions, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This chart is Not Yet Implemented</h3>'
-
-def demographicsChartByPubPriv(institutions, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This chart is Not Yet Implemented</h3>'
-
-def demographicsChartByEPSCoR(institutions, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This chart is Not Yet Implemented</h3>'
-
-def demographicsChartByMSI(institutions, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This chart is Not Yet Implemented</h3>'
-
-# Not clear if we will do this one
-#def demographicsChartBySize(institutions, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-#    return '<br><h3 class="graphNYI">This chart is Not Yet Implemented</h3>'
-
-def demographicsChartByOrgModel(institutions, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This chart is Not Yet Implemented</h3>'
-
-def demographicsChartByReporting(institutions, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This chart is Not Yet Implemented</h3>'
-
-def scatterChart(answers, instCount, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    if (answers.count() == 0): 
-        return None
-    
-    data = answers.aggregate_score('question__topic__facing','assessment__profile__institution'). \
-        values('question__topic__facing','assessment__profile__institution','average')
-
-    df= pd.DataFrame(data)
-    df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping) # Map the facings to names
-
-    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
-    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
-    # Multiply by 100 to display percentages
-    df['average'] *= 100
-
-    # Rename the columns for clarity
-    df =  df.rename(columns={
-            'question__topic__facing' : 'Facings',
-            'assessment__profile__institution' :'Inst',
-            'average':'Average Values',
-        })
-    nInstsRange = [i for i in range(1, 1+int(instCount))]
-    instIndex = pd.Index(nInstsRange+nInstsRange+nInstsRange+nInstsRange+nInstsRange)
-    df.loc[:, 'Inst'] = instIndex
-    #print('Scatter df: ',df)
-
-    # Create a scatter chart
-    fig = px.scatter( df, x='Inst', y='Average Values',
-                    color='Facings',
-                    # color_discrete_map=scatterPlotcolorMap,
-                    color_discrete_sequence=scatterPlotColorSeq,
-                    labels=None,
-                    width=800, height=600)
-    
-    #fig.update_layout(yaxis={'visible': False, 'showticklabels': False})
-    roundedInstCount = ceil(instCount/5)*5
-    xdtick = 5 if roundedInstCount<25 else 10
-    fig.update_layout(
-        xaxis=dict(range=[0, roundedInstCount], visible=True, showticklabels=True, dtick=xdtick, color='white'),
-        xaxis_title=dict(text='<b>Institutions</b>', font=dict(size=14, color=colorPalette['bgColor']), standoff=0),
-        yaxis=dict(ticksuffix="%", range=[0, 100], dtick=20),
-        yaxis_title=dict(text='<b>Coverage</b>', font=dict(size=14, color=colorPalette['bgColor'])),
-        plot_bgcolor=colorPalette['bgColor'], 
-        margin_t=25,autosize=True,
-        legend_title_text=''
-        )
-    msize = 5 + 100/instCount   # scale the marker size up for fewer results
-    fig.update_traces(marker={'size': msize})
-
-
-    # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
-
 
 # Translate URL query parameters into a filter for CapabilitiesAnswer objects
 def filterAssessmentData(dict):
@@ -258,9 +235,7 @@ def filterAssessmentData(dict):
                 filters |= Q(assessment__profile__institution__ipeds_hsi=Institution.HSIChoices.HSI)    # Add HSIs
 
             if "otherMSI" in msis:
-                # BUG - Hawaii institutions are all AANAPISI_ANNHChoices.AANAPISI_ANNH, and admin shows them as such, but
-                # this query does not return them! 
-                # Once this is resolved, add exclude annotations for HBCU and HSIs. 
+                # TODO: add exclude annotations for HBCU and HSIs. 
                 filters |= Q(assessment__profile__institution__ipeds_pbi=Institution.PBIChoices.PBI)
                 filters |= Q(assessment__profile__institution__ipeds_tcu=Institution.TCUChoices.TCU)
                 filters |= Q(assessment__profile__institution__ipeds_aanapisi_annh=Institution.AANAPISI_ANNHChoices.AANAPISI_ANNH)
@@ -288,7 +263,8 @@ def applyStandardVBarFormatting(fig, width=None):
         margin_t=25,autosize=True,
         legend_title_text=''
         )
-    fig.update_traces(error_y_color='#bbb', marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{y:.1f}%')
+    fig.update_traces(error_y_color=colorPalette['errBars'], 
+                      marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{y:.1f}%')
     fig.update_yaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
 
 
@@ -344,12 +320,13 @@ def capsDataGraphByCC(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
+    # For this graph, we will ignore the "Other" institutions (labs, etc.) which have Null values for CC
     answers = answers.filter(assessment__profile__institution__carnegie_classification__isnull=False)
     annotatedAnswers = answers.annotate(simpleCC=Case(
         When(assessment__profile__institution__carnegie_classification=15, then=Value(15)),
         When(assessment__profile__institution__carnegie_classification=16, then=Value(16)),
         When(assessment__profile__institution__carnegie_classification=0, then=Value(0)),
-        #When(assessment__profile__institution__carnegie_classification__isnull=True, then=Value(0)),
+        # When(assessment__profile__institution__carnegie_classification__isnull=True, then=Value(0)),
         default=Value(99) ))
     data = annotatedAnswers.aggregate_score('question__topic__facing','simpleCC').values('question__topic__facing','simpleCC','average','stddev')
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame

@@ -21,10 +21,6 @@ class AllNoneMultipleChoiceField(forms.MultipleChoiceField):
 # For now, all the fields are in the filter tree. 
 class DataFilterForm(forms.Form):
     # Must pass in a string (e.g., rcd_profiles.MissionChoices.RESEARCHESSENTIAL.label)
-    def getShortMissionChoice(label):
-        #The Choices all have the main label marked in <b> tags, at the start. We just extract that
-        return label[3:label.find("</b>")]
-    
     hasViewChoices=False  # indicates to template that this version of Form includes View choices
 
     POPULATION="Population"
@@ -40,11 +36,11 @@ class DataFilterForm(forms.Form):
     )
     MISSION="Mission"
     MISSION_CHOICES = (     # Need to think about this since we may only be able to say MSI or not in our dataset. 
-        (RCDProfile.MissionChoices.RESEARCHESSENTIAL.value,getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label)),
-        (RCDProfile.MissionChoices.RESEARCHFAVORED.value,getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label)),
-        (RCDProfile.MissionChoices.BALANCED.value,getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label)),
-        (RCDProfile.MissionChoices.TEACHINGFAVORED.value,getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label)),
-        (RCDProfile.MissionChoices.TEACHINGESSENTIAL.value,getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label)),
+        (RCDProfile.MissionChoices.RESEARCHESSENTIAL.value,RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label)),
+        (RCDProfile.MissionChoices.RESEARCHFAVORED.value,RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label)),
+        (RCDProfile.MissionChoices.BALANCED.value,RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label)),
+        (RCDProfile.MissionChoices.TEACHINGFAVORED.value,RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label)),
+        (RCDProfile.MissionChoices.TEACHINGESSENTIAL.value,RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label)),
     )
 
     ORG_MODEL="Organizational Model"
@@ -167,7 +163,7 @@ class DataFilterForm(forms.Form):
     population = forms.ChoiceField(
         label=POPULATION,
         choices=POP_CHOICES,
-        initial="all",
+        initial="contrib",
         widget=forms.RadioSelect(),
         help_text="Show data for All institutions or just Contributors",
     )
@@ -257,7 +253,7 @@ class DataFilterForm(forms.Form):
     chart_views = forms.ChoiceField(
         label=CHART_VIEWS,
         choices=CHART_VIEW_CHOICES,
-        initial = [0],   # Default to CARN_CLASS
+        initial = [0],   # Default to Summary
         help_text="Select the data you want to compare in the chart",
     )
 

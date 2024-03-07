@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.http import urlencode
 from nexus.utils.filtertree import *
-from nexus.utils import cmgraphs
+from nexus.utils import cmgraphs, demogcharts
 from nexus.forms.dataviz import *
 from nexus.models.rcd_profiles import RCDProfile
 from nexus.models.ipeds_classification import IPEDSMixin
@@ -49,7 +49,7 @@ def data_viz_demographics_maps(request):
         filter_form = DataFilterForm()
 
     filter_form.filtertree(includes=DataFilterForm.INCLUDE_ALL, excludes={DataFilterForm.REGION, DataFilterForm.EPSCOR, DataFilterForm.RESEARCH_EXP})
-    print("FilterForm.hasViewChoices: "+str(filter_form.hasViewChoices))
+    #print("FilterForm.hasViewChoices: "+str(filter_form.hasViewChoices))
     context = {
         "filterform":filter_form,
         "graph":graph,
@@ -90,7 +90,8 @@ def data_viz_demographics_charts(request):
             else: 
                 popName = 'Users'
             #print( "Cleaned dict: ",cleaned_dict)
-            institutions, instCount = cmgraphs.filterInstitutions(cleaned_dict)
+            profiles = demogcharts.filterProfiles(cleaned_dict)
+            instCount = profiles.count()
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
                 graphtitle = f'Too Few Institutions ({instCount}) to Chart!'
@@ -98,25 +99,25 @@ def data_viz_demographics_charts(request):
                 match chart:
                     # Note that sum makes no sense for Charts, and will be hidden/disabled in the template
                     case "cc" :
-                        if graph := cmgraphs.demographicsChartByCC(institutions) :
+                        if graph := demogcharts.demographicsChartByCC(profiles) :
                             graphtitle = f'Carnegie Classification of {instCount} {popName}'
                     case "mission" :
-                        if graph := cmgraphs.demographicsChartByMission(institutions) :
+                        if graph := demogcharts.demographicsChartByMission(profiles) :
                             graphtitle = f'Mission of {instCount} {popName}'
                     case "pub_priv" :
-                        if graph := cmgraphs.demographicsChartByPubPriv(institutions) :
+                        if graph := demogcharts.demographicsChartByPubPriv(profiles) :
                             graphtitle = f'Control (Public/Private) of {instCount} {popName}'
                     case "epscor" :
-                        if graph := cmgraphs.demographicsChartByEPSCoR(institutions) :
+                        if graph := demogcharts.demographicsChartByEPSCoR(profiles) :
                             graphtitle = f'EPSCoR status of {instCount} {popName}'
                     case "msi" :
-                        if graph := cmgraphs.demographicsChartByMSI(institutions) :
+                        if graph := demogcharts.demographicsChartByMSI(profiles) :
                             graphtitle = f'Minority-serving status of {instCount} {popName}'
                     case "orgmodel" :
-                        if graph := cmgraphs.demographicsChartByOrgModel(institutions) :
+                        if graph := demogcharts.demographicsChartByOrgModel(profiles) :
                             graphtitle = f'Organizational Model of {instCount} {popName}'
                     case "reporting" :
-                        if graph := cmgraphs.demographicsChartByReporting(institutions) :
+                        if graph := demogcharts.demographicsChartByReporting(profiles) :
                             graphtitle = f'Reporting Structure of {instCount} {popName}'
                     case _ :
                         send_mail(
@@ -132,8 +133,10 @@ def data_viz_demographics_charts(request):
         else :
             #print( "GET with no params ")
             filter_form = DataFilterForm()
-            graphtitle = 'Carnegie Classifications for All Users'
-            graph = cmgraphs.demographicsChartByCC(cmgraphs.getAllInstitutions())
+            chart = 'cc'    # Set default chart so Filter tree is adjusted
+            profiles = demogcharts.getAllProfiles()
+            graphtitle = f'Carnegie Classifications for {profiles.count()} Contributors'
+            graph = demogcharts.demographicsChartByCC(profiles)
 
     filter_form.filtertree(includes=DataFilterForm.CHARTS_INCLUDE_ALL)
     context = {
@@ -171,7 +174,7 @@ def data_viz_demographics_scatter(request):
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
                 graphtitle = f'Too Few Institutions ({instCount}) to Chart!'
-            elif graph := cmgraphs.scatterChart(answers, instCount) :
+            elif graph := demogcharts.scatterChart(answers, instCount) :
                 graphtitle = f'Scatter Graph of {instCount} Contributors'
 
             if graph is None:
@@ -181,7 +184,7 @@ def data_viz_demographics_scatter(request):
             #print( "GET with no params ")
             filter_form = DataFilterForm()
             answers, instCount = cmgraphs.getAllAnswers()
-            graph = cmgraphs.scatterChart(answers, instCount)
+            graph = demogcharts.scatterChart(answers, instCount)
             graphtitle = f'Scatter Graph of All {instCount} Contributors'
 
     filter_form.filtertree(includes=DataFilterForm.INCLUDE_ALL_CONTRIBS)
@@ -237,6 +240,13 @@ def data_viz_capsmodeldata(request):
                 facing = cleaned_dict.get('facings')
                 facingname = [item for item in DataFilterForm.FACINGS_CHOICES if item[0] == facing]
                 # ignore caps feature for now
+                # TODO: add support to overlay the benchmarking data
+                # Need to get the authenticated user request.user.is_authenticated and request.user.institutions.first(?)
+                # instVales = facingstotals2022.loc[facingstotals2022['Inst']==inst]['2021 Calc'].tolist()
+                # if(instVals!=None) :
+                #   assert len(instVals) == 5, "showFacingsBarGraph passed bad instVals: "+str(instVals)
+                # pass into the graph tools. 
+                #   ax.scatter([0,1,2,3,4], instVals, color=[1,0.8,0], s=30, zorder=2, label=instName, **kwargs)
                 match chart:
                     case "sum":
                         if facing == 'all':
