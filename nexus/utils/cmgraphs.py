@@ -25,11 +25,6 @@ colorPalette = {'allData':'#9F9F9F', 'EPSCoR':'#5ab4ac', 'nonEPSCoR':'#d8b365',
                 'Centralized':'#A37C40','School':'#98473E','Decentralized':'#B49082','None':'#D6C3C9',
                 'Public':'#ffd966','Private':'#ec7728',
                 'NotMSI':'#8FB8DE','HSI':'#586F6B','HBCU':'#CFE795','AA':'#F7EF81','TCU':'#D4C685','otherMSI':'#D0CFEC',
-                RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label):'#e29578',
-                RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label):'#ffddd2',
-                RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label):'#edf6f9',
-                RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label):'#83c5be',
-                RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label):'#006d77',
                 VALUE_UNKNOWN_LABEL:'#8d99ae',
                 '2022':'#ffba5a', '2021':'#6aaa96', '2020':'#ada3d3'}
 
@@ -108,16 +103,11 @@ mission_mapping = {
     RCDProfile.MissionChoices.TEACHINGESSENTIAL: RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label),
     VALUE_UNKNOWN: VALUE_UNKNOWN_LABEL
     }
-mission_palette = {RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label):
-                    colorPalette[RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label)],
-                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label):
-                    colorPalette[RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label)],
-                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label):
-                    colorPalette[RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label)],
-                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label):
-                    colorPalette[RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label)],
-                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label):
-                    colorPalette[RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label)],
+mission_palette = {RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label):'#e29578',
+                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label):'#ffddd2',
+                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label):'#edf6f9',
+                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label):'#83c5be',
+                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label):'#e29578',
                     VALUE_UNKNOWN_LABEL:colorPalette[VALUE_UNKNOWN_LABEL]
 }
 
@@ -164,6 +154,8 @@ def getAllAnswers(years=None) :
     return answers, instCount
 
 # Translate URL query parameters into a filter for CapabilitiesAnswer objects
+# Note that we skip filtering when all values are chosen. This is both more efficient, and moreover
+# ensures that we do not filter out all the Null values (e.g., for mission) on older profiles. 
 def filterAssessmentData(dict):
 
     # We normally start with the latest profiles for each institution, but if we are filtering on years, we

@@ -18,7 +18,8 @@ DEFAULT_PIE_HEIGHT=cmgraphs.DEFAULT_HEIGHT*PIE_SIZE_SCALE
 
 def getAllProfiles(pop='contrib', years=None) :
     # TODO: We need some kind of marker for test institutions
-    # Find all the profiles since some of the filters and graphs are profile info.
+    # Find all the profiles since some of the filters and graphs are profile (vs. Institutional) info.
+    # Since we only get the latest profile for each institution, we need to filter for years FIRST
     profiles = RCDProfile.objects.all()
     if not years is None:
         # print('getAllProfiles filtering to years: ',years)
@@ -32,6 +33,8 @@ def getAllProfiles(pop='contrib', years=None) :
     return profiles
 
 # Translate URL query parameters into a filter for Profile objects
+# Note that we skip filtering when all values are chosen. This is both more efficient, and moreover
+# ensures that we do not filter out all the Null values (e.g., for mission) on older profiles. 
 def filterProfiles(dict):
     profiles=None
     # Check whether all users or just contributors
@@ -146,7 +149,7 @@ def demographicsChartByCC(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_
     counts = df.groupby('simpleCC').size()      # Don't sort_values(ascending=False); keep in CC order
     counts = counts.rename(cmgraphs.cc_mapping)
 
-    # Create a grouped bar chart
+    # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.simple_cc_palette )
     applyStandardPieFormatting(fig)
@@ -156,14 +159,14 @@ def demographicsChartByCC(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_
 
 def demographicsChartByMission(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
     annotatedProfiles = profiles.annotate(mission2=Case(
-        When(mission__isnull=True, then=Value(cmgraphs.VALUE_UNKNOWN)),
+        When(mission__isnull=True, then=Value(cmgraphs.VALUE_UNKNOWN)), # Since most old profiles have Null for Mission, let's map it for graphing
         default=F('mission') ))
     data = annotatedProfiles.values('mission2')
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
     counts = df.groupby('mission2').size()
     counts = counts.rename(cmgraphs.mission_mapping)
 
-    # Create a grouped bar chart
+    # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.mission_palette)
     applyStandardPieFormatting(fig)
@@ -176,7 +179,7 @@ def demographicsChartByPubPriv(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT
     counts = df.groupby('institution__ipeds_control').size()
     counts = counts.rename(cmgraphs.pubpriv_mapping)
 
-    # Create a grouped bar chart
+    # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.pub_priv_palette)
     applyStandardPieFormatting(fig)
@@ -189,7 +192,7 @@ def demographicsChartByEPSCoR(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_
     counts = df.groupby('institution__ipeds_epscor').size()
     counts = counts.rename(cmgraphs.epscor_mapping)
 
-    # Create a grouped bar chart
+    # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map={Institution.EPSCORChoices.EPSCOR.label: cmgraphs.colorPalette['EPSCoR'], 
                                         Institution.EPSCORChoices.NOT_EPSCOR.label: cmgraphs.colorPalette['nonEPSCoR']})
@@ -201,8 +204,7 @@ def demographicsChartByMSI(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE
     #data = profiles.values('institution__ipeds_msi')
 
     annotatedProfiles = profiles.annotate(simpleMSI=Case(
-        # TODO: change case statements to have ranges and just map the Baccs and others
-        # Have the default be to use the CC value
+        # Create a unifed MSI field based upon the various others. 
         When(institution__ipeds_tcu=Institution.TCUChoices.TCU,
                 then=Value(cmgraphs.MSI_TCU)),
         When(institution__ipeds_hbcu=Institution.HBCUChoices.HBCU, 
@@ -224,7 +226,7 @@ def demographicsChartByMSI(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE
     counts = df.groupby('simpleMSI').size()
     counts = counts.rename(cmgraphs.simple_msi_mapping)
 
-    # Create a grouped bar chart
+    # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.simple_msi_palette )
     applyStandardPieFormatting(fig)
@@ -244,12 +246,13 @@ def demographicsChartByOrgModel(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAUL
     counts = df.groupby('structure2').size()
     counts = counts.rename(cmgraphs.structure_mapping)
 
-    # Create a grouped bar chart
+    # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.structure_palette)
     applyStandardPieFormatting(fig)
     
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+
 def demographicsChartByReporting(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
     return '<br><h3 class="graphNYI">This chart is Not Yet Implemented</h3>'
 
@@ -286,8 +289,8 @@ def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=cmgrap
                     color_discrete_sequence=cmgraphs.scatterPlotColorSeq,
                     labels=None,
                     width=800, height=550)
-    
-    #fig.update_layout(yaxis={'visible': False, 'showticklabels': False})
+
+    # Make the x axis have a round number range. Round to 5 for small counts, to 10 for larger ones.
     roundedInstCount = ceil(instCount/5)*5
     xdtick = 5 if roundedInstCount<25 else 10
     fig.update_layout(
@@ -301,7 +304,6 @@ def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=cmgrap
         )
     msize = 5 + 100/instCount   # scale the marker size up for fewer results
     fig.update_traces(marker={'size': msize})
-
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
