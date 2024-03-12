@@ -251,6 +251,7 @@ class IPEDSMixin(models.Model):
         FAR_WEST = 8, "Far West"
         OTHER_U_S_JURISDICTIONS = 9, "Other U.S. jurisdictions"
         CANADA = 100, "Canada"
+        INTERNATIONAL = 200, "International"
 
     ipeds_region = models.IntegerField(
         "Region",

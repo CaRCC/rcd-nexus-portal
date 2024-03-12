@@ -70,7 +70,7 @@ simple_msi_mapping = {
     MSI_AA: 'AANAPISI or ANNH',
     MSI_TCU: 'Tribal College',
     MSI_OTHER: 'Other MSI',
-}
+    }
 simple_msi_palette = {'Not an MSI': colorPalette['NotMSI'], 'Hispanic-Serving': colorPalette['HSI'], 'HBCU/PBI': colorPalette['HBCU'], 
                     'AANAPISI or ANNH': colorPalette['AA'], 'Tribal College': colorPalette['TCU'], 'Other MSI': colorPalette['otherMSI'] }
 
@@ -103,13 +103,14 @@ mission_mapping = {
     RCDProfile.MissionChoices.TEACHINGESSENTIAL: RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label),
     VALUE_UNKNOWN: VALUE_UNKNOWN_LABEL
     }
-mission_palette = {RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label):'#e29578',
-                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label):'#ffddd2',
-                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label):'#edf6f9',
-                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label):'#83c5be',
-                    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label):'#e29578',
-                    VALUE_UNKNOWN_LABEL:colorPalette[VALUE_UNKNOWN_LABEL]
-}
+mission_palette = {
+    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHESSENTIAL.label):'#e29578',
+    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.RESEARCHFAVORED.label):'#ffddd2',
+    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.BALANCED.label):'#edf6f9',
+    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGFAVORED.label):'#83c5be',
+    RCDProfile.getShortMissionChoice(RCDProfile.MissionChoices.TEACHINGESSENTIAL.label):'#e29578',
+    VALUE_UNKNOWN_LABEL:colorPalette[VALUE_UNKNOWN_LABEL]
+    }
 
 # Define a dictionary to map Structure values to names
 structure_mapping = {
@@ -119,12 +120,13 @@ structure_mapping = {
     RCDProfile.StructureChoices.NONE: 'No organized support',
     VALUE_UNKNOWN: VALUE_UNKNOWN_LABEL
     }
-structure_palette = {'Centralized':'#dda15e',
-                    'In a School/Dept.':'#fefae0',
-                    'Decentralized across units':'#283618',
-                    'No organized support': '#606c38',
-                    VALUE_UNKNOWN_LABEL:colorPalette[VALUE_UNKNOWN_LABEL]
-}
+structure_palette = {
+    'Centralized':'#dda15e',
+    'In a School/Dept.':'#fefae0',
+    'Decentralized across units':'#283618',
+    'No organized support': '#606c38',
+    VALUE_UNKNOWN_LABEL:colorPalette[VALUE_UNKNOWN_LABEL]
+    }
 
 
 

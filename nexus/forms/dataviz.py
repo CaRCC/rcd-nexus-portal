@@ -92,6 +92,7 @@ class DataFilterForm(forms.Form):
         (IPEDSMixin.RegionChoices.FAR_WEST,IPEDSMixin.RegionChoices.FAR_WEST.label),
         (IPEDSMixin.RegionChoices.OTHER_U_S_JURISDICTIONS,"Other U.S."),        # "Other U.S. jurisdictions" is too long
         (IPEDSMixin.RegionChoices.CANADA,IPEDSMixin.RegionChoices.CANADA.label),
+        (IPEDSMixin.RegionChoices.INTERNATIONAL,IPEDSMixin.RegionChoices.INTERNATIONAL.label),
     )
 
     SIZE="Size"
@@ -197,7 +198,7 @@ class DataFilterForm(forms.Form):
         choices=REGION_CHOICES,
         initial = [c[0] for c in REGION_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(attrs={"class":"toggle"}),
-        help_text="Filter by US Region or Canada",
+        help_text="Filter by US Region, Canada, or International",
     )
 
     size = AllNoneMultipleChoiceField(

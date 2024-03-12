@@ -224,3 +224,84 @@ def load_capmodel_data(path, institution_path):
             answer.save()
 
     print("Loaded {} assessments.".format(assessments_loaded))
+
+INTL_PREFIX = 'Intl:'       # Denotes non-US/Canada country names in "State" field
+INTL_SKIP = len(INTL_PREFIX)
+CANADA_PREFIX = 'Canada:'  # Denotes Canada province names in "State" field
+CANADA_SKIP = len(CANADA_PREFIX)
+
+def load_legacy_profiles_data(path):
+    profiles_loaded = 0
+    print("Loading legacy profiles...")
+    user = get_user_model().objects.first()
+
+    with open(path, "r") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if DEBUGMODE:
+                print(row)
+            try:
+                if row["UnitID"].isnumeric():
+                    institution = Institution.objects.get(ipeds_unitid=row["UnitID"])
+                else:
+                    institution = Institution.objects.get(internet_domain=row["UnitID"])
+            except Institution.DoesNotExist:
+                if DEBUGMODE:
+                    print("Could not find institution for {}".format(row))
+                try:
+                    input_state=row["State"]
+                    if input_state.startswith(INTL_PREFIX):
+                        country = input_state[INTL_SKIP:]
+                        state = None
+                        region = Institution.RegionChoices.INTERNATIONAL
+                    elif input_state.startswith(CANADA_PREFIX):
+                        country = 'Canada'
+                        state = input_state[CANADA_SKIP:]
+                        region = Institution.RegionChoices.CANADA
+                    else:
+                        country='USA'
+                        state = input_state
+                        region = None       # Not in the input - will need to adjust by hand
+                    institution, _ = Institution.objects.get_or_create(
+                        name=row["Name"], 
+                        country=country,
+                        ipeds_region=region,
+                        state_or_province=state,
+                        # ipeds_unitid=row["UnitID"], We are only here if there was not UnitID match
+                        defaults={
+                            "internet_domain": row["UnitID"],
+                            "list_as_contributor": True,            # No assessment so no risk to default to True
+                            # Since we do not know of them, assume these are all False 
+                            # Most of them are non-US, so False is appropriate
+                            "ipeds_hbcu":Institution.HBCUChoices.NOT_AN_HBCU,
+                            "ipeds_pbi":Institution.PBIChoices.NOT_A_PBI,
+                            "ipeds_tcu":Institution.TCUChoices.NOT_A_TCU,
+                            "ipeds_hsi":Institution.HSIChoices.NOT_AN_HSI,
+                            "ipeds_aanapisi_annh":Institution.AANAPISI_ANNHChoices.NOT_AN_AANAPISI_ANNH,
+                            "ipeds_epscor":Institution.EPSCORChoices.NOT_EPSCOR,
+                            "ipeds_land_grant":Institution.LandGrantChoices.NOT_A_LAND_GRANT_INSTITUTION,
+                            },
+                       )
+                    institution
+                except IntegrityError as e:
+                    print(e, row)
+                    continue
+                if DEBUGMODE:
+                    print("Created new institution for {}".format(row))
+
+            if profile := institution.profiles.filter(year=row["Year"]):
+                # There is a chance someone created a 1.1 profile and then a 2.0 profile, both in 2023.
+                if int(row["Year"]) == 2023:
+                    print(f'Profile: {row["Name"]} ({row["Year"]}) already exists!  Skipping...')
+                else:
+                    if DEBUGMODE:
+                        print(f'Found duplicate pre-2023 Profile: {row["Name"]} ({row["Year"]}). (load_legacy_profiles_data run twice? Ignoring...)')
+            else: 
+                profile = institution.profiles.create(year=row["Year"], created_by=user)
+                # TODO - put under if DEBUG:
+                if DEBUGMODE:
+                    print(f'Created new Profile: {row["Name"]} ({row["Year"]})')
+                profiles_loaded += 1
+
+    print(f'Loaded {profiles_loaded} profiles.')
+

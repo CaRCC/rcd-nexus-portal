@@ -16,7 +16,7 @@ PIE_SIZE_SCALE = 0.75
 DEFAULT_PIE_WIDTH=cmgraphs.DEFAULT_WIDTH*PIE_SIZE_SCALE
 DEFAULT_PIE_HEIGHT=cmgraphs.DEFAULT_HEIGHT*PIE_SIZE_SCALE
 
-def getAllProfiles(pop='contrib', years=None) :
+def getAllProfiles(pop='all', years=None) :         # default to full set of profiles and not just contributors
     # TODO: We need some kind of marker for test institutions
     # Find all the profiles since some of the filters and graphs are profile (vs. Institutional) info.
     # Since we only get the latest profile for each institution, we need to filter for years FIRST
@@ -39,7 +39,7 @@ def filterProfiles(dict):
     profiles=None
     # Check whether all users or just contributors
     if not (pop := dict.get('population')):
-        pop = 'contrib'
+        pop = 'all'                             #default to all users for charts                 
     # Have to handle years specially since it can impact which is the "latest" profile. 
     if years := dict.get('year'):
         if len(years) < len(dataviz.DataFilterForm.YEAR_CHOICES):   # Skip the filter if all are set (nothing to filter)
@@ -124,9 +124,9 @@ def filterProfiles(dict):
     return profiles
 
 def applyStandardPieFormatting(fig):
-    fig.update_layout(showlegend=False, margin_t=20,margin_b=20,margin_l=20,margin_r=20,autosize=True,)
-    fig.update_traces(sort=False, direction='clockwise', hovertemplate='%{label}: %{value:.0f} institutions', 
-                      textposition='inside', texttemplate='%{label}: %{percent:.0%}', textfont_size=18,
+    fig.update_layout(showlegend=False, margin_t=20,margin_b=20,margin_l=20,margin_r=20,autosize=True, hoverlabel = dict(font=dict(size=16)))
+    fig.update_traces(sort=False, direction='clockwise', hovertemplate='<b>%{label}: %{value:.0f} institutions</b>', 
+                      textposition='inside', texttemplate='<b>%{label}: %{percent:.0%}</b>', textfont_size=18,
                   marker=dict(line=dict(color=cmgraphs.colorPalette['errBars'], width=1.5)))
 
 def demographicsChartByCC(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
@@ -296,14 +296,16 @@ def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=cmgrap
     fig.update_layout(
         xaxis=dict(range=[0, roundedInstCount], visible=True, showticklabels=True, dtick=xdtick, color='white'),
         xaxis_title=dict(text='<b>Institutions</b>', font=dict(size=14, color=cmgraphs.colorPalette['bgColor']), standoff=0),
-        yaxis=dict(ticksuffix="%", range=[0, 100], dtick=20),
+        yaxis=dict(ticksuffix="%", range=[0, 100], dtick=20, ),
         yaxis_title=dict(text='<b>Coverage</b>', font=dict(size=14, color=cmgraphs.colorPalette['bgColor'])),
         plot_bgcolor=cmgraphs.colorPalette['bgColor'], 
         margin_t=25,autosize=True,
-        legend_title_text=''
+        legend_title_text='',
+        legend=dict(font=dict(size=14, color=cmgraphs.colorPalette['bgColor']), itemsizing="constant", itemwidth=30),
+        hoverlabel = dict(font=dict(size=16)),        
         )
     msize = 5 + 100/instCount   # scale the marker size up for fewer results
-    fig.update_traces(marker={'size': msize})
+    fig.update_traces(marker={'size': msize}, textfont_size=18, hovertemplate='<b>Coverage: %{y:.0f}%</b>', )
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
