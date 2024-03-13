@@ -624,6 +624,12 @@ h3.graphNYI {
     margin-bottom: 0.2em;
 }
 
+p.viz_footnote {
+    font-size: 0.8em;
+    color: var(--nexus-light-text);
+    z-index: 5;
+}
+
 .menu {
     display: flex;
     flex-direction: row;
