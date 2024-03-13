@@ -66,9 +66,12 @@ def data_viz_demographics_maps(request):
 # Rewrite this to be one view per chart type, and add a context variable that selects which type.
 # Make the Select use that to show that as selected.
 # Add a GO button to the template, and have that fetch the view from the option value. 
+
+FOOTNOTE_NOT_ALL_KNOWN = 'Excludes institutions for which this value is unknown'
 def data_viz_demographics_charts(request): 
     graph = None
     graphtitle = None
+    footnote = None
     chart = None
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
@@ -100,16 +103,22 @@ def data_viz_demographics_charts(request):
                     # Note that sum makes no sense for Charts, and will be hidden/disabled in the template
                     case "cc" :
                         if graph := demogcharts.demographicsChartByCC(profiles) :
-                            graphtitle = f'Carnegie Classification of {instCount} {popName}'
+                            graphtitle = f'Institutional Classification of {instCount} {popName}'
                     case "mission" :
                         if graph := demogcharts.demographicsChartByMission(profiles) :
                             graphtitle = f'Mission of {instCount} {popName}'
                     case "pub_priv" :
-                        if graph := demogcharts.demographicsChartByPubPriv(profiles) :
-                            graphtitle = f'Control (Public/Private) of {instCount} {popName}'
+                        graph, totalShown = demogcharts.demographicsChartByPubPriv(profiles)
+                        if graph :
+                            graphtitle = f'Control (Public/Private) of {totalShown} {popName}'
+                            if totalShown != instCount :
+                                footnote = FOOTNOTE_NOT_ALL_KNOWN
                     case "epscor" :
-                        if graph := demogcharts.demographicsChartByEPSCoR(profiles) :
-                            graphtitle = f'EPSCoR status of {instCount} {popName}'
+                        graph, totalShown = demogcharts.demographicsChartByEPSCoR(profiles)
+                        if graph :
+                            graphtitle = f'EPSCoR status of {totalShown} {popName}'
+                            if totalShown != instCount :
+                                footnote = FOOTNOTE_NOT_ALL_KNOWN
                     case "msi" :
                         if graph := demogcharts.demographicsChartByMSI(profiles) :
                             graphtitle = f'Minority-serving status of {instCount} {popName}'
@@ -135,7 +144,7 @@ def data_viz_demographics_charts(request):
             filter_form = DataFilterForm()
             chart = 'cc'    # Set default chart so Filter tree is adjusted
             profiles = demogcharts.getAllProfiles()
-            graphtitle = f'Carnegie Classifications for {profiles.count()} Contributors'
+            graphtitle = f'Institutional Classifications for {profiles.count()} Users'
             graph = demogcharts.demographicsChartByCC(profiles)
 
     filter_form.filtertree(includes=DataFilterForm.CHARTS_INCLUDE_ALL)
@@ -143,6 +152,7 @@ def data_viz_demographics_charts(request):
         "filterform":filter_form,
         "graph":graph,
         "graphtitle":graphtitle,
+        "footnote":footnote,
         "chart":chart,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
@@ -262,7 +272,7 @@ def data_viz_capsmodeldata(request):
                         else:
                             graph = cmgraphs.facingCapsDataGraphByCC(answers, facing)
                         if graph : 
-                            graphtitle = f'{facingname[0][1]} by Carnegie Classification ({instCount} Institutions)'
+                            graphtitle = f'{facingname[0][1]} by Institutional Classification ({instCount} Institutions)'
                     case "mission" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByMission(answers)

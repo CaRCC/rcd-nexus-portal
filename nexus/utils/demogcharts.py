@@ -132,16 +132,25 @@ def applyStandardPieFormatting(fig):
 def demographicsChartByCC(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
     # For this chart, we'll include the "Other" institutions that have a Null CC value
     annotatedProfiles = profiles.annotate(simpleCC=Case(
-        When(institution__carnegie_classification__lt=Institution.CarnegieClassificationChoices.R1, 
-                then=Value(cmgraphs.CC_BACC)),
+        When(institution__carnegie_classification__isnull=True, 
+             then=Value(cmgraphs.CC_UNKNOWN)),
+        When(institution__carnegie_classification=Institution.CarnegieClassificationChoices.OTHER, 
+             then=Value(cmgraphs.CC_OTHER)),
+        When(institution__carnegie_classification=Institution.CarnegieClassificationChoices.INDUSTRY,
+             then=Value(cmgraphs.CC_INDUSTRY)),
+        When(institution__carnegie_classification=Institution.CarnegieClassificationChoices.MISC,
+             then=Value(cmgraphs.CC_MISC)),
+        When(institution__carnegie_classification=Institution.CarnegieClassificationChoices.TRIBAL_COLLEGES,
+             then=Value(cmgraphs.CC_TCU)),
+        # Handle MIXED_BACC_ASSOC_ASSOC_DOM
+        When(institution__carnegie_classification__lt=Institution.CarnegieClassificationChoices.R1,
+             then=Value(cmgraphs.CC_BACC)),
         When(institution__carnegie_classification__gte=Institution.CarnegieClassificationChoices.R1, 
              institution__carnegie_classification__lte=Institution.CarnegieClassificationChoices.M3, 
-                then=F('institution__carnegie_classification')),
+             then=F('institution__carnegie_classification')),
         When(institution__carnegie_classification__gt=Institution.CarnegieClassificationChoices.M3, 
                 then=Value(cmgraphs.CC_BACC)),
-        #When(institution__carnegie_classification=0, then=Value(cmgraphs.CC_MISC)),            # Properly Other, but this sorts better
-        #When(institution__carnegie_classification__isnull=True, then=Value(cmgraphs.CC_MISC)), # Properly Other, but this sorts better
-        default=Value(cmgraphs.CC_MISC) ))
+        default=Value(cmgraphs.CC_OTHERACAD) ))
     simpleCCList = annotatedProfiles.values('simpleCC')
     data = simpleCCList.values('simpleCC')
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
@@ -178,19 +187,22 @@ def demographicsChartByPubPriv(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
     counts = df.groupby('institution__ipeds_control').size()
     counts = counts.rename(cmgraphs.pubpriv_mapping)
+    totalShown = sum(counts.array)
+    #print(f'Total pub/priv items shown: {totalShown}')
 
     # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.pub_priv_palette)
     applyStandardPieFormatting(fig)
     
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs='cdn', full_html=True), totalShown
 
 def demographicsChartByEPSCoR(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
     data = profiles.values('institution__ipeds_epscor')
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
     counts = df.groupby('institution__ipeds_epscor').size()
     counts = counts.rename(cmgraphs.epscor_mapping)
+    totalShown = sum(counts.array)
 
     # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
@@ -198,7 +210,7 @@ def demographicsChartByEPSCoR(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_
                                         Institution.EPSCORChoices.NOT_EPSCOR.label: cmgraphs.colorPalette['nonEPSCoR']})
     applyStandardPieFormatting(fig)
     
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs='cdn', full_html=True), totalShown
 
 def demographicsChartByMSI(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
     #data = profiles.values('institution__ipeds_msi')
@@ -222,7 +234,7 @@ def demographicsChartByMSI(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE
     data = simpleMSIList.values('simpleMSI')
 
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
-    print(df)
+    #print(df)
     counts = df.groupby('simpleMSI').size()
     counts = counts.rename(cmgraphs.simple_msi_mapping)
 

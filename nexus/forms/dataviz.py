@@ -28,7 +28,7 @@ class DataFilterForm(forms.Form):
         ("all","All Users"), 
         ("contrib","Contributors"),
     )
-    CARN_CLASS="Carnegie Classification"
+    CARN_CLASS="Institutional Classification"
     CC_CHOICES=(
         ("R1","R1"),
         ("R2","R2"),
@@ -164,7 +164,7 @@ class DataFilterForm(forms.Form):
     population = forms.ChoiceField(
         label=POPULATION,
         choices=POP_CHOICES,
-        initial="contrib",
+        initial="all",
         widget=forms.RadioSelect(),
         help_text="Show data for All institutions or just Contributors",
     )
@@ -174,7 +174,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in CC_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         #validators=[require_min_one],
-        help_text="Filter by Institution (Carnegie) Type",
+        help_text="Filter by Institution Classification (Carnegie+)",
     )
 
     mission = AllNoneMultipleChoiceField(

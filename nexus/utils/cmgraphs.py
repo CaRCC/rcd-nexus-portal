@@ -35,17 +35,24 @@ scatterPlotColorSeq = [colorPalette['RF'],colorPalette['DF'],colorPalette['SWF']
 # QUESTION Why does this work?  Facings fixture defines the indices as 0-4, not 1-5
 Facing_mapping = { 1: '<b>Researcher-<br>Facing</b>', 2: '<b>Data-<br>Facing</b>', 3: '<b>Software-<br>Facing</b>', 4 : '<b>System-<br>Facing</b>', 5: '<b>Strategy & Policy-<br>Facing</b>'}
 
-CC_OTHER = 0
+# SimpleCC values - ordered for presentation
+CC_BACC = 97
+CC_TCU = 98
 CC_OTHERACAD = 99
-CC_MISC = 100
-CC_BACC = 98
+CC_OTHER = 100
+CC_INDUSTRY = 101
+CC_MISC = 102
+CC_UNKNOWN = 999
 
 def initCCMapping():
     mapping = {}
-    mapping[CC_MISC] = 'Other'
-    mapping[CC_OTHER] = 'Other'
-    mapping[CC_OTHERACAD] = 'OtherAcad'
     mapping[CC_BACC] = 'Bacc'
+    mapping[CC_TCU] = 'TCU'
+    mapping[CC_OTHERACAD] = 'Other Acad.'
+    mapping[CC_OTHER] = Institution.CarnegieClassificationChoices.OTHER.label
+    mapping[CC_MISC] = Institution.CarnegieClassificationChoices.MISC.label
+    mapping[CC_INDUSTRY] = Institution.CarnegieClassificationChoices.INDUSTRY.label
+    mapping[CC_UNKNOWN] = 'Unknown'
     for val in Institution.CarnegieClassificationChoices:
         mapping[int(val)] = val.label
     return mapping
@@ -306,22 +313,28 @@ def summaryDataGraph(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
 
 def facingSummaryDataGraph(answers, facing, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
+
+'''
 def simpleCC(cc) :
     if(cc=='R1')|(cc=='R2')|(cc=='Other'): return cc
     return 'OtherAcad'
+'''
 
 def capsDataGraphByCC(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
-    # For this graph, we will ignore the "Other" institutions (labs, etc.) which have Null values for CC
-    answers = answers.filter(assessment__profile__institution__carnegie_classification__isnull=False)
+    # For this graph, we will ignore the "Other" institutions (labs, etc.), the Unknowns which have Null values for CC, and 
+    # anything in our extended definitions (MISC, INDUSTRY, etc.)
+    # If we get many more contributions from these groups, we can reconsider
+    answers = answers.filter(Q(assessment__profile__institution__carnegie_classification__isnull=False)
+                           | Q(assessment__profile__institution__carnegie_classification=Institution.CarnegieClassificationChoices.OTHER)
+                           | Q(assessment__profile__institution__carnegie_classification__gte=Institution.CarnegieClassificationChoices.MISC)
+                            )
     annotatedAnswers = answers.annotate(simpleCC=Case(
         When(assessment__profile__institution__carnegie_classification=15, then=Value(15)),
         When(assessment__profile__institution__carnegie_classification=16, then=Value(16)),
-        When(assessment__profile__institution__carnegie_classification=0, then=Value(0)),
-        # When(assessment__profile__institution__carnegie_classification__isnull=True, then=Value(0)),
-        default=Value(99) ))
+        default=Value(CC_OTHERACAD) ))
     data = annotatedAnswers.aggregate_score('question__topic__facing','simpleCC').values('question__topic__facing','simpleCC','average','stddev')
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
     # Map the facings values to names
@@ -343,9 +356,9 @@ def capsDataGraphByCC(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     # Create a grouped bar chart
     fig = px.bar(df, x='Facings', y='Average Value',error_y='stddev',
                 color='simpleCC', 
-                color_discrete_map={'R1':colorPalette['R1'], 'R2':colorPalette['R2'],'OtherAcad':colorPalette['OtherAcad']},
+                color_discrete_map={'R1':colorPalette['R1'], 'R2':colorPalette['R2'],'Other Acad.':colorPalette['OtherAcad']},
                 barmode='group', # Use 'group' for grouped bars
-                labels={'question__topic__facing': '', 'average': '', 'simpleCC':'Carnegie Classification'},
+                labels={'question__topic__facing': '', 'average': '', 'simpleCC':dataviz.DataFilterForm.CARN_CLASS},
                 width=width, height=height )
     applyStandardVBarFormatting(fig)
 

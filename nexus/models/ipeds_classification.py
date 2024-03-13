@@ -5,7 +5,7 @@ class IPEDSMixin(models.Model):
     """
     Includes fields defined by the Integrated Postsecondary Education Data System (IPEDS).
 
-    Includes Carnegie classification.
+    Includes our Institutional classification which is based upon Carnegie classification, but with additions.
 
     https://nces.ed.gov/ipeds/
     """
@@ -170,6 +170,7 @@ class IPEDSMixin(models.Model):
     )
 
     class CarnegieClassificationChoices(models.IntegerChoices):
+        OTHER = 0, "Other RCD (Nat'l Labs/Facilities, etc.)"
         MIXED_BACC_ASSOC_ASSOC_DOM = 14, "Mixed Bacc/Assoc (Assoc. Dom.)"
         R1 = 15, "R1"
         R2 = 16, "R2"
@@ -184,21 +185,18 @@ class IPEDSMixin(models.Model):
         FOUR_YR_MED_SCHOOLS_CENTERS = 25, "4yr: Med Schools & Centers"
         FOUR_YR_OTHER_HEALTH_PROF_SCHOOLS = 26, "4yr: Other Health Prof. Schools"
         FOUR_YR_RESEARCH_INSTITUTIONS = 27, "4yr: Research Institutions"
-        FOUR_YR_ENGINEERING_TECHNOLOGY_SCHOOLS = (
-            28,
-            "4yr: Engineering & Technology Schools",
-        )
+        FOUR_YR_ENGINEERING_TECHNOLOGY_SCHOOLS = 28, "4yr: Engineering & Technology Schools",
         FOUR_YR_BUSINESS_MANAGEMENT_SCHOOLS = 29, "4yr: Business & Management Schools"
         FOUR_YR_ARTS_MUSIC_DESIGN_SCHOOLS = 30, "4yr: Arts, Music & Design Schools"
         FOUR_YR_LAW_SCHOOLS = 31, "4yr: Law Schools"
-        FOUR_YR_OTHER_SPECIAL_FOCUS_INSTITUTIONS = (
-            32,
-            "4yr: Other Special Focus Institutions",
-        )
+        FOUR_YR_OTHER_SPECIAL_FOCUS_INSTITUTIONS = 32, "4yr: Other Special Focus Institutions"
         TRIBAL_COLLEGES = 33, "Tribal Colleges"
+        MISC = 1000, "Miscellaneous (Funders, Agencies, etc.)"
+        INDUSTRY = 1001, "Industry Labs/Institutes"
+
 
     carnegie_classification = models.IntegerField(
-        "Carnegie Classification",
+        "Institutional Classification",
         choices=CarnegieClassificationChoices.choices,
         null=True,
         blank=True,

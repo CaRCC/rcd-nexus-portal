@@ -11,6 +11,10 @@
 {% block main %}
 <h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}Demographic Charts{%endif%}</h2>
 <div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
+{%if footnote %}
+<p class="viz_footnote">Note: {{footnote}}.</p>
+{%endif%}
+
 <script>
     initDetailsFromStorage();
     document.getElementById("id_chart_views").addEventListener("change", handleChartViewSelection );
