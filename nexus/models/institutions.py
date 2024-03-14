@@ -64,8 +64,13 @@ class Institution(IPEDSMixin, models.Model):
     def research_mdollars(self):
         if self.research_expenditure is None :
             return "(Unknown)"
-        fmt = "${:,} Million"
-        return fmt.format(math.floor(self.research_expenditure/1000000))
+        if self.research_expenditure < 1000000:
+            fmt = "${:,} Thousand"
+            divisor = 1000
+        else:
+            fmt = "${:,} Million"
+            divisor = 1000000
+        return fmt.format(math.floor(round(self.research_expenditure/divisor)))
 
     users = models.ManyToManyField(
         settings.AUTH_USER_MODEL,

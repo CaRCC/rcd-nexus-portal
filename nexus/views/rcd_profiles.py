@@ -23,6 +23,7 @@ from nexus.models import (
     RCDProfileMember,
     RCDProfileMemberInvite,
     RCDProfileMemberRequest,
+    InstitutionAffiliation,
 )
 from nexus.utils.navtree import NavNode
 
@@ -226,6 +227,9 @@ def rcd_profile_edit(request, pk):
         "navtree": navtree(profile, re.escape(str(profile))),
         "can_manage": request.user.rcd_profile_memberships.filter(
             profile=profile, role__in=manage_roles
+        ).exists(),
+        "can_edit_inst": profile.institution.user_affiliations.filter(
+            user=request.user, role=InstitutionAffiliation.Role.MANAGER
         ).exists(),
     }
 

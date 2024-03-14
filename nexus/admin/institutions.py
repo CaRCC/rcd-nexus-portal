@@ -14,10 +14,6 @@ class InstitutionAdmin(admin.ModelAdmin):
     list_display = ["name", "country", "state_or_province", "internet_domain"]
     readonly_fields = [
         "has_cilogon_idp",
-        "student_pop",
-        "grad_pop",
-        "undergrad_pop",
-        "research_expenditure",
     ]
     search_fields = ["name"]
     list_filter = [

@@ -72,6 +72,7 @@ def institution_edit(request: HttpRequest, pk: int):
             messages.success(request, f"Updated institution '{institution}'.")
             return redirect("index")
         else:
+            #print("Problem with Institution form. Data:",form.cleaned_data)
             messages.error(request, "Please correct the errors below.")
 
     return render(
@@ -127,7 +128,7 @@ They can now create an assessment, so should probably be added to the capsModel-
                     "expires": timezone.now() + timedelta(days=7),
                 },
             )
-            print(aff_req, aff_req.token, aff_req.expires)
+            #print(aff_req, aff_req.token, aff_req.expires)
             req_link = request.build_absolute_uri(reverse("institutions:affiliation-request-approve", args=[aff_req.token]))
             email_in_html = render_to_string('institutions/affiliation_req_email.html', 
                                       {'user': request.user, 'institution':institution, 'email':email, 'req_link':req_link})
