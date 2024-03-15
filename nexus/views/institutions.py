@@ -8,6 +8,7 @@ from django.http import HttpRequest
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 from nexus.forms.institutions import (
     AffiliationRequestForm,
@@ -20,7 +21,7 @@ from nexus.models.institutions import (
     InstitutionAffiliation,
 )
 
-
+@login_required
 def institution_request(request: HttpRequest):
     form = NewInstitutionRequestForm(request.POST or None)
 
@@ -84,7 +85,7 @@ def institution_edit(request: HttpRequest, pk: int):
         },
     )
 
-
+@login_required
 def affiliation_request(request: HttpRequest, token=None):
     form = AffiliationRequestForm(request.POST or None)
 
