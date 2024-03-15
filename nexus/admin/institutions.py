@@ -19,7 +19,6 @@ class InstitutionAdmin(admin.ModelAdmin):
     list_filter = [
         # allow filtering by the carnegie_classification values, and by null
         "carnegie_classification",
-        ("carnegie_classification",admin.EmptyFieldListFilter),
         "ipeds_control",
         "ipeds_region",
         "ipeds_epscor",
