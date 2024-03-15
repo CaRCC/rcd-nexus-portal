@@ -192,7 +192,8 @@ class IPEDSMixin(models.Model):
         FOUR_YR_OTHER_SPECIAL_FOCUS_INSTITUTIONS = 32, "4yr: Other Special Focus Institutions"
         TRIBAL_COLLEGES = 33, "Tribal Colleges"
         MISC = 1000, "Miscellaneous (Funders, Agencies, etc.)"
-        INDUSTRY = 1001, "Industry Labs/Institutes"
+        INDUSTRY = 1001, "Industry Labs/Institutes",
+        __empty__ = "Unknown"
 
 
     carnegie_classification = models.IntegerField(
