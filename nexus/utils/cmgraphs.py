@@ -249,6 +249,15 @@ def filterAssessmentData(dict):
     if regions := dict.get('region'):
         if len(regions) < len(dataviz.DataFilterForm.REGION_CHOICES):   # Skip the filter if all are set (nothing to filter)
             answers = answers.filter(assessment__profile__institution__ipeds_region__in=regions)
+
+    if resexp_min := dict.get('resexp_min'):
+        minMills = int(resexp_min)
+        if minMills > 0:
+            answers = answers.filter(assessment__profile__institution__research_expenditure__gte=(minMills*1000000))
+    if resexp_max := dict.get('resexp_max'):
+        maxMills = int(resexp_max)
+        if maxMills > 0:
+            answers = answers.filter(assessment__profile__institution__research_expenditure__lte=(maxMills*1000000))
  
     instCount = answers.values('assessment__id').distinct().count()
     #print("After filtering have: ",answers.count(), " answers for: ",instCount," Institutions")

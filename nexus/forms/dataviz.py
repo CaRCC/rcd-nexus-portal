@@ -20,7 +20,6 @@ class AllNoneMultipleChoiceField(forms.MultipleChoiceField):
 # group the filter tree form fields separately from the other vix hoices that run across the top. 
 # For now, all the fields are in the filter tree. 
 class DataFilterForm(forms.Form):
-    # Must pass in a string (e.g., rcd_profiles.MissionChoices.RESEARCHESSENTIAL.label)
     hasViewChoices=False  # indicates to template that this version of Form includes View choices
 
     POPULATION="Population"
@@ -104,7 +103,7 @@ class DataFilterForm(forms.Form):
         (IPEDSMixin.SizeChoices.ABOVE_20000,IPEDSMixin.SizeChoices.ABOVE_20000.label),
     )
 
-    BY_YEAR="By Year"
+    BY_YEAR="Year"
     def buildYearChoiceList():
         choices = []
         thisyear = datetime.date.today().year
@@ -116,6 +115,8 @@ class DataFilterForm(forms.Form):
     YEAR_CHOICES = buildYearChoiceList()
 
     RESEARCH_EXP="Research Exp."
+    RESEARCH_EXP_MIN="Research Exp. >="
+    RESEARCH_EXP_MAX="Research Exp. <="
 
     # Add the Data View controls for charts, and for caps model data
     CHART_VIEWS="Chart View"
@@ -233,13 +234,28 @@ class DataFilterForm(forms.Form):
         help_text="Filter by the Year a Profile was created or an Assessment was Contributed",
     )
 
+    resexp_min = forms.IntegerField(
+        label=RESEARCH_EXP_MIN,
+        min_value=0,
+        max_value=10000,
+        required=False,
+        help_text="Filter for research expenditures of at least (in Millions)",
+    )
+    resexp_max = forms.IntegerField(
+        label=RESEARCH_EXP_MAX,
+        min_value=0,
+        max_value=10000,
+        required=False,
+        help_text="Filter for research expenditures of at most (in Millions)",
+    )
+
     """ These are more important to be able to show, that to use as filters. 
     org_model = forms.MultipleChoiceField(
         label=ORG_MODEL,
         choices=ORG_MODEL_CHOICES,
         initial = [c[0] for c in ORG_MODEL_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
-        help_text="Filter by Organizational Model",
+        help_text="Filter by Organizational Model", 
     )
 
     reporting = forms.MultipleChoiceField(
@@ -279,8 +295,20 @@ class DataFilterForm(forms.Form):
         help_text="Check if you want to overlay institutional data for benchmarking",
     )
     
+    def clean(self):
+        cleaned_data = super().clean()
+        resexpmin = cleaned_data.get("resexp_min")
+        resexpmax = cleaned_data.get("resexp_max")
 
-    # Need to add support for YEAR, and for RESEARCH EXPENDITURES
+        if resexpmin and resexpmax:
+            if resexpmax <= resexpmin:
+                print(f'Bad Res Exp Min:{resexpmin} Max {resexpmax}')
+                if not 'resexp_max' in self._errors:
+                    from django.forms.utils import ErrorList
+                    self._errors['resexp_max'] = ErrorList()
+                self._errors['resexp_max'].append('Research Expenditures Max must be > Min')
+
+        return cleaned_data
 
     #Should we add Land Grant, and others?
 
@@ -309,10 +337,11 @@ class DataFilterForm(forms.Form):
             self.fields['epscor'].label = "skip"+self.fields['epscor'].label
         if (includes and self.MSI not in includes) or (excludes and self.MSI in excludes):
             self.fields['msi'].label = "skip"+self.fields['msi'].label
+        if (includes and self.RESEARCH_EXP not in includes) or (excludes and self.RESEARCH_EXP in excludes):
+            self.fields['resexp_min'].label = "skip"+self.fields['resexp_min'].label
+            self.fields['resexp_max'].label = "skip"+self.fields['resexp_max'].label
 
         # Handle the view choices. Note that we will never "restore" Views on the fly so just replace vs. prefix labels, with "skip"
-        # TODO - handle removing 'sum' from the CHART_VIEWS for Demographic Charts
-            # Mark the option as hidden and disabled (for older browsers)
         self.hasViewChoices = False  # default, unless we have ANY of the view choices
         if (includes and self.CHART_VIEWS not in includes) or (excludes and self.CHART_VIEWS in excludes):
             self.fields['chart_views'].label = "skip"

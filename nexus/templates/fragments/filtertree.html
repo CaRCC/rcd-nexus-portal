@@ -25,7 +25,7 @@
     {% if not filterform.hasViewChoices %}<input type="submit" id="UpdateView" value="UpdateView">{% endif %}</p>
 <ul class="filter">
     {% for field in filterform %}
-        {% if not field.label in filterform.NOT_FILTERS %}
+        {% if not "resexp" in field.auto_id and not field.label in filterform.NOT_FILTERS %}
             <li id="{{ field.auto_id }}_fli"{% if "skip" in field.label %}class="skip"{% endif %}>
                 <div class="fieldWrapper">
                     <details id="{{ field.auto_id }}_d" {% if field.errors %}open{% endif %} onToggle="saveToggleState(this)">
@@ -49,3 +49,21 @@
         {% endif %}
     {% endfor %}
 </ul>
+{% comment %}
+ Handle the research expenditures specially. 
+{% endcomment %}
+<div id="res_exp_wrapper">
+    <p>
+        <label id="resExp_lbl">Research Expenditures ($Millions)</label>
+        <span class="filtertip">?
+            <span class="help filtertiptext" id="{{ filterform.resexp_min.auto_id }}_helptext">
+                Filter for research expenditures (in $Millions)
+            </span>
+        </span>
+    </p>
+    <span class="fielderror">{{ filterform.resexp_min.errors }}</span>
+    <span class="fielderror">{{ filterform.resexp_max.errors }}</span>
+    {{ filterform.resexp_min }}
+    <span id="resexp_to">&nbsp;to&nbsp;</span>
+    {{ filterform.resexp_max }}
+</div>

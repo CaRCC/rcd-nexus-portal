@@ -8,7 +8,6 @@ from django.http import HttpRequest
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.http import urlencode
-from nexus.utils.filtertree import *
 from nexus.utils import cmgraphs, demogcharts
 from nexus.forms.dataviz import *
 from nexus.models.rcd_profiles import RCDProfile
@@ -76,11 +75,13 @@ def data_viz_demographics_charts(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            qs = urlencode(posted.cleaned_data)
+            dict = removeNullDictEntries(posted.cleaned_data)
+            qs = urlencode(dict)
             return redirect(reverse('dataviz:demographics_chartviews') + '?'+qs)
-        #else:
-        #    print("FilterForm not valid!")
-        filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
+        else:
+            print("FilterForm not valid!")
+            filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
+            chart = posted.cleaned_data.get('chart_views')      # Ensure we handle the chart filtering
     else: 
         if(request.GET) :
             dict = request.GET.dict()
@@ -168,10 +169,11 @@ def data_viz_demographics_scatter(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            qs = urlencode(posted.cleaned_data)
+            dict = removeNullDictEntries(posted.cleaned_data)
+            qs = urlencode(dict)
             return redirect(reverse('dataviz:demographics_scatterplots') + '?'+qs)
-        #else:
-        #    print("FilterForm not valid!")
+        else:
+            print("FilterForm not valid!")
         filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
     else: 
         if(request.GET) :
@@ -210,6 +212,13 @@ def data_viz_demographics_scatter(request):
         }
     return render(request, "dataviz/scatterplots.html", context)
 
+def removeNullDictEntries(dict):
+    if dict['resexp_min'] is None:
+        del dict['resexp_min']
+    if dict['resexp_max'] is None:
+        del dict['resexp_max']
+    return dict
+
 def fixMultiSelectDictEntries(dict):
     # These are passed as a quoted string so we need to turn them into a list
     dict['cc'] = eval(dict['cc'])
@@ -230,11 +239,13 @@ def data_viz_capsmodeldata(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            qs = urlencode(posted.cleaned_data)
+            dict = removeNullDictEntries(posted.cleaned_data)
+            qs = urlencode(dict)
             return redirect(reverse('dataviz:capsmodeldata') + '?'+qs)
-        #else:
-        #    print("FilterForm not valid!")
-        filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
+        else:
+            print("FilterForm not valid!")
+            filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
+            chart = posted.cleaned_data.get('chart_views')      # Ensure we handle the chart filtering
     else: 
         if(request.GET) :
             dict = request.GET.dict()

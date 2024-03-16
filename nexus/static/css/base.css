@@ -488,7 +488,7 @@ body>nav details ul {
     width: 16em;
 }
 
-#filtertree label {
+#filtertree label, #resexp_to {
     font-weight: bold;
     font-size: .9em;
 }
@@ -511,6 +511,15 @@ body>nav details ul {
 #filtertree details:not([open]) span.showAllNone {
     display:none;
 }
+#filtertree div#res_exp_wrapper {
+    padding-left: .4em;
+    padding-top: .2em;
+}
+#filtertree div#res_exp_wrapper p {
+    margin-top: .2em;
+    margin-bottom: .2em;
+}
+
 
 /* FilterTooltip container */
 .filtertip {
@@ -541,56 +550,6 @@ body>nav details ul {
 .filtertip:hover .filtertiptext {
     visibility: visible;
 }
-
-/*
-body>nav>ul.filter {
-    font-size:0.9em;
-}
-
-body>nav ul.filter {
-    list-style:none;
-    padding: 0;
-}
-
-nav>ul.filter>li {
-    padding-bottom: 8px;
-    padding-right: 2em;
-}
-
-nav>ul.filter>li summary {
-    position: relative;
-}
-
-nav>ul.filter>li span.filterlabel {
-    font-weight: bold;
-}
-nav>ul.filter>li input.longLabel {
-    float: left;
-    margin-right: 0.4em;
-}
-
-nav>ul.filter>li span.setall {
-    font-size: 1.9em;
-    font-weight: bold;
-    position: absolute;
-    top: -0.15em;
-    right: -0.7em;
-}
-
-nav>ul.filter>li span.clearall {
-    font-weight: bold;
-    font-family: 'Consolas', 'Menlo', fixed;
-    font-size: 1.1em;
-    position: absolute;
-    right: -2em;
-    bottom: 0.1em;
-}
-
-nav>ul.filter>li span.setall:hover, nav>ul.filter>li span.clearall:hover {
-    color:var(--secondary);
-    cursor: pointer;
-}
-*/
 
 nav p.FilterTitle {
     margin:0 0 0.3em 0;
