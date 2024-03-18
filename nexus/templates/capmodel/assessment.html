@@ -343,8 +343,8 @@
 {% elif profile.capabilities_assessment.review_status == "pending" %}
 <h3>Review pending</h3>
 <section class="status">
-    <p>This assessment has been submitted and is pending final review by RCD Nexus administrators.<br />
-        You may make any last-minute adjustments to your answers, but once it is approved it will be frozen.</p>
+    <p>This assessment has been submitted and is pending final review by <br />RCD Nexus Program Staff.<br />
+        You may <strong><em>unsubmit</em></strong> to make changes to your answers. <br/> Once approved the assessment will be frozen.</p>
     <form method="post" action="unsubmit">
         {% csrf_token %}
         <section class="actions">
@@ -358,7 +358,7 @@
     <p>This assessment has been approved for inclusion in RCD Nexus community datasets and can no longer be altered.</p>
 </section>
 {% elif profile.capabilities_assessment.review_status == "denied" %}
-<h3><em><strong></em>Denied</strong></em></h3>
+<h3><em><strong></em>Rejected</strong></em></h3>
 <section class="status">
     <p>This assessment has been rejected for the following reason(s):<br />
         <i>{{ profile.capabilities_assessment.review_note }}</i>

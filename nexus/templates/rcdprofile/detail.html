@@ -7,17 +7,25 @@
     <section>
       <h2>RCD Capabilities Model Assessment</h2>
       {% if profile.capabilities_assessment %}
-      {% if not profile.capabilities_assessment.is_frozen %}
-      <p>Your RCD Capabilities Model Assessment has not been submitted yet.</p>
-      <p>Click the button below to continue working on the assessment.</p>
-      <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Continue Working</a>
+        {% if profile.capabilities_assessment.review_status == "not_submitted" %}
+          <p>Your RCD Capabilities Model Assessment has not been submitted yet.</p>
+          <p>Click the button below to continue working on the assessment.</p>
+          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Continue Working</a>
+        {% elif profile.capabilities_assessment.review_status == "pending" %}
+          <p>Your RCD Capabilities Model Assessment has been submitted, and is pending review by Program Staff.</p>
+          <p>Click the button below to review your work, and optionally unsubmit to update any answers.</p>
+          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+        {% elif profile.capabilities_assessment.review_status == "denied" %}
+          <p>Your RCD Capabilities Model Assessment was submitted and rejected.</p>
+          <p>Click the button below for details on the reasons for rejection.</p>
+          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+        {% else %}
+          <p>Your RCD Capabilities Model Assessment has been submitted and accepted.</p>
+          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+        {% endif %}
       {% else %}
-      <p>Your RCD Capabilities Model Assessment has been submitted.</p>
-      <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
-      {% endif %}
-      {% else %}
-      <p>You have not started a RCD Capabilities Model Assessment.</p>
-      <a style="text-align:center" class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Begin</a>
+        <p>You have not started a RCD Capabilities Model Assessment.</p>
+        <a style="text-align:center" class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Begin</a>
       {% endif %}
     </section>
 
