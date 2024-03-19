@@ -128,8 +128,8 @@ SYFLabels = {'infrastructure':'Infrastructure Support','compute':'Compute Infras
              'specialized':'Specialized Infrastructure','software':'Infrastructure Software','monitoring': 'Monitoring and<br>Measurement','recordkeeping':
              'Change Mgmnt,<br>Version Control, etc.','documentation':'Documentation','planning':'Planning','security':'Security Practices<br>for Open Environments'}
 
-SPFLabels = {'alignment' :'Institutional Alignment','culture':'Institutional Culture\nfor Research Support','funding':'Funding',
-            'patnerships':'Partnerships &<br>External Engagement','professionalization':'RCD Professional<br>Development','diversity': 'Diversity, Equity,<br> and Inclusion'}
+SPFLabels = {'alignment':'Institutional Alignment','culture':'Institutional Culture <br>for Research Support','funding':'Funding',
+            'partnerships':'Partnerships &<br>External Engagement','professionalization':'RCD Professional<br>Development','diversity':'Diversity, Equity,<br> and Inclusion'}
 
 # Define a dictionary to map classification values to names
 publicprivate_mapping = {
@@ -499,8 +499,7 @@ def demographic_map():
             
         })
     print(demographic_data)
-    
-        
+
     # Plot the choropleth map
     fig = px.choropleth(
         demographic_data,
@@ -1349,7 +1348,7 @@ def strategy_ccGraph():
                                                 values("question__topic__slug","assessment__profile__institution__carnegie_classification","average","stddev").\
                                                 filter(question__topic__facing__slug="strategy")
     df =pd.DataFrame(data)
-        #print(df)
+    
     # Drop rows with specified values
     dataset = df.dropna() 
         
@@ -1358,7 +1357,8 @@ def strategy_ccGraph():
     dataset['assessment__profile__institution__carnegie_classification'] = dataset['assessment__profile__institution__carnegie_classification'].map(classification_mapping)
 
     #Map the slug values to name
-    dataset['question__topic__slug'] = dataset['question__topic__slug'].map(SYFLabels) 
+    dataset['question__topic__slug'] = dataset['question__topic__slug'].map(SPFLabels) 
+
 
     for i in dataset.index:
                 if ((dataset['assessment__profile__institution__carnegie_classification'][i] == 'R1') or (dataset['assessment__profile__institution__carnegie_classification'][i]== 'R2') or (dataset['assessment__profile__institution__carnegie_classification'][i] == 'Other')):
@@ -1374,16 +1374,12 @@ def strategy_ccGraph():
         
     data1['assessment__profile__institution__carnegie_classification'] = ['OtherAcad','OtherAcad','OtherAcad','OtherAcad','OtherAcad','OtherAcad']
         
-    #print(data1) 
     
     # Reset index to convert 'question__topic__facing' to a regular column
     data1.reset_index(inplace=True)
     
     data1.rename(columns={'index': 'question__topic__slug'}, inplace=True) 
     
-    print(data1)
-    
-
     # Filter only 'R1' and 'R2' values
     CCdatafilter = dataset[dataset['assessment__profile__institution__carnegie_classification'].isin(['R1', 'R2'])]
       
@@ -1393,12 +1389,10 @@ def strategy_ccGraph():
 
     # Reset index
     #combined_df.reset_index(drop=True, inplace=True)
-
-    print(simpleCC) 
-
+     
     
     # Rename the columns for clarity
-    simpleCC= simpleCC.rename(columns={
+    simpleCC1= simpleCC.rename(columns={
             'question__topic__slug' : 'Topics',
             'assessment__profile__institution__carnegie_classification' : 'Carnegie Classification',
             'average':'Average Values',
@@ -1406,16 +1400,18 @@ def strategy_ccGraph():
         })
     
     # rounding the values 
-    simpleCC['Average Values'] = simpleCC['Average Values'].round(2)
-    simpleCC['Std Dev'] = simpleCC['Std Dev'].round(2)
+    simpleCC1['Average Values'] = simpleCC1['Average Values'].round(2)
+    simpleCC1['Std Dev'] = simpleCC1['Std Dev'].round(2)
     
+
     #Multiply by 100
-    simpleCC['Average Values'] *= 100
-    simpleCC['Std Dev'] *= 100
+    simpleCC1['Average Values'] *= 100
+    simpleCC1['Std Dev'] *= 100
     
-    
+    print("###########################################")
+    print("data5:\n",simpleCC1) 
     # Create a grouped bar chart
-    fig = px.bar(simpleCC, x='Average Values', y='Topics', error_x='Std Dev',
+    fig = px.bar(simpleCC1, x='Average Values', y='Topics', error_x='Std Dev',
                     color='Carnegie Classification', color_discrete_map={'R1':colorPalette['R1'], 'R2':colorPalette['R2'],'OtherAcad':colorPalette['OtherAcad']},
                     barmode='group', # Use 'group' for grouped bars
                     labels={'question__topic__facing': '', 'average': ''},
@@ -1466,6 +1462,7 @@ def index(request):
     context = {'viz1': reasercher_ppGraph(),'viz2':data_ppGraph(),'viz3':software_ppGraph(),'viz4':system_ppGraph(),'viz5()':strategy_ppGraph(),\
                'viz6': reasercher_ccGraph(), 'viz7': data_ccGraph(),'viz8':software_ccGraph(),'viz9':system_ccGraph(),'viz10()':strategy_ccGraph(), \
                 'viz11': demographic_map()} 
+    
     
     return render(request, 'viz/test.html',context)
     
