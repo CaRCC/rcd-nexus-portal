@@ -114,6 +114,28 @@ classification_mapping = {
 # Define a dictionary to map classification values to names
 
 Facing_mapping = { 1: 'Researcher-Facing', 2: 'Data-Facing', 3: 'Software-Facing', 4 : 'System-Facing', 5: ' Strategy & Policy Facing'}
+
+RFLabels = {'staffing':'RCD Staffing', 'outreach':'RCD Outreach', 'consulting':'RCD Adv. Support', 'lifecycle':'Research<br>Lifecycle Mgmnt'}
+
+DFLabels = {'creation':'Data Creation','discovery': 'Data Discovery <br> &Collection','analysis':'Data Analysis','visualization':'Data Visualization',
+             'curation':'Curation','policy':'Data Policy<br>Compliance','security':'Security/Sensitive Data'}
+
+SWFLabels = {'management':'SW Package Mgmnt','development':'Research SW<br>Development','optimization':'SW Optimization,<br>Troubleshooting',
+             'workflow':'Workflow Engineering','probability':'SW Portability,<br>Containers, Cloud','access':'Securing Access to SW',
+             'physical_specimens':'SW for Physical<br>Specimen Mgmnt'}
+
+SYFLabels = {'infrastructure':'Infrastructure Support','compute':'Compute Infrastructure','storage':'Storage Infrastructure','network':'Network and Data<br>Movement',
+             'specialized':'Specialized Infrastructure','software':'Infrastructure Software','monitoring': 'Monitoring and<br>Measurement','recordkeeping':
+             'Change Mgmnt,<br>Version Control, etc.','documentation':'Documentation','planning':'Planning','security':'Security Practices<br>for Open Environments'}
+
+SPFLabels = {'alignment' :'Institutional Alignment','culture':'Institutional Culture\nfor Research Support','funding':'Funding',
+            'patnerships':'Partnerships &<br>External Engagement','professionalization':'RCD Professional<br>Development','diversity': 'Diversity, Equity,<br> and Inclusion'}
+
+# Define a dictionary to map classification values to names
+publicprivate_mapping = {
+        1: 'Public',
+        2: 'Private'
+        }  
 '''
 def allSummaryDataGraph():
         
@@ -443,6 +465,7 @@ def demographic_map():
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)'''
 
+
 def demographic_map():
   
     # Fetch US states GeoJSON data
@@ -450,6 +473,18 @@ def demographic_map():
     
     us_states_geojson = response_us.json()
 
+    url = "https://github.com/prajaktaamate23/Python_visualization/raw/main/candian_states.geojson"
+    response = requests.get(url)
+    canadian_provinces_geojson = response.json()
+
+    # Combine GeoJSON data
+    combined_geojson = {
+        'type': 'FeatureCollection',
+        'features': us_states_geojson['features'] + canadian_provinces_geojson['features']
+    }
+
+    
+    
     # Django Query to fetach data
     data = CapabilitiesAssessment.objects.values('profile__institution__state_or_province').annotate(count=Count('pk'))
     
@@ -469,16 +504,21 @@ def demographic_map():
     # Plot the choropleth map
     fig = px.choropleth(
         demographic_data,
-        geojson=us_states_geojson,
+        geojson=combined_geojson,
 	    featureidkey="properties.name",
         locations="State",
         color="Count",
-        color_continuous_scale="Viridis",
+        color_continuous_scale="plasma",
         range_color=(0, demographic_data['Count'].max()),
         scope="usa",
+        color_continuous_midpoint=-1,  # Set midpoint outside the data range
         labels={"Count": "# of Contributing Institutions"},
         title="Number of Universities in Each US State"
     )
+
+    # Remove the legend
+    fig.update_coloraxes(showscale=False)
+
     
     fig.update_layout(
         autosize=False,
@@ -500,22 +540,21 @@ def demographic_map():
 # Facings graph by Public-Private Institutions
 
 def reasercher_ppGraph():
-     data = CapabilitiesAnswer.objects.aggregate_score("question__topic__facing","question__topic__slug","assessment__profile__institution__ipeds_control").\
-                                                values("question__topic__facing","question__topic__slug","assessment__profile__institution__ipeds_control","average","stddev").\
+     data = CapabilitiesAnswer.objects.aggregate_score("question__topic__slug","assessment__profile__institution__ipeds_control").\
+                                                values("question__topic__slug","assessment__profile__institution__ipeds_control","average","stddev").\
                                                 filter(question__topic__facing__slug="researcher")
      df =pd.DataFrame(data)
-     df = df.drop(columns='question__topic__facing')
+     
      #print(df)
      # Drop rows with specified values
      dataset = df.dropna()
-    # Define a dictionary to map classification values to names
-     classification_mapping = {
-        1: 'Public',
-        2: 'Private'
-        }  
+    
      # Map the classification values to names
-     dataset['assessment__profile__institution__ipeds_control'] =  dataset['assessment__profile__institution__ipeds_control'].\
-        map(classification_mapping)
+     dataset['assessment__profile__institution__ipeds_control'] =  dataset['assessment__profile__institution__ipeds_control'].map(publicprivate_mapping)
+    
+     #Map the slug values to name
+     dataset['question__topic__slug'] = dataset['question__topic__slug'].map(RFLabels) 
+    
       # Rename the columns for clarity
      dataset =  dataset.rename(columns={
             'question__topic__slug' : 'Topics',
@@ -572,23 +611,23 @@ def reasercher_ppGraph():
      return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
 
 def data_ppGraph():
-     data = CapabilitiesAnswer.objects.aggregate_score("question__topic__facing","question__topic__slug","assessment__profile__institution__ipeds_control").\
-                                                values("question__topic__facing","question__topic__slug","assessment__profile__institution__ipeds_control","average","stddev").\
+     data = CapabilitiesAnswer.objects.aggregate_score("question__topic__slug","assessment__profile__institution__ipeds_control").\
+                                                values("question__topic__slug","assessment__profile__institution__ipeds_control","average","stddev").\
                                                 filter(question__topic__facing__slug="data")
      df =pd.DataFrame(data)
-     df = df.drop(columns='question__topic__facing')
+   
      #print(df)
      # Drop rows with specified values
      dataset = df.dropna()
-    # Define a dictionary to map classification values to names
-     classification_mapping = {
-        1: 'Public',
-        2: 'Private'
-        }  
+    
      # Map the classification values to names
-     dataset['assessment__profile__institution__ipeds_control'] =  dataset['assessment__profile__institution__ipeds_control'].\
-        map(classification_mapping)
-      # Rename the columns for clarity
+     dataset['assessment__profile__institution__ipeds_control'] =  dataset['assessment__profile__institution__ipeds_control'].map(publicprivate_mapping)
+
+     # Map the slug values to names
+     dataset['question__topic__slug'] = dataset['question__topic__slug'].map(DFLabels) 
+      
+      
+    # Rename the columns for clarity
      dataset =  dataset.rename(columns={
             'question__topic__slug' : 'Topics',
             'assessment__profile__institution__ipeds_control' :'Public/Private',
@@ -643,22 +682,20 @@ def data_ppGraph():
      return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
 
 def software_ppGraph():
-     data = CapabilitiesAnswer.objects.aggregate_score("question__topic__facing","question__topic__slug","assessment__profile__institution__ipeds_control").\
-                                                values("question__topic__facing","question__topic__slug","assessment__profile__institution__ipeds_control","average","stddev").\
+     data = CapabilitiesAnswer.objects.aggregate_score("question__topic__slug","assessment__profile__institution__ipeds_control").\
+                                                values("question__topic__slug","assessment__profile__institution__ipeds_control","average","stddev").\
                                                 filter(question__topic__facing__slug="software")
      df =pd.DataFrame(data)
-     df = df.drop(columns='question__topic__facing')
-     #print(df)
+     
      # Drop rows with specified values
      dataset = df.dropna()
-    # Define a dictionary to map classification values to names
-     classification_mapping = {
-        1: 'Public',
-        2: 'Private'
-        }  
-     # Map the classification values to names
-     dataset['assessment__profile__institution__ipeds_control'] =  dataset['assessment__profile__institution__ipeds_control'].\
-        map(classification_mapping)
+
+    # Map the classification values to names
+     dataset['assessment__profile__institution__ipeds_control'] =  dataset['assessment__profile__institution__ipeds_control'].map(publicprivate_mapping)
+    
+     #Map the slug values to name
+     dataset['question__topic__slug'] = dataset['question__topic__slug'].map(SWFLabels) 
+
       # Rename the columns for clarity
      dataset =  dataset.rename(columns={
             'question__topic__slug' : 'Topics',
@@ -684,6 +721,9 @@ def software_ppGraph():
                     labels={'Facings': 'Facings', 'value': 'Average Values'},
                     title='Coverage For Software-Facing Areas',
                     width=800, height=600)
+    
+     # Update x-axis range to include 0
+     fig.update_xaxes(range=[0, dataset['Average Values'].max() * 1.69 ])
 
     # Update the tooltip to display only the rounded average values
      fig.update_traces(hovertemplate='Average Values: %{x}% <br>')
@@ -714,23 +754,22 @@ def software_ppGraph():
      return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
 
 def system_ppGraph():
-     data = CapabilitiesAnswer.objects.aggregate_score("question__topic__facing","question__topic__slug","assessment__profile__institution__ipeds_control").\
-                                                values("question__topic__facing","question__topic__slug","assessment__profile__institution__ipeds_control","average","stddev").\
+     data = CapabilitiesAnswer.objects.aggregate_score("question__topic__slug","assessment__profile__institution__ipeds_control").\
+                                                values("question__topic__slug","assessment__profile__institution__ipeds_control","average","stddev").\
                                                 filter(question__topic__facing__slug="systems")
      df =pd.DataFrame(data)
-     df = df.drop(columns='question__topic__facing')
-     #print(df)
+     
      # Drop rows with specified values
      dataset = df.dropna()
-    # Define a dictionary to map classification values to names
-     classification_mapping = {
-        1: 'Public',
-        2: 'Private'
-        }  
+
      # Map the classification values to names
-     dataset['assessment__profile__institution__ipeds_control'] =  dataset['assessment__profile__institution__ipeds_control'].\
-        map(classification_mapping)
-      # Rename the columns for clarity
+     dataset['assessment__profile__institution__ipeds_control'] =  dataset['assessment__profile__institution__ipeds_control'].map(publicprivate_mapping)
+    
+     #Map the slug values to name
+     dataset['question__topic__slug'] = dataset['question__topic__slug'].map(SYFLabels) 
+     
+     
+     # Rename the columns for clarity
      dataset =  dataset.rename(columns={
             'question__topic__slug' : 'Topics',
             'assessment__profile__institution__ipeds_control' :'Public/Private',
@@ -785,23 +824,21 @@ def system_ppGraph():
      return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
 
 def strategy_ppGraph():
-     data = CapabilitiesAnswer.objects.aggregate_score("question__topic__facing","question__topic__slug","assessment__profile__institution__ipeds_control").\
-                                                values("question__topic__facing","question__topic__slug","assessment__profile__institution__ipeds_control","average","stddev").\
+     data = CapabilitiesAnswer.objects.aggregate_score("question__topic__slug","assessment__profile__institution__ipeds_control").\
+                                                values("question__topic__slug","assessment__profile__institution__ipeds_control","average","stddev").\
                                                 filter(question__topic__facing__slug="strategy")
      df =pd.DataFrame(data)
-     df = df.drop(columns='question__topic__facing')
-     #print(df)
+     
      # Drop rows with specified values
      dataset = df.dropna()
-    # Define a dictionary to map classification values to names
-     classification_mapping = {
-        1: 'Public',
-        2: 'Private'
-        }  
+    
      # Map the classification values to names
-     dataset['assessment__profile__institution__ipeds_control'] =  dataset['assessment__profile__institution__ipeds_control'].\
-        map(classification_mapping)
-      # Rename the columns for clarity
+     dataset['assessment__profile__institution__ipeds_control'] =  dataset['assessment__profile__institution__ipeds_control'].map(publicprivate_mapping)
+    
+     #Map the slug values to name
+     dataset['question__topic__slug'] = dataset['question__topic__slug'].map(SPFLabels) 
+     
+     # Rename the columns for clarity
      dataset =  dataset.rename(columns={
             'question__topic__slug' : 'Topics',
             'assessment__profile__institution__ipeds_control' :'Public/Private',
@@ -865,7 +902,8 @@ def reasercher_ccGraph():
                                                 values("question__topic__slug","assessment__profile__institution__carnegie_classification","average","stddev").\
                                                 filter(question__topic__facing__slug="researcher")
     df =pd.DataFrame(data)
-        #print(df)
+   
+    
     # Drop rows with specified values
     dataset = df.dropna() 
         
@@ -874,6 +912,9 @@ def reasercher_ccGraph():
     dataset['assessment__profile__institution__carnegie_classification'] = dataset['assessment__profile__institution__carnegie_classification'].\
             map(classification_mapping)
         
+    #Map the slug values to name
+    dataset['question__topic__slug'] = dataset['question__topic__slug'].map(RFLabels) 
+
     for i in dataset.index:
                 if ((dataset['assessment__profile__institution__carnegie_classification'][i] == 'R1') or (dataset['assessment__profile__institution__carnegie_classification'][i]== 'R2') or (dataset['assessment__profile__institution__carnegie_classification'][i] == 'Other')):
                     pass
@@ -977,6 +1018,11 @@ def data_ccGraph():
         
     dataset['assessment__profile__institution__carnegie_classification'] = dataset['assessment__profile__institution__carnegie_classification'].\
             map(classification_mapping)
+    
+    
+    #Map the slug values to name
+    dataset['question__topic__slug'] = dataset['question__topic__slug'].map(DFLabels) 
+
         
     for i in dataset.index:
                 if ((dataset['assessment__profile__institution__carnegie_classification'][i] == 'R1') or (dataset['assessment__profile__institution__carnegie_classification'][i]== 'R2') or (dataset['assessment__profile__institution__carnegie_classification'][i] == 'Other')):
@@ -1039,6 +1085,9 @@ def data_ccGraph():
                     labels={'question__topic__facing': '', 'average': ''},
                     title='Coverage For Data-Facing Areas by Carnegie- Classification',
                     width=800, height=600)
+    
+    # Update x-axis range to include 0
+    fig.update_xaxes(range=[0, simpleCC['Average Values'].max() * 1.68]) 
 
     # Update the tooltip to display only the rounded average values
     fig.update_traces(hovertemplate='Average Values: %{x}% <br>')
@@ -1075,6 +1124,7 @@ def software_ccGraph():
                                                 filter(question__topic__facing__slug="software")
     df =pd.DataFrame(data)
         #print(df)
+    
     # Drop rows with specified values
     dataset = df.dropna() 
         
@@ -1082,6 +1132,15 @@ def software_ccGraph():
         
     dataset['assessment__profile__institution__carnegie_classification'] = dataset['assessment__profile__institution__carnegie_classification'].\
             map(classification_mapping)
+    
+    # Before mapping
+    print("Unique values before mapping:", dataset['question__topic__slug'].unique())
+
+    
+    #Map the slug values to name
+    
+    #dataset['question__topic__slug'] = dataset['question__topic__slug'].map(SWFLabels) 
+
         
     for i in dataset.index:
                 if ((dataset['assessment__profile__institution__carnegie_classification'][i] == 'R1') or (dataset['assessment__profile__institution__carnegie_classification'][i]== 'R2') or (dataset['assessment__profile__institution__carnegie_classification'][i] == 'Other')):
@@ -1104,7 +1163,7 @@ def software_ccGraph():
     
     data1.rename(columns={'index': 'question__topic__slug'}, inplace=True) 
     
-    print(data1)
+    #print(data1)
     
 
     # Filter only 'R1' and 'R2' values
@@ -1117,7 +1176,7 @@ def software_ccGraph():
     # Reset index
     #combined_df.reset_index(drop=True, inplace=True)
 
-    print(simpleCC) 
+    #print(simpleCC) 
 
     
     # Rename the columns for clarity
@@ -1145,11 +1204,14 @@ def software_ccGraph():
                     title='Coverage For Software-Facing Areas by Carnegie- Classification',
                     width=800, height=600)
 
+    # Update x-axis range to include 0
+    fig.update_xaxes(range=[0, simpleCC['Average Values'].max() * 1.69 ])
+    
     # Update the tooltip to display only the rounded average values
     fig.update_traces(hovertemplate='Average Values: %{x}% <br>')
     
     # Set empty legend title 
-    fig.update_layout(legend_title_text='')
+    fig.update_layout(legend_title_text='') 
     
     # Change font size and font type
     fig.update_layout(
@@ -1186,7 +1248,10 @@ def system_ccGraph():
         
     dataset['assessment__profile__institution__carnegie_classification'] = dataset['assessment__profile__institution__carnegie_classification'].\
             map(classification_mapping)
-        
+
+    #Map the slug values to name
+    dataset['question__topic__slug'] = dataset['question__topic__slug'].map(SYFLabels) 
+    
     for i in dataset.index:
                 if ((dataset['assessment__profile__institution__carnegie_classification'][i] == 'R1') or (dataset['assessment__profile__institution__carnegie_classification'][i]== 'R2') or (dataset['assessment__profile__institution__carnegie_classification'][i] == 'Other')):
                     pass
@@ -1290,9 +1355,11 @@ def strategy_ccGraph():
         
     # Map the classification values to names
         
-    dataset['assessment__profile__institution__carnegie_classification'] = dataset['assessment__profile__institution__carnegie_classification'].\
-            map(classification_mapping)
-        
+    dataset['assessment__profile__institution__carnegie_classification'] = dataset['assessment__profile__institution__carnegie_classification'].map(classification_mapping)
+
+    #Map the slug values to name
+    dataset['question__topic__slug'] = dataset['question__topic__slug'].map(SYFLabels) 
+
     for i in dataset.index:
                 if ((dataset['assessment__profile__institution__carnegie_classification'][i] == 'R1') or (dataset['assessment__profile__institution__carnegie_classification'][i]== 'R2') or (dataset['assessment__profile__institution__carnegie_classification'][i] == 'Other')):
                     pass
@@ -1395,9 +1462,10 @@ def index(request):
   # print(filter_data)  
 
    #context = {'visualization':allSummaryDataGraph(),'viz1': simpleCC(),'viz2':publicPrivateGraph(),'viz3': demographic_map()}
+    
     context = {'viz1': reasercher_ppGraph(),'viz2':data_ppGraph(),'viz3':software_ppGraph(),'viz4':system_ppGraph(),'viz5()':strategy_ppGraph(),\
                'viz6': reasercher_ccGraph(), 'viz7': data_ccGraph(),'viz8':software_ccGraph(),'viz9':system_ccGraph(),'viz10()':strategy_ccGraph(), \
-                'viz11': demographic_map()}
-   
+                'viz11': demographic_map()} 
+    
     return render(request, 'viz/test.html',context)
     
