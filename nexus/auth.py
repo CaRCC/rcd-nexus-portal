@@ -27,10 +27,18 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             return super().authenticate(request, **kwargs)
         except InvalidClaimsError as e:
             if e.claims["idp"] == "http://orcid.org/oauth/authorize":
-                messages.error(request, "ORCID login is not supported. Please use your institutional login, or a supported social login such as Google.")
+                messages.error(request, "ORCID login is not currently supported. Please use your institutional login, or a supported social login such as Google.")
+            elif e.claims["idp"] == "http://github.com/login/oauth/authorize":
+                messages.error(request, "GitHub login is not currently supported. Please use your institutional login, or a supported social login such as Google.")
             else:
                 messages.error(request, "Invalid identity provider. If it is your institution, please contact RCD Nexus support.")
 
+    def verify_claims(self, claims):
+        if claims["idp"] in {"http://github.com/login/oauth/authorize", "http://orcid.org/oauth/authorize"}:
+            return False
+            
+        return super().verify_claims(claims)
+    
     def get_or_create_user(self, access_token, id_token, payload):
         claims = self.get_userinfo(access_token, id_token, payload)
 

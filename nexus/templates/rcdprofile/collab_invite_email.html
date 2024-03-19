@@ -1,0 +1,8 @@
+{% extends "base_email.html" %}
+{% block main %}
+    <p>
+        Hello - <br><br>{{invby}} is inviting you to collaborate on RCD Nexus assessments for <b>{{profile}}</b>.<br><br>
+        <a href="{{invite_link}}">Click here to accept this invitation</a><br><br>
+        Or, cut and paste this URL:<br> {{invite_link}}.
+    </p>
+{% endblock %}

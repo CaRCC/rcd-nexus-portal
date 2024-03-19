@@ -25,7 +25,9 @@ This project uses Visual Studio Dev Containers to provide easy-to-setup, isolate
 
 After your environment is built and activated, run `./manage.py loaddata facings legacy_capmodel`. 
 
-To load historical data, first copy the legacy datasets into `data/sensitive/` then run `./manage.py load_nexus_data` from the top of the repository. This may take a couple minutes.
+Historical datasets include sensitive data that subject to a signed MOU with the project data managers. Ask on one of the project lists or Slack channels for more information and to get access. 
+
+To load historical data, first copy the legacy datasets into `data/sensitive/` in your local tree then run `./manage.py load_nexus_data` from the top of the repository. This may take a couple minutes.
 
 ### CILogon integration
 

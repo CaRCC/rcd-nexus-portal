@@ -13,6 +13,14 @@ class IPEDSMixin(models.Model):
     class Meta:
         abstract = True
 
+    ipeds_unitid = models.BigIntegerField(
+        "IPEDS Unit ID",
+        unique=True,
+        null=True,
+        blank=True,
+        help_text="IPEDS UnitID primarily for joining new data."
+    )
+
     class SectorChoices(models.IntegerChoices):
         PUBLIC_4_YR = 1, "Public 4-yr"
         PRIVATE_4_YR = 2, "Private 4-yr"
@@ -62,6 +70,17 @@ class IPEDSMixin(models.Model):
         blank=True,
     )
 
+    class PBIChoices(models.IntegerChoices):
+        PBI = 1, "PBI"
+        NOT_A_PBI = 2, "Not a PBI"
+
+    ipeds_pbi = models.IntegerField(
+        "Predominantly Black Institution",
+        choices=PBIChoices.choices,
+        null=True,
+        blank=True,
+    )
+
     class TCUChoices(models.IntegerChoices):
         TCU = 1, "TCU"
         NOT_A_TCU = 2, "Not a TCU"
@@ -69,6 +88,50 @@ class IPEDSMixin(models.Model):
     ipeds_tcu = models.IntegerField(
         "Tribal College or University",
         choices=TCUChoices.choices,
+        null=True,
+        blank=True,
+    )
+
+    class HSIChoices(models.IntegerChoices):
+        HSI = 1, "HSI"
+        NOT_AN_HSI = 2, "Not an HSI"
+
+    ipeds_hsi = models.IntegerField(
+        "Hispanic-Serving Institution",
+        choices=HSIChoices.choices,
+        null=True,
+        blank=True,
+    )
+
+    class AANAPISI_ANNHChoices(models.IntegerChoices):
+        AANAPISI_ANNH = 1, "AANAPISI or ANNH"
+        NOT_AN_AANAPISI_ANNH = 2, "Not an AANAPISI or ANNH"
+
+    ipeds_aanapisi_annh = models.IntegerField(
+        "Asian American and Native American Pacific Islander Serving Institution and/or Alaska Native and Native Hawaiian Serving Institution",
+        choices=AANAPISI_ANNHChoices.choices,
+        null=True,
+        blank=True,
+    )
+
+    class MSIChoices(models.IntegerChoices):
+        MSI = 1, "An MSI"
+        NOT_AN_MSI = 2, "Not an MSI"
+
+    ipeds_msi = models.IntegerField(
+        "Minority-Serving Institution",
+        choices=MSIChoices.choices,
+        null=True,
+        blank=True,
+    )
+
+    class EPSCORChoices(models.IntegerChoices):
+        EPSCOR = 1, "EPSCoR"
+        NOT_EPSCOR = 2, "Not EPSCoR"
+
+    ipeds_epscor = models.IntegerField(
+        "EPSCoR Institution",
+        choices=EPSCORChoices.choices,
         null=True,
         blank=True,
     )
@@ -107,6 +170,7 @@ class IPEDSMixin(models.Model):
     )
 
     class CarnegieClassificationChoices(models.IntegerChoices):
+        MIXED_BACC_ASSOC_ASSOC_DOM = 14, "Mixed Bacc/Assoc (Assoc. Dom.)"
         R1 = 15, "R1"
         R2 = 16, "R2"
         R3 = 17, "R3"
@@ -116,6 +180,7 @@ class IPEDSMixin(models.Model):
         BACC_ARTS_AND_SCI = 21, "Bacc: Arts and Sci"
         BACC_DIVERSE = 22, "Bacc: Diverse"
         MIXED_BACC_ASSOC = 23, "Mixed Bacc/Assoc"
+        FOUR_YR_FAITH_RELATED_INSTITUTIONS = 24, "4yr: Faith-Related Institutions"
         FOUR_YR_MED_SCHOOLS_CENTERS = 25, "4yr: Med Schools & Centers"
         FOUR_YR_OTHER_HEALTH_PROF_SCHOOLS = 26, "4yr: Other Health Prof. Schools"
         FOUR_YR_RESEARCH_INSTITUTIONS = 27, "4yr: Research Institutions"
@@ -131,6 +196,7 @@ class IPEDSMixin(models.Model):
             "4yr: Other Special Focus Institutions",
         )
         TRIBAL_COLLEGES = 33, "Tribal Colleges"
+        __empty__ = "Other"
 
     carnegie_classification = models.IntegerField(
         "Carnegie Classification",
@@ -150,11 +216,12 @@ class IPEDSMixin(models.Model):
 
     def carnegie_longname(self) :
         if self.carnegie_classification is None\
-            or self.carnegie_classification < self.CarnegieClassificationChoices.R1 \
+            or self.carnegie_classification < self.CarnegieClassificationChoices.MIXED_BACC_ASSOC_ASSOC_DOM \
             or self.carnegie_classification > self.CarnegieClassificationChoices.TRIBAL_COLLEGES :
             return "Other"
-        if self.carnegie_classification >= self.CarnegieClassificationChoices.BACC_ARTS_AND_SCI :
-            return self.carnegie_classification.choices.__getitem__(self.carnegie_classification)
+        if self.carnegie_classification == self.CarnegieClassificationChoices.MIXED_BACC_ASSOC_ASSOC_DOM \
+            or self.carnegie_classification >= self.CarnegieClassificationChoices.BACC_ARTS_AND_SCI :
+            return self.get_carnegie_classification_display()
         # self.carnegie_classification is between 15 and 20 inclusive (one of 6 values)
         return self.carnegie_longnames[self.carnegie_classification - self.CarnegieClassificationChoices.R1]
 

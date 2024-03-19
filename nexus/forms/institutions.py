@@ -58,6 +58,10 @@ class AffiliationRequestForm(forms.Form):
             raise ValidationError(
                 "No institution found with that email domain. Fix any typos, or request a new institution be added to RCD Nexus using the above link."
             )
+        except Institution.MultipleObjectsReturned:
+            raise ValidationError(
+                "We couldn't resolve this email domain to a unique IPEDS institution. Please email capsmodel-help@carcc.org to proceed."
+            )
 
         if institution.has_cilogon_idp():
             raise ValidationError(

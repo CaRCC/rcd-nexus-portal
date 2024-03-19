@@ -6,7 +6,9 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import HttpRequest
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 from nexus.forms.institutions import (
     AffiliationRequestForm,
@@ -19,7 +21,7 @@ from nexus.models.institutions import (
     InstitutionAffiliation,
 )
 
-
+@login_required
 def institution_request(request: HttpRequest):
     form = NewInstitutionRequestForm(request.POST or None)
 
@@ -46,6 +48,7 @@ def institution_request(request: HttpRequest):
         "institutions/request.html",
         {
             "form": form,
+            "institutions": Institution.objects.all(),
         },
     )
 
@@ -81,18 +84,29 @@ def institution_edit(request: HttpRequest, pk: int):
         },
     )
 
-
+@login_required
 def affiliation_request(request: HttpRequest, token=None):
     form = AffiliationRequestForm(request.POST or None)
 
     if token:
         try:
             aff_req = AffiliationRequest.objects.get(token=token, expires__gte=timezone.now(), user=request.user)
-        except AffiliationRequest.DoesNotExist:
-            messages.error(request, "Invalid token.")
-        finally:
             aff_req.approve()
             messages.success(request, f"Your affiliation with {aff_req.institution} has been confirmed.")
+            send_mail(
+                subject="RCD Nexus Affiliation Request Confirmed",
+                message=f"""
+{request.user}'s request to be affiliated with {aff_req.institution} via {aff_req.email} was approved.
+
+They can now create an assessment, so should probably be added to the capsModel-discuss list. 
+""",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.SUPPORT_EMAIL],
+                fail_silently=False,
+            )
+        except AffiliationRequest.DoesNotExist:
+            messages.error(request, "Invalid token.")
+
         return redirect("index")
 
     if request.method == "POST":
@@ -100,6 +114,12 @@ def affiliation_request(request: HttpRequest, token=None):
             email = form.cleaned_data["email"]
             name, domain = email.split("@")
             institution = Institution.objects.get(internet_domain=domain)
+            if institution.has_cilogon_idp():
+                messages.error(
+                    request,
+                    f"Access to {institution} is supported via CILogon. Please logout and login to this institution via CILogon.",
+                )
+                return redirect("index")
             aff_req, created = AffiliationRequest.objects.update_or_create(
                 user=request.user,
                 institution=institution,
@@ -109,6 +129,9 @@ def affiliation_request(request: HttpRequest, token=None):
                 },
             )
             print(aff_req, aff_req.token, aff_req.expires)
+            req_link = request.build_absolute_uri(reverse("institutions:affiliation-request-approve", args=[aff_req.token]))
+            email_in_html = render_to_string('institutions/affiliation_req_email.html', 
+                                      {'user': request.user, 'institution':institution, 'email':email, 'req_link':req_link})
             send_mail(
                 subject="RCD Nexus Affiliation Request",
                 message=f"""
@@ -116,8 +139,9 @@ def affiliation_request(request: HttpRequest, token=None):
 
 To approve this request, please visit the following link:
 
-{request.build_absolute_uri(reverse("institutions:affiliation-request-approve", args=[aff_req.token]))}
+{req_link}
 """,
+                html_message=email_in_html,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
                 fail_silently=False,
