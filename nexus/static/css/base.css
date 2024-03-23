@@ -511,6 +511,9 @@ body>nav details ul {
 #filtertree details:not([open]) span.showAllNone {
     display:none;
 }
+#filtertree #id_benchmark {
+    float:left;
+}
 #filtertree div#res_exp_wrapper {
     padding-left: .4em;
     padding-top: .2em;

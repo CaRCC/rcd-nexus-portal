@@ -11,7 +11,10 @@ from django.utils.http import urlencode
 from nexus.utils import cmgraphs, demogcharts
 from nexus.forms.dataviz import *
 from nexus.models.rcd_profiles import RCDProfile
+from nexus.models import CapabilitiesAssessment, CapabilitiesAnswer, CapabilitiesTopic
 from nexus.models.ipeds_classification import IPEDSMixin
+from nexus.models.facings import Facing
+from nexus.views.rcd_profiles import view_roles
 
 logger = logging.getLogger(__name__)
 
@@ -232,10 +235,41 @@ def fixMultiSelectDictEntries(dict):
     # print( "Fixed dict: ",dict)
     return dict
 
+facing_sel_mapping = { "rf":"researcher", "df":"data", "swf":"software", "syf":"systems", "spf":"strategy",}
+
+
+def getInstAverages(benchmarkAssessment, selFacing):
+    # Get the answers of interest (no domain, no not-Applicable)
+    allAnswers = benchmarkAssessment.filtered_answers()
+    values = []
+
+    if selFacing=='all':
+        answersByFacing = allAnswers.group_by_facing()
+        # Get the average of all questions in each facing.
+        for facing in Facing.objects.all():
+            answers = answersByFacing[facing]
+            agg = answers.aggregate_score()
+            coverage = agg["average"]
+            # print(f'getInstAvgs(sum) Facing {facing} avg coverage: {coverage}')
+            values.append(coverage*100)   # Convert to percent, since that's what we graph
+    else:  
+        facing_slug = facing_sel_mapping[selFacing]
+        answersByFacingTopic = allAnswers.group_by_facing_topic()
+        answersForFacingTopics = answersByFacingTopic[facing_slug]
+        # Get the average of all questions in each topic in the specified facing.
+        for topic in answersForFacingTopics:
+            answers = answersByFacing[topic]
+            agg = answers.aggregate_score()
+            coverage = agg["average"]
+            # print(f'getInstAvgs(facing:{facing_slug}) Topic {topic} avg coverage: {coverage}')
+            values.append(coverage*100)   # Convert to percent, since that's what we graph
+    return values
+
 def data_viz_capsmodeldata(request): 
     graph = None
     graphtitle = None
     chart = None
+    benchmarkInfo = None
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -252,13 +286,32 @@ def data_viz_capsmodeldata(request):
             cleaned_dict = fixMultiSelectDictEntries(dict)
             filter_form = DataFilterForm(cleaned_dict)
             chart = cleaned_dict.get('chart_views')
+            facing = cleaned_dict.get('facings')
             #print( "Cleaned dict: ",cleaned_dict)
             answers, instCount = cmgraphs.filterAssessmentData(cleaned_dict)
+            benchmarkAssessment = None
+            benchmarkReq = cleaned_dict.get('benchmark')
+            if benchmarkReq == 'True':                            # Note that benchmark option not shows if not authenticated.
+                if not request.user.is_authenticated:           # Just for safety
+                    messages.info(request, f"You must be logged in to use benchmarking.")
+                else:
+                    print('Looking for approved assessment...')
+                    membership = request.user.rcd_profile_memberships.filter(
+                            profile__capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED,
+                             role__in=view_roles).order_by('-profile__year').first()
+                    if membership is None or membership.profile.archived:
+                        messages.info(request, f"You must have view rights on an approved assessment to use benchmarking.")
+                    else:
+                        benchmarkAssessment = membership.profile.capabilities_assessment
+
+            if benchmarkAssessment:
+                benchmarkInfo = getInstAverages(benchmarkAssessment, facing)
+                print('Benchmark info: ',benchmarkInfo)
+
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
                 graphtitle = f'Too Few Institutions ({instCount}) to Graph!'
             else:
-                facing = cleaned_dict.get('facings')
                 facingname = [item for item in DataFilterForm.FACINGS_CHOICES if item[0] == facing]
                 # ignore caps feature for now
                 # TODO: add support to overlay the benchmarking data
@@ -271,59 +324,59 @@ def data_viz_capsmodeldata(request):
                 match chart:
                     case "sum":
                         if facing == 'all':
-                            graph = cmgraphs.summaryDataGraph(answers)
+                            graph = cmgraphs.summaryDataGraph(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingSummaryDataGraph(answers, facing)
+                            graph = cmgraphs.facingSummaryDataGraph(answers, facing, benchmark=benchmarkInfo)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} ({instCount} Institutions)'
 
                     case "cc" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByCC(answers)
+                            graph = cmgraphs.capsDataGraphByCC(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facing)
+                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facing, benchmark=benchmarkInfo)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Institutional Classification ({instCount} Institutions)'
                     case "mission" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByMission(answers)
+                            graph = cmgraphs.capsDataGraphByMission(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facing)
+                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facing, benchmark=benchmarkInfo)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Mission ({instCount} Institutions)'
                     case "pub_priv" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByPubPriv(answers)
+                            graph = cmgraphs.capsDataGraphByPubPriv(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facing)
+                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facing, benchmark=benchmarkInfo)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Control (Public/Private) ({instCount} Institutions)'
                     case "epscor" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByEPSCoR(answers)
+                            graph = cmgraphs.capsDataGraphByEPSCoR(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facing)
+                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facing, benchmark=benchmarkInfo)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by EPSCoR status ({instCount} Institutions)'
                     case "msi" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByMSI(answers)
+                            graph = cmgraphs.capsDataGraphByMSI(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facing)
+                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facing, benchmark=benchmarkInfo)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Minority-serving status ({instCount} Institutions)'
                     case "orgmodel" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByOrgModel(answers)
+                            graph = cmgraphs.capsDataGraphByOrgModel(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facing)
+                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facing, benchmark=benchmarkInfo)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Organizational Model ({instCount} Institutions)'
                     case "reporting" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByReporting(answers)
+                            graph = cmgraphs.capsDataGraphByReporting(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facing)
+                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facing, benchmark=benchmarkInfo)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Reporting Structure ({instCount} Institutions)'
                     case _ :

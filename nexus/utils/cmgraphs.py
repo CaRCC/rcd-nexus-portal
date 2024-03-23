@@ -8,6 +8,7 @@ from nexus.forms import dataviz
 #from django.http import JsonResponse
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import plotly.io as po
 from django.db.models import Q
 
@@ -34,6 +35,11 @@ scatterPlotColorSeq = [colorPalette['RF'],colorPalette['DF'],colorPalette['SWF']
 
 # QUESTION Why does this work?  Facings fixture defines the indices as 0-4, not 1-5
 Facing_mapping = { 1: '<b>Researcher-<br>Facing</b>', 2: '<b>Data-<br>Facing</b>', 3: '<b>Software-<br>Facing</b>', 4 : '<b>System-<br>Facing</b>', 5: '<b>Strategy & Policy-<br>Facing</b>'}
+Facing_xvals = ['<b>Researcher-<br>Facing</b>',
+                '<b>Data-<br>Facing</b>',
+                '<b>Software-<br>Facing</b>', 
+                '<b>System-<br>Facing</b>', 
+                '<b>Strategy & Policy-<br>Facing</b>']
 
 # SimpleCC values - ordered for presentation
 CC_BACC = 97
@@ -156,6 +162,7 @@ def getAllAnswers(years=None) :
     #print("getAllAnswers found: ",profiles.count()," distinct non-superseded profiles")
     answers = CapabilitiesAnswer.objects.filter(assessment__profile__in=profiles)
     # Get only the main answers (skip the domain coverage ones)
+    # TODO BUG need to use answers.filter(not_applicable=False)
     answers = answers.exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug)
     #print(answers.count())
     instCount = answers.values('assessment__id').distinct().count()
@@ -172,10 +179,12 @@ def filterAssessmentData(dict):
     answers=None
     if years := dict.get('year'):
         if len(years) < len(dataviz.DataFilterForm.YEAR_CHOICES):   # Skip the filter if all are set (nothing to filter)
+            # TODO - get instCount in return
             answers = getAllAnswers(years)[0]                       # filters on years, and then gets answers for latest assessment for each institution
 
     # if we did not handle the special case, get all the answers normally
     if(answers is None):
+        # TODO - get instCount in return
         answers = getAllAnswers()[0]                                # gets answers for latest assessment for each institution
 
     if cc := dict.get('cc'):
@@ -280,47 +289,56 @@ def applyStandardVBarFormatting(fig, width=None):
 
 def allSummaryDataGraph(width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     answers, instCount = getAllAnswers()
-    return summaryDataGraph(answers, width, height), instCount
+    return summaryDataGraph(answers, width=width, height=height), instCount
 
-def summaryDataGraph(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-        #print("SummaryDataGraph with: ", answers.count()," answers")
-        #instCount = answers.values('assessment__id').distinct().count()
-        #print("SummaryDataGraph with: ", answers.count()," answers for: ",instCount," Institutions")
-        if (answers.count() == 0): 
-            return None
-    
-        data = answers.aggregate_score('question__topic__facing').values('question__topic__facing','average','stddev')
-        # Convert the queryset to a DataFrame
-        df = pd.DataFrame(data)
+def summaryDataGraph(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+    #print("SummaryDataGraph with: ", answers.count()," answers")
+    #instCount = answers.values('assessment__id').distinct().count()
+    #print("SummaryDataGraph with: ", answers.count()," answers for: ",instCount," Institutions")
+    if (answers.count() == 0): 
+        return None
 
-        # Map the facings values to names
-        df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping)
-        data = df
+    #Note that answers has been pre-filtered of domain topic and not_applicable answers
+    data = answers.aggregate_score('question__topic__facing').values('question__topic__facing','average','stddev')
+    # Convert the queryset to a DataFrame
+    df = pd.DataFrame(data)
 
-        # Rename the columns for clarity
-        data = data.rename(columns={
-                'average':'Average Values',
-                'question__topic__facing' : 'Facings',
-                'stddev' : 'Std Dev'
-            })
-        print(data)
+    # Map the facings values to names
+    df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping)
+    data = df
 
-        # Compute a naive graph max and consider limiting the y axis (there is no simple way to compute the max of the sum) 
-        # No - this is making the graphs jitter for comparison. 
-        maxYRange = 100 #computeMaxRange(data['Average Values'], data['Std Dev'])
-        # print("MaxYRange: "+str(maxYRange))
+    # Rename the columns for clarity
+    data = data.rename(columns={
+            'average':'Average Values',
+            'question__topic__facing' : 'Facings',
+            'stddev' : 'Std Dev'
+        })
+    print(data)
 
-        data['Average Values'] *= 100
-        data['Std Dev'] *= 100
+    # Compute a naive graph max and consider limiting the y axis (there is no simple way to compute the max of the sum) 
+    # No - this is making the graphs jitter for comparison. 
+    maxYRange = 100 #computeMaxRange(data['Average Values'], data['Std Dev'])
+    # print("MaxYRange: "+str(maxYRange))
 
-        # Create a All Summary Data bar chart
-        fig = px.bar(data, x='Facings', y= 'Average Values', error_y='Std Dev',width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
-        applyStandardVBarFormatting(fig, width=0.6)
-        
-        # Convert the figure to HTML including Plotly.js
-        return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    data['Average Values'] *= 100
+    data['Std Dev'] *= 100
 
-def facingSummaryDataGraph(answers, facing, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+    # Create a All Summary Data bar chart
+    fig = px.bar(data, x='Facings', y= 'Average Values', error_y='Std Dev',
+                    width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
+    applyStandardVBarFormatting(fig, width=0.6)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
+   
+    # Convert the figure to HTML including Plotly.js
+    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+
+def facingSummaryDataGraph(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 
 '''
@@ -329,7 +347,7 @@ def simpleCC(cc) :
     return 'OtherAcad'
 '''
 
-def capsDataGraphByCC(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByCC(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -344,6 +362,7 @@ def capsDataGraphByCC(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
         When(assessment__profile__institution__carnegie_classification=15, then=Value(15)),
         When(assessment__profile__institution__carnegie_classification=16, then=Value(16)),
         default=Value(CC_OTHERACAD) ))
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = annotatedAnswers.aggregate_score('question__topic__facing','simpleCC').values('question__topic__facing','simpleCC','average','stddev')
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
     # Map the facings values to names
@@ -371,22 +390,30 @@ def capsDataGraphByCC(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
                 width=width, height=height )
     applyStandardVBarFormatting(fig)
 
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
+
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
 
-def facingCapsDataGraphByCC(answers, facing, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByCC(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 
-def capsDataGraphByMission(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByMission(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 
-def facingCapsDataGraphByMission(answers, facing, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByMission(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 
-def capsDataGraphByPubPriv(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByPubPriv(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
     answers = answers.filter(assessment__profile__institution__ipeds_control__isnull=False)
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = answers.aggregate_score('question__topic__facing','assessment__profile__institution__ipeds_control'). \
         values('question__topic__facing','assessment__profile__institution__ipeds_control','average','stddev')
 
@@ -418,16 +445,24 @@ def capsDataGraphByPubPriv(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
                     width=800, height=600)
     applyStandardVBarFormatting(fig)
 
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
+
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
 
-def facingCapsDataGraphByPubPriv(answers, facing, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByPubPriv(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 
-def capsDataGraphByEPSCoR(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByEPSCoR(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     #print("capsDataGraphByEPSCoR with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
     answers = answers.filter(assessment__profile__institution__ipeds_epscor__isnull=False)
     data = answers.aggregate_score('question__topic__facing','assessment__profile__institution__ipeds_epscor'). \
         values('question__topic__facing','assessment__profile__institution__ipeds_epscor','average','stddev')
@@ -461,23 +496,31 @@ def capsDataGraphByEPSCoR(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
                     width=800, height=600)
     applyStandardVBarFormatting(fig)
 
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
+
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
 
-def facingCapsDataGraphByEPSCoR(answers, facing, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByEPSCoR(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 
-def capsDataGraphByMSI(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByMSI(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 
-def facingCapsDataGraphByMSI(answers, facing, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 
-def capsDataGraphByOrgModel(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     # Org Model is call "structure" in the model - not very useful until we have more metadata. Sigh. 
     print("capsDataGraphByOrgModel with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
     answers = answers.filter(assessment__profile__structure__isnull=False)
     instCount = answers.values('assessment__id').distinct().count()
     print("capsDataGraphByOrgModel filtering for Nulls: ", instCount," Institutions")
@@ -516,15 +559,22 @@ def capsDataGraphByOrgModel(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT)
                     width=800, height=600)
     applyStandardVBarFormatting(fig)
 
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
+
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
 
-def facingCapsDataGraphByOrgModel(answers, facing, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByOrgModel(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 
-def capsDataGraphByReporting(answers, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByReporting(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 
-def facingCapsDataGraphByReporting(answers, facing, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByReporting(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
 

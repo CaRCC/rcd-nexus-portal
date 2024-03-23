@@ -281,6 +281,7 @@ def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=cmgrap
     if (answers.count() == 0): 
         return None
     
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = answers.aggregate_score('question__topic__facing','assessment__profile__institution'). \
         values('question__topic__facing','assessment__profile__institution','average')
 

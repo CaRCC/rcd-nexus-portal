@@ -298,7 +298,6 @@ def load_legacy_profiles_data(path):
                         print(f'Found duplicate pre-2023 Profile: {row["Name"]} ({row["Year"]}). (load_legacy_profiles_data run twice? Ignoring...)')
             else: 
                 profile = institution.profiles.create(year=row["Year"], created_by=user)
-                # TODO - put under if DEBUG:
                 if DEBUGMODE:
                     print(f'Created new Profile: {row["Name"]} ({row["Year"]})')
                 profiles_loaded += 1
