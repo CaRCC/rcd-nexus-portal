@@ -7,6 +7,7 @@ from nexus.models import CapabilitiesAnswer, CapabilitiesAssessment, Capabilitie
 from nexus.forms import dataviz
 #from django.http import JsonResponse
 import requests
+import json
 import pandas as pd
 import plotly.express as px
 import plotly.io as po
@@ -353,21 +354,18 @@ def demographicsMap(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT
     #    data = json.load(jsonfile)
 
     # Fetch US states GeoJSON data
-    # Should be:
-    # path = "data/us-states.json"
-    # with open(path, "r") as jsonfile:
-    #   us_states_geojson = json.load(jsonfile)
-    response_us = requests.get("https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json")
-    
-    us_states_geojson = response_us.json()
+    # response_us = requests.get("https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json")
+    # us_states_geojson = response_us.json()
+    path = "data/us-states.json"
+    with open(path, "r") as jsonfile:
+        us_states_geojson = json.load(jsonfile)
 
-    # Should be:
-    # path = "data/canadian_states.json"
-    # with open(path, "r") as jsonfile:
-    #   canadian_provinces_geojson = json.load(jsonfile)
-    url = "https://github.com/prajaktaamate23/Python_visualization/raw/main/candian_states.geojson"
-    response = requests.get(url)
-    canadian_provinces_geojson = response.json()
+    #url = "https://github.com/prajaktaamate23/Python_visualization/raw/main/candian_states.geojson"
+    #response = requests.get(url)
+    #canadian_provinces_geojson = response.json()
+    path = "data/candian_states.geojson"
+    with open(path, "r") as jsonfile:
+        canadian_provinces_geojson = json.load(jsonfile)
 
     # Combine GeoJSON data
     combined_geojson = {
@@ -376,16 +374,27 @@ def demographicsMap(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT
     }
 
     # Note that we have already deduped profiles so we do not double count.
-    data = profiles.objects.values('institution__state_or_province').annotate(count=Count('pk'))
-    demographic_data = pd.DataFrame(data)
-    #print(demographic_data)
-
-    # Rename the columns for clarity
-    demographic_data=  demographic_data.rename(columns={
-            'institution__state_or_province' : 'State',
-        })
+    # What we would *like* to do is the following, but Django cannot
+    # data = profiles.values('institution__state_or_province').annotate(count=Count('institution__pk'))
+    data = profiles.values('institution__state_or_province').filter(institution__state_or_province__isnull=False)
+    #print(data)
+    data2 = {}
+    for profile_state in data.all():
+        print(profile_state)
+        state = profile_state['institution__state_or_province']
+        if state in data2:
+            data2[state]['Count'] += 1
+            print(f'Incrementing count for {state}')
+        else:
+            print(f'Adding initial entry for {state}')
+            entry = {}
+            entry['State'] = state
+            entry['Count'] = 1
+            data2[state] = entry
+    # print(data2)
+    demographic_data = pd.DataFrame.from_dict(data2, orient='index', columns=['State', 'Count'])
     print(demographic_data)
-    
+
     # Plot the choropleth map
     fig = px.choropleth(
         demographic_data,
@@ -393,16 +402,17 @@ def demographicsMap(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT
 	    featureidkey="properties.name",
         locations="State",
         color="Count",
-        color_continuous_scale="plasma",
+        color_continuous_scale="emrld", # Could also use: "burgyl", "darkmint", or "brwnyl",
         range_color=(0, demographic_data['Count'].max()),
-        scope="usa",
+        scope="north america",
         color_continuous_midpoint=-1,  # Set midpoint outside the data range
-        labels={"Count": "# of Institutions"},
+        labels={"Count": "# of Institutions", "State":"State/Province"},
         title="Number of Institutions in Each State ot Province"
     )
+    fig.update_geos(projection_scale=1, lonaxis_range=[-170, -65], lataxis_range=[27, 70])
 
     # Remove the legend
-    fig.update_coloraxes(showscale=False)
+    fig.update_coloraxes(showscale=True)
 
     
     fig.update_layout(

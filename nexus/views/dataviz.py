@@ -75,7 +75,7 @@ def data_viz_demographics_maps(request):
             filter_form = DataFilterForm()
             profiles = demogcharts.getAllProfiles()
             if graph := demogcharts.demographicsMap(profiles) :
-                graphtitle = f'Geographic Distribution of {instCount} {popName}'
+                graphtitle = f'Geographic Distribution of {profiles.count()} Users'
             else:
                 graphtitle = 'No Data to Chart!'
 
