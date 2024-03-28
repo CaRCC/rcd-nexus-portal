@@ -72,8 +72,7 @@ def assessment(request, profile_id):
     nFacings = len(categories.keys())
     for facing, topics in categories.items():
         facing.content = facing.contents.get(language=session_language)
-        # Ignore the domain coverage topic in each facing
-        nTopicsRequired = len(topics.keys())-1  
+        nTopicsRequired = len(topics.keys())  
         nTopicsComplete = 0
         aggSum = 0
         for topic, answers in topics.items():
@@ -90,12 +89,16 @@ def assessment(request, profile_id):
             else:
                 agg = answers.aggregate_score()  # TODO BUG need to use answers.filter(not_applicable=False)
                 coverage = agg["average"]
+                coverage = min(1.0, max(0.0, coverage))
                 if coverage != None:
                     covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
                     answers.coverage_pct = mark_safe(f"{covstring}")
                     answers.coverage_color = compute_answer_color(coverage)
                     # Do not include domain coverage in the aggregated Facing coverage
-                    if(topic.slug!=CapabilitiesTopic.domain_coverage_slug) :
+                    if(topic.slug==CapabilitiesTopic.domain_coverage_slug) :
+                        # Ignore the domain coverage topic in each facing, when present
+                        nTopicsRequired -= 1
+                    else:
                         nTopicsComplete += 1
                         aggSum += coverage
                 else:
@@ -237,6 +240,7 @@ def topic(request, profile_id, facing, topic):
         agg = answers.aggregate_score()  # TODO BUG need to use answers.filter(not_applicable=False)
         coverage = agg["average"]
         if coverage != None:
+            coverage = min(1.0, max(0.0, coverage))
             covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
             coverage_pct = mark_safe(f"{covstring}")
             coverage_color = compute_answer_color(coverage)

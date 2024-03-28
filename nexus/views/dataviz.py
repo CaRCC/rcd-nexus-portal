@@ -43,12 +43,41 @@ def data_viz_demographics_maps(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            print("FilterForm valid ",posted.cleaned_data)
+            dict = removeNullDictEntries(posted.cleaned_data)
+            qs = urlencode(dict)
+            return redirect(reverse('dataviz:demographics_mapviews') + '?'+qs)
         else:
             print("FilterForm not valid!")
-        filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
+            filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
     else: 
-        filter_form = DataFilterForm()
+        if(request.GET) :
+            dict = request.GET.dict()
+            cleaned_dict = fixMultiSelectDictEntries(dict)
+            filter_form = DataFilterForm(cleaned_dict)
+            pop = cleaned_dict.get('population')
+            if(pop == 'contrib'):
+                popName = 'Contributors'
+            else: 
+                popName = 'Users'
+            #print( "Cleaned dict: ",cleaned_dict)
+            profiles = demogcharts.filterProfiles(cleaned_dict)
+            instCount = profiles.count()
+            if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
+                graph = None
+                graphtitle = f'Too Few Institutions ({instCount}) to Map!'
+            elif graph := demogcharts.demographicsMap(profiles) :
+                graphtitle = f'Geographic Distribution of {instCount} {popName}'
+            else:
+                graphtitle = 'No Data to Chart!'
+
+        else :
+            #print( "GET with no params ")
+            filter_form = DataFilterForm()
+            profiles = demogcharts.getAllProfiles()
+            if graph := demogcharts.demographicsMap(profiles) :
+                graphtitle = f'Geographic Distribution of {instCount} {popName}'
+            else:
+                graphtitle = 'No Data to Chart!'
 
     filter_form.filtertree(includes=DataFilterForm.INCLUDE_ALL, excludes={DataFilterForm.REGION, DataFilterForm.EPSCOR, DataFilterForm.RESEARCH_EXP})
     #print("FilterForm.hasViewChoices: "+str(filter_form.hasViewChoices))
@@ -250,17 +279,21 @@ def getInstAverages(benchmarkAssessment, selFacing):
             answers = answersByFacing[facing]
             agg = answers.aggregate_score()
             coverage = agg["average"]
+            coverage = min(1.0, max(0.0, coverage))
             # print(f'getInstAvgs(sum) Facing {facing} avg coverage: {coverage}')
             values.append(coverage*100)   # Convert to percent, since that's what we graph
     else:  
-        facing_slug = facing_sel_mapping[selFacing]
+        facing_slug = facing_sel_mapping.get(selFacing)
+        facing = Facing.objects.get(slug=facing_slug) 
+
         answersByFacingTopic = allAnswers.group_by_facing_topic()
-        answersForFacingTopics = answersByFacingTopic[facing_slug]
+        answersForFacingTopics = answersByFacingTopic[facing]
         # Get the average of all questions in each topic in the specified facing.
         for topic in answersForFacingTopics:
-            answers = answersByFacing[topic]
+            answers = answersForFacingTopics[topic]
             agg = answers.aggregate_score()
             coverage = agg["average"]
+            coverage = min(1.0, max(0.0, coverage))
             # print(f'getInstAvgs(facing:{facing_slug}) Topic {topic} avg coverage: {coverage}')
             values.append(coverage*100)   # Convert to percent, since that's what we graph
     return values
@@ -313,6 +346,7 @@ def data_viz_capsmodeldata(request):
                 graphtitle = f'Too Few Institutions ({instCount}) to Graph!'
             else:
                 facingname = [item for item in DataFilterForm.FACINGS_CHOICES if item[0] == facing]
+                facingslug = facing_sel_mapping.get(facing)
                 # ignore caps feature for now
                 # TODO: add support to overlay the benchmarking data
                 # Need to get the authenticated user request.user.is_authenticated and request.user.institutions.first(?)
@@ -326,7 +360,8 @@ def data_viz_capsmodeldata(request):
                         if facing == 'all':
                             graph = cmgraphs.summaryDataGraph(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingSummaryDataGraph(answers, facing, benchmark=benchmarkInfo)
+                            graph = cmgraphs.facingSummaryDataGraph(answers, facingslug, benchmark=benchmarkInfo,
+                                                                    height=cmgraphs.CALCULATE_SCALED_HEIGHT)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} ({instCount} Institutions)'
 
@@ -334,49 +369,56 @@ def data_viz_capsmodeldata(request):
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByCC(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facing, benchmark=benchmarkInfo)
+                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmark=benchmarkInfo,
+                                                                     height=cmgraphs.CALCULATE_SCALED_HEIGHT)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Institutional Classification ({instCount} Institutions)'
                     case "mission" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByMission(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facing, benchmark=benchmarkInfo)
+                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, benchmark=benchmarkInfo,
+                                                                          height=cmgraphs.CALCULATE_SCALED_HEIGHT)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Mission ({instCount} Institutions)'
                     case "pub_priv" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByPubPriv(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facing, benchmark=benchmarkInfo)
+                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, benchmark=benchmarkInfo,
+                                                                          height=cmgraphs.CALCULATE_SCALED_HEIGHT)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Control (Public/Private) ({instCount} Institutions)'
                     case "epscor" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByEPSCoR(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facing, benchmark=benchmarkInfo)
+                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, benchmark=benchmarkInfo,
+                                                                         height=cmgraphs.CALCULATE_SCALED_HEIGHT)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by EPSCoR status ({instCount} Institutions)'
                     case "msi" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByMSI(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facing, benchmark=benchmarkInfo)
+                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, benchmark=benchmarkInfo,
+                                                                      height=cmgraphs.CALCULATE_SCALED_HEIGHT)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Minority-serving status ({instCount} Institutions)'
                     case "orgmodel" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByOrgModel(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facing, benchmark=benchmarkInfo)
+                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, benchmark=benchmarkInfo,
+                                                                           height=cmgraphs.CALCULATE_SCALED_HEIGHT)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Organizational Model ({instCount} Institutions)'
                     case "reporting" :
                         if facing == 'all':
                             graph = cmgraphs.capsDataGraphByReporting(answers, benchmark=benchmarkInfo)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facing, benchmark=benchmarkInfo)
+                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, benchmark=benchmarkInfo,
+                                                                            height=cmgraphs.CALCULATE_SCALED_HEIGHT)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Reporting Structure ({instCount} Institutions)'
                     case _ :

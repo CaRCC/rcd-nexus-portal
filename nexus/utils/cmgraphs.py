@@ -1,5 +1,5 @@
 # from django.shortcuts import render
-from django.db.models import Q, Case, Value, When
+from django.db.models import Q, Case, Value, When, F
 from functools import reduce
 from operator import or_
 from math import ceil
@@ -14,6 +14,10 @@ from django.db.models import Q
 
 DEFAULT_WIDTH = 800
 DEFAULT_HEIGHT = 600
+CALCULATE_SCALED_HEIGHT = -1
+MAX_TOPICS = 11         # Systems has the most
+
+INCLUDE_PLOTLYJS = 'cdn'  #REVERT THIS TO 'cdn' for checkin - Use True ONLY FOR OFFLINE!!
 
 VALUE_UNKNOWN = "unknown"
 VALUE_UNKNOWN_LABEL = "Unknown"
@@ -25,7 +29,7 @@ colorPalette = {'allData':'#9F9F9F', 'EPSCoR':'#5ab4ac', 'nonEPSCoR':'#d8b365',
                 'M1':'#95A472','M2':'#C8E087','M3':'#DDFCAD','Bacc':'#F7EF81',
                 'Centralized':'#A37C40','School':'#98473E','Decentralized':'#B49082','None':'#D6C3C9',
                 'Public':'#ffd966','Private':'#ec7728',
-                'NotMSI':'#8FB8DE','HSI':'#586F6B','HBCU':'#CFE795','AA':'#F7EF81','TCU':'#D4C685','otherMSI':'#D0CFEC',
+                'MSI':'#0084d1', 'NotMSI':'#8FB8DE','HSI':'#586F6B','HBCU':'#CFE795','AA':'#F7EF81','TCU':'#D4C685','otherMSI':'#D0CFEC',
                 VALUE_UNKNOWN_LABEL:'#8d99ae',
                 '2022':'#ffba5a', '2021':'#6aaa96', '2020':'#ada3d3'}
 
@@ -35,11 +39,53 @@ scatterPlotColorSeq = [colorPalette['RF'],colorPalette['DF'],colorPalette['SWF']
 
 # QUESTION Why does this work?  Facings fixture defines the indices as 0-4, not 1-5
 Facing_mapping = { 1: '<b>Researcher-<br>Facing</b>', 2: '<b>Data-<br>Facing</b>', 3: '<b>Software-<br>Facing</b>', 4 : '<b>System-<br>Facing</b>', 5: '<b>Strategy & Policy-<br>Facing</b>'}
-Facing_xvals = ['<b>Researcher-<br>Facing</b>',
-                '<b>Data-<br>Facing</b>',
-                '<b>Software-<br>Facing</b>', 
-                '<b>System-<br>Facing</b>', 
-                '<b>Strategy & Policy-<br>Facing</b>']
+Facing_xvals = list(Facing_mapping.values())
+
+RFLabels = {'staffing':'<b>RCD Staffing  </b>',
+            'outreach':'<b>RCD Outreach  </b>',
+            'consulting':'<b>RCD Adv. Support  </b>',
+            'lifecycle':'<b>Research  <br>Lifecycle Mgmnt  </b>'}
+RFLabels_yvals = list(RFLabels.values())
+
+DFLabels = {'creation':'<b>Data Creation  </b>',
+            'discovery': '<b>Data Discovery  <br>& Collection  </b>',
+            'analysis':'<b>Data Analysis  </b>',
+            'visualization':'<b>Data Visualization  </b>',
+            'curation':'<b>Curation  </b>',
+            'policy':'<b>Data Policy  <br>Compliance  </b>',
+            'security':'<b>Security/Sensitive Data  </b>'}
+DFLabels_yvals = list(DFLabels.values())
+
+SWFLabels = {'management':'<b>SW Package Mgmnt  </b>',
+             'development':'<b>Research SW  <br>Development  </b>',
+             'optimization':'<b>SW Optimization,  <br>Troubleshooting  </b>',
+             'workflow':'<b>Workflow Engineering  </b>',
+             'portability':'<b>SW Portability,  <br>Containers, Cloud  </b>',
+             'access':'<b>Securing Access to SW  </b>',
+             'physical_specimens':'<b>SW for Physical  <br>Specimen Mgmnt  </b>'}
+SWFLabels_yvals = list(SWFLabels.values())
+
+SYFLabels = {'infrastructure':'<b>Infrastructure Support  </b>',
+             'compute':'<b>Compute Infrastructure  </b>',
+             'storage':'<b>Storage Infrastructure  </b>',
+             'network':'<b>Network and Data  <br>Movement  </b>',
+             'specialized':'<b>Specialized Infrastructure  </b>',
+             'software':'<b>Infrastructure Software  </b>',
+             'monitoring': '<b>Monitoring and  <br>Measurement  </b>',
+             'recordkeeping':'<b>Change Mgmnt,  <br>Version Control, etc.  </b>',
+             'documentation':'<b>Documentation </b>',
+             'planning':'<b>Planning  </b>',
+             'security':'<b>Security Practices  <br>for Open Environments  </b>'}
+SYFLabels_yvals = list(SYFLabels.values())
+
+SPFLabels = {'alignment':'<b>Institutional Alignment  </b>',
+             'culture':'<b>Institutional Culture  <br>for Research Support  </b>',
+             'funding':'<b>Funding  </b>',
+             'partnerships':'<b>Partnerships &  <br>External Engagement  </b>',
+             'professionalization':'<b>RCD Professional  <br>Development  </b>',
+             'diversity':'<b>Diversity, Equity,  <br>and Inclusion  </b>'}
+SPFLabels_yvals = list(SPFLabels.values())
+
 
 # SimpleCC values - ordered for presentation
 CC_BACC = 97
@@ -138,6 +184,25 @@ structure_palette = {
     'In a School/Dept.':'#fefae0',
     'Decentralized across units':'#283618',
     'No organized support': '#606c38',
+    VALUE_UNKNOWN_LABEL:colorPalette[VALUE_UNKNOWN_LABEL]
+    }
+
+# Define a dictionary to map Structure values to names
+reporting_mapping = {
+    RCDProfile.OrgChartChoices.INFOTECH: RCDProfile.OrgChartChoices.INFOTECH.label,
+    RCDProfile.OrgChartChoices.RESEARCH: RCDProfile.OrgChartChoices.RESEARCH.label,
+    RCDProfile.OrgChartChoices.ACADEMIA: RCDProfile.OrgChartChoices.ACADEMIA.label,
+    RCDProfile.OrgChartChoices.INSTITUTE: RCDProfile.OrgChartChoices.INSTITUTE.label,
+    RCDProfile.OrgChartChoices.OTHER: RCDProfile.OrgChartChoices.OTHER.label,
+    VALUE_UNKNOWN: VALUE_UNKNOWN_LABEL
+    }
+
+reporting_palette = {
+    RCDProfile.OrgChartChoices.INFOTECH.label:'#dda15e',
+    RCDProfile.OrgChartChoices.RESEARCH.label:'#fefae0',
+    RCDProfile.OrgChartChoices.ACADEMIA.label:'#283618',
+    RCDProfile.OrgChartChoices.INSTITUTE.label: '#606c38',
+    RCDProfile.OrgChartChoices.OTHER.label: '#f0f0f0',
     VALUE_UNKNOWN_LABEL:colorPalette[VALUE_UNKNOWN_LABEL]
     }
 
@@ -286,6 +351,19 @@ def applyStandardVBarFormatting(fig, width=None):
                       marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{y:.1f}%')
     fig.update_yaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
 
+def applyStandardHBarFormatting(fig, width=None):
+    # Apply standard font size and font type
+    fig.update_layout(
+        yaxis=dict(title=dict(text='', font=dict(size=16, family='Arial'))),
+        xaxis=dict(title=dict(text='', font=dict(size=16, family='Arial')), ticksuffix="%", range=[0, 100], dtick=20),
+        plot_bgcolor=colorPalette['bgColor'], 
+        margin_t=25, margin_l=20,autosize=True,
+        legend_title_text='',        
+        )
+    fig.update_traces(error_x_color=colorPalette['errBars'], 
+                      marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{x:.1f}%')
+    fig.update_yaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
+
 
 def allSummaryDataGraph(width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     answers, instCount = getAllAnswers()
@@ -336,16 +414,79 @@ def summaryDataGraph(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAUL
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
    
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+
+def labelMapForFacing(facing):
+    match facing:
+        case "researcher":
+            return RFLabels, RFLabels_yvals
+        case "data":
+            return DFLabels, DFLabels_yvals
+        case "software":
+            return SWFLabels, SWFLabels_yvals
+        case "systems":
+            return SYFLabels, SYFLabels_yvals
+        case "strategy":
+            return SPFLabels, SPFLabels_yvals
+        case _ :
+            raise ValueError(f"labelMapForFacing: unrecognized facing: {facing}")
+
+def calculateScaledHeight(nTopics):
+    scale = nTopics/MAX_TOPICS
+    adjustedscale = 1 - (1-scale)/2     # scale by half the difference in # of Topics
+    height = adjustedscale*DEFAULT_HEIGHT
+    return height
+
 
 def facingSummaryDataGraph(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
+    # print(f"Facing: [{facing}] SummaryDataGraph with: {answers.count()} answers")
+    #instCount = answers.values('assessment__id').distinct().count()
+    if (answers.count() == 0): 
+        return None
+    
+    #Note that answers has been pre-filtered of domain topic and not_applicable answers
+    data = answers.aggregate_score('question__topic__slug')\
+        .values('question__topic__slug','average','stddev')\
+        .filter(question__topic__facing__slug=facing).order_by('-question__topic__index')
 
-'''
-def simpleCC(cc) :
-    if(cc=='R1')|(cc=='R2')|(cc=='Other'): return cc
-    return 'OtherAcad'
-'''
+    # Convert the queryset to a DataFrame
+    df = pd.DataFrame(data)
+    # print(f'facingSummaryDataGraph DF: {df}')
+
+    # Map the topic slugs to names
+    labelMap, yvalues = labelMapForFacing(facing)
+
+    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    data = df
+
+    # Rename the columns for clarity
+    data = data.rename(columns={
+            'average':'Average Values',
+            'question__topic__slug' : 'Topics',
+            'stddev' : 'Std Dev'
+        })
+    # print(data)
+
+    data['Average Values'] *= 100
+    data['Std Dev'] *= 100
+
+    if height == CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues))
+
+    # Create a Topics Summary Data bar chart for this facing
+    fig = px.bar(data, y='Topics', x= 'Average Values', error_x='Std Dev',
+                    width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
+    applyStandardHBarFormatting(fig, width=0.6)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
+   
+    # Convert the figure to HTML including Plotly.js
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def capsDataGraphByCC(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
@@ -386,7 +527,6 @@ def capsDataGraphByCC(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAU
                 color='simpleCC', 
                 color_discrete_map={'R1':colorPalette['R1'], 'R2':colorPalette['R2'],'Other Acad.':colorPalette['OtherAcad']},
                 barmode='group', # Use 'group' for grouped bars
-                labels={'question__topic__facing': '', 'average': '', 'simpleCC':dataviz.DataFilterForm.CARN_CLASS},
                 width=width, height=height )
     applyStandardVBarFormatting(fig)
 
@@ -397,16 +537,166 @@ def capsDataGraphByCC(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAU
                                     marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def facingCapsDataGraphByCC(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
+    #print("capsDataGraphByCC with: ", answers.count()," answers")
+    if (answers.count() == 0): 
+        return None
+    # For this graph, we will ignore the "Other" institutions (labs, etc.), the Unknowns which have Null values for CC, and 
+    # anything in our extended definitions (MISC, INDUSTRY, etc.)
+    # If we get many more contributions from these groups, we can reconsider
+    answers = answers.filter(Q(assessment__profile__institution__carnegie_classification__isnull=False)
+                           | Q(assessment__profile__institution__carnegie_classification=Institution.CarnegieClassificationChoices.OTHER)
+                           | Q(assessment__profile__institution__carnegie_classification__gte=Institution.CarnegieClassificationChoices.MISC)
+                            )
+    answers = answers.filter(question__topic__facing__slug=facing)
+    
+    annotatedAnswers = answers.annotate(simpleCC=Case(
+        When(assessment__profile__institution__carnegie_classification=15, then=Value(15)),
+        When(assessment__profile__institution__carnegie_classification=16, then=Value(16)),
+        default=Value(CC_OTHERACAD) ))
+    annotatedAnswers = annotatedAnswers.order_by('-question__topic__index', '-simpleCC')
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
+    data = annotatedAnswers.aggregate_score('question__topic__slug','simpleCC')\
+        .values('question__topic__slug','simpleCC','average','stddev')
+
+    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+    # Map the topic slugs to names
+    labelMap, yvalues = labelMapForFacing(facing)
+
+    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    df['simpleCC'] = df['simpleCC'].map(cc_mapping)
+
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+    df['stddev'] *= 100
+
+    # Rename the columns for clarity
+    df= df.rename(columns={
+            'question__topic__slug' : 'Topics',
+            'average':'Average Value',
+        })
+    
+    if height == CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues))
+    
+    # Create a grouped bar chart
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+                color='simpleCC', 
+                color_discrete_map={'R1':colorPalette['R1'], 'R2':colorPalette['R2'],'Other Acad.':colorPalette['OtherAcad']},
+                barmode='group', # Use 'group' for grouped bars
+                labels={'question__topic__slug': '', 'average': '', 'simpleCC':dataviz.DataFilterForm.CARN_CLASS},
+                width=width, height=height )
+    applyStandardHBarFormatting(fig)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
+
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def capsDataGraphByMission(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
+    #print("capsDataGraphByMission with: ", answers.count()," answers")
+    if (answers.count() == 0): 
+        return None
+    answers = answers.annotate(mission2=Case(
+        # Since most old profiles have Null for Mission, let's map it
+        When(assessment__profile__mission__isnull=True, then=Value(VALUE_UNKNOWN)),  
+        default=F('assessment__profile__mission') ))
+    data = answers.aggregate_score('question__topic__facing','mission2').values('question__topic__facing','mission2','average','stddev')
+    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+    # Map the facings values to names
+    df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping)
+    df['mission2'] = df['mission2'].map(mission_mapping)
+
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+    df['stddev'] *= 100
+
+    # Rename the columns for clarity
+    df= df.rename(columns={
+            'question__topic__facing' : 'Facings',
+            'average':'Average Value',
+        })
+
+    # Create a grouped bar chart
+    fig = px.bar(df, x='Facings', y='Average Value',error_y='stddev',
+                color='mission2', 
+                color_discrete_map=mission_palette,
+                barmode='group', # Use 'group' for grouped bars
+                width=width, height=height )
+    applyStandardVBarFormatting(fig)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
+
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def facingCapsDataGraphByMission(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
+    #print("facingCapsDataGraphByMission with: ", answers.count()," answers")
+    if (answers.count() == 0): 
+        return None
+    answers = answers.filter(question__topic__facing__slug=facing)
+    answers = answers.annotate(mission2=Case(
+        # Since most old profiles have Null for Mission, let's map it
+        When(assessment__profile__mission__isnull=True, then=Value(VALUE_UNKNOWN)),  
+        default=F('assessment__profile__mission') ))\
+            .order_by('-question__topic__index', '-mission2')
+
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
+    data = answers.aggregate_score('question__topic__slug','mission2')\
+                    .values('question__topic__slug','mission2','average','stddev')
+
+    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+    # Map the topic slugs to names
+    labelMap, yvalues = labelMapForFacing(facing)
+
+    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    df['mission2'] = df['mission2'].map(mission_mapping)
+
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+    df['stddev'] *= 100
+
+    # Rename the columns for clarity
+    df= df.rename(columns={
+            'question__topic__slug' : 'Topics',
+            'average':'Average Value',
+        })
+    
+    if height == CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues))
+    
+    # Create a grouped bar chart
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+                color='mission2',
+                color_discrete_map=mission_palette,
+                barmode='group', # Use 'group' for grouped bars
+                width=width, height=height )
+    applyStandardHBarFormatting(fig)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
+
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def capsDataGraphByPubPriv(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
@@ -453,10 +743,61 @@ def capsDataGraphByPubPriv(answers, benchmark=None, width=DEFAULT_WIDTH, height=
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def facingCapsDataGraphByPubPriv(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
+    #print("facingCapsDataGraphByPubPriv with: ", answers.count()," answers")
+    if (answers.count() == 0): 
+        return None
+    answers = answers.filter(assessment__profile__institution__ipeds_control__isnull=False)\
+                            .filter(question__topic__facing__slug=facing)\
+                            .order_by('-question__topic__index', 
+                                      '-assessment__profile__institution__ipeds_control')
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
+    data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_control')\
+                    .values('question__topic__slug',
+                            'assessment__profile__institution__ipeds_control','average','stddev')
+
+    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+    # Map the topic slugs to names
+    labelMap, yvalues = labelMapForFacing(facing)
+
+    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    df['assessment__profile__institution__ipeds_control'] = \
+        df['assessment__profile__institution__ipeds_control'].map(pubpriv_mapping)
+
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+    df['stddev'] *= 100
+
+    # Rename the columns for clarity
+    df= df.rename(columns={
+            'question__topic__slug' : 'Topics',
+            'assessment__profile__institution__ipeds_control' :'Public/Private',
+            'average':'Average Value',
+        })
+    
+    if height == CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues))
+    
+    # Create a grouped bar chart
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+                color='Public/Private',
+                color_discrete_map={'Public': colorPalette['Public'], 'Private': colorPalette['Private']},  # Set custom color
+                barmode='group', # Use 'group' for grouped bars
+                width=width, height=height )
+    applyStandardHBarFormatting(fig)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
+
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def capsDataGraphByEPSCoR(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     #print("capsDataGraphByEPSCoR with: ", answers.count()," answers")
@@ -492,7 +833,6 @@ def capsDataGraphByEPSCoR(answers, benchmark=None, width=DEFAULT_WIDTH, height=D
                     color='EPSCoR',
                     color_discrete_map={Institution.EPSCORChoices.EPSCOR.label: colorPalette['EPSCoR'], 
                                         Institution.EPSCORChoices.NOT_EPSCOR.label: colorPalette['nonEPSCoR']},  # Set custom color
-                    labels={'Facings': 'Facings', 'value': 'Average Values'},
                     width=800, height=600)
     applyStandardVBarFormatting(fig)
 
@@ -504,35 +844,78 @@ def capsDataGraphByEPSCoR(answers, benchmark=None, width=DEFAULT_WIDTH, height=D
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def facingCapsDataGraphByEPSCoR(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
-
-def capsDataGraphByMSI(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
-
-def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
-
-def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    # Org Model is call "structure" in the model - not very useful until we have more metadata. Sigh. 
-    print("capsDataGraphByOrgModel with: ", answers.count()," answers")
+    #print("facingCapsDataGraphByEPSCoR with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
+    answers = answers.filter(assessment__profile__institution__ipeds_epscor__isnull=False)\
+                            .filter(question__topic__facing__slug=facing)\
+                            .order_by('-question__topic__index', 
+                                      '-assessment__profile__institution__ipeds_epscor')
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
-    answers = answers.filter(assessment__profile__structure__isnull=False)
-    instCount = answers.values('assessment__id').distinct().count()
-    print("capsDataGraphByOrgModel filtering for Nulls: ", instCount," Institutions")
-    data = answers.aggregate_score('question__topic__facing','assessment__profile__structure'). \
-        values('question__topic__facing','assessment__profile__structure','average','stddev')
+    data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_epscor')\
+                    .values('question__topic__slug',
+                            'assessment__profile__institution__ipeds_epscor','average','stddev')
+
+    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+    # Map the topic slugs to names
+    labelMap, yvalues = labelMapForFacing(facing)
+
+    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    df['assessment__profile__institution__ipeds_epscor'] = \
+        df['assessment__profile__institution__ipeds_epscor'].map(epscor_mapping)
+
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+    df['stddev'] *= 100
+
+    # Rename the columns for clarity
+    df= df.rename(columns={
+            'question__topic__slug' : 'Topics',
+            'assessment__profile__institution__ipeds_epscor' :'EPSCoR',
+            'average':'Average Value',
+        })
+    
+    if height == CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues))
+    
+    # Create a grouped bar chart
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+                color='EPSCoR',
+                color_discrete_map={Institution.EPSCORChoices.EPSCOR.label: colorPalette['EPSCoR'], 
+                                    Institution.EPSCORChoices.NOT_EPSCOR.label: colorPalette['nonEPSCoR']},  # Set custom color
+                barmode='group', # Use 'group' for grouped bars
+                width=width, height=height )
+    applyStandardHBarFormatting(fig)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
+
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+
+def capsDataGraphByMSI(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+    #print("capsDataGraphByMSI with: ", answers.count()," answers")
+    if (answers.count() == 0): 
+        return None
+    
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
+    answers = answers.filter(Q(assessment__profile__institution__ipeds_msi__isnull=False))
+    data = answers.aggregate_score('question__topic__facing','assessment__profile__institution__ipeds_msi'). \
+        values('question__topic__facing','assessment__profile__institution__ipeds_msi','average','stddev')
 
     df= pd.DataFrame(data)
     df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping) # Map the classification values to names
-    # print("OrgModel Data \n", df)
 
     # Map the values to names
-    df['assessment__profile__structure'] =  df['assessment__profile__structure'].map(structure_mapping)
+    df['assessment__profile__institution__ipeds_msi'] =  df['assessment__profile__institution__ipeds_msi'].map(msi_mapping)
     # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
     df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
     # Multiply by 100 to display percentages
@@ -542,7 +925,109 @@ def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height
     # Rename the columns for clarity
     df =  df.rename(columns={
             'question__topic__facing' : 'Facings',
-            'assessment__profile__structure' :'OrgModel',
+            'assessment__profile__institution__ipeds_msi' :'MSI',
+            'average':'Average Values',
+        })
+
+    # Create a grouped bar chart
+    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev',
+                    barmode='group',  # Use 'group' for grouped bars
+                    color='MSI',
+                    color_discrete_map={Institution.MSIChoices.MSI.label: colorPalette['otherMSI'], 
+                                        Institution.MSIChoices.NOT_AN_MSI.label: colorPalette['NotMSI']},  # Set custom color
+                    width=800, height=600)
+    applyStandardVBarFormatting(fig)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
+
+    # Convert the figure to HTML including Plotly.js
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+
+def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+    #print("facingCapsDataGraphByMSI with: ", answers.count()," answers")
+    if (answers.count() == 0): 
+        return None
+    answers = answers.filter(assessment__profile__institution__ipeds_msi__isnull=False)\
+                            .filter(question__topic__facing__slug=facing)\
+                            .order_by('-question__topic__index', 
+                                      '-assessment__profile__institution__ipeds_msi')
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
+    data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_msi')\
+                    .values('question__topic__slug',
+                            'assessment__profile__institution__ipeds_msi','average','stddev')
+
+    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+    # Map the topic slugs to names
+    labelMap, yvalues = labelMapForFacing(facing)
+
+    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    df['assessment__profile__institution__ipeds_msi'] = \
+        df['assessment__profile__institution__ipeds_msi'].map(msi_mapping)
+
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+    df['stddev'] *= 100
+
+    # Rename the columns for clarity
+    df= df.rename(columns={
+            'question__topic__slug' : 'Topics',
+            'assessment__profile__institution__ipeds_msi' :'MSI',
+            'average':'Average Value',
+        })
+    
+    if height == CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues))
+    
+    # Create a grouped bar chart
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+                color='MSI',
+                color_discrete_map={Institution.MSIChoices.MSI.label: colorPalette['otherMSI'], 
+                                    Institution.MSIChoices.NOT_AN_MSI.label: colorPalette['NotMSI']},  # Set custom color
+                barmode='group', # Use 'group' for grouped bars
+                width=width, height=height )
+    applyStandardHBarFormatting(fig)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
+
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+
+def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+    # Org Model is call "structure" in the model - not very useful until we have more metadata. Sigh. 
+    # print("capsDataGraphByOrgModel with: ", answers.count()," answers")
+    if (answers.count() == 0): 
+        return None
+    answers = answers.annotate(structure2=Case(
+        # Since most old profiles have Null for Mission, let's map it
+        When(assessment__profile__structure__isnull=True, then=Value(VALUE_UNKNOWN)),  
+        default=F('assessment__profile__structure') ))
+    data = answers.aggregate_score('question__topic__facing','structure2'). \
+        values('question__topic__facing','structure2','average','stddev')
+
+    df= pd.DataFrame(data)
+    df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping) # Map the classification values to names
+    df['structure2'] =  df['structure2'].map(structure_mapping)
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+    df['stddev'] *= 100
+
+    # Rename the columns for clarity
+    df =  df.rename(columns={
+            'question__topic__facing' : 'Facings',
+            'structure2' :'OrgModel',
             'average':'Average Values',
         })
 
@@ -550,11 +1035,7 @@ def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height
     fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev',
                     barmode='group',  # Use 'group' for grouped bars
                     color='OrgModel',
-                    color_discrete_map={'Centralized': colorPalette['Centralized'], 
-                                        'In a School/Dept.': colorPalette['School'], 
-                                        'Decentralized across units': colorPalette['Decentralized'], 
-                                        'No organized support': colorPalette['None'], 
-                                        },  # Set custom color
+                    color_discrete_map=structure_palette,
                     labels={'Facings': 'Facings', 'value': 'Average Values'},
                     width=800, height=600)
     applyStandardVBarFormatting(fig)
@@ -567,14 +1048,159 @@ def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def facingCapsDataGraphByOrgModel(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
+    #print("facingCapsDataGraphByOrgModel with: ", answers.count()," answers")
+    if (answers.count() == 0): 
+        return None
+    answers = answers.filter(question__topic__facing__slug=facing)
+    answers = answers.annotate(structure2=Case(
+        # Since most old profiles have Null for Mission, let's map it
+        When(assessment__profile__structure__isnull=True, then=Value(VALUE_UNKNOWN)),  
+        default=F('assessment__profile__structure') ))\
+            .order_by('-question__topic__index', '-structure2')
+
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
+    data = answers.aggregate_score('question__topic__slug','structure2')\
+                    .values('question__topic__slug','structure2','average','stddev')
+
+    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+    # Map the topic slugs to names
+    labelMap, yvalues = labelMapForFacing(facing)
+
+    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    df['structure2'] = df['structure2'].map(structure_mapping)
+
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+    df['stddev'] *= 100
+
+    # Rename the columns for clarity
+    df= df.rename(columns={
+            'question__topic__slug' : 'Topics',
+            'average':'Average Value',
+        })
+    
+    if height == CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues))
+    
+    # Create a grouped bar chart
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+                color='structure2',
+                color_discrete_map=structure_palette,
+                barmode='group', # Use 'group' for grouped bars
+                width=width, height=height )
+    applyStandardHBarFormatting(fig)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
+
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def capsDataGraphByReporting(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
+    # Org Model is call "orgchart" in the model - not very useful until we have more metadata. Sigh. 
+    # print("capsDataGraphByReporting with: ", answers.count()," answers")
+    if (answers.count() == 0): 
+        return None
+    answers = answers.annotate(reporting2=Case(
+        # Since most old profiles have Null for Mission, let's map it
+        When(assessment__profile__org_chart__isnull=True, then=Value(VALUE_UNKNOWN)),  
+        default=F('assessment__profile__org_chart') ))
+    data = answers.aggregate_score('question__topic__facing','reporting2'). \
+        values('question__topic__facing','reporting2','average','stddev')
+
+    df= pd.DataFrame(data)
+    df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping) # Map the classification values to names
+    df['reporting2'] =  df['reporting2'].map(reporting_mapping)
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+    df['stddev'] *= 100
+
+    # Rename the columns for clarity
+    df =  df.rename(columns={
+            'question__topic__facing' : 'Facings',
+            'average':'Average Values',
+        })
+
+    # Create a grouped bar chart
+    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev',
+                    barmode='group',  # Use 'group' for grouped bars
+                    color='reporting2',
+                    color_discrete_map=reporting_palette,
+                    labels={'Facings': 'Facings', 'value': 'Average Values'},
+                    width=800, height=600)
+    applyStandardVBarFormatting(fig)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
+
+    # Convert the figure to HTML including Plotly.js
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
 def facingCapsDataGraphByReporting(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
-    return '<br><h3 class="graphNYI">This graph is Not Yet Implemented</h3>'
+    #print("facingCapsDataGraphByReporting with: ", answers.count()," answers")
+    if (answers.count() == 0): 
+        return None
+    answers = answers.filter(question__topic__facing__slug=facing)
+    answers = answers.annotate(reporting2=Case(
+        # Since most old profiles have Null for Mission, let's map it
+        When(assessment__profile__org_chart__isnull=True, then=Value(VALUE_UNKNOWN)),  
+        default=F('assessment__profile__org_chart') ))\
+            .order_by('-question__topic__index', '-reporting2')
+
+    # Note that answers has been pre-filtered of domain topic and not_applicable answers
+    data = answers.aggregate_score('question__topic__slug','reporting2')\
+                    .values('question__topic__slug','reporting2','average','stddev')
+
+    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+    # Map the topic slugs to names
+    labelMap, yvalues = labelMapForFacing(facing)
+
+    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    df['reporting2'] = df['reporting2'].map(reporting_mapping)
+
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+    df['stddev'] *= 100
+
+    # Rename the columns for clarity
+    df= df.rename(columns={
+            'question__topic__slug' : 'Topics',
+            'average':'Average Value',
+        })
+    
+    if height == CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues))
+    
+    # Create a grouped bar chart
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+                color='reporting2',
+                color_discrete_map=reporting_palette,
+                barmode='group', # Use 'group' for grouped bars
+                width=width, height=height )
+    applyStandardHBarFormatting(fig)
+
+    # If benchmark data passed in, layer that over
+    if(benchmark!=None) :
+        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
+                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
+                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+        fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
+
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 

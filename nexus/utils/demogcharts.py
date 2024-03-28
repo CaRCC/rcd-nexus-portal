@@ -6,11 +6,13 @@ from math import ceil
 from nexus.models import CapabilitiesAnswer, CapabilitiesAssessment, CapabilitiesTopic, Institution, RCDProfile
 from nexus.forms import dataviz
 #from django.http import JsonResponse
+import requests
 import pandas as pd
 import plotly.express as px
 import plotly.io as po
 from django.db.models import Q
 from nexus.utils import cmgraphs
+
 
 PIE_SIZE_SCALE = 0.75
 DEFAULT_PIE_WIDTH=cmgraphs.DEFAULT_WIDTH*PIE_SIZE_SCALE
@@ -172,7 +174,7 @@ def demographicsChartByCC(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_
                 color_discrete_map=cmgraphs.simple_cc_palette )
     applyStandardPieFormatting(fig)
     
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
 
 def demographicsChartByMission(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
@@ -189,7 +191,7 @@ def demographicsChartByMission(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT
                 color_discrete_map=cmgraphs.mission_palette)
     applyStandardPieFormatting(fig)
     
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
 def demographicsChartByPubPriv(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
     data = profiles.values('institution__ipeds_control')
@@ -204,7 +206,7 @@ def demographicsChartByPubPriv(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT
                 color_discrete_map=cmgraphs.pub_priv_palette)
     applyStandardPieFormatting(fig)
     
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True), totalShown
+    return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True), totalShown
 
 def demographicsChartByEPSCoR(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
     data = profiles.values('institution__ipeds_epscor')
@@ -219,7 +221,7 @@ def demographicsChartByEPSCoR(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_
                                         Institution.EPSCORChoices.NOT_EPSCOR.label: cmgraphs.colorPalette['nonEPSCoR']})
     applyStandardPieFormatting(fig)
     
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True), totalShown
+    return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True), totalShown
 
 def demographicsChartByMSI(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
     #data = profiles.values('institution__ipeds_msi')
@@ -252,7 +254,7 @@ def demographicsChartByMSI(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE
                 color_discrete_map=cmgraphs.simple_msi_palette )
     applyStandardPieFormatting(fig)
     
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
 # Not clear if we will do this one
 #def demographicsChartBySize(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_HEIGHT):
@@ -272,10 +274,23 @@ def demographicsChartByOrgModel(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAUL
                 color_discrete_map=cmgraphs.structure_palette)
     applyStandardPieFormatting(fig)
     
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
 def demographicsChartByReporting(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
-    return '<br><h3 class="graphNYI">This chart is Not Yet Implemented</h3>'
+    annotatedProfiles = profiles.annotate(reporting2=Case(
+        When(org_chart__isnull=True, then=Value(cmgraphs.VALUE_UNKNOWN)),
+        default=F('org_chart') ))
+    data = annotatedProfiles.values('reporting2')
+    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+    counts = df.groupby('reporting2').size()
+    counts = counts.rename(cmgraphs.reporting_mapping)
+
+    # Create a pie chart
+    fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
+                color_discrete_map=cmgraphs.reporting_palette)
+    applyStandardPieFormatting(fig)
+    
+    return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
 def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=cmgraphs.DEFAULT_HEIGHT):
     if (answers.count() == 0): 
@@ -329,5 +344,79 @@ def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=cmgrap
     msize = 5 + 100/instCount   # scale the marker size up for fewer results
     fig.update_traces(marker={'size': msize}, textfont_size=18, hovertemplate='<b>Coverage: %{y:.0f}%</b>', )
 
+    # Convert the figure to HTML including Plotly.js
+    return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
+
+def demographicsMap(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
+    # TODO - use a static js file. Use code:
+    #with open(path, "r") as jsonfile:
+    #    data = json.load(jsonfile)
+
+    # Fetch US states GeoJSON data
+    # Should be:
+    # path = "data/us-states.json"
+    # with open(path, "r") as jsonfile:
+    #   us_states_geojson = json.load(jsonfile)
+    response_us = requests.get("https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json")
+    
+    us_states_geojson = response_us.json()
+
+    # Should be:
+    # path = "data/canadian_states.json"
+    # with open(path, "r") as jsonfile:
+    #   canadian_provinces_geojson = json.load(jsonfile)
+    url = "https://github.com/prajaktaamate23/Python_visualization/raw/main/candian_states.geojson"
+    response = requests.get(url)
+    canadian_provinces_geojson = response.json()
+
+    # Combine GeoJSON data
+    combined_geojson = {
+        'type': 'FeatureCollection',
+        'features': us_states_geojson['features'] + canadian_provinces_geojson['features']
+    }
+
+    # Note that we have already deduped profiles so we do not double count.
+    data = profiles.objects.values('institution__state_or_province').annotate(count=Count('pk'))
+    demographic_data = pd.DataFrame(data)
+    #print(demographic_data)
+
+    # Rename the columns for clarity
+    demographic_data=  demographic_data.rename(columns={
+            'institution__state_or_province' : 'State',
+        })
+    print(demographic_data)
+    
+    # Plot the choropleth map
+    fig = px.choropleth(
+        demographic_data,
+        geojson=combined_geojson,
+	    featureidkey="properties.name",
+        locations="State",
+        color="Count",
+        color_continuous_scale="plasma",
+        range_color=(0, demographic_data['Count'].max()),
+        scope="usa",
+        color_continuous_midpoint=-1,  # Set midpoint outside the data range
+        labels={"Count": "# of Institutions"},
+        title="Number of Institutions in Each State ot Province"
+    )
+
+    # Remove the legend
+    fig.update_coloraxes(showscale=False)
+
+    
+    fig.update_layout(
+        autosize=False,
+        margin = dict(
+                l=0,
+                r=0,
+                b=0,
+                t=0,
+                pad=4,
+                autoexpand=True
+            ),
+            width=800,
+        #     height=400,
+    )
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
