@@ -240,6 +240,8 @@ def load_legacy_profiles_data(path):
         for row in reader:
             if DEBUGMODE:
                 print(row)
+            structure = row["Structure"] if row["Structure"] != "" else None
+            reporting = row["Reporting"] if row["Reporting"] != "" else None
             try:
                 if row["UnitID"].isnumeric():
                     institution = Institution.objects.get(ipeds_unitid=row["UnitID"])
@@ -282,22 +284,36 @@ def load_legacy_profiles_data(path):
                             "ipeds_land_grant":Institution.LandGrantChoices.NOT_A_LAND_GRANT_INSTITUTION,
                             },
                        )
-                    institution
+                    #institution
                 except IntegrityError as e:
                     print(e, row)
                     continue
                 if DEBUGMODE:
                     print("Created new institution for {}".format(row))
 
-            if profile := institution.profiles.filter(year=row["Year"]):
+            if profile := institution.profiles.filter(year=row["Year"]).first():
                 # There is a chance someone created a 1.1 profile and then a 2.0 profile, both in 2023.
                 if int(row["Year"]) == 2023:
                     print(f'Profile: {row["Name"]} ({row["Year"]}) already exists!  Skipping...')
                 else:
                     if DEBUGMODE:
                         print(f'Found duplicate pre-2023 Profile: {row["Name"]} ({row["Year"]}). (load_legacy_profiles_data run twice? Ignoring...)')
+                updated = False
+                if profile.structure is None and not (structure is None):
+                    profile.structure = structure
+                    updated = True
+                    if DEBUGMODE:
+                        print(f'Updating existing Profile {row["Name"]} ({row["Year"]} with structure: {row["Structure"]}')
+                if profile.org_chart is None and not (reporting is None):
+                    profile.org_chart = reporting
+                    updated = True
+                    if DEBUGMODE:
+                        print(f'Updating existing Profile {row["Name"]} ({row["Year"]} with org_chart: {row["Reporting"]}')
+                if updated:
+                    profile.save()
+
             else: 
-                profile = institution.profiles.create(year=row["Year"], created_by=user)
+                profile = institution.profiles.create(year=row["Year"], structure=structure, org_chart=reporting, created_by=user)
                 if DEBUGMODE:
                     print(f'Created new Profile: {row["Name"]} ({row["Year"]})')
                 profiles_loaded += 1

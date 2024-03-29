@@ -266,8 +266,10 @@ def demographicsChartByOrgModel(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAUL
         When(structure__isnull=True, then=Value(cmgraphs.VALUE_UNKNOWN)),
         default=F('structure') ))
     data = annotatedProfiles.values('structure2')
+    #print(data)
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
-    counts = df.groupby('structure2').size()
+    counts = df.groupby('structure2').size().sort_values(ascending=False)
+    print(counts)
     counts = counts.rename(cmgraphs.structure_mapping)
 
     # Create a pie chart
@@ -283,7 +285,7 @@ def demographicsChartByReporting(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAU
         default=F('org_chart') ))
     data = annotatedProfiles.values('reporting2')
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
-    counts = df.groupby('reporting2').size()
+    counts = df.groupby('reporting2').size().sort_values(ascending=False)
     counts = counts.rename(cmgraphs.reporting_mapping)
 
     # Create a pie chart

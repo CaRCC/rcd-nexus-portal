@@ -189,19 +189,19 @@ structure_palette = {
 
 # Define a dictionary to map Structure values to names
 reporting_mapping = {
-    RCDProfile.OrgChartChoices.INFOTECH: RCDProfile.OrgChartChoices.INFOTECH.label,
-    RCDProfile.OrgChartChoices.RESEARCH: RCDProfile.OrgChartChoices.RESEARCH.label,
-    RCDProfile.OrgChartChoices.ACADEMIA: RCDProfile.OrgChartChoices.ACADEMIA.label,
-    RCDProfile.OrgChartChoices.INSTITUTE: RCDProfile.OrgChartChoices.INSTITUTE.label,
+    RCDProfile.OrgChartChoices.INFOTECH: "IT (e.g., CIO)",
+    RCDProfile.OrgChartChoices.RESEARCH: "Research (e.g., VPR)",
+    RCDProfile.OrgChartChoices.ACADEMIA: "Academic leadership<br>(e.g., Provost or a Dean)",
+    RCDProfile.OrgChartChoices.INSTITUTE: "Academic/Research<br>Institute or Center",
     RCDProfile.OrgChartChoices.OTHER: RCDProfile.OrgChartChoices.OTHER.label,
     VALUE_UNKNOWN: VALUE_UNKNOWN_LABEL
     }
 
 reporting_palette = {
-    RCDProfile.OrgChartChoices.INFOTECH.label:'#dda15e',
-    RCDProfile.OrgChartChoices.RESEARCH.label:'#fefae0',
-    RCDProfile.OrgChartChoices.ACADEMIA.label:'#283618',
-    RCDProfile.OrgChartChoices.INSTITUTE.label: '#606c38',
+    "IT (e.g., CIO)":'#dda15e',
+    "Research (e.g., VPR)":'#fefae0',
+    "Academic leadership<br>(e.g., Provost or a Dean)":'#283618',
+    "Academic/Research<br>Institute or Center": '#606c38',
     RCDProfile.OrgChartChoices.OTHER.label: '#f0f0f0',
     VALUE_UNKNOWN_LABEL:colorPalette[VALUE_UNKNOWN_LABEL]
     }
