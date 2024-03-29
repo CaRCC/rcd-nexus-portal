@@ -280,6 +280,7 @@ def load_legacy_profiles_data(path):
                             "ipeds_tcu":Institution.TCUChoices.NOT_A_TCU,
                             "ipeds_hsi":Institution.HSIChoices.NOT_AN_HSI,
                             "ipeds_aanapisi_annh":Institution.AANAPISI_ANNHChoices.NOT_AN_AANAPISI_ANNH,
+                            "ipeds_msi":Institution.MSIChoices.NOT_AN_MSI,
                             "ipeds_epscor":Institution.EPSCORChoices.NOT_EPSCOR,
                             "ipeds_land_grant":Institution.LandGrantChoices.NOT_A_LAND_GRANT_INSTITUTION,
                             },
