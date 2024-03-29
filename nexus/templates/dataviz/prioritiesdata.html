@@ -2,13 +2,16 @@
 {% block title %}RCD-Nexus Capabilities Model Priorities Data Visualizations{% endblock %}
 
 {% block nav %}
-    <form id="filtertree" method="post" action="">
+    <form id="filtertree" method="post" action="" autocomplete="off">
         {% csrf_token %}
         {% include "fragments/filtertree.html" %}
     </form>
 {% endblock %}
 
 {% block main %}
-<h2>Priorities Data</h2>
-<canvas class="viz"></canvas>
+<h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}Priorities Data{%endif%}</h2>
+<div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
+<script>
+    initDetailsFromStorage();
+</script>
 {% endblock %}

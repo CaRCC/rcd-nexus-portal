@@ -391,7 +391,7 @@ def summaryDataGraph(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAUL
             'question__topic__facing' : 'Facings',
             'stddev' : 'Std Dev'
         })
-    print(data)
+    #print(data)
 
     # Compute a naive graph max and consider limiting the y axis (there is no simple way to compute the max of the sum) 
     # No - this is making the graphs jitter for comparison. 

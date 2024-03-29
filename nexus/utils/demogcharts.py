@@ -351,10 +351,6 @@ def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=cmgrap
     return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
 def demographicsMap(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
-    # TODO - use a static js file. Use code:
-    #with open(path, "r") as jsonfile:
-    #    data = json.load(jsonfile)
-
     # Fetch US states GeoJSON data
     # response_us = requests.get("https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json")
     # us_states_geojson = response_us.json()
@@ -382,20 +378,20 @@ def demographicsMap(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT
     #print(data)
     data2 = {}
     for profile_state in data.all():
-        print(profile_state)
+        #print(profile_state)
         state = profile_state['institution__state_or_province']
         if state in data2:
             data2[state]['Count'] += 1
-            print(f'Incrementing count for {state}')
+            #print(f'Incrementing count for {state}')
         else:
-            print(f'Adding initial entry for {state}')
+            #print(f'Adding initial entry for {state}')
             entry = {}
             entry['State'] = state
             entry['Count'] = 1
             data2[state] = entry
     # print(data2)
     demographic_data = pd.DataFrame.from_dict(data2, orient='index', columns=['State', 'Count'])
-    print(demographic_data)
+    #print(demographic_data)
 
     # Plot the choropleth map
     fig = px.choropleth(
