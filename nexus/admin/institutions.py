@@ -14,24 +14,22 @@ class InstitutionAdmin(admin.ModelAdmin):
     list_display = ["name", "country", "state_or_province", "internet_domain"]
     readonly_fields = [
         "has_cilogon_idp",
-        "student_pop",
-        "grad_pop",
-        "undergrad_pop",
-        "research_expenditure",
     ]
     search_fields = ["name"]
     list_filter = [
+        # allow filtering by the carnegie_classification values, and by null
         "carnegie_classification",
-        "ipeds_region",
-        "ipeds_sector",
         "ipeds_control",
+        "ipeds_region",
+        "ipeds_epscor",
         "ipeds_size",
+        #"ipeds_sector",
+        "ipeds_msi",
         "ipeds_hbcu",
         "ipeds_pbi",
         "ipeds_tcu",
         "ipeds_hsi",
         "ipeds_aanapisi_annh",
-        "ipeds_msi",
     ]
     inlines = [InstitutionAffiliationInline]
     fieldsets = (
@@ -67,6 +65,8 @@ class InstitutionAdmin(admin.ModelAdmin):
                     "ipeds_sector",
                     "ipeds_level",
                     "ipeds_control",
+                    "ipeds_epscor",
+                    "ipeds_size",
                     "ipeds_hbcu",
                     "ipeds_pbi",
                     "ipeds_tcu",

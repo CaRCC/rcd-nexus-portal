@@ -11,6 +11,7 @@
 
     <script src="{% static 'js/htmx.min.js' %}"></script>
     <script src="{% static 'js/_hyperscript.min.js' %}"></script>
+    <script src="{% static 'js/filter-utils.js' %}"></script>
     {% block head %}
     <style>
     </style>
@@ -19,7 +20,7 @@
 
 <body>
     <header id="pagetop">{% include "base/header.html" %}</header>
-    <nav>{% include "base/nav.html" %}</nav>
+    <nav>{% block nav %} {% include "base/nav.html" %} {% endblock %}</nav>
     <main>
       {% include "base/messages.html" %}
       {% include "base/breadcrumbs.html" %}

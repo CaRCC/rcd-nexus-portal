@@ -10,7 +10,13 @@
         color: black;
         font-size: 1.1em;
     }
-
+    span#IPEDS_Edit_link {
+        float: right;
+        margin: 0px;
+        padding: 3px 6px 3px 0px;
+        font-size: smaller;
+        cursor: pointer;
+    }
     form section.fields div.field-head {
         height: 100%;
     }
@@ -116,7 +122,11 @@
     <div class="IPEDS">
         <section class="fields">
             <div class="IPEDShdr">
-                <h3>Institutional data from Carnegie/IPEDS/Dept of Education (2022)</h3>
+                <h3>Institutional data from Carnegie/IPEDS/Dept of Education (2022)
+                    {%if can_edit_inst %}
+                        <span id="IPEDS_Edit_link"><a href="{% url 'institutions:edit' form.instance.institution.pk %}">Edit Info</a></span>
+                    {% endif %}
+                </h3>
             </div>
             <div class="fields-head even-field">
                 <label>{% get_verbose_name form.instance.institution 'carnegie_classification' %}:</label>
@@ -137,10 +147,10 @@
                 <label>{{ form.instance.institution.get_ipeds_sector_display }}</label>
             </div>
             <div class="fields-head odd-field">
-                <label>{% get_verbose_name form.instance.institution 'student_pop' %}:</label>
+                <label>{% get_verbose_name form.instance.institution 'ipeds_size' %}:</label>
             </div>
             <div class="fields-body odd-field">
-                <label>{{ form.instance.institution.student_thous }}</label>
+                <label>{{ form.instance.institution.get_ipeds_size_display }}</label>
             </div>
             <div class="fields-head even-field">
                 <label>Location:</label>
@@ -186,15 +196,16 @@
                 <div class="fields-body {{ next_row }}">
                 {% if form.instance.institution.ipeds_tcu == 1 %}
                     <label>{% get_verbose_name form.instance.institution 'ipeds_tcu' %}</label><br>
-                {% endif %}
-                {% if form.instance.institution.ipeds_hbcu == 1 %}
+                {% elif form.instance.institution.ipeds_hbcu == 1 %}
                     <label>{% get_verbose_name form.instance.institution 'ipeds_hbcu' %}</label><br>
-                {% endif %}
-                {% if form.instance.institution.ipeds_hsi == 1 %}
+                {% elif form.instance.institution.ipeds_pbi == 1 %}
+                    <label>{% get_verbose_name form.instance.institution 'ipeds_pbi' %}</label><br>
+                {% elif form.instance.institution.ipeds_hsi == 1 %}
                     <label>{% get_verbose_name form.instance.institution 'ipeds_hsi' %}</label><br>
-                {% endif %}
-                {% if form.instance.institution.ipeds_aanapisi_annh == 1 %}
+                {% elif form.instance.institution.ipeds_aanapisi_annh == 1 %}
                     <label>{% get_verbose_name form.instance.institution 'ipeds_aanapisi_annh' %}</label>
+                {% elif form.instance.institution.ipeds_msi == 1 %}
+                    <label>{% get_verbose_name form.instance.institution 'ipeds_msi' %}</label>
                 {% endif %}
                 </div>
             {% endif %}

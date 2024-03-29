@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}RCD-Nexus Capabilities Model Demographics Data Visualizations{% endblock %}
+
+{% block nav %}
+    <form id="filtertree" method="post" action="">
+        {% csrf_token %}
+        {% include "fragments/filtertree.html" %}
+    </form>
+{% endblock %}
+
+{% block main %}
+<h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}Demographic Charts{%endif%}</h2>
+<div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
+{%if footnote %}
+<p class="viz_footnote">Note: {{footnote}}.</p>
+{%endif%}
+
+<script>
+    initDetailsFromStorage();
+    document.getElementById("id_chart_views").addEventListener("change", handleChartViewSelection );
+    // There is no summary semantic for charts, so just hide that here. Also set disabled for older browsers. 
+    if( chartselect = document.querySelector("select#id_chart_views")) {
+        if( sumoption = chartselect.options[0] ) {
+            sumoption.disabled = true;
+            sumoption.hidden = true;
+        } else {
+            console.log("Couldn't find the summary option element in the chart select!!")
+        }
+        // If set to (disabled) summary, change to next option (CC)
+        if(chartselect.selectedIndex == 0 ) {
+            chartselect.selectedIndex = 1;
+        }
+    }
+{%if chart %}
+    hideFiltersForChartView("{{chart}}");
+{%endif%}
+</script>
+{% endblock %}
