@@ -15,6 +15,7 @@ from nexus.models import CapabilitiesAssessment, CapabilitiesAnswer, Capabilitie
 from nexus.models.ipeds_classification import IPEDSMixin
 from nexus.models.facings import Facing
 from nexus.views.rcd_profiles import view_roles
+from django.views.decorators.cache import never_cache
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,7 @@ def data_viz_demographics(request):
         }
     return render(request, "dataviz/demographics.html", context)
 
+@never_cache
 def data_viz_demographics_maps(request): 
     graph = None
     graphtitle = None
@@ -99,6 +101,7 @@ def data_viz_demographics_maps(request):
 # Add a GO button to the template, and have that fetch the view from the option value. 
 
 FOOTNOTE_NOT_ALL_KNOWN = 'Excludes institutions for which this value is unknown'
+@never_cache
 def data_viz_demographics_charts(request): 
     graph = None
     graphtitle = None
@@ -195,6 +198,7 @@ def data_viz_demographics_charts(request):
         }
     return render(request, "dataviz/chartviews.html", context)
 
+@never_cache
 def data_viz_demographics_scatter(request): 
     graph = None
     graphtitle = None
@@ -298,6 +302,7 @@ def getInstAverages(benchmarkAssessment, selFacing):
             values.append(coverage*100)   # Convert to percent, since that's what we graph
     return values
 
+@never_cache
 def data_viz_capsmodeldata(request): 
     graph = None
     graphtitle = None
@@ -462,12 +467,25 @@ def data_viz_prioritiessdata(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            print("FilterForm valid ",posted.cleaned_data)
+            dict = removeNullDictEntries(posted.cleaned_data)
+            qs = urlencode(dict)
+            return redirect(reverse('dataviz:prioritiesdata') + '?'+qs)
         else:
             print("FilterForm not valid!")
         filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
     else: 
-        filter_form = DataFilterForm()
+        if(request.GET) :
+            dict = request.GET.dict()
+            cleaned_dict = fixMultiSelectDictEntries(dict)
+            filter_form = DataFilterForm(cleaned_dict)
+            #print( "Cleaned dict: ",cleaned_dict)
+            # This is where we would generate the graph
+            graphtitle = 'Priorities Graphing is not yet implemented'
+        else :
+            #print( "GET with no params ")
+            filter_form = DataFilterForm()
+            graphtitle = 'Priorities Graphing is not yet implemented'
+
     filter_form.filtertree(includes=DataFilterForm.INCLUDE_ALL_CONTRIBS)
     context = {
         "filterform":filter_form,
@@ -479,3 +497,4 @@ def data_viz_prioritiessdata(request):
             }
         }
     return render(request, "dataviz/prioritiesdata.html", context)
+

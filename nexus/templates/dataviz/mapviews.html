@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block nav %}
-    <form id="filtertree" method="post" action="">
+    <form id="filtertree" method="post" action=""  autocomplete="off">
         {% csrf_token %}
         {% include "fragments/filtertree.html" %}
     </form>
