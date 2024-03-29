@@ -114,6 +114,8 @@ class RCDProfile(models.Model):
                                                 but faculty research is rewarded.")
         TEACHINGESSENTIAL = "teachess", mark_safe("<b>Teaching Essential</b>: Teaching is the primary mission, \
             and faculty research does not factor heavily in faculty and institutional success.")
+        __empty__ = "Unknown"
+
 
     def getShortMissionChoice(label):
         #The Choices all have the main label marked in <b> tags, at the start. We just extract that
@@ -155,6 +157,8 @@ class RCDProfile(models.Model):
         # MEDICAL = "medical", "Health sciences/Medical school"  This is a scoping issue, not an org model
         OTHER = "other", "Other"
          # NONE = "none", "Not applicable"  This is covered under Other, and simplifies things to omit it
+        __empty__ = "Unknown"
+
 
     org_chart = models.CharField(
         "Reporting structure",
