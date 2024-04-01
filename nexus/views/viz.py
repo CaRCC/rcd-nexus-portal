@@ -1410,8 +1410,9 @@ def strategy_ccGraph():
     
     print("###########################################")
     print("data5:\n",simpleCC1) 
+
     # Create a grouped bar chart
-    fig = px.bar(simpleCC1, x='Average Values', y='Topics', error_x='Std Dev',
+    fig = px.bar(   simpleCC1, y='Average Values', x='Topics', error_x='Std Dev',
                     color='Carnegie Classification', color_discrete_map={'R1':colorPalette['R1'], 'R2':colorPalette['R2'],'OtherAcad':colorPalette['OtherAcad']},
                     barmode='group', # Use 'group' for grouped bars
                     labels={'question__topic__facing': '', 'average': ''},
