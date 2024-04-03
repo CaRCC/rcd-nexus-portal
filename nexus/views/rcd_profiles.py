@@ -202,7 +202,7 @@ def rcd_profile_create(request, institution_pk):
     context = {
         "form": form,
         "institution": institution,
-        "importable_profiles": request.user.rcd_profiles.filter(archived=False, institution=institution)
+        "importable_profiles": RCDProfile.objects.filter_can_view(request.user)
         .order_by("-year")
         .filter(),
     }
@@ -239,7 +239,7 @@ def rcd_profile_edit(request, pk):
 def rcd_profile_import(request):
     if request.method == "POST":
         profile = access_profile(
-            request, request.POST.get("imported-profile"), "edit"
+            request, request.POST.get("imported-profile"), "view"
         )
         new_profile = RCDProfile.objects.copy(profile, request.user)
         return redirect("rcdprofile:detail", new_profile.pk)
