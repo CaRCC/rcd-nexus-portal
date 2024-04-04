@@ -361,7 +361,9 @@ def applyStandardHBarFormatting(fig, width=None):
         )
     fig.update_traces(error_x_color=colorPalette['errBars'], 
                       marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{x:.1f}%')
-    fig.update_yaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
+    fig.update_yaxes(showgrid=False,zeroline=False, autorange="reversed",
+                     showline=True, linewidth=1, linecolor='black')
+    fig.update_xaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot', zeroline=False)
 
 
 def allSummaryDataGraph(width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
@@ -446,7 +448,7 @@ def facingSummaryDataGraph(answers, facing, benchmark=None, width=DEFAULT_WIDTH,
     #Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = answers.aggregate_score('question__topic__slug')\
         .values('question__topic__slug','average','stddev')\
-        .filter(question__topic__facing__slug=facing).order_by('-question__topic__index')
+        .filter(question__topic__facing__slug=facing).order_by('question__topic__index')
 
     # Convert the queryset to a DataFrame
     df = pd.DataFrame(data)
@@ -555,7 +557,7 @@ def facingCapsDataGraphByCC(answers, facing, benchmark=None, width=DEFAULT_WIDTH
         When(assessment__profile__institution__carnegie_classification=15, then=Value(15)),
         When(assessment__profile__institution__carnegie_classification=16, then=Value(16)),
         default=Value(CC_OTHERACAD) ))
-    annotatedAnswers = annotatedAnswers.order_by('-question__topic__index', '-simpleCC')
+    annotatedAnswers = annotatedAnswers.order_by('question__topic__index', 'simpleCC')
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = annotatedAnswers.aggregate_score('question__topic__slug','simpleCC')\
         .values('question__topic__slug','simpleCC','average','stddev')
@@ -652,7 +654,7 @@ def facingCapsDataGraphByMission(answers, facing, benchmark=None, width=DEFAULT_
         # Since most old profiles have Null for Mission, let's map it
         When(assessment__profile__mission__isnull=True, then=Value(VALUE_UNKNOWN)),  
         default=F('assessment__profile__mission') ))\
-            .order_by('-question__topic__index', '-mission2')
+            .order_by('question__topic__index', 'mission2')
 
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = answers.aggregate_score('question__topic__slug','mission2')\
@@ -750,8 +752,8 @@ def facingCapsDataGraphByPubPriv(answers, facing, benchmark=None, width=DEFAULT_
         return None
     answers = answers.filter(assessment__profile__institution__ipeds_control__isnull=False)\
                             .filter(question__topic__facing__slug=facing)\
-                            .order_by('-question__topic__index', 
-                                      '-assessment__profile__institution__ipeds_control')
+                            .order_by('question__topic__index', 
+                                      'assessment__profile__institution__ipeds_control')
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_control')\
                     .values('question__topic__slug',
@@ -851,8 +853,8 @@ def facingCapsDataGraphByEPSCoR(answers, facing, benchmark=None, width=DEFAULT_W
         return None
     answers = answers.filter(assessment__profile__institution__ipeds_epscor__isnull=False)\
                             .filter(question__topic__facing__slug=facing)\
-                            .order_by('-question__topic__index', 
-                                      '-assessment__profile__institution__ipeds_epscor')
+                            .order_by('question__topic__index', 
+                                      'assessment__profile__institution__ipeds_epscor')
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_epscor')\
                     .values('question__topic__slug',
@@ -953,8 +955,8 @@ def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDT
         return None
     answers = answers.filter(assessment__profile__institution__ipeds_msi__isnull=False)\
                             .filter(question__topic__facing__slug=facing)\
-                            .order_by('-question__topic__index', 
-                                      '-assessment__profile__institution__ipeds_msi')
+                            .order_by('question__topic__index', 
+                                      'assessment__profile__institution__ipeds_msi')
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_msi')\
                     .values('question__topic__slug',
@@ -1058,7 +1060,7 @@ def facingCapsDataGraphByOrgModel(answers, facing, benchmark=None, width=DEFAULT
         # Since most old profiles have Null for Mission, let's map it
         When(assessment__profile__structure__isnull=True, then=Value(VALUE_UNKNOWN)),  
         default=F('assessment__profile__structure') ))\
-            .order_by('-question__topic__index', '-structure2')
+            .order_by('question__topic__index', 'structure2')
 
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = answers.aggregate_score('question__topic__slug','structure2')\
@@ -1158,7 +1160,7 @@ def facingCapsDataGraphByReporting(answers, facing, benchmark=None, width=DEFAUL
         # Since most old profiles have Null for Mission, let's map it
         When(assessment__profile__org_chart__isnull=True, then=Value(VALUE_UNKNOWN)),  
         default=F('assessment__profile__org_chart') ))\
-            .order_by('-question__topic__index', '-reporting2')
+            .order_by('question__topic__index') #, 'reporting2')
 
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = answers.aggregate_score('question__topic__slug','reporting2')\
