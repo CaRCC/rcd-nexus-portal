@@ -242,7 +242,6 @@ main div.cardbutton {
     margin-left: auto;
     margin-right: auto; 
     margin-bottom: 8px; 
-    width: 12em;
 }
 main img.cardcontent {  
     display: table-cell;
@@ -254,12 +253,18 @@ main img.cardcontent {
     border: none;
     border-radius: 8px;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
-
     cursor: pointer;
 }
 
-main a.cardbutton {  
-    display: table-cell;
+main div.cardbutton img.cardcontent { 
+    display: block;
+    width:90%;
+    padding: 4px 10px;
+}
+
+main a.cardbutton, main div.cardbutton a p.cardbutton {  
+    display: block;
+    width: 12em;
     text-align: center;
     vertical-align: middle;
     padding: 10px 20px;
@@ -281,11 +286,11 @@ main a.cardbutton {
     cursor: pointer;
     transition: 220ms all ease-in-out;    
 }
-main a.cardbutton:hover {  
+main a.cardbutton:hover, main div.cardbutton a p.cardbutton:hover {  
     background-color: var(--secondary-emphasis);
 }
 
-main a.cardbutton:focus {
+main a.cardbutton:focus, main div.cardbutton a p.cardbutton:focus {
     outline-style: solid;
     outline-color: transparent;
     box-shadow: 0 0 0 4px var(--accent);

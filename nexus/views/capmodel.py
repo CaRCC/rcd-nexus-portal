@@ -87,7 +87,7 @@ def assessment(request, profile_id):
                 else :
                     answers.coverage_pct = "-"
             else:
-                agg = answers.aggregate_score()  # TODO BUG need to use answers.filter(not_applicable=False)
+                agg = answers.filter(not_applicable=False).aggregate_score()
                 coverage = agg["average"]
                 coverage = min(1.0, max(0.0, coverage))
                 if coverage != None:
@@ -105,9 +105,9 @@ def assessment(request, profile_id):
                     answers.coverage_pct = "-"
                     answers.coverage_color = None
         if nTopicsComplete == nTopicsRequired:
-            # TODO - This is not a good way to compute the facing average, as it does not weight all answers the same
-            # Try getting facing.items, and then aggregate that to get average
-            facingCov = aggSum/nTopicsRequired
+            # For the Facing coverage, get the aggregate average of all questions in the Facing that are not marked N/A
+            facingAnswers = assessment.answers.filter(question__topic__facing=facing).filter(not_applicable=False)
+            facingCov = facingAnswers.aggregate_score()["average"]
             covstring = format(facingCov, ".1%" if facingCov<1.0 else ".0%")
             facing.coverage_pct = mark_safe(f"{covstring}")
             facing.coverage_color = compute_answer_color(facingCov)
@@ -237,7 +237,7 @@ def topic(request, profile_id, facing, topic):
     coverage_pct = None
     coverage_color = None
     if all_answered:
-        agg = answers.aggregate_score()  # TODO BUG need to use answers.filter(not_applicable=False)
+        agg = answers.filter(not_applicable=False).aggregate_score()
         coverage = agg["average"]
         if coverage != None:
             coverage = min(1.0, max(0.0, coverage))

@@ -227,8 +227,7 @@ def getAllAnswers(years=None) :
     #print("getAllAnswers found: ",profiles.count()," distinct non-superseded profiles")
     answers = CapabilitiesAnswer.objects.filter(assessment__profile__in=profiles)
     # Get only the main answers (skip the domain coverage ones)
-    # TODO BUG need to use answers.filter(not_applicable=False)
-    answers = answers.exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug)
+    answers = answers.filter(not_applicable=False).exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug)
     #print(answers.count())
     instCount = answers.values('assessment__id').distinct().count()
 

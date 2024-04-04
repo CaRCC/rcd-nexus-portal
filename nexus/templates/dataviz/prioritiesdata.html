@@ -10,7 +10,9 @@
 
 {% block main %}
 <h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}Priorities Data{%endif%}</h2>
-<div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
+<div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%else%}
+    <p style="margin:3em auto;">Note: This feature is still under development and will be included in a future release.</p>{%endif%}</div>
+
 <script>
     initDetailsFromStorage();
 </script>
