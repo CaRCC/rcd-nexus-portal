@@ -13,7 +13,6 @@ import plotly.express as px
 import plotly.io as po
 from django.db.models import Q
 from nexus.utils import cmgraphs
-from django.contrib.staticfiles import finders
 
 PIE_SIZE_SCALE = 0.75
 DEFAULT_PIE_WIDTH=cmgraphs.DEFAULT_WIDTH*PIE_SIZE_SCALE
@@ -354,7 +353,7 @@ def demographicsMap(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT
     # Fetch US states GeoJSON data
     # response_us = requests.get("https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json")
     # us_states_geojson = response_us.json()
-    path = finders.find("data/us-states.json")
+    path = "data/us-states.json"
     #print(f'Jsonpath1 is:{path}')
     with open(path, "r") as jsonfile:
         us_states_geojson = json.load(jsonfile)
@@ -362,7 +361,7 @@ def demographicsMap(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT
     #url = "https://github.com/prajaktaamate23/Python_visualization/raw/main/candian_states.geojson"
     #response = requests.get(url)
     #canadian_provinces_geojson = response.json()
-    path = finders.find("data/candian_states.geojson")
+    path = "data/candian_states.geojson"
     #print(f'Jsonpath2 is:{path}')
     with open(path, "r") as jsonfile:
         canadian_provinces_geojson = json.load(jsonfile)
