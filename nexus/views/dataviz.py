@@ -333,14 +333,13 @@ def data_viz_capsmodeldata(request):
                 if not request.user.is_authenticated:           # Just for safety
                     messages.info(request, f"You must be logged in to use benchmarking.")
                 else:
-                    print('Looking for approved assessment...')
-                    membership = request.user.rcd_profile_memberships.filter(
-                            profile__capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED,
-                             role__in=view_roles).order_by('-profile__year').first()
-                    if membership is None or membership.profile.archived:
+                    # print('Looking for approved assessment...')
+                    bmProfile = RCDProfile.objects.filter_can_view(request.user).exclude(archived=True)\
+                        .filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED).order_by('-year').first()
+                    if bmProfile is None:
                         messages.info(request, f"You must have view rights on an approved assessment to use benchmarking.")
                     else:
-                        benchmarkAssessment = membership.profile.capabilities_assessment
+                        benchmarkAssessment = bmProfile.capabilities_assessment
 
             if benchmarkAssessment:
                 benchmarkInfo = getInstAverages(benchmarkAssessment, facing)
