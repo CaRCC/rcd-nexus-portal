@@ -605,6 +605,9 @@ def reasercher_ppGraph():
     # Set grid color and linestyle for y-axis
      ebColor = 'black'  # Replace with your desired grid color
      fig.update_xaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
+     #fig.update_yaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot', zeroline=False)
+
+     
     
     # Convert the figure to HTML including Plotly.js
      return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
