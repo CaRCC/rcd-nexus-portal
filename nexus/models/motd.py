@@ -8,17 +8,11 @@ class MOTD(models.Model):
         max_length=255,
         blank=True,
     )
-    # Days to pause the message if the user dismisses it (e.g., using a cookie timeout)
-    timeout = models.PositiveIntegerField(
-        "Cookie timeout",
-        default=1, 
-    )
-
     @classmethod
     def getMOTD(cls) :
         try:
             motd = cls.objects.get()
-            return motd.message, motd.timeout
+            return motd.message
         except cls.DoesNotExist:
-            return "", 0
+            return ""
         
