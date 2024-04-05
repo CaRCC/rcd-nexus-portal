@@ -10,5 +10,5 @@ def base_template(request):
     return {"base_template": template}
 
 def motd_message(request):
-    message = MOTD.getMOTD()
-    return {"motd": message}
+    message, timeout = MOTD.getMOTD()
+    return {"motd": message, "motdtimeout":timeout}
