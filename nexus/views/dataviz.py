@@ -445,8 +445,7 @@ def data_viz_capsmodeldata(request):
             else:
                 graphtitle = f'All Data Summary Graph By Facings ({instCount} Institutions)'
 
-    # TODO: This should be changed to be request.user.is_data_contributor once that is implemented. 
-    excludes = None if request.user.is_authenticated else DataFilterForm.CAPS_DATA_EXCLUDE_NO_DATA_CONTRIB
+    excludes = None if (request.user.is_authenticated and request.user.is_capmodel_contributor) else DataFilterForm.CAPS_DATA_EXCLUDE_NO_DATA_CONTRIB
     filter_form.filtertree(includes=DataFilterForm.CAPS_DATA_INCLUDE_ALL, excludes=excludes)
     context = {
         "filterform":filter_form,
