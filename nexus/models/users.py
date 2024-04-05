@@ -1,6 +1,8 @@
+import datetime
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+from nexus.models.capmodel import CapabilitiesAssessment
 
 
 class User(AbstractUser):
@@ -17,7 +19,12 @@ class User(AbstractUser):
     
     @property
     def is_capmodel_contributor(self):
-        for profile in self.rcd_profiles.filter(year__gte=timezone.now()-timezone.timedelta(days=365*3)):
-            if profile.capabilities_assessment.review_status == "approved":
+        currYear = datetime.date.today().year
+        # After 2024, only contributors in the past three years have privileges
+        cutoffyear = currYear-3
+        # print(f'Minimum year for contributors is: {cutoffyear}')
+        for profile in self.rcd_profiles.filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED):
+            # All contributors are good until the end of 2024, so if there are any approved ones they're good
+            if currYear == 2024 or profile.year >= cutoffyear:
                 return True
         return False
