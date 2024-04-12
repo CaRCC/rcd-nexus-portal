@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    body>nav {
+        display:none;
+    }
+    body {
+        grid-template-areas:
+            "header"
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+    }
+    section.contriblist {
+        width: 80%;
+        max-width: 800px;
+        margin:10px 10px 10px 10px;
+        padding:1em .7in .7in .7in;
+    }
+    section.contriblist h1.title {
+        font-size: 1.7em;
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 0px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    table.content {
+        font-size: 0.85em;
+        border: solid thick var(--primary-fg-off);
+    }
+    table.content td {
+        border: solid thin var(--nexus-white-text);
+        background-color: var(--primary-fg-off);
+        vertical-align: middle;
+        width:30%;
+    }
+    table.content td p {
+        margin:4px;
+        font-weight: normal;
+    }
+    p.footnote {
+        font-size: 0.85em;
+        text-align: left;
+    }
+</style>
+{% endblock %}
+
+{% block title %}RCD-Nexus Capabilities Model Contributors{% endblock %}
+
+{% block main %}
+<section class="contriblist" >
+    <h1 class="title">Capabilities Model Contributors</h1>
+    <p class="content" style="text-align: center;">
+        Each of these institutions has submitted at least one assessment<br>(and agreed to be listed as a contributor*). 
+    </p>
+    <table class="content">
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td><p>{{ row.0 }}</p></td>
+                <td><p>{{ row.1 }}</p></td>
+                <td><p>{{ row.2 }}</p></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="footnote">
+        * If you are a contributor and are not listed here, 
+        please contact us at <a href="mailto:capsmodel-help@carcc.org">capsmodel-help@carcc.org</a> to have your institution listed. 
+    </p>
+</section>
+{% endblock %}

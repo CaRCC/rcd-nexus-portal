@@ -204,12 +204,19 @@ main div.cardblock {
 }
 main div.cardblock section.card {
     min-height: 250px;
-    height: 100%;
     max-height: 400px;
     flex-basis: 30%;
     min-width:250px;
     padding:auto;
     margin:10px auto;
+}
+main div.cardblock section.card.short {
+    min-height: 50px;
+    max-height: 150px;
+}
+main div.cardblock section.card.short h3{
+    margin: 0 auto;
+    text-align: center;
 }
 main div.cardblock section.card div.imgcard {
     display:flex;
@@ -217,9 +224,10 @@ main div.cardblock section.card div.imgcard {
     align-items: center;
     height: 90%;
     width: 100%;
+    padding:5px;
 }
 main div.cardblock section.card div img {
-    width: 95%;
+    width: 100%;
 }
 
 section.card h2 {

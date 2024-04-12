@@ -19,7 +19,7 @@ main {
 <div class="cardblock">
     <section class="card">
         <h2>Map Views</h2>
-        <div>
+        <div class="imgcard">
             <a href="{% url 'dataviz:demographics_mapviews' %}">
                 <img class="cardcontent" src="/static/images/demogMapCardImg.png" alt="Map showing distribution of community contributors">
             </a>
@@ -27,7 +27,7 @@ main {
     </section>
     <section class="card">
         <h2>Demographic Charts</h2>
-        <div>
+        <div class="imgcard">
             <a href="{% url 'dataviz:demographics_chartviews' %}">
                 <img class="cardcontent" src="/static/images/demogChartCardImg.png" alt="Chart showing demographic distribution of community contributors">
             </a>
@@ -35,12 +35,21 @@ main {
     </section>
     <section class="card">
         <h2>Scatter Plots</h2>
-        <div>
+        <div class="imgcard">
             <a href="{% url 'dataviz:demographics_scatterplots' %}">
                 <img class="cardcontent" src="/static/images/scatterCardImg.png" alt="Scatter plot showing diversity of coverage across the community">
             </a>
         </div>
     </section>
+    <section class="card short">
+        <h2>Contributor List</h2>
+        <div>
+            <a href="{% url 'dataviz:demographics_contriblist' %}">
+                <h3>View the Contributing Institutions</h3>
+            </a>
+        </div>
+    </section>
+</section>
 
 </div>
 {% endblock %}

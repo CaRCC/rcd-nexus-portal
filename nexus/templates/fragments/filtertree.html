@@ -17,6 +17,15 @@
                     {% if not field.field.widget.input_type == "checkbox" %}<br>{% endif %}
                     {{ field }}
                 </div>
+            {% elif "benchmark" in field.auto_id %}
+                <div class="viewselect">
+                    <label for="{{ field.auto_id }}" style="font-style: italic; color:gray">Benchmarking not available</label>
+                    <span class="filtertip">?
+                        <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
+                            You must be logged in and have an approved assessment to use the benchmarking feature.
+                        </span>
+                    </span>
+                </div>
             {% endif %}
         {% endfor %}
     </div>

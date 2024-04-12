@@ -1,5 +1,6 @@
 import datetime
 import logging
+import math
 import urllib.parse
 from django.contrib import messages
 from django.conf import settings
@@ -37,6 +38,50 @@ def data_viz_demographics(request):
             }
         }
     return render(request, "dataviz/demographics.html", context)
+
+def data_viz_demographics_contriblist(request): 
+    profiles = demogcharts.getAllProfiles(pop='contrib').filter(institution__list_as_contributor=True)
+    institutions = profiles.values_list('institution__name')
+    instlist = []
+    nInsts = institutions.count()
+    nPerCol = math.floor(nInsts/3)
+    if (nInsts % 3) == 0:
+        col0Max = nPerCol
+        col1Max = col0Max+nPerCol
+        colmax = col0Max
+    elif (nInsts % 3) == 1:
+        col0Max = nPerCol
+        col1Max = col0Max+nPerCol+1
+        colmax = col0Max+1
+    else:
+        col0Max = nPerCol+1
+        col1Max = col0Max+nPerCol+1
+        colmax = col0Max+1
+
+    for inst in institutions:
+        instlist.append(inst[0])
+
+    instlist.sort()
+    rows = []
+    for i in range(colmax):    # Col1 (middle) is always the max
+        cols = [""]*3
+        if i < col0Max:         # Col0 may have one less than col1
+            cols[0] = instlist[i]
+        if (i+col0Max) < nInsts:
+            cols[1] = instlist[i+col0Max]
+            if (i+col1Max) < nInsts:
+                cols[2] = instlist[i+col1Max]
+        rows.append(cols)
+
+    context = {
+        "rows":rows,
+        "breadcrumbs":{
+            "Data Viewer":"dataviz:vizmain",
+            "Community Demographics":"dataviz:demographics",
+            "Contributor List":"dataviz:demographics_contriblist",
+            }
+        }
+    return render(request, "dataviz/contriblist.html", context)
 
 @never_cache
 def data_viz_demographics_maps(request): 
