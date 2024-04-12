@@ -456,6 +456,11 @@ body>nav details ul {
     padding-left: 1.5em;
 }
 
+body>nav details summary {
+    text-indent: -1.2em;
+    padding-left: 1.1em;
+}
+
 #filtertree {
     min-width: 15em;
 }
