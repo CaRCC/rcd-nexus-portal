@@ -357,8 +357,10 @@ class DataFilterForm(forms.Form):
             self.fields['caps_feature'].label = "skip"
         else: 
             self.hasViewChoices = True
-        if (includes and self.BENCHMARK not in includes) or (excludes and self.BENCHMARK in excludes):
+        if (includes and self.BENCHMARK not in includes):
             self.fields['benchmark'].label = "skip"
+        elif (excludes and self.BENCHMARK in excludes):
+            self.fields['benchmark'].label = "skip_nobm"
         else: 
             self.hasViewChoices = True
 
