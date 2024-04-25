@@ -354,7 +354,7 @@ def applyStandardVBarFormatting(fig, width=None):
 def applyStandardHBarFormatting(fig, width=None):
     # Apply standard font size and font type
     fig.update_layout(
-        yaxis=dict(title=dict(text='', font=dict(size=16, family='Arial'))),
+        yaxis=dict(title=dict(text='', font=dict(size=16, family='Arial')),showgrid=False),
         xaxis=dict(title=dict(text='', font=dict(size=16, family='Arial')), ticksuffix="%", range=[0, 100], dtick=20),
         plot_bgcolor=colorPalette['bgColor'], 
         margin_t=25, margin_l=20,autosize=True,
@@ -362,7 +362,7 @@ def applyStandardHBarFormatting(fig, width=None):
         )
     fig.update_traces(error_x_color=colorPalette['errBars'], 
                       marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{x:.1f}%')
-    fig.update_yaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
+    fig.update_xaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
 
 
 def allSummaryDataGraph(width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
