@@ -9,6 +9,8 @@ urlpatterns = [
     path("explore", explore, name="explore"),
     path("<int:profile_id>/", assessment, name="assessment"),
     path("<int:profile_id>/priorities", priorities, name="priorities"),
+    path("<int:profile_id>/printable_report", printable_report, name="printable_report"),
+    path("<int:profile_id>/csv_report", csv_report, name="csv_report"),
     path(
         "<int:profile_id>/benchmark",
         legacy_benchmark_report,

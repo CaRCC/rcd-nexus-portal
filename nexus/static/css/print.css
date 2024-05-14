@@ -19,14 +19,19 @@
         padding: 0;
     }
 
-    main section.helpdocs, main section.priorities {
+    main section.helpdocs, main section.priorities, main div.report {
         width: 100%;
         max-width: 100%;
         padding: 0;
         box-sizing: content-box;
         box-shadow: none;
-        background-color: white;
         font-size: 90%;
+    }
+    main section.helpdocs, main section.priorities {
+        background-color: white;
+    }
+    main div.report>section:not(:first-child) {
+        page-break-before: always;
     }
 
     main {
@@ -39,10 +44,15 @@
         padding-right: 0;
     }
 
+    main>h2 {
+        margin: 0.2em 0;
+        font-size: 1.2em;
+    }
+
     .noprint, p.totop a {
         display: none;
     }
-    div.helptopic {
+    div.helptopic, div.reporttopic {
         page-break-inside: avoid;
     }
 

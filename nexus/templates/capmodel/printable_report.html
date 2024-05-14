@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+
+    div.report {
+        align-self: center;
+        width: 70%;
+    }
+
+    div.report section  {
+        text-align: left;
+        align-self: center;
+        padding: 4px;
+        margin: 5px
+    }
+
+    div.report section h3 {
+        text-align: center;
+        margin: 0.1em 0em 0em 0em;
+    }
+
+    div.report section h4 {
+        margin: 0.5em 0em 0em 1em;
+    }
+
+    div.report section table {
+        width: 97%;
+        margin: 5px 0px 10px 10px;
+        border: solid grey thin;
+    }
+
+    td.prio {
+        font-weight: bold;
+        text-align: right;
+    }
+
+    th, td {
+        font-size: 0.8em;
+        padding: 4px 6px 4px 6px;
+        border-bottom: solid grey thin;
+    }
+    td.question.NA {
+        color:grey;
+    }
+    td.prio {
+        width:24px;
+    }
+    td.lens {
+        width:75px;
+    }
+    td.lens.avail, td.lens.sol {
+        width:60px;
+    }
+    td.cov {
+        width:50px;
+        font-weight: bold;
+    }
+    @media screen {
+        div.footer {
+            display: none;
+        }
+    }
+    @media print {
+        div.footer {
+            position: fixed;
+            bottom:0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block title %}RCD-Nexus Capabilities Model Assessment{% endblock %}
+{% block main %}
+<h2>RCD Capabilities Assessment for {{ profile }}
+    {% if profile.capabilities_assessment.review_status == "not_submitted" %}
+    <span class="status">(In Progress)</span>
+    {% elif profile.capabilities_assessment.review_status == "pending" %}
+    <span class="status">(Review pending)</span>
+    {% elif profile.capabilities_assessment.review_status == "approved" %}
+    <span class="status">(Approved)</span>
+    {% elif profile.capabilities_assessment.review_status == "denied" %}
+    <span class="status">(Rejected)</span>
+    {% else %}
+    <span class="status">(Unknown state)</span>
+    {% endif %}
+</h2>
+
+<div class="report">
+{% for facing, topics in categories.items %}
+    <section>
+        <h3 id="{{facing.slug}}">
+            {{facing.content.display_name}}-Facing Topics 
+            {%if facing.coverage_pct %}<span class="facingcov">Avg. Coverage:&nbsp;&nbsp;
+                <span class="facingcovpcnt">{{facing.coverage_pct}}</span>{% endif %}
+        </h3>    
+        {% for topic, answers in topics.items %}
+            <div class="reporttopic">
+            <h4 id="{{topic.slug}}">{{topic.content.display_name}}
+                {%if topic.coverage_pct %}
+                    <span class="topiccov">Avg. Coverage:&nbsp;&nbsp;
+                        <span class="tcov">{{topic.coverage_pct}}</span>
+                    </span>
+                {% endif %}
+            </h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Question/Capability</th>
+                        <th class="lens avail">Avail.</th>
+                        <th class="lens sol">SOL</th>
+                        <th class="lens">Comm.</th>
+                        <th class="cov">Cov.</th>
+                        <th class="prio">Prio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for answer in answers %}
+                        <tr class="question"
+                            {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
+                            <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                                {{answer.html_display }}
+                            </td>
+                            <td class="lens avail">{{answer.avail}}</td>
+                            <td class="lens sol">{{answer.sol}}</td>
+                            <td class="lens">{{answer.comm}}</td>
+                            <td {%if answer.coverage_color %} class="cov" {% else %} class="nocov" {% endif %}>
+                                {{answer.coverage_percent}}
+                            </td>
+                            <td class="prio">
+                                {% if answer.priority %}{{answer.priority}}{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        {% endfor %}
+    </section>
+{% endfor %}
+</div>
+<div class="footer">RCD Capabilities Assessment for {{ profile }}</div>
+{% endblock %}
