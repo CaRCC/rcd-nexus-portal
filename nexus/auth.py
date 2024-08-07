@@ -81,7 +81,7 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             )
             profile.save()
             if idp.institution:
-                profile.user.affiliations.create(institution=idp.institution)
+                profile.user.affiliations.get_or_create(institution=idp.institution)
 
         return profile.user
 
