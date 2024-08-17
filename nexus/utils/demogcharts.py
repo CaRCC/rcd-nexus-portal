@@ -15,8 +15,10 @@ from django.db.models import Q
 from nexus.utils import cmgraphs
 
 PIE_SIZE_SCALE = 0.75
+SCATTER_SIZE_SCALE = 0.9
 DEFAULT_PIE_WIDTH=cmgraphs.DEFAULT_WIDTH*PIE_SIZE_SCALE
 DEFAULT_PIE_HEIGHT=cmgraphs.DEFAULT_HEIGHT*PIE_SIZE_SCALE
+DEFAULT_SCATTER_HEIGHT=cmgraphs.DEFAULT_HEIGHT*SCATTER_SIZE_SCALE
 
 def getAllProfiles(pop='all', years=None) :         # default to full set of profiles and not just contributors
     # TODO: We need some kind of marker for test institutions
@@ -134,10 +136,17 @@ def filterProfiles(dict):
     #print("After filtering have: ",profiles.count(), " profiles")
     return profiles
 
-def applyStandardPieFormatting(fig):
+def applyStandardPieFormatting(fig, height):
     fig.update_layout(showlegend=False, margin_t=20,margin_b=20,margin_l=20,margin_r=20,autosize=True, hoverlabel = dict(font=dict(size=16)))
+    if (height/DEFAULT_PIE_HEIGHT) >= 0.7 :
+        textposition='inside' 
+        textfont_size=18
+    else :
+        textposition='outside'
+        textfont_size=12
+
     fig.update_traces(sort=False, direction='clockwise', hovertemplate='<b>%{label}: %{value:.0f} institutions</b>', 
-                      textposition='inside', texttemplate='<b>%{label}: %{percent:.0%}</b>', textfont_size=18,
+                      textposition=textposition, texttemplate='<b>%{label}: %{percent:.0%}</b>', textfont_size=textfont_size,
                   marker=dict(line=dict(color=cmgraphs.colorPalette['errBars'], width=1.5)))
 
 def demographicsChartByCC(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
@@ -172,7 +181,7 @@ def demographicsChartByCC(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_
     # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.simple_cc_palette )
-    applyStandardPieFormatting(fig)
+    applyStandardPieFormatting(fig, height)
     
     return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
@@ -189,7 +198,7 @@ def demographicsChartByMission(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT
     # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.mission_palette)
-    applyStandardPieFormatting(fig)
+    applyStandardPieFormatting(fig, height)
     
     return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
@@ -204,7 +213,7 @@ def demographicsChartByPubPriv(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT
     # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.pub_priv_palette)
-    applyStandardPieFormatting(fig)
+    applyStandardPieFormatting(fig, height)
     
     return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True), totalShown
 
@@ -219,7 +228,7 @@ def demographicsChartByEPSCoR(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map={Institution.EPSCORChoices.EPSCOR.label: cmgraphs.colorPalette['EPSCoR'], 
                                         Institution.EPSCORChoices.NOT_EPSCOR.label: cmgraphs.colorPalette['nonEPSCoR']})
-    applyStandardPieFormatting(fig)
+    applyStandardPieFormatting(fig, height)
     
     return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True), totalShown
 
@@ -252,7 +261,7 @@ def demographicsChartByMSI(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE
     # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.simple_msi_palette )
-    applyStandardPieFormatting(fig)
+    applyStandardPieFormatting(fig, height)
     
     return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
@@ -274,7 +283,7 @@ def demographicsChartByOrgModel(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAUL
     # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.structure_palette)
-    applyStandardPieFormatting(fig)
+    applyStandardPieFormatting(fig, height)
     
     return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
@@ -290,11 +299,11 @@ def demographicsChartByReporting(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAU
     # Create a pie chart
     fig = px.pie(counts, values=counts.array, names=counts.index, width=width, height=height, color=counts.index, 
                 color_discrete_map=cmgraphs.reporting_palette)
-    applyStandardPieFormatting(fig)
+    applyStandardPieFormatting(fig, height)
     
     return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
-def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=cmgraphs.DEFAULT_HEIGHT):
+def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_SCATTER_HEIGHT, fontscale=1):
     if (answers.count() == 0): 
         return None
     
@@ -327,7 +336,7 @@ def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=cmgrap
                     # color_discrete_map=scatterPlotcolorMap,
                     color_discrete_sequence=cmgraphs.scatterPlotColorSeq,
                     labels=None,
-                    width=800, height=550)
+                    width=width, height=height)
 
     # Make the x axis have a round number range. Round to 5 for small counts, to 10 for larger ones.
     roundedInstCount = ceil(instCount/5)*5
@@ -340,16 +349,16 @@ def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=cmgrap
         plot_bgcolor=cmgraphs.colorPalette['bgColor'], 
         margin_t=25,autosize=True,
         legend_title_text='',
-        legend=dict(font=dict(size=14, color=cmgraphs.colorPalette['bgColor']), itemsizing="constant", itemwidth=30),
+        legend=dict(font=dict(size=(14*fontscale), color=cmgraphs.colorPalette['bgColor']), itemsizing="constant", itemwidth=30),
         hoverlabel = dict(font=dict(size=16)),        
         )
     msize = 5 + 100/instCount   # scale the marker size up for fewer results
-    fig.update_traces(marker={'size': msize}, textfont_size=18, hovertemplate='<b>Coverage: %{y:.0f}%</b>', )
+    fig.update_traces(marker={'size': msize*fontscale}, textfont_size=14*fontscale, hovertemplate='<b>Coverage: %{y:.0f}%</b>', )
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
-def demographicsMap(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT):
+def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_HEIGHT):
     # Fetch US states GeoJSON data
     # response_us = requests.get("https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json")
     # us_states_geojson = response_us.json()
@@ -408,24 +417,16 @@ def demographicsMap(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAULT_PIE_HEIGHT
         labels={"Count": "# of Institutions", "State":"State/Province"},
         title="Number of Institutions in Each State ot Province"
     )
-    fig.update_geos(projection_scale=1, lonaxis_range=[-170, -65], lataxis_range=[27, 70])
+    fig.update_geos(projection_scale=1, lonaxis_range=[-170, -65], lataxis_range=[27, 75])
 
-    # Remove the legend
+    # Show the legend
     fig.update_coloraxes(showscale=True)
 
-    
     fig.update_layout(
         autosize=False,
-        margin = dict(
-                l=0,
-                r=0,
-                b=0,
-                t=0,
-                pad=4,
-                autoexpand=True
-            ),
-            width=800,
-        #     height=400,
+        margin = dict(l=0, r=0, b=0, t=0, pad=4, autoexpand=True ),
+        width=width,
+        height=height,
     )
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)

@@ -112,10 +112,29 @@ def data_viz_demographics_maps(request):
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
                 graphtitle = f'Too Few Institutions ({instCount}) to Map!'
-            elif graph := demogcharts.demographicsMap(profiles) :
-                graphtitle = f'Geographic Distribution of {instCount} {popName}'
-            else:
-                graphtitle = 'No Data to Chart!'
+            else :
+                grSize = cleaned_dict.get('graph_size')
+                match grSize:
+                    case "lg":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT
+                        grwidth = cmgraphs.DEFAULT_WIDTH
+                        #fontscale = 1
+                    case "med":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
+                        width_scale = 1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7)
+                        grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_MED_SCALE
+                        #grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
+                        #fontscale = width_scale
+                    case "sm":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                        width_scale = 1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7)
+                        grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                        #grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
+                        #fontscale = width_scale*1.1
+                if graph := demogcharts.demographicsMap(profiles,width=grwidth, height=grheight) :
+                    graphtitle = f'Geographic Distribution of {instCount} {popName}'
+                else:
+                    graphtitle = 'No Data to Graph!'
 
         else :
             #print( "GET with no params ")
@@ -180,34 +199,43 @@ def data_viz_demographics_charts(request):
                 graph = None
                 graphtitle = f'Too Few Institutions ({instCount}) to Chart!'
             else:
+                grSize = cleaned_dict.get('graph_size')
+                match grSize:
+                    case "lg":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT
+                    case "med":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
+                    case "sm":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
+
                 match chart:
                     # Note that sum makes no sense for Charts, and will be hidden/disabled in the template
                     case "cc" :
-                        if graph := demogcharts.demographicsChartByCC(profiles) :
+                        if graph := demogcharts.demographicsChartByCC(profiles, height=grheight) :
                             graphtitle = f'Institutional Classification of {instCount} {popName}'
                     case "mission" :
-                        if graph := demogcharts.demographicsChartByMission(profiles) :
+                        if graph := demogcharts.demographicsChartByMission(profiles, height=grheight) :
                             graphtitle = f'Mission of {instCount} {popName}'
                     case "pub_priv" :
-                        graph, totalShown = demogcharts.demographicsChartByPubPriv(profiles)
+                        graph, totalShown = demogcharts.demographicsChartByPubPriv(profiles, height=grheight)
                         if graph :
                             graphtitle = f'Control (Public/Private) of {totalShown} {popName}'
                             if totalShown != instCount :
                                 footnote = FOOTNOTE_NOT_ALL_KNOWN
                     case "epscor" :
-                        graph, totalShown = demogcharts.demographicsChartByEPSCoR(profiles)
+                        graph, totalShown = demogcharts.demographicsChartByEPSCoR(profiles, height=grheight)
                         if graph :
                             graphtitle = f'EPSCoR status of {totalShown} {popName}'
                             if totalShown != instCount :
                                 footnote = FOOTNOTE_NOT_ALL_KNOWN
                     case "msi" :
-                        if graph := demogcharts.demographicsChartByMSI(profiles) :
+                        if graph := demogcharts.demographicsChartByMSI(profiles, height=grheight) :
                             graphtitle = f'Minority-serving status of {instCount} {popName}'
                     case "orgmodel" :
-                        if graph := demogcharts.demographicsChartByOrgModel(profiles) :
+                        if graph := demogcharts.demographicsChartByOrgModel(profiles, height=grheight) :
                             graphtitle = f'Organizational Model of {instCount} {popName}'
                     case "reporting" :
-                        if graph := demogcharts.demographicsChartByReporting(profiles) :
+                        if graph := demogcharts.demographicsChartByReporting(profiles, height=grheight) :
                             graphtitle = f'Reporting Structure of {instCount} {popName}'
                     case _ :
                         send_mail(
@@ -267,8 +295,25 @@ def data_viz_demographics_scatter(request):
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
                 graphtitle = f'Too Few Institutions ({instCount}) to Chart!'
-            elif graph := demogcharts.scatterChart(answers, instCount) :
-                graphtitle = f'Scatter Graph of {instCount} Contributors'
+            else :
+                grSize = cleaned_dict.get('graph_size')
+                match grSize:
+                    case "lg":
+                        grheight = demogcharts.DEFAULT_SCATTER_HEIGHT
+                        grwidth = cmgraphs.DEFAULT_WIDTH
+                        fontscale = 1
+                    case "med":
+                        grheight = demogcharts.DEFAULT_SCATTER_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
+                        width_scale = 1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7)
+                        grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
+                        fontscale = width_scale
+                    case "sm":
+                        grheight = demogcharts.DEFAULT_SCATTER_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                        width_scale = 1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7)
+                        grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
+                        fontscale = width_scale*1.1
+                if graph := demogcharts.scatterChart(answers, instCount, height=grheight, width=grwidth, fontscale=fontscale) :
+                    graphtitle = f'Scatter Graph of {instCount} Contributors'
 
             if graph is None:
                 graphtitle = 'No Data to Graph!'
@@ -388,7 +433,7 @@ def data_viz_capsmodeldata(request):
 
             if benchmarkAssessment:
                 benchmarkInfo = getInstAverages(benchmarkAssessment, facing)
-                print('Benchmark info: ',benchmarkInfo)
+                #print('Benchmark info: ',benchmarkInfo)
 
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
@@ -404,70 +449,91 @@ def data_viz_capsmodeldata(request):
                 #   assert len(instVals) == 5, "showFacingsBarGraph passed bad instVals: "+str(instVals)
                 # pass into the graph tools. 
                 #   ax.scatter([0,1,2,3,4], instVals, color=[1,0.8,0], s=30, zorder=2, label=instName, **kwargs)
+
+                grSize = cleaned_dict.get('graph_size')
+                match grSize:
+                    case "lg":
+                        grheight = cmgraphs.DEFAULT_HEIGHT
+                        grwidth = cmgraphs.DEFAULT_WIDTH
+                    case "med":
+                        grheight = cmgraphs.DEFAULT_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
+                        grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_MED_SCALE
+                        grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7))
+                    case "sm":
+                        grheight = cmgraphs.DEFAULT_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                        grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                        grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7))
+
+                if facing != 'all':
+                    grheight *= cmgraphs.CALCULATE_SCALED_HEIGHT
+
+                showErrBars = cleaned_dict.get('opt_show_errbars') != 'False'
+                print("ShowErrBars: ",showErrBars)
+
                 match chart:
                     case "sum":
                         if facing == 'all':
-                            graph = cmgraphs.summaryDataGraph(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.summaryDataGraph(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingSummaryDataGraph(answers, facingslug, benchmark=benchmarkInfo,
-                                                                    height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingSummaryDataGraph(answers, facingslug, benchmark=benchmarkInfo, 
+                                                                    height=grheight, width=grwidth, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} ({instCount} Institutions)'
 
                     case "cc" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByCC(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByCC(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmark=benchmarkInfo,
-                                                                     height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmark=benchmarkInfo, 
+                                                                     height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Institutional Classification ({instCount} Institutions)'
                     case "mission" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByMission(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByMission(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, benchmark=benchmarkInfo,
-                                                                          height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, benchmark=benchmarkInfo, 
+                                                                          height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Mission ({instCount} Institutions)'
                     case "pub_priv" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByPubPriv(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByPubPriv(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, benchmark=benchmarkInfo,
-                                                                          height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, benchmark=benchmarkInfo, 
+                                                                          height=grheight, width=grwidth, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Control (Public/Private) ({instCount} Institutions)'
                     case "epscor" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByEPSCoR(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByEPSCoR(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, benchmark=benchmarkInfo,
-                                                                         height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, benchmark=benchmarkInfo, 
+                                                                         height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by EPSCoR status ({instCount} Institutions)'
                     case "msi" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByMSI(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByMSI(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, benchmark=benchmarkInfo,
-                                                                      height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, benchmark=benchmarkInfo, 
+                                                                      height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Minority-serving status ({instCount} Institutions)'
                     case "orgmodel" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByOrgModel(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByOrgModel(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, benchmark=benchmarkInfo,
-                                                                           height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, benchmark=benchmarkInfo, 
+                                                                           height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Organizational Model ({instCount} Institutions)'
                     case "reporting" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByReporting(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByReporting(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, benchmark=benchmarkInfo,
-                                                                            height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, benchmark=benchmarkInfo, 
+                                                                            height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Reporting Structure ({instCount} Institutions)'
                     case _ :

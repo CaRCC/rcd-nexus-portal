@@ -456,7 +456,7 @@ body>nav details ul {
     padding-left: 1.5em;
 }
 
-body>nav details summary {
+body>nav details summary, nav #filtertree details summary {
     text-indent: -1.2em;
     padding-left: 1.1em;
 }
@@ -485,7 +485,7 @@ body>nav details summary {
 #filtertree li.skip, #filtertree li.skipFilter, #filtertree div.skip {
     display: none;
 }
-#filtertree div.viewChoices {
+#filtertree div.viewChoices, #filtertree div.viewOptions {
     margin-left: 10px;
     margin-bottom: 10px;
 }
@@ -509,6 +509,10 @@ body>nav details summary {
 #filtertree label, #resexp_to {
     font-weight: bold;
     font-size: .9em;
+}
+#filtertree .viewoption label, #filtertree .viewoption label option {
+    font-weight: normal;
+    font-size: .85em;
 }
 #filtertree details summary label {
     pointer-events: none;
@@ -545,18 +549,24 @@ body>nav details summary {
 /* FilterTooltip container */
 .filtertip {
     position: relative;
-    color: var(--primary);
+    color: #6453AFA0;
+    border: 2px outset #99def94f;
+    border-radius: 1em;
+    border-width: 2px;
+    padding: 0 2px;
+    font-weight: bold;
+    font-size: 0.85em;
 }
 
 /* Tooltip text */
 .filtertip .filtertiptext {
     visibility: hidden;
-    min-width: 400px;
+    min-width: 22em;
     background-color: white;
     box-shadow: 0px 0px 3px 3px #FFFFFF;
     color: var(--nexus-dark-colored-text);
     text-align: left;
-    font-size: 0.9em;
+    font-size: 1em;
     font-weight: bold;
     padding: 1px;
 
@@ -564,16 +574,25 @@ body>nav details summary {
     position: absolute;
     z-index: 1;
     top: -1px;
-    left: 20px;
+    left: 2.5em;
 }
 
 /* Show the filtertip text when you mouse over the filtertip container */
+.filtertip:hover {
+    color: #6453AF;
+    border-color: #99def9;
+}
+
 .filtertip:hover .filtertiptext {
     visibility: visible;
 }
 
 nav p.FilterTitle {
     margin:0 0 0.3em 0;
+}
+
+nav p.FilterTitle.Options{
+    margin-top:1em;
 }
 
 nav span.FilterTitle {

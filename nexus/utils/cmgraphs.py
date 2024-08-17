@@ -14,6 +14,8 @@ from django.db.models import Q
 
 DEFAULT_WIDTH = 800
 DEFAULT_HEIGHT = 600
+GRAPHSIZE_MED_SCALE = 0.8       # 640 X 420
+GRAPHSIZE_SMALL_SCALE = 0.6     # 480 X 360
 CALCULATE_SCALED_HEIGHT = -1
 MAX_TOPICS = 11         # Systems has the most
 
@@ -370,7 +372,7 @@ def allSummaryDataGraph(width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     answers, instCount = getAllAnswers()
     return summaryDataGraph(answers, width=width, height=height), instCount
 
-def summaryDataGraph(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def summaryDataGraph(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("SummaryDataGraph with: ", answers.count()," answers")
     #instCount = answers.values('assessment__id').distinct().count()
     #print("SummaryDataGraph with: ", answers.count()," answers for: ",instCount," Institutions")
@@ -403,7 +405,7 @@ def summaryDataGraph(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAUL
     data['Std Dev'] *= 100
 
     # Create a All Summary Data bar chart
-    fig = px.bar(data, x='Facings', y= 'Average Values', error_y='Std Dev',
+    fig = px.bar(data, x='Facings', y= 'Average Values', error_y='Std Dev' if showErrBars else None,
                     width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
     applyStandardVBarFormatting(fig, width=0.6)
 
@@ -432,14 +434,14 @@ def labelMapForFacing(facing):
         case _ :
             raise ValueError(f"labelMapForFacing: unrecognized facing: {facing}")
 
-def calculateScaledHeight(nTopics):
+def calculateScaledHeight(nTopics, height):
     scale = nTopics/MAX_TOPICS
     adjustedscale = 1 - (1-scale)/2     # scale by half the difference in # of Topics
-    height = adjustedscale*DEFAULT_HEIGHT
+    height = adjustedscale*height
     return height
 
 
-def facingSummaryDataGraph(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingSummaryDataGraph(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     # print(f"Facing: [{facing}] SummaryDataGraph with: {answers.count()} answers")
     #instCount = answers.values('assessment__id').distinct().count()
     if (answers.count() == 0): 
@@ -471,11 +473,11 @@ def facingSummaryDataGraph(answers, facing, benchmark=None, width=DEFAULT_WIDTH,
     data['Average Values'] *= 100
     data['Std Dev'] *= 100
 
-    if height == CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues))
+    if height <= CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues), abs(height))
 
     # Create a Topics Summary Data bar chart for this facing
-    fig = px.bar(data, y='Topics', x= 'Average Values', error_x='Std Dev',
+    fig = px.bar(data, y='Topics', x= 'Average Values', error_x='Std Dev' if showErrBars else None,
                     width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
     applyStandardHBarFormatting(fig, width=0.6)
 
@@ -489,7 +491,7 @@ def facingSummaryDataGraph(answers, facing, benchmark=None, width=DEFAULT_WIDTH,
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByCC(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByCC(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -524,7 +526,7 @@ def capsDataGraphByCC(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAU
         })
 
     # Create a grouped bar chart
-    fig = px.bar(df, x='Facings', y='Average Value',error_y='stddev',
+    fig = px.bar(df, x='Facings', y='Average Value',error_y='stddev' if showErrBars else None,
                 color='simpleCC', 
                 color_discrete_map={'R1':colorPalette['R1'], 'R2':colorPalette['R2'],'Other Acad.':colorPalette['OtherAcad']},
                 barmode='group', # Use 'group' for grouped bars
@@ -540,7 +542,7 @@ def capsDataGraphByCC(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAU
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByCC(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByCC(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -581,11 +583,11 @@ def facingCapsDataGraphByCC(answers, facing, benchmark=None, width=DEFAULT_WIDTH
             'average':'Average Value',
         })
     
-    if height == CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues))
+    if height <= CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues), abs(height))
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
                 color='simpleCC', 
                 color_discrete_map={'R1':colorPalette['R1'], 'R2':colorPalette['R2'],'Other Acad.':colorPalette['OtherAcad']},
                 barmode='group', # Use 'group' for grouped bars
@@ -602,7 +604,7 @@ def facingCapsDataGraphByCC(answers, facing, benchmark=None, width=DEFAULT_WIDTH
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByMission(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByMission(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByMission with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -629,7 +631,7 @@ def capsDataGraphByMission(answers, benchmark=None, width=DEFAULT_WIDTH, height=
         })
 
     # Create a grouped bar chart
-    fig = px.bar(df, x='Facings', y='Average Value',error_y='stddev',
+    fig = px.bar(df, x='Facings', y='Average Value',error_y='stddev' if showErrBars else None,
                 color='mission2', 
                 color_discrete_map=mission_palette,
                 barmode='group', # Use 'group' for grouped bars
@@ -645,7 +647,7 @@ def capsDataGraphByMission(answers, benchmark=None, width=DEFAULT_WIDTH, height=
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByMission(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByMission(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByMission with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -679,11 +681,11 @@ def facingCapsDataGraphByMission(answers, facing, benchmark=None, width=DEFAULT_
             'average':'Average Value',
         })
     
-    if height == CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues))
+    if height <= CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues), abs(height))
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
                 color='mission2',
                 color_discrete_map=mission_palette,
                 barmode='group', # Use 'group' for grouped bars
@@ -699,7 +701,7 @@ def facingCapsDataGraphByMission(answers, facing, benchmark=None, width=DEFAULT_
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByPubPriv(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByPubPriv(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -728,12 +730,12 @@ def capsDataGraphByPubPriv(answers, benchmark=None, width=DEFAULT_WIDTH, height=
         })
 
     # Create a grouped bar chart
-    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev',
+    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev' if showErrBars else None,
                     barmode='group',  # Use 'group' for grouped bars
                     color='Public/Private',
                     color_discrete_map={'Public': colorPalette['Public'], 'Private': colorPalette['Private']},  # Set custom color
                     labels={'Facings': 'Facings', 'value': 'Average Values'},
-                    width=800, height=600)
+                    width=width, height=height)
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
@@ -746,7 +748,7 @@ def capsDataGraphByPubPriv(answers, benchmark=None, width=DEFAULT_WIDTH, height=
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByPubPriv(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByPubPriv(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByPubPriv with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -780,11 +782,11 @@ def facingCapsDataGraphByPubPriv(answers, facing, benchmark=None, width=DEFAULT_
             'average':'Average Value',
         })
     
-    if height == CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues))
+    if height <= CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues), abs(height))
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
                 color='Public/Private',
                 color_discrete_map={'Public': colorPalette['Public'], 'Private': colorPalette['Private']},  # Set custom color
                 barmode='group', # Use 'group' for grouped bars
@@ -800,7 +802,7 @@ def facingCapsDataGraphByPubPriv(answers, facing, benchmark=None, width=DEFAULT_
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByEPSCoR(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByEPSCoR(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByEPSCoR with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -829,12 +831,12 @@ def capsDataGraphByEPSCoR(answers, benchmark=None, width=DEFAULT_WIDTH, height=D
         })
 
     # Create a grouped bar chart
-    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev',
+    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev' if showErrBars else None,
                     barmode='group',  # Use 'group' for grouped bars
                     color='EPSCoR',
                     color_discrete_map={Institution.EPSCORChoices.EPSCOR.label: colorPalette['EPSCoR'], 
                                         Institution.EPSCORChoices.NOT_EPSCOR.label: colorPalette['nonEPSCoR']},  # Set custom color
-                    width=800, height=600)
+                    width=width, height=height)
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
@@ -847,7 +849,7 @@ def capsDataGraphByEPSCoR(answers, benchmark=None, width=DEFAULT_WIDTH, height=D
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByEPSCoR(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByEPSCoR(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByEPSCoR with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -881,11 +883,11 @@ def facingCapsDataGraphByEPSCoR(answers, facing, benchmark=None, width=DEFAULT_W
             'average':'Average Value',
         })
     
-    if height == CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues))
+    if height <= CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues), abs(height))
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
                 color='EPSCoR',
                 color_discrete_map={Institution.EPSCORChoices.EPSCOR.label: colorPalette['EPSCoR'], 
                                     Institution.EPSCORChoices.NOT_EPSCOR.label: colorPalette['nonEPSCoR']},  # Set custom color
@@ -902,7 +904,7 @@ def facingCapsDataGraphByEPSCoR(answers, facing, benchmark=None, width=DEFAULT_W
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByMSI(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByMSI(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByMSI with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -931,12 +933,12 @@ def capsDataGraphByMSI(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFA
         })
 
     # Create a grouped bar chart
-    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev',
+    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev' if showErrBars else None,
                     barmode='group',  # Use 'group' for grouped bars
                     color='MSI',
                     color_discrete_map={Institution.MSIChoices.MSI.label: colorPalette['otherMSI'], 
                                         Institution.MSIChoices.NOT_AN_MSI.label: colorPalette['NotMSI']},  # Set custom color
-                    width=800, height=600)
+                    width=width, height=height)
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
@@ -949,7 +951,7 @@ def capsDataGraphByMSI(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFA
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByMSI with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -983,11 +985,11 @@ def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDT
             'average':'Average Value',
         })
     
-    if height == CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues))
+    if height <= CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues), abs(height))
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
                 color='MSI',
                 color_discrete_map={Institution.MSIChoices.MSI.label: colorPalette['otherMSI'], 
                                     Institution.MSIChoices.NOT_AN_MSI.label: colorPalette['NotMSI']},  # Set custom color
@@ -1004,7 +1006,7 @@ def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDT
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     # Org Model is call "structure" in the model - not very useful until we have more metadata. Sigh. 
     # print("capsDataGraphByOrgModel with: ", answers.count()," answers")
     if (answers.count() == 0): 
@@ -1033,12 +1035,12 @@ def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height
         })
 
     # Create a grouped bar chart
-    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev',
+    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev' if showErrBars else None,
                     barmode='group',  # Use 'group' for grouped bars
                     color='OrgModel',
                     color_discrete_map=structure_palette,
                     labels={'Facings': 'Facings', 'value': 'Average Values'},
-                    width=800, height=600)
+                    width=width, height=height)
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
@@ -1051,7 +1053,7 @@ def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByOrgModel(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByOrgModel(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByOrgModel with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -1085,11 +1087,11 @@ def facingCapsDataGraphByOrgModel(answers, facing, benchmark=None, width=DEFAULT
             'average':'Average Value',
         })
     
-    if height == CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues))
+    if height <= CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues), abs(height))
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
                 color='structure2',
                 color_discrete_map=structure_palette,
                 barmode='group', # Use 'group' for grouped bars
@@ -1105,7 +1107,7 @@ def facingCapsDataGraphByOrgModel(answers, facing, benchmark=None, width=DEFAULT
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByReporting(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def capsDataGraphByReporting(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     # Org Model is call "orgchart" in the model - not very useful until we have more metadata. Sigh. 
     # print("capsDataGraphByReporting with: ", answers.count()," answers")
     if (answers.count() == 0): 
@@ -1133,12 +1135,12 @@ def capsDataGraphByReporting(answers, benchmark=None, width=DEFAULT_WIDTH, heigh
         })
 
     # Create a grouped bar chart
-    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev',
+    fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev' if showErrBars else None,
                     barmode='group',  # Use 'group' for grouped bars
                     color='reporting2',
                     color_discrete_map=reporting_palette,
                     labels={'Facings': 'Facings', 'value': 'Average Values'},
-                    width=800, height=600)
+                    width=width, height=height)
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
@@ -1151,7 +1153,7 @@ def capsDataGraphByReporting(answers, benchmark=None, width=DEFAULT_WIDTH, heigh
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByReporting(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
+def facingCapsDataGraphByReporting(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByReporting with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -1185,11 +1187,11 @@ def facingCapsDataGraphByReporting(answers, facing, benchmark=None, width=DEFAUL
             'average':'Average Value',
         })
     
-    if height == CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues))
+    if height <= CALCULATE_SCALED_HEIGHT:
+        height = calculateScaledHeight(len(yvalues), abs(height))
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev',
+    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
                 color='reporting2',
                 color_discrete_map=reporting_palette,
                 barmode='group', # Use 'group' for grouped bars

@@ -151,7 +151,17 @@ class DataFilterForm(forms.Form):
 
     BENCHMARK="Benchmark my Data"
 
+    OPT_ERRBARS="Show Error bars"
+
+    OPT_GRAPHSIZE="Graph Scale"
+    OPT_GRAPHSIZE_CHOICES = (
+        ("lg","Large"),
+        ("med","Medium"),
+        ("sm","Small"),
+    )
+
     NOT_FILTERS = CHART_VIEWS+", "+FACINGS+", "+CAPS_FEATURE+", "+BENCHMARK
+    OPTIONS = OPT_ERRBARS+", "+OPT_GRAPHSIZE
 
     # Note that we are omitting ORG_MODEL and REPORTING for now, unless and until someone asks for this info
     INCLUDE_ALL={POPULATION, CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP}
@@ -161,7 +171,7 @@ class DataFilterForm(forms.Form):
     # Omit the "Population" choice when viewing contributor data, and add the detail views
     # Omit CAPS_FEATURE since NYI in current release
     # CAPS_DATA_INCLUDE_ALL={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP, CHART_VIEWS, FACINGS, CAPS_FEATURE, BENCHMARK}
-    CAPS_DATA_INCLUDE_ALL={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP, CHART_VIEWS, FACINGS, BENCHMARK}
+    CAPS_DATA_INCLUDE_ALL={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP, CHART_VIEWS, FACINGS, BENCHMARK, OPT_ERRBARS}
     CAPS_DATA_EXCLUDE_NO_DATA_CONTRIB={CAPS_FEATURE, BENCHMARK}
 
     population = forms.ChoiceField(
@@ -297,6 +307,20 @@ class DataFilterForm(forms.Form):
         help_text="Check if you want to overlay institutional data for benchmarking",
     )
     
+    graph_size = forms.ChoiceField(
+        label=OPT_GRAPHSIZE,
+        choices=OPT_GRAPHSIZE_CHOICES,
+        initial = [0],   # Default to Large graphs
+        help_text="Choose the size of the rendered graphs",
+    )
+
+    opt_show_errbars = forms.BooleanField(
+        label=OPT_ERRBARS,
+        initial = True,     # Default to show err bars
+        required=False,     # Don't need this always
+        help_text="Un-Check to hide error bars in the graphs",
+    )
+    
     def clean(self):
         cleaned_data = super().clean()
         resexpmin = cleaned_data.get("resexp_min")
@@ -363,4 +387,9 @@ class DataFilterForm(forms.Form):
             self.fields['benchmark'].label = "skip_nobm"
         else: 
             self.hasViewChoices = True
+
+        if (includes and self.OPT_ERRBARS not in includes) or (excludes and self.OPT_ERRBARS in excludes):
+            self.fields['opt_show_errbars'].label = "skip"+self.fields['opt_show_errbars'].label
+
+        # Note that graph size option will always be shown
 
