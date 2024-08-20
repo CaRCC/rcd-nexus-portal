@@ -1,6 +1,7 @@
 import datetime
 import logging
 import math
+import textwrap
 import urllib.parse
 from django.contrib import messages
 from django.conf import settings
@@ -398,6 +399,7 @@ def data_viz_capsmodeldata(request):
     graphtitle = None
     chart = None
     benchmarkInfo = None
+    showErrBars = False
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -424,16 +426,23 @@ def data_viz_capsmodeldata(request):
                     messages.info(request, f"You must be logged in to use benchmarking.")
                 else:
                     # print('Looking for approved assessment...')
-                    bmProfile = RCDProfile.objects.filter_can_view(request.user).exclude(archived=True)\
-                        .filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED).order_by('-year').first()
-                    if bmProfile is None:
+                    # Allow them to benchmark up to 3 assessments. If this is really a problem, they can go archive some to see the ones they want. 
+                    bmProfiles = RCDProfile.objects.filter_can_view(request.user).exclude(archived=True)\
+                        .filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED).order_by('-year')[:3]
+                    if not bmProfiles:
                         messages.info(request, f"You must have view rights on an approved assessment to use benchmarking.")
                     else:
-                        benchmarkAssessment = bmProfile.capabilities_assessment
+                        benchmarkInfo = []
+                        for bmprof in bmProfiles:
+                            benchmarkAssessment = bmprof.capabilities_assessment
+                            # The last 6 chars are always the year. Strip that, then cut the name short a bit, and rejoin
+                            yrstr = str(bmprof)[-6:]
+                            instName = textwrap.shorten(str(bmprof)[:-6], width=40, placeholder="...")
+                            shortprofname = instName+'<b>'+yrstr+'</b>'
+                            bmName = '<br>'.join(textwrap.wrap(shortprofname, 20))
+                            benchmarkInfo.append({ 'data':getInstAverages(benchmarkAssessment, facing), 'name':bmName })
+                            print('Adding Benchmark info for: ',bmName)
 
-            if benchmarkAssessment:
-                benchmarkInfo = getInstAverages(benchmarkAssessment, facing)
-                #print('Benchmark info: ',benchmarkInfo)
 
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
@@ -455,84 +464,94 @@ def data_viz_capsmodeldata(request):
                     case "lg":
                         grheight = cmgraphs.DEFAULT_HEIGHT
                         grwidth = cmgraphs.DEFAULT_WIDTH
+                        grwidth2 = grwidth
                     case "med":
                         grheight = cmgraphs.DEFAULT_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
-                        grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_MED_SCALE
-                        grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7))
+                        if benchmarkInfo :
+                            grwidth = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7))
+                            grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.6))
+                        else:
+                            grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_MED_SCALE
+                            grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7))
                     case "sm":
-                        grheight = cmgraphs.DEFAULT_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
-                        grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_SMALL_SCALE
-                        grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7))
+                        grheight = cmgraphs.DEFAULT_HEIGHT * (1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.8))
+                        if benchmarkInfo :
+                            grwidth = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7))
+                            grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.6))
+                        else:
+                            grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                            grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7))
 
                 if facing != 'all':
                     grheight *= cmgraphs.CALCULATE_SCALED_HEIGHT
 
                 showErrBars = cleaned_dict.get('opt_show_errbars') != 'False'
-                print("ShowErrBars: ",showErrBars)
+                # print("ShowErrBars: ",showErrBars)
 
                 match chart:
                     case "sum":
                         if facing == 'all':
-                            graph = cmgraphs.summaryDataGraph(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph = cmgraphs.summaryDataGraph(answers, benchmarks=benchmarkInfo,
+                                                              height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingSummaryDataGraph(answers, facingslug, benchmark=benchmarkInfo, 
+                            graph = cmgraphs.facingSummaryDataGraph(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                     height=grheight, width=grwidth, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} ({instCount} Institutions)'
 
                     case "cc" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByCC(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph = cmgraphs.capsDataGraphByCC(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmark=benchmarkInfo, 
+                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                      height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Institutional Classification ({instCount} Institutions)'
                     case "mission" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByMission(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph = cmgraphs.capsDataGraphByMission(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, benchmark=benchmarkInfo, 
+                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                           height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Mission ({instCount} Institutions)'
                     case "pub_priv" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByPubPriv(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph = cmgraphs.capsDataGraphByPubPriv(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, benchmark=benchmarkInfo, 
+                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                           height=grheight, width=grwidth, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Control (Public/Private) ({instCount} Institutions)'
                     case "epscor" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByEPSCoR(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph = cmgraphs.capsDataGraphByEPSCoR(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, benchmark=benchmarkInfo, 
+                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                          height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by EPSCoR status ({instCount} Institutions)'
                     case "msi" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByMSI(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph = cmgraphs.capsDataGraphByMSI(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, benchmark=benchmarkInfo, 
+                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                       height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Minority-serving status ({instCount} Institutions)'
                     case "orgmodel" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByOrgModel(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
+                            graph = cmgraphs.capsDataGraphByOrgModel(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, benchmark=benchmarkInfo, 
+                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                            height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Organizational Model ({instCount} Institutions)'
                     case "reporting" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByReporting(answers, benchmark=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
+                            graph = cmgraphs.capsDataGraphByReporting(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, benchmark=benchmarkInfo, 
+                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                             height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Reporting Structure ({instCount} Institutions)'
@@ -563,6 +582,7 @@ def data_viz_capsmodeldata(request):
         "graph":graph,
         "graphtitle":graphtitle,
         "chart":chart,
+        "showErrBars":showErrBars,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Capabilities Model Data":"dataviz:capsmodeldata",

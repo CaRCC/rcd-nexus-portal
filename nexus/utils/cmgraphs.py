@@ -18,11 +18,18 @@ GRAPHSIZE_MED_SCALE = 0.8       # 640 X 420
 GRAPHSIZE_SMALL_SCALE = 0.6     # 480 X 360
 CALCULATE_SCALED_HEIGHT = -1
 MAX_TOPICS = 11         # Systems has the most
+MARKER_SZ = 25
 
 INCLUDE_PLOTLYJS = 'cdn'  #REVERT THIS TO 'cdn' for checkin - Use True ONLY FOR OFFLINE!!
 
 VALUE_UNKNOWN = "unknown"
 VALUE_UNKNOWN_LABEL = "Unknown"
+
+barmarkercolors = ['darkorchid', 'orchid', 'plum']
+vbarmarkertypes = ['diamond-wide-dot', 'hexagon2-dot', 'circle-dot']
+hbarmarkertypes = ['diamond-tall-dot', 'hexagon-dot', 'circle-dot']
+barmarkerscales = [1, .9, .75]
+NMARKERSMAX = 3
 
 colorPalette = {'allData':'#9F9F9F', 'EPSCoR':'#5ab4ac', 'nonEPSCoR':'#d8b365', 
                 'errBars':'#bbb', 'lightErrBars':'#f5f5f5', 'bgColor':'#555',
@@ -346,25 +353,29 @@ def applyStandardVBarFormatting(fig, width=None):
         yaxis=dict(title=dict(text='', font=dict(size=16, family='Arial')), ticksuffix="%", range=[0, 100], dtick=20),
         plot_bgcolor=colorPalette['bgColor'], 
         margin_t=25,autosize=True,
-        legend_title_text=''
+        legend_title_text='',
+        #legend_traceorder="normal",
         )
     fig.update_traces(error_y_color=colorPalette['errBars'], 
                       marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{y:.1f}%')
     fig.update_yaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
 
-def applyStandardHBarFormatting(fig, width=None):
+def applyStandardHBarFormatting(fig, width=None, textscale=1):
     # Apply standard font size and font type
     fig.update_layout(
-        yaxis=dict(title=dict(text='', font=dict(size=16, family='Arial'))),
+        yaxis=dict(title=dict(text='')), #, font=dict(size=16, family='Arial'))),
         xaxis=dict(title=dict(text='', font=dict(size=16, family='Arial')), ticksuffix="%", range=[0, 100], dtick=20),
         plot_bgcolor=colorPalette['bgColor'], 
         margin_t=25, margin_l=20,autosize=True,
         legend_title_text='',        
+        bargap=0.250,
+        legend = dict(font=dict(size=14*textscale, )),
         )
     fig.update_traces(error_x_color=colorPalette['errBars'], 
                       marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{x:.1f}%')
     fig.update_yaxes(showgrid=False,zeroline=False, autorange="reversed",
-                     showline=True, linewidth=1, linecolor='black')
+                     showline=True, linewidth=1, linecolor='black',
+                     tickfont=dict(size=14*textscale, family='Arial'),)
     fig.update_xaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot', zeroline=False)
 
 
@@ -372,7 +383,7 @@ def allSummaryDataGraph(width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     answers, instCount = getAllAnswers()
     return summaryDataGraph(answers, width=width, height=height), instCount
 
-def summaryDataGraph(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def summaryDataGraph(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("SummaryDataGraph with: ", answers.count()," answers")
     #instCount = answers.values('assessment__id').distinct().count()
     #print("SummaryDataGraph with: ", answers.count()," answers for: ",instCount," Institutions")
@@ -410,10 +421,18 @@ def summaryDataGraph(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAUL
     applyStandardVBarFormatting(fig, width=0.6)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+    scale = (height/DEFAULT_HEIGHT)
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        # Legendrank is SUPPOSED to let us order with the most recent year on top, but seems not to work.
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name'],
+                                        legendrank=(5-imarker)))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
    
     # Convert the figure to HTML including Plotly.js
@@ -436,12 +455,13 @@ def labelMapForFacing(facing):
 
 def calculateScaledHeight(nTopics, height):
     scale = nTopics/MAX_TOPICS
-    adjustedscale = 1 - (1-scale)/2     # scale by half the difference in # of Topics
+    adjustedscale = 1 - ((1-scale)*.5)     # scale by a fraction of the difference in # of Topics
     height = adjustedscale*height
     return height
 
 
-def facingSummaryDataGraph(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingSummaryDataGraph(answers, facing, benchmarks=None,
+                           width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     # print(f"Facing: [{facing}] SummaryDataGraph with: {answers.count()} answers")
     #instCount = answers.values('assessment__id').distinct().count()
     if (answers.count() == 0): 
@@ -473,25 +493,33 @@ def facingSummaryDataGraph(answers, facing, benchmark=None, width=DEFAULT_WIDTH,
     data['Average Values'] *= 100
     data['Std Dev'] *= 100
 
+    markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
+    textscale = 1-((1-markerscale)*.6)
+
     if height <= CALCULATE_SCALED_HEIGHT:
         height = calculateScaledHeight(len(yvalues), abs(height))
 
     # Create a Topics Summary Data bar chart for this facing
     fig = px.bar(data, y='Topics', x= 'Average Values', error_x='Std Dev' if showErrBars else None,
                     width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
-    applyStandardHBarFormatting(fig, width=0.6)
+    applyStandardHBarFormatting(fig, width=0.6, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
    
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByCC(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def capsDataGraphByCC(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -534,15 +562,21 @@ def capsDataGraphByCC(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAU
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+    scale = (height/DEFAULT_HEIGHT)
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByCC(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByCC(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -583,6 +617,10 @@ def facingCapsDataGraphByCC(answers, facing, benchmark=None, width=DEFAULT_WIDTH
             'average':'Average Value',
         })
     
+    #markerscale = (abs(height)/DEFAULT_HEIGHT)
+    markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
+    textscale = 1-((1-markerscale)*.6)
+
     if height <= CALCULATE_SCALED_HEIGHT:
         height = calculateScaledHeight(len(yvalues), abs(height))
     
@@ -593,18 +631,23 @@ def facingCapsDataGraphByCC(answers, facing, benchmark=None, width=DEFAULT_WIDTH
                 barmode='group', # Use 'group' for grouped bars
                 labels={'question__topic__slug': '', 'average': '', 'simpleCC':dataviz.DataFilterForm.CARN_CLASS},
                 width=width, height=height )
-    applyStandardHBarFormatting(fig)
+    applyStandardHBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByMission(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def capsDataGraphByMission(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByMission with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -639,15 +682,21 @@ def capsDataGraphByMission(answers, benchmark=None, width=DEFAULT_WIDTH, height=
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+    scale = (height/DEFAULT_HEIGHT)
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByMission(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByMission(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByMission with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -681,6 +730,10 @@ def facingCapsDataGraphByMission(answers, facing, benchmark=None, width=DEFAULT_
             'average':'Average Value',
         })
     
+    #markerscale = (abs(height)/DEFAULT_HEIGHT)
+    markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
+    textscale = 1-((1-markerscale)*.6)
+
     if height <= CALCULATE_SCALED_HEIGHT:
         height = calculateScaledHeight(len(yvalues), abs(height))
     
@@ -690,18 +743,23 @@ def facingCapsDataGraphByMission(answers, facing, benchmark=None, width=DEFAULT_
                 color_discrete_map=mission_palette,
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardHBarFormatting(fig)
+    applyStandardHBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByPubPriv(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def capsDataGraphByPubPriv(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -739,16 +797,22 @@ def capsDataGraphByPubPriv(answers, benchmark=None, width=DEFAULT_WIDTH, height=
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+    scale = (height/DEFAULT_HEIGHT)
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByPubPriv(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByPubPriv(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByPubPriv with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -782,6 +846,10 @@ def facingCapsDataGraphByPubPriv(answers, facing, benchmark=None, width=DEFAULT_
             'average':'Average Value',
         })
     
+    #markerscale = (abs(height)/DEFAULT_HEIGHT)
+    markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
+    textscale = 1-((1-markerscale)*.6)
+
     if height <= CALCULATE_SCALED_HEIGHT:
         height = calculateScaledHeight(len(yvalues), abs(height))
     
@@ -791,18 +859,23 @@ def facingCapsDataGraphByPubPriv(answers, facing, benchmark=None, width=DEFAULT_
                 color_discrete_map={'Public': colorPalette['Public'], 'Private': colorPalette['Private']},  # Set custom color
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardHBarFormatting(fig)
+    applyStandardHBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByEPSCoR(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def capsDataGraphByEPSCoR(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByEPSCoR with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -840,16 +913,22 @@ def capsDataGraphByEPSCoR(answers, benchmark=None, width=DEFAULT_WIDTH, height=D
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+    scale = (height/DEFAULT_HEIGHT)
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByEPSCoR(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByEPSCoR(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByEPSCoR with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -883,6 +962,10 @@ def facingCapsDataGraphByEPSCoR(answers, facing, benchmark=None, width=DEFAULT_W
             'average':'Average Value',
         })
     
+    #markerscale = (abs(height)/DEFAULT_HEIGHT)
+    markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
+    textscale = 1-((1-markerscale)*.6)
+
     if height <= CALCULATE_SCALED_HEIGHT:
         height = calculateScaledHeight(len(yvalues), abs(height))
     
@@ -893,18 +976,23 @@ def facingCapsDataGraphByEPSCoR(answers, facing, benchmark=None, width=DEFAULT_W
                                     Institution.EPSCORChoices.NOT_EPSCOR.label: colorPalette['nonEPSCoR']},  # Set custom color
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardHBarFormatting(fig)
+    applyStandardHBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByMSI(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def capsDataGraphByMSI(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByMSI with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -942,16 +1030,22 @@ def capsDataGraphByMSI(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFA
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+    scale = (height/DEFAULT_HEIGHT)
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByMSI(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByMSI with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -985,6 +1079,10 @@ def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDT
             'average':'Average Value',
         })
     
+    #markerscale = (abs(height)/DEFAULT_HEIGHT)
+    markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
+    textscale = 1-((1-markerscale)*.6)
+
     if height <= CALCULATE_SCALED_HEIGHT:
         height = calculateScaledHeight(len(yvalues), abs(height))
     
@@ -995,18 +1093,23 @@ def facingCapsDataGraphByMSI(answers, facing, benchmark=None, width=DEFAULT_WIDT
                                     Institution.MSIChoices.NOT_AN_MSI.label: colorPalette['NotMSI']},  # Set custom color
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardHBarFormatting(fig)
+    applyStandardHBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def capsDataGraphByOrgModel(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     # Org Model is call "structure" in the model - not very useful until we have more metadata. Sigh. 
     # print("capsDataGraphByOrgModel with: ", answers.count()," answers")
     if (answers.count() == 0): 
@@ -1044,16 +1147,22 @@ def capsDataGraphByOrgModel(answers, benchmark=None, width=DEFAULT_WIDTH, height
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+    scale = (height/DEFAULT_HEIGHT)
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByOrgModel(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByOrgModel(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByOrgModel with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -1087,6 +1196,10 @@ def facingCapsDataGraphByOrgModel(answers, facing, benchmark=None, width=DEFAULT
             'average':'Average Value',
         })
     
+    #markerscale = (abs(height)/DEFAULT_HEIGHT)
+    markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
+    textscale = 1-((1-markerscale)*.6)
+
     if height <= CALCULATE_SCALED_HEIGHT:
         height = calculateScaledHeight(len(yvalues), abs(height))
     
@@ -1096,18 +1209,24 @@ def facingCapsDataGraphByOrgModel(answers, facing, benchmark=None, width=DEFAULT
                 color_discrete_map=structure_palette,
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardHBarFormatting(fig)
+    applyStandardHBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def capsDataGraphByReporting(answers, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def capsDataGraphByReporting(answers, benchmarks=None,
+                           width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     # Org Model is call "orgchart" in the model - not very useful until we have more metadata. Sigh. 
     # print("capsDataGraphByReporting with: ", answers.count()," answers")
     if (answers.count() == 0): 
@@ -1144,16 +1263,22 @@ def capsDataGraphByReporting(answers, benchmark=None, width=DEFAULT_WIDTH, heigh
     applyStandardVBarFormatting(fig)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(x=Facing_xvals, y=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-wide-dot', name='Your Institution'))
+    scale = (height/DEFAULT_HEIGHT)
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
-def facingCapsDataGraphByReporting(answers, facing, benchmark=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByReporting(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByReporting with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -1187,6 +1312,10 @@ def facingCapsDataGraphByReporting(answers, facing, benchmark=None, width=DEFAUL
             'average':'Average Value',
         })
     
+    #markerscale = (abs(height)/DEFAULT_HEIGHT)
+    markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
+    textscale = 1-((1-markerscale)*.6)
+
     if height <= CALCULATE_SCALED_HEIGHT:
         height = calculateScaledHeight(len(yvalues), abs(height))
     
@@ -1196,13 +1325,18 @@ def facingCapsDataGraphByReporting(answers, facing, benchmark=None, width=DEFAUL
                 color_discrete_map=reporting_palette,
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardHBarFormatting(fig)
+    applyStandardHBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    if(benchmark!=None) :
-        fig.add_trace(go.Scatter(y=yvalues, x=benchmark, mode='markers', 
-                                    marker_color='darkorchid', marker_line_width=2, marker_line_color='white',
-                                    marker_size=30, marker_symbol='diamond-tall-dot', name='Your Institution'))
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+            imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
