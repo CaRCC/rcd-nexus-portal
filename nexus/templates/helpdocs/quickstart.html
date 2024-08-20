@@ -95,7 +95,7 @@
     <p class="subtitle">A Step-by-Step Use of the Assessment Tool at your Institution</h2>
     <p class="step">Step 1) Log on to the portal</p>
     <ol class="outer">
-        <li>If you have not yet logged in, go to <a href="https://portal.rcd-nexus.org">https://portal.rcd-nexus.org</a> 
+        <li>If you have not yet logged in, go to <a href="{{ request.scheme }}://{{ request.META.HTTP_HOST }}">{{ request.META.HTTP_HOST }}</a> 
             and follow the instructions to log on with your institutional credentials (e.g., your university).
             <br>If your university is not listed in the CILogon list:
             <ol>
@@ -154,7 +154,7 @@
                 for brainstorming ideas for strategic opportunities. While this should not influence the answers,
                 it may impact the discussions as the team goes through the questions.</li>
         <li>Provide everyone involved with a link to (or copy of) the
-                <a href="/helpdocs/intro_and_guide">Introduction and Guide to Use</a>, and discuss the
+                <a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a>, and discuss the
                 <em>Key Aspects of the Model</em> together to ensure consistent use of the levels.
             <ul>
                 <li>If you are not assessing your whole institution, discuss the organization scope with your team. Review the 
@@ -213,7 +213,7 @@
 
     <hr>
     <p class="footnote" id="ftnt1"><sup>1</sup>  The Integrated Postsecondary Education Data System. 
-        See <a href="https://nces.ed.gov/ipeds">https://nces.ed.gov/ipeds</a>.
+        See <a target="_blank" rel="noopener noreferrer" href="https://nces.ed.gov/ipeds">https://nces.ed.gov/ipeds</a>.
    </p>
 </section>
 

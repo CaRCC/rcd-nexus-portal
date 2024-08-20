@@ -76,6 +76,10 @@
     div.IPEDShdr h3 {
         margin:0;
     }
+    /* Hack to hide "Unknown" in the list of choices for mission */
+    div#id_mission label[for="id_mission_0"] {
+        display: none;
+    }
 </style>
 {% endblock %}
 

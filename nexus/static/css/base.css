@@ -78,6 +78,16 @@ header {
     width: 90%;
 }
 
+#nsflogo {
+    width:40px;
+    height:40px;
+    position:absolute;
+    top: 25px;
+    right: 10px;
+}
+/* Hide the logo when screen gets narrow (so it doesn't float over the menu) */
+@media screen and (max-width: 900px) { #nsflogo { display:none; } }
+
 .messages {
     width: 100%;
     margin-top: 0em;

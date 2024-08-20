@@ -76,6 +76,7 @@ def data_viz_demographics_contriblist(request):
 
     context = {
         "rows":rows,
+        "nInsts":nInsts,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Community Demographics":"dataviz:demographics",
