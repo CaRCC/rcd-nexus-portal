@@ -511,8 +511,8 @@ body>nav details summary, nav #filtertree details summary {
     font-size: .9em;
 }
 #filtertree .viewoption label, #filtertree .viewoption label option {
-    font-weight: normal;
-    font-size: .85em;
+    /* font-weight: normal; */
+    font-size: .9em;
 }
 #filtertree details summary label {
     pointer-events: none;
