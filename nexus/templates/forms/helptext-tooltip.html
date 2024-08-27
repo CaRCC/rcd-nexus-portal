@@ -1,3 +1,4 @@
+{% load static %}
 <table>
     {% for field in form %}
     <tr class="answer-field">
@@ -9,7 +10,7 @@
             {{ field }}
         </td>
         <td class="answer-field-help tooltip">
-            <img class="tooltip" src="/static/images/help.png" alt="help icon">
+            <img class="tooltip" src="{% static 'images/help.png' %}" alt="help icon">
             <span class="tooltiptext">{{ field.help_text }}</span>                
         </td> 
     </tr>

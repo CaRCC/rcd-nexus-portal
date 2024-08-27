@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block head %}
 <style>
@@ -200,7 +201,7 @@
         </p>
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     <h2 id="ack">Acknowledgements</h2>
-    <img src="/static/images/NSF-logo-sm.png" width="125" height="125" align="right" alt="NSF logo image"/>
+    <img src="{% static 'images/NSF-logo-sm.png' %}" width="125" height="125" align="right" alt="NSF logo image"/>
     <p class="content">The RCD Capabilities Model was developed through a collaboration of the Campus Research Computing Consortium 
         (<a target="_blank" rel="noopener noreferrer" href="https://www.carcc.org">CaRCC</a>), <a target="_blank" rel="noopener noreferrer" href="https://internet2.edu">Internet2</a>, and 
         <a target="_blank" rel="noopener noreferrer" href="https://educause.edu">EDUCAUSE</a>. This work is supported in part by National Science Foundation by an 

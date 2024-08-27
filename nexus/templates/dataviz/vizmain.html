@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block head %}
 <style>
@@ -21,7 +22,8 @@ main {
         <h2>Community Demographics</h2>
         <div class="imgcard">
             <a href="{% url 'dataviz:demographics' %}">
-                <img class="cardcontent" src="/static/images/demogMapCardImg.png" alt="Map showing distribution of community contributors">
+                <img class="cardcontent" src="{% static 'images/demogMapCardImg.png' %}" alt="Map showing distribution of community contributors">
+                                             "{% static 'images/NSF-logo-sm.png' %}"
             </a>
         </div>
     </section>
@@ -29,7 +31,7 @@ main {
         <h2>Capabilities Data+Benchmarking</h2>
         <div class="imgcard">
             <a href="{% url 'dataviz:capsmodeldata' %}">
-                <img class="cardcontent" src="/static/images/epscor_DFTopicsCardImg.png" alt="Bar graph showing example capabilities model data">
+                <img class="cardcontent" src="{% static 'images/epscor_DFTopicsCardImg.png' %}" alt="Bar graph showing example capabilities model data">
             </a>
         </div>
     </section>
@@ -37,7 +39,7 @@ main {
         <h2>Priorities Data</h2>
         <div class="imgcard">
             <a href="{% url 'dataviz:prioritiesdata' %}">
-                <img class="cardcontent" src="/static/images/prioDistCardImg.png" alt="Bar graph showing example capabilities model priorities data">
+                <img class="cardcontent" src="{% static 'images/prioDistCardImg.png' %}" alt="Bar graph showing example capabilities model priorities data">
             </a>
         </div>
     </section>
