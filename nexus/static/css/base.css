@@ -194,6 +194,122 @@ main section section {
     box-shadow: none;
 }
 
+main div.cardblock {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    grid-auto-rows: 1fr;
+    padding-top:2em;
+}
+main div.cardblock section.card {
+    min-height: 250px;
+    height: 100%;
+    max-height: 400px;
+    flex-basis: 30%;
+    min-width:250px;
+    padding:auto;
+    margin:10px auto;
+}
+main div.cardblock section.card div.imgcard {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height: 90%;
+    width: 100%;
+}
+main div.cardblock section.card div img {
+    width: 95%;
+}
+
+section.card h2 {
+    padding-left: 10px;
+    text-align: center;
+    font-size: 1.3em;
+}
+section.card p {
+    padding: 0px 10px;
+}
+section.card p.center {
+    text-align: center;
+}
+section.card ul {
+    list-style-type: disc;
+    padding-left: 2em;
+}
+
+main div.cardbutton { 
+    margin-left: auto;
+    margin-right: auto; 
+    margin-bottom: 8px; 
+    width: 12em;
+}
+main img.cardcontent {  
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px 20px;
+    margin: auto;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+
+    cursor: pointer;
+}
+
+main a.cardbutton {  
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px 20px;
+    margin: auto;
+    justify-content: center;
+    min-width: 4em;
+    min-height: 2.5em;
+
+    color: var(--primary-fg);
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1.1;
+
+    background-color: var(--secondary);
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+
+    cursor: pointer;
+    transition: 220ms all ease-in-out;    
+}
+main a.cardbutton:hover {  
+    background-color: var(--secondary-emphasis);
+}
+
+main a.cardbutton:focus {
+    outline-style: solid;
+    outline-color: transparent;
+    box-shadow: 0 0 0 4px var(--accent);
+}
+
+
+main a.cardbutton.NYI {  
+    pointer-events: none;
+    background-color: var(--primary-fg-off);
+    color: var(--info-off);
+}
+
+img.main-bg {
+    opacity: 0.4;
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 100%;
+    height: 600px;
+    z-index: -100;
+    object-fit: cover;
+    object-position: 80%;
+}
+
 main ul {
     list-style: none;
     padding-left: 1em;
@@ -272,6 +388,10 @@ header>nav .logo {
     margin-left: 0;
 }
 
+header>nav .logo a {
+    display:inline-block;
+}
+
 header>nav li {
     text-align: center;
     text-transform:uppercase;
@@ -291,12 +411,24 @@ header>nav .logo img {
     vertical-align: middle;
 }
 
+main>nav.breadcrumbs {
+    align-self: flex-start;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.9em;
+    padding-left: 10px;
+}
+main>nav.breadcrumbs>p.breadcrumbs {
+    margin-top: 0.7em;
+    margin-bottom: 0.2em;
+}
+
 body>nav {
     grid-area: nav;
     background-color: white;
     display: flex;
     flex-direction: column;
-    margin: 10px;
+    padding: 10px;
     border-right: solid dimgrey;
 }
 
@@ -304,10 +436,160 @@ body>nav ul {
     list-style: circle;
     max-width: 12em;
     padding-left: 0em;
+    margin:0;
 }
 
 body>nav details ul {
     padding-left: 1.5em;
+}
+
+#filtertree {
+    min-width: 15em;
+}
+#filtertree input#UpdateView {
+    font-size: 0.9em;
+    font-weight: bold;
+    background-color: var(--logo-dk-blue-shadow);
+    display:inline;
+    margin:0 auto;
+    float: right;
+    border-width: 1px;
+    padding: 3px 10px
+}
+
+#filtertree input#UpdateView:hover {
+    background-color: var(--logo-lt-blue);
+}
+
+#filtertree span.helptext {
+    display: none;
+}
+#filtertree li.skip, #filtertree li.skipFilter, #filtertree div.skip {
+    display: none;
+}
+#filtertree div.viewChoices {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+#filtertree summary, #filtertree div.viewselect {
+    margin-top: 5px;
+}
+
+#filtertree div.viewselect input[type='checkbox']{
+    position:relative;
+    top: 0.15em;
+}
+
+#filtertree summary, #filtertree div.viewselect select{
+    margin-left: 5px;
+    padding:1px;
+    font-weight: bold;
+    width: 16em;
+}
+
+#filtertree label, #resexp_to {
+    font-weight: bold;
+    font-size: .9em;
+}
+#filtertree details summary label {
+    pointer-events: none;
+}
+#filtertree details label[for] {
+    margin-left:10px;
+}
+
+#filtertree label input:checked {
+    accent-color: var(--logo-dk-blue);
+}
+
+#filtertree span.showAllNone {
+    font-size: .8em;
+    padding-left: .1em;
+}
+
+#filtertree details:not([open]) span.showAllNone {
+    display:none;
+}
+#filtertree #id_benchmark {
+    float:left;
+}
+#filtertree div#res_exp_wrapper {
+    padding-left: .4em;
+    padding-top: .2em;
+}
+#filtertree div#res_exp_wrapper p {
+    margin-top: .2em;
+    margin-bottom: .2em;
+}
+
+
+/* FilterTooltip container */
+.filtertip {
+    position: relative;
+    color: var(--primary);
+}
+
+/* Tooltip text */
+.filtertip .filtertiptext {
+    visibility: hidden;
+    min-width: 400px;
+    background-color: white;
+    box-shadow: 0px 0px 3px 3px #FFFFFF;
+    color: var(--nexus-dark-colored-text);
+    text-align: left;
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 1px;
+
+    /* Position the filtertip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    top: -1px;
+    left: 20px;
+}
+
+/* Show the filtertip text when you mouse over the filtertip container */
+.filtertip:hover .filtertiptext {
+    visibility: visible;
+}
+
+nav p.FilterTitle {
+    margin:0 0 0.3em 0;
+}
+
+nav span.FilterTitle {
+    font-weight: bold;
+    font-size: 1em;
+}
+
+#canvas.viz {
+    width: 80%;
+    height: 600px;
+    display:flex;
+    /* border:1px solid var(--logo-dark-purple); */
+}
+#canvas.viz>div {
+    margin:20px auto;
+}
+h3.graphNYI {
+    margin:3em auto;
+    font-style: italic;
+    color:var(--nexus-dark-colored-text);
+}
+.plotly .hoverlayer .hovertext rect {
+    fill-opacity: 1 !important;
+}
+
+#CMGraphTitle {
+    margin-top: 0;
+    margin-bottom: 0.2em;
+}
+
+p.viz_footnote {
+    font-size: 0.8em;
+    color: var(--nexus-light-text);
+    z-index: 5;
 }
 
 .menu {
@@ -320,8 +602,12 @@ body>nav details ul {
 }
 
 .menu>li {
-    margin: auto 1rem;
+    margin: auto 0.3rem;
     text-transform: uppercase;
+}
+
+.menu>li a {
+    padding: 0 0.5rem;
 }
 
 .menu>li button {
@@ -329,7 +615,7 @@ body>nav details ul {
     background-color: transparent;
     font-family: inherit;
     font-size: inherit;
-    padding: 0;
+    padding: 0 0.5rem;
     cursor: pointer;
     color: inherit;
     font-weight: bold;

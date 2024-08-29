@@ -101,6 +101,7 @@ class RCDProfile(models.Model):
         on_delete=models.RESTRICT,
         related_name="profiles",
     )
+
     class MissionChoices(models.TextChoices): 
         RESEARCHESSENTIAL = "rsrchess", mark_safe("<b>Research Essential</b>: Research is the primary or exclusive mission, \
             and teaching does not significantly factor into faculty and institutional success \
@@ -113,6 +114,12 @@ class RCDProfile(models.Model):
                                                 but faculty research is rewarded.")
         TEACHINGESSENTIAL = "teachess", mark_safe("<b>Teaching Essential</b>: Teaching is the primary mission, \
             and faculty research does not factor heavily in faculty and institutional success.")
+        __empty__ = "Unknown"
+
+
+    def getShortMissionChoice(label):
+        #The Choices all have the main label marked in <b> tags, at the start. We just extract that
+        return label[3:label.find("</b>")]
 
     mission = models.CharField(
         "Institutional Mission",
@@ -150,6 +157,8 @@ class RCDProfile(models.Model):
         # MEDICAL = "medical", "Health sciences/Medical school"  This is a scoping issue, not an org model
         OTHER = "other", "Other"
          # NONE = "none", "Not applicable"  This is covered under Other, and simplifies things to omit it
+        __empty__ = "Unknown"
+
 
     org_chart = models.CharField(
         "Reporting structure",

@@ -1,2 +1,18 @@
 <nav class="breadcrumbs">
+    {% if breadcrumbs %}
+    <p class="breadcrumbs">
+        {% for breadcrumb, view in breadcrumbs.items %}
+            {% if not forloop.first %}
+                <span class="breadcrumbarrow"> -> </span>
+            {% endif %}
+            <span class="breadcrumb">
+                {% if not forloop.last %}
+                    <a href="{% url view %}">{{breadcrumb}}</a>
+                {% else %}
+                    {{breadcrumb}}
+                {% endif %}
+            </span>
+        {% endfor %}
+    </p>
+    {% endif %}
 </nav>

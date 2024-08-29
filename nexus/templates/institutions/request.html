@@ -1,35 +1,68 @@
 {% extends "base.html" %}
 
 {% block title %}RCD-Nexus New Institution request{% endblock %}
+
+{% block head %}
+<style>
+p.intro {
+    margin:0px;
+    max-width: 700px;
+    text-align: center;
+}
+form section.fields input, form section.fields textarea {
+    width: 25em;
+    margin-bottom: 5px;
+}
+thead th {
+    padding:10px;
+    padding-left: 2em;
+}
+tbody td.name {
+    width: 25em;
+}
+tbody td.domain {
+    width: 8em;
+    margin-left: 2em;
+}
+</style>
+{% endblock %}
+
 {% block main %}
 <h1>New Institution Request</h1>
-<p>Fill out the form below to request a new institution. We will review your request and get back to you as soon as possible.</p>
-<p>Before submitting, <b>please verify</b> that your institution isn't already included in RCD Nexus, using the table at the bottom. If it is, you should login to it via CILogon, or <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a>to it.</p>
+<p class="intro">Fill out the form below to request a new institution.<br>We will review your request and get back to you as soon as possible.</p>
+<p class="intro">Before submitting, <b>please verify</b> that your institution isn't already included in RCD Nexus,using the table at the bottom.
+    If it is, you should login to it via CILogon, or <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a>to it.</p>
 <form method="post" action="">
     {% csrf_token %}
     {{ form }}
-    <input type="submit" value="Submit">
+    <section class="actions">
+        <button type="submit">Submit Request</button>
+    </section>
 </form>
 
-<label for="inst-filter">Filter existing institutions:</label>
-<input id="inst-filter" _="on input show <tbody>tr/> in <table.results/> when its textContent.toLowerCase() contains my value.toLowerCase()"/>
-{% if institutions %}
-<table class="results">
-    <thead>
-        <tr>
-            <th>Institution</th>
-        </tr>
-    </thead>
-    <tbody style="display:block; max-height:20em; overflow:scroll">
-        {% for inst in institutions %}
-        <tr>
-            <td>{{ inst.name }}</td>
-            <td>{{ inst.internet_domain }}</td>
-        </tr>
-        {% endfor %}
-</table>
-{% else %}
-<p>No institutions found.</p>
-{% endif %}
+<section>
+    <h3><label style="font-weight: bold; font-size: 1.2em; margin:.5em;" for="inst-filter">Filter existing institutions:</label>
+    <input style="width:20em;" id="inst-filter" _="on input show <tbody>tr/> in <table.results/> when its textContent.toLowerCase() contains my value.toLowerCase()"/></h3>
+    {% if institutions %}
+
+    <table class="results" style="display:block; max-height:20em; overflow-y:scroll">
+        <thead>
+            <tr>
+                <th>Institution</th>
+                <th>Domain</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inst in institutions %}
+            <tr>
+                <td class="name">{{ inst.name }}</td>
+                <td class="domain">{{ inst.internet_domain }}</td>
+            </tr>
+            {% endfor %}
+    </table>
+    {% else %}
+    <p>No institutions found.</p>
+    {% endif %}
+</section>
 
 {% endblock %}

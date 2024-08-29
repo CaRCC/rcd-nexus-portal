@@ -1,21 +1,195 @@
 {% extends "base.html" %}
+{% block head %}
+<style>
+    h2 {
+        color: dimgray;
+    }
+    .tooltip {
+        top: 1.5px;
+        height: 1.1em;
+    }
+    span.Instname {
+        color: black;
+        font-size: 1.1em;
+    }
+    div.IPEDS {
+        min-width: 400px;
+        max-width: 700px;
+    }
+
+    div.IPEDS section.fields {
+        display: grid;
+        grid-template-columns: auto 1fr;
+    }
+    div.IPEDS section.fields>div {
+        padding: 10px;
+    }
+    div.IPEDS div.fields-head {
+        text-align: right;
+    }
+    div.IPEDShdr {
+        grid-column: 1/-1;
+        background-color: #eee;
+        margin: 0 0 6px 0;
+        padding: 5px 20px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    div.IPEDShdr h3 {
+        margin:0;
+    }
+    input#id_internet_domain {
+        background-color: var(--nexus-white-text);
+        color: #666666;
+        cursor: default;
+        border:solid thin var(--nexus-disabled);
+        box-shadow: none;
+    }
+</style>
+{% endblock %}
 
 {% block main %}
-<h1>Edit Institution</h1>
-<h2>{{form.instance}}</h2>
-<form method="post">
+<h2>{% if can_edit %}Edit{% else %}View{% endif %} Institution Information for: <span class="Instname">{{form.instance}}</span></h2>
+<form id="EditForm" method="post" onsubmit="setFormSubmitting()">
+    {% if can_edit %}
+        <p class="intro">In most instances this data comes from IPEDS and relatives sources.
+            <br>You may fill in missing information or change incorrect values but use care - <br>incorrect values may compromise portal functionality!</p>
+    {% else %}
+        <p class="intro">You can view but do not have rights to change the information about your institution.</p>
+    {% endif %}
+    {{form.subject.errors}}
+    {% for field in form %}
+        {% if field.errors %}
+            <div class="fieldWrapper">
+                {{ field.label }}{{ field.errors }}
+            </div>
+            {% endif %}
+    {% endfor %}
     {% csrf_token %}
     {% if not can_edit %}
     <fieldset disabled>
     {% endif %}
-    {{ form }}
-    {% if can_edit %}
-    <section class="actions">
-        <button type="submit">Save</button>
-    </section>
-    {% else %}
-    </fieldset>
-    {% endif %}
+    <div class="IPEDS">
+        <section class="fields">
+            <div class="fields-head even-field">{{ form.name.label_tag  }}</div>
+            <div class="fields-body even-field">{{ form.name }}{{ form.name.errors }}</div>
+
+            <div class="fields-head odd-field">{{ form.country.label_tag  }}</div>
+            <div class="fields-body odd-field">{{ form.country }}{{ form.country.errors }}</div>
+
+            <div class="fields-head even-field">{{ form.ipeds_region.label_tag  }}</div>
+            <div class="fields-body even-field">{{ form.ipeds_region }}{{ form.ipeds_region.errors }}</div>
+
+            <div class="fields-head even-field">{{ form.state_or_province.label_tag  }}</div>
+            <div class="fields-body even-field">
+                {{ form.state_or_province }} 
+                <span class="tooltip">
+                    <img class="tooltip" src="/static/images/help.png" alt="help icon">
+                    <span class="tooltiptext">Use standard names with proper noun capitalization</span>                
+                </span>
+                {{ form.state_or_province.errors }}
+            </div>
+
+            {% comment %}
+            Just add the size element, not the individual numbers - we don't use them now. 
+            <div class="fields-head odd-field">{{ form.undergrad_pop.label_tag  }}</div>
+            <div class="fields-body odd-field">{{ form.undergrad_pop }}{{ form.undergrad_pop.errors }}</div>
+
+            <div class="fields-head odd-field">{{ form.grad_pop.label_tag  }}</div>
+            <div class="fields-body odd-field">{{ form.grad_pop }}{{ form.grad_pop.errors }}</div>
+
+            <div class="fields-head odd-field">{{ form.student_pop.label_tag  }}</div>
+            <div class="fields-body odd-field">
+                {{ form.student_pop }}
+                <span class="tooltip">
+                    <img class="tooltip" src="/static/images/help.png" alt="help icon">
+                    <span class="tooltiptext">Enter the sum of undergraduate and graduate populations.</span>                
+                </span>
+                {{ form.student_pop.errors }}
+            </div>
+            {% endcomment %}
+            
+            <div class="fields-head odd-field">{{ form.ipeds_size.label_tag  }}</div>
+            <div class="fields-body odd-field">{{ form.ipeds_size }}{{ form.ipeds_size.errors }}</div>
+
+            <div class="fields-head even-field">{{ form.research_expenditure.label_tag  }}</div>
+            <div class="fields-body even-field">{{ form.research_expenditure }}{{ form.research_expenditure.errors }}</div>
+
+            <div class="fields-head odd-field">{{ form.ipeds_sector.label_tag  }}</div>
+            <div class="fields-body odd-field">{{ form.ipeds_sector }}{{ form.ipeds_sector.errors }}</div>
+
+            <div class="fields-head even-field">{{ form.ipeds_level.label_tag  }}</div>
+            <div class="fields-body even-field">{{ form.ipeds_level }}{{ form.ipeds_level.errors }}</div>
+
+            <div class="fields-head odd-field">{{ form.ipeds_control.label_tag  }}</div>
+            <div class="fields-body odd-field">{{ form.ipeds_control }}{{ form.ipeds_control.errors }}</div>
+
+            <div class="fields-head even-field">{{ form.ipeds_hbcu.label_tag  }}</div>
+            <div class="fields-body even-field">{{ form.ipeds_hbcu }}{{ form.ipeds_hbcu.errors }}</div>
+
+            <div class="fields-head odd-field">{{ form.ipeds_pbi.label_tag  }}</div>
+            <div class="fields-body odd-field">{{ form.ipeds_pbi }}{{ form.ipeds_pbi.errors }}</div>
+
+            <div class="fields-head even-field">{{ form.ipeds_tcu.label_tag  }}</div>
+            <div class="fields-body even-field">{{ form.ipeds_tcu }}{{ form.ipeds_tcu.errors }}</div>
+
+            <div class="fields-head odd-field">{{ form.ipeds_hsi.label_tag  }}</div>
+            <div class="fields-body odd-field">{{ form.ipeds_hsi }}{{ form.ipeds_hsi.errors }}</div>
+
+            <div class="fields-head even-field">{{ form.ipeds_msi.label_tag  }}</div>
+            <div class="fields-body even-field">{{ form.ipeds_msi }}{{ form.ipeds_msi.errors }}</div>
+
+            <div class="fields-head odd-field">{{ form.ipeds_epscor.label_tag  }}</div>
+            <div class="fields-body odd-field">
+                {{ form.ipeds_epscor }}
+                <span class="tooltip">
+                    <img class="tooltip" src="/static/images/help.png" alt="help icon">
+                    <span class="tooltiptext">If you don't know what this is, it should probably be Not EPSCoR.</span>                
+                </span>
+                {{ form.ipeds_epscor.errors }}
+            </div>
+
+            <div class="fields-head even-field">{{ form.ipeds_urbanization.label_tag  }}</div>
+            <div class="fields-body even-field">{{ form.ipeds_urbanization }}{{ form.ipeds_size.errors }}</div>
+
+            <div class="fields-head odd-field">{{ form.ipeds_land_grant.label_tag  }}</div>
+            <div class="fields-body odd-field">{{ form.ipeds_land_grant }}{{ form.ipeds_land_grant.errors }}</div>
+
+            <div class="fields-head even-field">{{ form.carnegie_classification.label_tag  }}</div>
+            <div class="fields-body even-field">{{ form.carnegie_classification }}{{ form.carnegie_classification.errors }}</div>
+
+        </section>
+        {% if can_edit %}
+        <section class="actions">
+            <button type="submit">Save</button>
+        </section>
+        {% else %}
+        </fieldset>
+        {% endif %}
+        <section class="fields">
+            <fieldset>
+                <p>These fields are not user-editable.<br>Please email <a href="mailto:capsmodel-help@carcc.org">capsmodel-help@carcc.org</a> 
+                    if you need to correct one of these values.</p>
+                <section class="fields">
+                    <div class="fields-head">{{ form.internet_domain.label_tag  }}</div>
+                    <div class="fields-body">{{ form.internet_domain }}</div>
+                </section>
+            </fieldset>
+        </section>
+    </div>
 </form>
 
-{% endblock %}
+<script>
+    var formEl = document.getElementById("EditForm");
+    var i;
+    formChanged = false;
+    formEl.addEventListener("change", () => formChanged = true );
+    window.addEventListener('beforeunload', (event) => {
+        if (formChanged && !formSubmitting) {
+            event.returnValue = 'You have unsaved changes!';
+        }
+    });
+    formEl = document.getElementById("id_internet_domain");
+    formEl.setAttribute('readonly', true);
+    formEl.setAttribute("onfocus", "blur()");
+ </script>
+ {% endblock %}

@@ -23,6 +23,7 @@ from nexus.models import (
     RCDProfileMember,
     RCDProfileMemberInvite,
     RCDProfileMemberRequest,
+    InstitutionAffiliation,
 )
 from nexus.utils.navtree import NavNode
 
@@ -226,6 +227,9 @@ def rcd_profile_edit(request, pk):
         "navtree": navtree(profile, re.escape(str(profile))),
         "can_manage": request.user.rcd_profile_memberships.filter(
             profile=profile, role__in=manage_roles
+        ).exists(),
+        "can_edit_inst": profile.institution.user_affiliations.filter(
+            user=request.user, role=InstitutionAffiliation.Role.MANAGER
         ).exists(),
     }
 
@@ -442,7 +446,6 @@ def rcd_profile_handle_membership_request(http_request, pk):
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[profile_request.requested_by.email],
             )
-            # TODO send email
         else:
             return HttpResponseBadRequest()
 
