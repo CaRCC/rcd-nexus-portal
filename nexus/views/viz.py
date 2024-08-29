@@ -1511,7 +1511,7 @@ def scatter_plot():
     # Create a scatter chart
     fig = px.scatter( df, x='Inst', y='Average Values',
                     color='Facings',
-                    symbol='Facings',
+                    
                     # color_discrete_map=scatterPlotcolorMap,
                     color_discrete_sequence= scatterPlotColorSeq,
                     labels=None,
