@@ -8,6 +8,7 @@ from django.db.models import Count
 import plotly.express as px
 import plotly.io as po
 from django.db.models import Q
+from math import ceil
 
 
 def filter_assessment_data(request):
@@ -101,11 +102,13 @@ def filter_assessment_data(request):
 # % %
 colorPalette = {'allData':'#9F9F9F', 'EPSCoR':'#5ab4ac', 'nonEPSCoR':'#d8b365', 
                 'errBars':'#bbb', 'lightErrBars':'#f5f5f5', 'bgColor':'#555',
-                'RF':'#40bad2', 'DF': '#fab900', 'SWF':'#90bb23', 'SYF':'#ee7008', 'SPF':'#d5393d',
+                'RF':'#40bad2', 'DF': '#fab900', 'SWF':'#756bb1', 'SYF':'#ee7008', 'SPF':'#D81B60',
                 'R1':'#2e75b6','R2':'#8bb8e1','AllButR1':'#d1e3f3','OtherAcad':'#d1e3f3',
                 'Public':'#ffd966','Private':'#ec7728',
                 'NotMSI':'#FFE699','HSI':'#C5E0B4','otherMSI':'#8FAADC',
                 '2022':'#ffba5a', '2021':'#6aaa96', '2020':'#ada3d3'}
+
+scatterPlotColorSeq = [colorPalette['RF'],colorPalette['DF'],colorPalette['SWF'],colorPalette['SYF'],colorPalette['SPF']]
     
 # Define a dictionary to map classification values to names
 classification_mapping = {
@@ -463,7 +466,7 @@ def demographic_map():
         #     height=400,
     )
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)'''
+    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
 
 
 def demographic_map():
@@ -1448,6 +1451,92 @@ def strategy_ccGraph():
     fig.update_xaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
     
     # Convert the figure to HTML including Plotly.js
+    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)'''
+
+
+def scatter_plot():
+
+    data =CapabilitiesAnswer.objects.aggregate_score('question__topic__facing','assessment__profile__institution'). \
+        values('question__topic__facing','assessment__profile__institution','average')
+
+    df= pd.DataFrame(data)
+    df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping) # Map the facings to names
+
+    # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
+    df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
+    # Multiply by 100 to display percentages
+    df['average'] *= 100
+
+    # Rename the columns for clarity
+    df =  df.rename(columns={
+            'question__topic__facing' : 'Facings',
+            'assessment__profile__institution' :'Inst',
+            'average':'Average Values',
+        })
+    
+    # Restrict to approved assessments
+    profiles = RCDProfile.objects.filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED)
+    #if not years is None:
+        # print('getAllAnswers filtering to years: ',years)
+    #    profiles = profiles.filter(year__in=years)
+    # Now ensure we only have the latest profile for each institution for the given set of years
+    profiles = profiles.order_by('institution', '-year').distinct('institution')
+    #print("getAllAnswers found: ",profiles.count()," distinct non-superseded profiles")
+    answers = CapabilitiesAnswer.objects.filter(assessment__profile__in=profiles)
+    # Get only the main answers (skip the domain coverage ones)
+    answers = answers.filter(not_applicable=False).exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug)
+    #print(answers.count())
+    instCount = answers.values('assessment__id').distinct().count()
+
+    nInstsRange = [i for i in range(1, 1+int(instCount))]
+    instIndex = pd.Index(nInstsRange+nInstsRange+nInstsRange+nInstsRange+nInstsRange)
+    df.loc[:, 'Inst'] = instIndex
+    #print('Scatter df: ',df)
+
+    '''
+    # Define marker symbols for different facings
+    marker_symbols = {
+        'Researcher-Facing': 'circle',
+        'Data-Facing': 'square',
+        'Software-Facing': 'diamond',
+        'System-Facing': 'cross',
+        'Strategy & Policy Facing': 'plus'
+    }
+    
+    # Map marker symbols to the DataFrame
+    df['Marker'] = df['Facings'].map(marker_symbols)
+
+    '''
+    print(df)
+    # Create a scatter chart
+    fig = px.scatter( df, x='Inst', y='Average Values',
+                    color='Facings',
+                    symbol='Facings',
+                    # color_discrete_map=scatterPlotcolorMap,
+                    color_discrete_sequence= scatterPlotColorSeq,
+                    labels=None,
+                    width=800, height=550)
+
+    # Make the x axis have a round number range. Round to 5 for small counts, to 10 for larger ones.
+    roundedInstCount = ceil(instCount/5)*5
+    xdtick = 5 if roundedInstCount<25 else 10
+    fig.update_layout(
+        xaxis=dict(range=[0, roundedInstCount], visible=True, showticklabels=True, dtick=xdtick, color='white'),
+        xaxis_title=dict(text='<b>Institutions</b>', font=dict(size=14, color= colorPalette['bgColor']), standoff=0),
+        yaxis=dict(ticksuffix="%", range=[0, 100], dtick=20, ),
+        yaxis_title=dict(text='<b>Coverage</b>', font=dict(size=14, color= colorPalette['bgColor'])),
+        plot_bgcolor= colorPalette['bgColor'], 
+        margin_t=25,autosize=True,
+        legend_title_text='',
+        legend=dict(font=dict(size=14, color= colorPalette['bgColor']), itemsizing="constant", itemwidth=30),
+        hoverlabel = dict(font=dict(size=16)),        
+        )
+    msize = 5 + 100/instCount   # scale the marker size up for fewer results
+    fig.update_traces(marker={'size': msize}, textfont_size=18, hovertemplate='<b>Coverage: %{y:.0f}%</b>', )
+
+
+
+    # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
 
 
@@ -1460,12 +1549,15 @@ def index(request):
     # Convert the queryset to a DataFrame
     # filter_data = pd.DataFrame(data) 
   # print(filter_data)  
-
-   #context = {'visualization':allSummaryDataGraph(),'viz1': simpleCC(),'viz2':publicPrivateGraph(),'viz3': demographic_map()}
+  
     
-    context = {'viz1': reasercher_ppGraph(),'viz2':data_ppGraph(),'viz3':software_ppGraph(),'viz4':system_ppGraph(),'viz5()':strategy_ppGraph(),\
+    
+
+    context = {'viz':scatter_plot()}
+    
+    '''context = {'viz1': reasercher_ppGraph(),'viz2':data_ppGraph(),'viz3':software_ppGraph(),'viz4':system_ppGraph(),'viz5()':strategy_ppGraph(),\
                'viz6': reasercher_ccGraph(), 'viz7': data_ccGraph(),'viz8':software_ccGraph(),'viz9':system_ccGraph(),'viz10()':strategy_ccGraph(), \
-                'viz11': demographic_map()} 
+                'viz11': demographic_map()} '''
     
     
     return render(request, 'viz/test.html',context)
