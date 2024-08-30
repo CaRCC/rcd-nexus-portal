@@ -277,7 +277,7 @@ def demographicsChartByOrgModel(profiles, width=DEFAULT_PIE_WIDTH, height=DEFAUL
     #print(data)
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
     counts = df.groupby('structure2').size().sort_values(ascending=False)
-    print(counts)
+    # print(counts)
     counts = counts.rename(cmgraphs.structure_mapping)
 
     # Create a pie chart
