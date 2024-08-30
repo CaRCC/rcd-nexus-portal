@@ -13,6 +13,9 @@
             "footer";
         grid-template-columns: 1fr;
     }
+    p, ul, ol {
+        line-height: 1.35;
+    }
     section.helpdocs {
         width: 80%;
         max-width: 800px;
@@ -36,10 +39,10 @@
     }
     section.helpdocs ul li{
         padding:5px;
-        font-size: 0.9em;
+        font-size: 14px;
     }
-    p.content {
-        font-size: 0.9em;
+    p.content, ol.content  {
+        font-size: 14px;
     }
     span.topic {
         font-weight: bold;
@@ -76,6 +79,7 @@
     }
     table.content td p {
         margin:4px;
+        font-size: 13px;
     }
     table.content th p {
         margin:4px;
@@ -109,10 +113,12 @@
     span.tocentry {
         display:block;
         padding-left: 20px;
+        font-size: 0.9em;
     }
     span.tocsubentry {
         display:block;
         padding-left: 40px;
+        font-size: 0.9em;
     }
     p.totop {
         padding:0;
@@ -126,7 +132,7 @@
         margin: 0;
         padding: 0 10px 0 0;
         font-style:italic;
-        font-size:.85em;
+        font-size:.8em;
         position:relative;
         top: -2px;
     }
@@ -224,8 +230,8 @@
          usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
 
     <h2 id="KeyAspects">Understanding Key Aspects of the Model</h2>
-    <p>There are six key concepts that underlie the Model, around which the tool is organized. These are:</p>
-    <ol class="copyright">
+    <p class="content">There are six key concepts that underlie the Model, around which the tool is organized. These are:</p>
+    <ol class="content">
         <li><a href="#FiveFacings">The Five Facings</a></li>
         <li><a href="#Availability">Availability across institution</a></li>
         <li><a href="#SOL">Service Operating Level</a></li>

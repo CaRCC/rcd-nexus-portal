@@ -14,8 +14,10 @@
 {%if showErrBars %}
     <p class="viz_footnote">Note: "error bars" represent one standard deviation in the data, and illustrate the variation among institutions.</p>
 {%endif%}
+{{ nonDefs|json_script:"nonDefs" }}
 <script>
-    initDetailsFromStorage();
+    const nonDefs = JSON.parse(document.getElementById('nonDefs').textContent);
+    initDetailsFromStorage( nonDefs );
     document.getElementById("id_chart_views").addEventListener("change", handleChartViewSelection );
     {%if chart %}
         hideFiltersForChartView("{{chart}}");

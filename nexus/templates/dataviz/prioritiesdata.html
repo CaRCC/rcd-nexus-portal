@@ -13,7 +13,9 @@
 <div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%else%}
     <p style="margin:3em auto;">Note: This feature is still under development and will be included in a future release.</p>{%endif%}</div>
 
+{{ nonDefs|json_script:"nonDefs" }}
 <script>
-    initDetailsFromStorage();
+    const nonDefs = JSON.parse(document.getElementById('nonDefs').textContent);
+    initDetailsFromStorage( nonDefs );
 </script>
 {% endblock %}

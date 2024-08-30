@@ -33,7 +33,7 @@ NMARKERSMAX = 3
 
 colorPalette = {'allData':'#9F9F9F', 'EPSCoR':'#5ab4ac', 'nonEPSCoR':'#d8b365', 
                 'errBars':'#bbb', 'lightErrBars':'#f5f5f5', 'bgColor':'#555',
-                'RF':'#40bad2', 'DF': '#fab900', 'SWF':'#90bb23', 'SYF':'#ee7008', 'SPF':'#d5393d',
+                'RF':'#40bad2', 'DF': '#fab900', 'SWF':'#a147a8', 'SYF':'#ee7008', 'SPF':'#D81B60',
                 'R1':'#2e75b6','R2':'#8bb8e1','R3':'#d1e3f3','AllButR1':'#d1e3f3','OtherAcad':'#d1e3f3','Other':'#e9f0f7',
                 'M1':'#95A472','M2':'#C8E087','M3':'#DDFCAD','Bacc':'#F7EF81',
                 'Centralized':'#A37C40','School':'#98473E','Decentralized':'#B49082','None':'#D6C3C9',

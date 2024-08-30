@@ -333,6 +333,7 @@ def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=DEFAUL
     # Create a scatter chart
     fig = px.scatter( df, x='Inst', y='Average Values',
                     color='Facings',
+                    symbol='Facings',
                     # color_discrete_map=scatterPlotcolorMap,
                     color_discrete_sequence=cmgraphs.scatterPlotColorSeq,
                     labels=None,

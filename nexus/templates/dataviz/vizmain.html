@@ -23,7 +23,6 @@ main {
         <div class="imgcard">
             <a href="{% url 'dataviz:demographics' %}">
                 <img class="cardcontent" src="{% static 'images/demogMapCardImg.png' %}" alt="Map showing distribution of community contributors">
-                                             "{% static 'images/NSF-logo-sm.png' %}"
             </a>
         </div>
     </section>
@@ -40,6 +39,25 @@ main {
         <div class="imgcard">
             <a href="{% url 'dataviz:prioritiesdata' %}">
                 <img class="cardcontent" src="{% static 'images/prioDistCardImg.png' %}" alt="Bar graph showing example capabilities model priorities data">
+            </a>
+        </div>
+    </section>
+    <section class="card banner">
+        <h3>New to the Data Viewer?</h3>
+        <div>
+            <p>These tools complement the CaRCC Capabilities Model with interactive data visualizations
+                to explore the community dataset provided by institutions that are using and/or have completed assessments
+                using the Model. <br>See the <a href="{% url 'helpdocs:dv_quickstart' %}"><b>Quick Start Guide</b></a> or 
+                <b>click on one of the examples below</b> to dive right in! <br>
+                Review the <a href="{% url 'helpdocs:dv_intro_and_guide' %}">Introduction and Guide to Use</a> for a detailed 
+                description of the tools and options available.</p>
+        </div>
+    </section>
+    <section class="card">
+        <h3>Types of Contributing Institutions</h3>
+        <div class="imgcard">
+            <a href="{% url 'dataviz:demographics_chartviews' %}?population=contrib&chart_views=cc">
+                <img class="cardcontent" src="{% static 'images/ContribMix.png' %}" alt="Bar graph showing example capabilities model priorities data">
             </a>
         </div>
     </section>

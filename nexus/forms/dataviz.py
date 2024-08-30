@@ -119,9 +119,9 @@ class DataFilterForm(forms.Form):
     RESEARCH_EXP_MAX="Research Exp. <="
 
     # Add the Data View controls for charts, and for caps model data
-    CHART_VIEWS="Chart View"
+    CHART_VIEWS="Compare By"
     CHART_VIEW_CHOICES = (
-        ("sum","Summary"),
+        ("sum","Summary For All Institutions"),
         ("cc",CARN_CLASS),
         ("mission",MISSION),
         ("pub_priv",PUB_PRIV),
@@ -131,7 +131,7 @@ class DataFilterForm(forms.Form):
         ("reporting",REPORTING),
     )
 
-    FACINGS="Facing Detail"
+    FACINGS="Assessment Data (by Facing)"
     FACINGS_CHOICES = (
         ("all","Summary for All Facings"),
         ("rf","Researcher-Facing Topics"),
@@ -279,18 +279,18 @@ class DataFilterForm(forms.Form):
     )
     """
 
-    chart_views = forms.ChoiceField(
-        label=CHART_VIEWS,
-        choices=CHART_VIEW_CHOICES,
-        initial = [0],   # Default to Summary
-        help_text="Select the data you want to compare in the chart",
-    )
-
     facings = forms.ChoiceField(
         label=FACINGS,
         choices=FACINGS_CHOICES,
         initial = [0],   # Default to Summary
         help_text="Choose the Facing detail you want to explore",
+    )
+
+    chart_views = forms.ChoiceField(
+        label=CHART_VIEWS,
+        choices=CHART_VIEW_CHOICES,
+        initial = [0],   # Default to Summary
+        help_text="Select the data you want to compare in the chart",
     )
 
     caps_feature = forms.ChoiceField(

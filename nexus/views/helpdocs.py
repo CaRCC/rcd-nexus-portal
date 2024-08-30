@@ -33,6 +33,21 @@ def help_quickstart(request):
 
     return render(request, "helpdocs/quickstart.html", context)
 
+def help_dv_intro_and_guide(request):
+    context = {}
+
+    return render(request, "helpdocs/dv_intro.html", context)
+
+def help_dv_quickstart(request):
+    context = {}
+
+    return render(request, "helpdocs/dv_quickstart.html", context)
+
+def help_dv_faq(request):
+    context = {}
+
+    return render(request, "helpdocs/dv_faq.html", context)
+
 def printable_questions(request):
     context = {}
 

@@ -89,6 +89,7 @@ def data_viz_demographics_contriblist(request):
 def data_viz_demographics_maps(request): 
     graph = None
     graphtitle = None
+    nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -101,7 +102,8 @@ def data_viz_demographics_maps(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMultiSelectDictEntries(dict)
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            nonDefs = listNonDefaultFilters(cleaned_dict)
             filter_form = DataFilterForm(cleaned_dict)
             pop = cleaned_dict.get('population')
             if(pop == 'contrib'):
@@ -153,6 +155,7 @@ def data_viz_demographics_maps(request):
         "filterform":filter_form,
         "graph":graph,
         "graphtitle":graphtitle,
+        "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Community Demographics":"dataviz:demographics",
@@ -173,6 +176,7 @@ def data_viz_demographics_charts(request):
     graphtitle = None
     footnote = None
     chart = None
+    nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -186,7 +190,10 @@ def data_viz_demographics_charts(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMultiSelectDictEntries(dict)
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            print( "Cleaned dict: ",cleaned_dict)
+            nonDefs = listNonDefaultFilters(cleaned_dict)
+            print( "Non default choices: ",nonDefs)
             filter_form = DataFilterForm(cleaned_dict)
             chart = cleaned_dict.get('chart_views')
             pop = cleaned_dict.get('population')
@@ -265,6 +272,7 @@ def data_viz_demographics_charts(request):
         "graphtitle":graphtitle,
         "footnote":footnote,
         "chart":chart,
+        "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Community Demographics":"dataviz:demographics",
@@ -277,6 +285,7 @@ def data_viz_demographics_charts(request):
 def data_viz_demographics_scatter(request): 
     graph = None
     graphtitle = None
+    nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -289,7 +298,9 @@ def data_viz_demographics_scatter(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMultiSelectDictEntries(dict)
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            nonDefs = listNonDefaultFilters(cleaned_dict)
+            #print( "Non default choices: ",nonDefs)
             filter_form = DataFilterForm(cleaned_dict)
             #print( "Cleaned dict: ",cleaned_dict)
             # Note we need the answers (not institutions) to group into facings for the scatter graph
@@ -332,6 +343,7 @@ def data_viz_demographics_scatter(request):
         "filterform":filter_form,
         "graph":graph,
         "graphtitle":graphtitle,
+        "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Community Demographics":"dataviz:demographics",
@@ -347,16 +359,85 @@ def removeNullDictEntries(dict):
         del dict['resexp_max']
     return dict
 
+def fixMissingDictEntries(dict):
+    if dict.get('population') == None:
+        dict['population'] = 'all'
+    if dict.get('chart_views') == None:
+        dict['chart_views'] = 'cc'
+    if dict.get('facings') == None:
+        dict['sum'] = 'sum'
+    if dict.get('benchmark') == None:
+        dict['benchmark'] = False
+    if dict.get('graph_size') == None:
+        dict['graph_size'] = 'lg'
+    if dict.get('opt_show_errbars') == None:
+        dict['opt_show_errbars'] = True
+    return dict
+
+def listNonDefaultFilters(dict):
+    list = []
+    prefix = 'id_'
+    suffix = '_d'
+    if dict.get('population') != None and dict.get('population') == 'contrib':
+        list.append(prefix+'population'+suffix)
+    if dict.get('cc') != None and dict.get('cc') != [c[0] for c in DataFilterForm.CC_CHOICES]:
+        list.append(prefix+'cc'+suffix)
+    if dict.get('epscor') != None and dict.get('epscor') != [str(c[0]) for c in DataFilterForm.EPSCOR_CHOICES]:
+        list.append(prefix+'epscor'+suffix)
+    if dict.get('mission') != None and dict.get('mission') != [c[0] for c in DataFilterForm.MISSION_CHOICES]:
+        list.append(prefix+'mission'+suffix)
+    if dict.get('pub_priv') != None and dict.get('pub_priv') != [c[0] for c in DataFilterForm.PUB_PRIV_CHOICES]:
+        list.append(prefix+'pub_priv'+suffix)
+    if dict.get('region') != None and dict.get('region') != [str(c[0]) for c in DataFilterForm.REGION_CHOICES]:
+        list.append(prefix+'region'+suffix)
+    if dict.get('size') != None and dict.get('size') != [str(c[0]) for c in DataFilterForm.SIZE_CHOICES]:
+        list.append(prefix+'size'+suffix)
+    if dict.get('msi') != None and dict.get('msi') != [c[0] for c in DataFilterForm.MSI_CHOICES]:
+        list.append(prefix+'msi'+suffix)
+    if dict.get('year') != None and dict.get('year') != [str(c[0]) for c in DataFilterForm.YEAR_CHOICES]:
+        list.append(prefix+'year'+suffix)
+    return ';'.join(list)
+
 def fixMultiSelectDictEntries(dict):
     # These are passed as a quoted string so we need to turn them into a list
-    dict['cc'] = eval(dict['cc'])
-    dict['mission'] = eval(dict['mission'])
-    dict['pub_priv'] = eval(dict['pub_priv'])
-    dict['region'] = eval(dict['region'])
-    dict['size'] = eval(dict['size'])
-    dict['epscor'] = eval(dict['epscor'])
-    dict['msi'] = eval(dict['msi'])
-    dict['year'] = eval(dict['year'])
+    if 'cc' in dict:
+        dict['cc'] = eval(dict['cc'])
+    else:
+        dict['cc'] = [c[0] for c in DataFilterForm.CC_CHOICES]
+    
+    if 'mission' in dict:
+        dict['mission'] = eval(dict['mission'])
+    else: 
+        dict['mission'] = [c[0] for c in DataFilterForm.MISSION_CHOICES]
+    
+    if 'pub_priv' in dict:
+        dict['pub_priv'] = eval(dict['pub_priv'])
+    else: 
+        dict['pub_priv'] = [c[0] for c in DataFilterForm.PUB_PRIV_CHOICES]
+    
+    if 'region' in dict:
+        dict['region'] = eval(dict['region'])
+    else: 
+        dict['region'] = [str(c[0]) for c in DataFilterForm.REGION_CHOICES]
+    
+    if 'size' in dict:
+        dict['size'] = eval(dict['size'])
+    else: 
+        dict['size'] = [str(c[0]) for c in DataFilterForm.SIZE_CHOICES]
+
+    if 'epscor' in dict:
+        dict['epscor'] = eval(dict['epscor'])
+    else: 
+        dict['epscor'] = [str(c[0]) for c in DataFilterForm.EPSCOR_CHOICES]
+
+    if 'msi' in dict:
+        dict['msi'] = eval(dict['msi'])
+    else: 
+        dict['msi'] = [c[0] for c in DataFilterForm.MSI_CHOICES]
+    if 'year' in dict:
+        dict['year'] = eval(dict['year'])
+    else: 
+        dict['year'] = [str(c[0]) for c in DataFilterForm.YEAR_CHOICES]
     # print( "Fixed dict: ",dict)
     return dict
 
@@ -401,6 +482,7 @@ def data_viz_capsmodeldata(request):
     chart = None
     benchmarkInfo = None
     showErrBars = False
+    nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -414,7 +496,8 @@ def data_viz_capsmodeldata(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMultiSelectDictEntries(dict)
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            nonDefs = listNonDefaultFilters(cleaned_dict)
             filter_form = DataFilterForm(cleaned_dict)
             chart = cleaned_dict.get('chart_views')
             facing = cleaned_dict.get('facings')
@@ -584,6 +667,7 @@ def data_viz_capsmodeldata(request):
         "graphtitle":graphtitle,
         "chart":chart,
         "showErrBars":showErrBars,
+        "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Capabilities Model Data":"dataviz:capsmodeldata",
@@ -594,6 +678,7 @@ def data_viz_capsmodeldata(request):
 def data_viz_prioritiessdata(request): 
     graph = None
     graphtitle = None
+    nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -606,7 +691,8 @@ def data_viz_prioritiessdata(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMultiSelectDictEntries(dict)
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            nonDefs = listNonDefaultFilters(cleaned_dict)
             filter_form = DataFilterForm(cleaned_dict)
             #print( "Cleaned dict: ",cleaned_dict)
             # This is where we would generate the graph
@@ -621,6 +707,7 @@ def data_viz_prioritiessdata(request):
         "filterform":filter_form,
         "graph":graph,
         "graphtitle":graphtitle,
+        "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Priorities Data":"dataviz:prioritiesdata",

@@ -20,7 +20,9 @@
 <h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}Maps{%endif%}</h2>
 <div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
 
+{{ nonDefs|json_script:"nonDefs" }}
 <script>
-    initDetailsFromStorage();
+    const nonDefs = JSON.parse(document.getElementById('nonDefs').textContent);
+    initDetailsFromStorage( nonDefs );
 </script>
 {% endblock %}
