@@ -6,6 +6,7 @@ from math import ceil
 from nexus.models import CapabilitiesAnswer, CapabilitiesAssessment, CapabilitiesTopic, Institution, RCDProfile
 from nexus.forms import dataviz
 #from django.http import JsonResponse
+import colorsys
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -42,6 +43,26 @@ colorPalette = {'allData':'#9F9F9F', 'EPSCoR':'#5ab4ac', 'nonEPSCoR':'#d8b365',
                 VALUE_UNKNOWN_LABEL:'#8d99ae',
                 '2022':'#ffba5a', '2021':'#6aaa96', '2020':'#ada3d3'}
 
+def hex_to_rgb(h):
+    h = h.lstrip('#')
+    return [int(h[i:i+2], 16) for i in (0, 2, 4)]
+
+def adjust_color_lightness(hex, factor):
+    r,g,b = hex_to_rgb(hex)
+    h, l, s = colorsys.rgb_to_hls(r / 255.0, g / 255.0, b / 255.0)
+    l = max(min(l * factor, 1.0), 0.0)
+    r, g, b = colorsys.hls_to_rgb(h, l, s)
+    lighter = '#%02x%02x%02x' % (int(r * 255), int(g * 255), int(b * 255))
+    #print('adjust_color_lightness(',hex,', ', factor, '): ', lighter)
+    return lighter
+
+def lighten_color(hex, factor=0.1):
+    return adjust_color_lightness(hex, 1+factor)
+
+def darken_color(hex, factor=0.1):
+    return adjust_color_lightness(hex, 1-factor)
+
+
 scatterPlotcolorMap = {'RT':colorPalette['RF'],'DT':colorPalette['DF'], 'SWT':colorPalette['SWF'],
                                     'SYT':colorPalette['SYF'], 'SPT':colorPalette['SPF']}
 scatterPlotColorSeq = [colorPalette['RF'],colorPalette['DF'],colorPalette['SWF'],colorPalette['SYF'],colorPalette['SPF']]
@@ -49,6 +70,13 @@ scatterPlotColorSeq = [colorPalette['RF'],colorPalette['DF'],colorPalette['SWF']
 # QUESTION Why does this work?  Facings fixture defines the indices as 0-4, not 1-5
 Facing_mapping = { 1: '<b>Researcher-<br>Facing</b>', 2: '<b>Data-<br>Facing</b>', 3: '<b>Software-<br>Facing</b>', 4 : '<b>System-<br>Facing</b>', 5: '<b>Strategy & Policy-<br>Facing</b>'}
 Facing_xvals = list(Facing_mapping.values())
+
+colorSeqForFacings = [lighten_color(colorPalette['RF'],.4), lighten_color(colorPalette['DF'],.4),
+                      lighten_color(colorPalette['SWF'],.4),lighten_color(colorPalette['SYF'],.4),
+                      lighten_color(colorPalette['SPF'],.4)]
+colorMapByFacingSlug = {'researcher':colorSeqForFacings[0],'data':colorSeqForFacings[1],'software':colorSeqForFacings[2],
+                        'systems':colorSeqForFacings[3],'strategy':colorSeqForFacings[4]}
+#print(colorSeqForFacings)
 
 RFLabels = {'staffing':'<b>RCD Staffing  </b>',
             'outreach':'<b>RCD Outreach  </b>',
@@ -417,8 +445,10 @@ def summaryDataGraph(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAU
 
     # Create a All Summary Data bar chart
     fig = px.bar(data, x='Facings', y= 'Average Values', error_y='Std Dev' if showErrBars else None,
-                    width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
+                    #width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
+                    width=width, height=height,color='Facings', color_discrete_sequence=colorSeqForFacings)
     applyStandardVBarFormatting(fig, width=0.6)
+    fig.update_layout(showlegend=False)
 
     # If benchmark data passed in, layer that over
     scale = (height/DEFAULT_HEIGHT)
@@ -462,7 +492,7 @@ def calculateScaledHeight(nTopics, height):
 
 def facingSummaryDataGraph(answers, facing, benchmarks=None,
                            width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
-    # print(f"Facing: [{facing}] SummaryDataGraph with: {answers.count()} answers")
+    print(f"Facing: [{facing}] SummaryDataGraph with: {answers.count()} answers")
     #instCount = answers.values('assessment__id').distinct().count()
     if (answers.count() == 0): 
         return None
@@ -502,6 +532,7 @@ def facingSummaryDataGraph(answers, facing, benchmarks=None,
     # Create a Topics Summary Data bar chart for this facing
     fig = px.bar(data, y='Topics', x= 'Average Values', error_x='Std Dev' if showErrBars else None,
                     width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
+    fig.update_traces(marker_color=colorMapByFacingSlug[facing])
     applyStandardHBarFormatting(fig, width=0.6, textscale=textscale)
 
     # If benchmark data passed in, layer that over

@@ -575,8 +575,9 @@ def data_viz_capsmodeldata(request):
                 match chart:
                     case "sum":
                         if facing == 'all':
+                            # Scale the size slightly since the summary graph has no legend
                             graph = cmgraphs.summaryDataGraph(answers, benchmarks=benchmarkInfo,
-                                                              height=grheight, width=grwidth, showErrBars=showErrBars)
+                                                              height=grheight*.9, width=grwidth*.9, showErrBars=showErrBars)
                         else:
                             graph = cmgraphs.facingSummaryDataGraph(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                     height=grheight, width=grwidth, showErrBars=showErrBars)
