@@ -452,12 +452,20 @@ main>nav.breadcrumbs {
     align-self: flex-start;
     text-transform: uppercase;
     font-weight: bold;
-    font-size: 0.9em;
+    font-size: 15px;
     padding-left: 10px;
 }
 main>nav.breadcrumbs>p.breadcrumbs {
     margin-top: 0.7em;
     margin-bottom: 0.2em;
+}
+
+span.breadcrumbarrow {
+    font-weight: bold;
+    position: relative;
+    top:-1px;
+    font-family: "Arial Black";
+    color:var(--logo-dk-blue);
 }
 
 body>nav {
