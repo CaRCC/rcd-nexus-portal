@@ -868,6 +868,15 @@ main a.button {
     transition: 220ms all ease-in-out;
 }
 
+main a.button.discrete {
+    color: var(--nexus-light-text);
+    background-color: var(--info);
+    min-height: 2em;
+}
+main a.button.discrete:hover {
+    color: var(--primary-fg);
+}
+
 main a.button.center {
     display: flex;
     margin-left: auto;
