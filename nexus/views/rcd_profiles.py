@@ -35,8 +35,10 @@ edit_roles = {roles.CONTRIBUTOR, roles.MANAGER, roles.SUBMITTER}
 manage_roles = {roles.MANAGER, roles.SUBMITTER}
 submit_roles = {roles.SUBMITTER}
 
+from django.contrib import messages
 
 def index(request):
+    messages.success(request, "This is the staging environment")
     if request.user.is_authenticated:
         if "profile_invite_token" in request.session:
             return redirect("rcdprofile:accept-invite")
