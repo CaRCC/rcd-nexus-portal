@@ -703,6 +703,10 @@ def capsDataGraphByMission(answers, benchmarks=None, width=DEFAULT_WIDTH, height
             'question__topic__facing' : 'Facings',
             'average':'Average Value',
         })
+    # Enforce the original sorting that we define in the enumeration for Mission
+    df['mission2'] = pd.Categorical(df['mission2'], categories=mission_mapping.values(), ordered=True)
+    df = df.sort_values(['Facings', 'mission2'])
+    #print(df)
 
     # Create a grouped bar chart
     fig = px.bar(df, x='Facings', y='Average Value',error_y='stddev' if showErrBars else None,
@@ -760,6 +764,9 @@ def facingCapsDataGraphByMission(answers, facing, benchmarks=None, width=DEFAULT
             'question__topic__slug' : 'Topics',
             'average':'Average Value',
         })
+    # Enforce the original sorting that we define in the enumeration for Mission
+    df['mission2'] = pd.Categorical(df['mission2'], categories=mission_mapping.values(), ordered=True)
+    df = df.sort_values(['Topics', 'mission2'])
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
