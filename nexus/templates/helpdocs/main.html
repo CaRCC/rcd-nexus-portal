@@ -8,6 +8,13 @@
     p.doc {
         font-size: 1.2em;
         font-weight: bold;
+        margin: 5px 0 0 0;
+    }
+    p.doc:first-of-type {
+        margin-top: 14px;
+    }
+    p.doc:last-of-type {
+        margin-bottom: 8px;
     }
     p.content {
         font-size: 1em;
@@ -34,7 +41,7 @@
 
 {% endblock %}
 
-{% block title %}RCD-Nexus Capabilities Model Help Documentation{% endblock %}
+{% block title %}CaRCC Capabilities Model Help Documentation{% endblock %}
 {% block main %}
 <div class="helpgrid">
     <section class="helpdocs" >

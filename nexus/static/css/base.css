@@ -287,6 +287,12 @@ main img.cardcontent {
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
     cursor: pointer;
 }
+main section.card.nyi h2 {
+    color: var(--primary);
+}
+main section.card.nyi img.cardcontent {
+    cursor: not-allowed;
+}
 
 main div.cardbutton img.cardcontent { 
     display: block;
@@ -333,6 +339,24 @@ main a.cardbutton.NYI {
     pointer-events: none;
     background-color: var(--primary-fg-off);
     color: var(--info-off);
+}
+
+p.totop {
+    padding:0;
+    margin:0 0 10px 0;
+    border-bottom: 1px solid var(--primary);
+    position:relative;
+    top: -5px;
+    font-size: 0.85em;
+}
+a.totop {
+    float:right;
+    margin: 0;
+    padding: 0 10px 0 0;
+    font-style:italic;
+    /* font-size:.85em; */
+    position:relative;
+    top: -2px;
 }
 
 img.main-bg {

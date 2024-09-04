@@ -14,7 +14,7 @@ main {
 </style>
 {% endblock %}
 
-{% block title %}RCD-Nexus Capabilities Model Data Visualizations{% endblock %}
+{% block title %}CaRCC Capabilities Model Data Visualizations{% endblock %}
 
 {% block main %}
 <div class="cardblock">
@@ -34,12 +34,12 @@ main {
             </a>
         </div>
     </section>
-    <section class="card">
-        <h2>Priorities Data</h2>
+    <section class="card nyi">
+        <h2>Priorities Data (Coming soon)</h2>
         <div class="imgcard">
-            <a href="{% url 'dataviz:prioritiesdata' %}">
+            {% comment %} <a href="{% url 'dataviz:prioritiesdata' %}">{% endcomment %}
                 <img class="cardcontent" src="{% static 'images/prioDistCardImg.png' %}" alt="Bar graph showing example capabilities model priorities data">
-            </a>
+            {% comment %} </a>{% endcomment %}
         </div>
     </section>
     <section class="card banner">

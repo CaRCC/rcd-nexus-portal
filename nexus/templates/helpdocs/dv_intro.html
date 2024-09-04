@@ -145,23 +145,7 @@
         display:block;
         padding-left: 40px;
     }
-    p.totop {
-        padding:0;
-        margin:0 0 10px 0;
-        border-bottom: 1px solid var(--primary);
-        position:relative;
-        top: -5px;
-        font-size: 0.85em;
-    }
-    a.totop {
-        float:right;
-        margin: 0;
-        padding: 0 10px 0 0;
-        font-style:italic;
-        font-size:.85em;
-        position:relative;
-        top: -2px;
-    }
+
     h3.region {
         margin-bottom: 0;
         font-size: 0.9em;
@@ -751,9 +735,8 @@
           
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     <h3>Footnotes</h3>
-    <p class="footnote" id="ftnt1"><sup>1</sup> For more on the model, see the Introduction and Guide to use, 
-        available at <a href="https://docs.google.com/document/d/1s-rJhKewvzT0TnLokUlMwM6m5UYMKU3laagPFY-cJtE">
-            https://docs.google.com/document/d/1s-rJhKewvzT0TnLokUlMwM6m5UYMKU3laagPFY-cJtE</a>
+    <p class="footnote" id="ftnt1"><sup>1</sup> For more on the model, see the 
+        <a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a>.
     </p>
     <p class="footnote" id="ftnt2"><sup>2</sup> IPEDS is the Integrated Postsecondary Education Data System. 
         It is a system of interrelated surveys conducted annually by the U.S. Department of Education’s 
