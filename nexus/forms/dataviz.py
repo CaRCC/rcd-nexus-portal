@@ -119,9 +119,9 @@ class DataFilterForm(forms.Form):
     RESEARCH_EXP_MAX="Research Exp. <="
 
     # Add the Data View controls for charts, and for caps model data
-    CHART_VIEWS="Chart View"
+    CHART_VIEWS="Compare By"
     CHART_VIEW_CHOICES = (
-        ("sum","Summary"),
+        ("sum","Summary For All Institutions"),
         ("cc",CARN_CLASS),
         ("mission",MISSION),
         ("pub_priv",PUB_PRIV),
@@ -131,7 +131,7 @@ class DataFilterForm(forms.Form):
         ("reporting",REPORTING),
     )
 
-    FACINGS="Facing Detail"
+    FACINGS="Assessment Data (by Facing)"
     FACINGS_CHOICES = (
         ("all","Summary for All Facings"),
         ("rf","Researcher-Facing Topics"),
@@ -151,7 +151,17 @@ class DataFilterForm(forms.Form):
 
     BENCHMARK="Benchmark my Data"
 
+    OPT_ERRBARS="Show Error bars"
+
+    OPT_GRAPHSIZE="Graph Scale"
+    OPT_GRAPHSIZE_CHOICES = (
+        ("lg","Large"),
+        ("med","Medium"),
+        ("sm","Small"),
+    )
+
     NOT_FILTERS = CHART_VIEWS+", "+FACINGS+", "+CAPS_FEATURE+", "+BENCHMARK
+    OPTIONS = OPT_ERRBARS+", "+OPT_GRAPHSIZE
 
     # Note that we are omitting ORG_MODEL and REPORTING for now, unless and until someone asks for this info
     INCLUDE_ALL={POPULATION, CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP}
@@ -161,7 +171,7 @@ class DataFilterForm(forms.Form):
     # Omit the "Population" choice when viewing contributor data, and add the detail views
     # Omit CAPS_FEATURE since NYI in current release
     # CAPS_DATA_INCLUDE_ALL={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP, CHART_VIEWS, FACINGS, CAPS_FEATURE, BENCHMARK}
-    CAPS_DATA_INCLUDE_ALL={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP, CHART_VIEWS, FACINGS, BENCHMARK}
+    CAPS_DATA_INCLUDE_ALL={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP, CHART_VIEWS, FACINGS, BENCHMARK, OPT_ERRBARS}
     CAPS_DATA_EXCLUDE_NO_DATA_CONTRIB={CAPS_FEATURE, BENCHMARK}
 
     population = forms.ChoiceField(
@@ -269,18 +279,18 @@ class DataFilterForm(forms.Form):
     )
     """
 
-    chart_views = forms.ChoiceField(
-        label=CHART_VIEWS,
-        choices=CHART_VIEW_CHOICES,
-        initial = [0],   # Default to Summary
-        help_text="Select the data you want to compare in the chart",
-    )
-
     facings = forms.ChoiceField(
         label=FACINGS,
         choices=FACINGS_CHOICES,
         initial = [0],   # Default to Summary
         help_text="Choose the Facing detail you want to explore",
+    )
+
+    chart_views = forms.ChoiceField(
+        label=CHART_VIEWS,
+        choices=CHART_VIEW_CHOICES,
+        initial = [0],   # Default to Summary
+        help_text="Select the data you want to compare in the chart",
     )
 
     caps_feature = forms.ChoiceField(
@@ -295,6 +305,20 @@ class DataFilterForm(forms.Form):
         initial = False,    # Default to just show data (no benchmarking)
         required=False,     # Cannot require this or would always have benchmarking on
         help_text="Check if you want to overlay institutional data for benchmarking",
+    )
+    
+    graph_size = forms.ChoiceField(
+        label=OPT_GRAPHSIZE,
+        choices=OPT_GRAPHSIZE_CHOICES,
+        initial = [0],   # Default to Large graphs
+        help_text="Choose the size of the rendered graphs",
+    )
+
+    opt_show_errbars = forms.BooleanField(
+        label=OPT_ERRBARS,
+        initial = True,     # Default to show err bars
+        required=False,     # Don't need this always
+        help_text="Un-Check to hide error bars in the graphs",
     )
     
     def clean(self):
@@ -357,8 +381,15 @@ class DataFilterForm(forms.Form):
             self.fields['caps_feature'].label = "skip"
         else: 
             self.hasViewChoices = True
-        if (includes and self.BENCHMARK not in includes) or (excludes and self.BENCHMARK in excludes):
+        if (includes and self.BENCHMARK not in includes):
             self.fields['benchmark'].label = "skip"
+        elif (excludes and self.BENCHMARK in excludes):
+            self.fields['benchmark'].label = "skip_nobm"
         else: 
             self.hasViewChoices = True
+
+        if (includes and self.OPT_ERRBARS not in includes) or (excludes and self.OPT_ERRBARS in excludes):
+            self.fields['opt_show_errbars'].label = "skip"+self.fields['opt_show_errbars'].label
+
+        # Note that graph size option will always be shown
 

@@ -1,5 +1,5 @@
 {% if filterform.hasViewChoices %}
-    <p class="FilterTitle"><span class="FilterTitle">Views: </span><input type="submit" id="UpdateView" value="UpdateView"></p>
+    <p class="FilterTitle Update"><span class="FilterTitle">Views: </span><input type="submit" id="UpdateView" value="UpdateView"></p>
     <div class="viewChoices">
         {% for field in filterform %}
             {% if field.label in filterform.NOT_FILTERS %}
@@ -17,6 +17,15 @@
                     {% if not field.field.widget.input_type == "checkbox" %}<br>{% endif %}
                     {{ field }}
                 </div>
+            {% elif "skip_nobm" in field.label %}
+                <div class="viewselect">
+                    <label for="{{ field.auto_id }}" style="font-style: italic; color:gray">Benchmarking not available</label>
+                    <span class="filtertip">?
+                        <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
+                            You must be logged in and have an approved assessment to use the benchmarking feature.
+                        </span>
+                    </span>
+                </div>
             {% endif %}
         {% endfor %}
     </div>
@@ -25,7 +34,7 @@
     {% if not filterform.hasViewChoices %}<input type="submit" id="UpdateView" value="UpdateView">{% endif %}</p>
 <ul class="filter">
     {% for field in filterform %}
-        {% if not "resexp" in field.auto_id and not field.label in filterform.NOT_FILTERS %}
+        {% if not "resexp" in field.auto_id and not field.label in filterform.NOT_FILTERS and not field.label in filterform.OPTIONS %}
             <li id="{{ field.auto_id }}_fli"{% if "skip" in field.label %}class="skip"{% endif %}>
                 <div class="fieldWrapper">
                     <details id="{{ field.auto_id }}_d" {% if field.errors %}open{% endif %} onToggle="saveToggleState(this)">
@@ -52,7 +61,7 @@
 {% comment %}  Handle the research expenditures specially. {% endcomment %}
 <div id="res_exp_wrapper">
     <p>
-        <label id="resExp_lbl">Research Expenditures ($Millions)</label>
+        <label id="resExp_lbl">Research Expenditures ($M)</label>
         <span class="filtertip">?
             <span class="help filtertiptext" id="{{ filterform.resexp_min.auto_id }}_helptext">
                 Filter for research expenditures (in $Millions)
@@ -64,4 +73,27 @@
     {{ filterform.resexp_min }}
     <span id="resexp_to">&nbsp;to&nbsp;</span>
     {{ filterform.resexp_max }}
+</div>
+<div id="filter_options_wrapper">
+    <p class="FilterTitle Options"><span class="FilterTitle">View Options: </span></p>
+    <div class="viewOptions">
+        <ul class="filter_options">
+        {% for field in filterform %}
+            {% if field.label in filterform.OPTIONS %}
+            <div class="viewoption">
+                {{ field.label_tag | safe}}&nbsp;&nbsp;{{ field }}
+                {% comment %} Can't get errors with a fixed set of choices 
+                    <span class="fielderror">{{ field.errors }}</span>{% endcomment %}
+                {% if field.help_text %}
+                    &nbsp;<span class="filtertip">?
+                        <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
+                            {{ field.help_text|safe }}
+                        </span>
+                    </span>
+                {% endif %}
+            </div>            
+            {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
 </div>

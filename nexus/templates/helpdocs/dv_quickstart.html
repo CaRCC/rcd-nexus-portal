@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<style>
+    body>nav {
+        display:none;
+    }
+    body {
+        grid-template-areas:
+            "header"
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+    }
+    p, ul, ol {
+        line-height: 1.35;
+    }
+    section.helpdocs {
+        width: 80%;
+        max-width: 800px;
+        margin:10px 10px 10px 10px;
+        padding:1em .7in .7in .7in;
+    }
+    section.helpdocs h1, section.helpdocs h2, section.helpdocs h3 {
+        box-shadow: none;
+        background: none;
+    }
+    section.helpdocs h1.title {
+        font-size: 1.7em;
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 0px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    section.helpdocs ul {
+        list-style: disc outside;
+        margin-left: 1.5em;
+    }
+    section.helpdocs ul li{
+        padding-top:5px;
+        font-size: 14px;
+    }
+    section.helpdocs ul ul li {
+        font-size: 1em;
+    }
+    p.content, ol.content {
+        font-size: 14px;
+    }
+    ol.content.localtoc {
+        font-weight: bold;
+    }
+    ol.content li {
+        padding:.3em 0 0 0.4em;
+    }
+    ol.content ul li {
+        font-size: 1em;
+        padding:.2em 0 0 0;
+    }
+    img.screenshot {
+        /* border: 3px solid var(--logo-lt-blue);
+        margin: 3px var(--primary); */
+        box-shadow: 1px 3px 8px 0 rgba(0, 0, 0, 0.4), 0px -1px 8px 0px rgba(0, 0, 0, 0.4);
+    }
+
+    .indent {
+        margin-left: 2em;
+    }
+    span.topic {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+    p.content.emphasis {
+        background-color: #cbdcc3;
+        text-align: center;
+        padding:8px;
+        font-style: italic;
+        font-weight: bold;
+        font-size: 1em;
+        margin:15px 40px;
+    }
+    p.caption {
+        font-size: 0.8em;
+        font-style:italic;
+        text-align: center;
+        font-weight: bold;
+        color: var(--accent);
+    }
+    table.content {
+        border: solid thin var(--primary-fg);
+    }
+    table.content th {
+        border: solid thin var(--primary-fg);
+        background-color: lightgray;
+    }
+    table.content td {
+        border: solid thin var(--primary-fg);
+        background-color: var(--primary-fg-off);
+        vertical-align: middle;
+    }
+    table.content td p {
+        font-size: 0.83em;
+        margin:4px;
+    }
+    table.content th p {
+        font-size: 0.85em;
+        margin:4px;
+        font-weight: bold;
+        text-align: center;
+    }
+    p.update {
+        font-size: 0.8em;
+        font-style: italic;
+        color:var(--accent);
+    }
+    p.copyright {
+        border: solid black 2px;
+        padding: 10px;
+        margin: 20px;
+        font-size: .85em;
+    }
+    p.footnote {
+        margin: 10px;
+        text-align: left;
+        padding-left: 1.2em ;
+        text-indent: -1em ;
+    }
+    p.footnote.indent {
+        margin-left: 2em;
+    }
+
+    sup {
+        font-size: 0.75em;
+        vertical-align: .35em;
+    }
+    sup a:link, sup a:visited {
+        color: inherit;
+    }
+    span.tocentry {
+        display:block;
+        padding: .2em 0 0 1em;
+        font-size: 1em;
+    }
+    span.tocsubentry {
+        display:block;
+        padding-left: 40px;
+    }
+    h3.region {
+        margin-bottom: 0;
+        font-size: 0.9em;
+    }
+    ul.region, ul.region li {
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+        font-size: 1em;
+    }
+</style>
+
+<script>
+</script>
+
+{% endblock %}
+{% block title %}CaRCC Capabilities Model Data Viewer Intro and Guide to Use{% endblock %}
+
+{% block main %}
+<a id="top"></a>
+<section class="helpdocs" >
+    <h1 class="title">Data Viewer Introduction and Guide to Use</h1>
+	<p class="update">Initial version, Aug 2024</p>
+	<p><b>Table of Contents</b>:
+        <span class="tocentry"><a href="#StepByStep">Step-by-Step example of benchmarking for your Institution</a></span>
+    </p>
+	<hr>
+
+    <h2 id="StepByStep">Step-by-Step example of benchmarking for your Institution</h3>
+    <p class="content">In order to use the benchmarking tool, you must be logged in and affiliated to an 
+        institution that has completed an assessment using the Capabilities Model, submitted it, and had 
+        it approved by the CaRCC data stewards. See also the 
+        <a href="{% url 'helpdocs:quickstart' %}">Capabilities Model Quick Start Guide</a> and the 
+        <a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a>.</p>
+        
+    <p class="content">Once you’re ready to explore benchmarking, follow these steps:</p>
+
+    <p class="content"><b>Step 1) Log on to the portal</b> <em>(if you are not already)</em>.
+    </p>
+    <p class="content"><b>Step 2) Navigate to </b> <a href="{% url 'dataviz:capsmodeldata' %}">Capabilities Data and Benchmarking</a>
+         within the <a href="{% url 'dataviz:vizmain' %}">Data Viewer</a> section of the portal.
+    </p>
+    <p class="content"><b>Step 3) Ensure the Benchmark my Data option is checked</b> as shown in the image below:
+        <p class="content indent">Note: This will only be shown if you are logged in and your institution has at least one completed assessment.
+            <br><br><img class="screenshot" src="{% static 'images/DVUI_Benchmark.png' %}" 
+            alt="Screen-shot excerpt showing a checkbox to enable benchmarking."/>
+        </p>
+    </p>
+    <p class="content"><b>Step 4) Select an area of interest</b>. For example:
+        <p class="content indent">Select the <b>Institutional Classification Chart</b> view as shown in the image below:
+            <br><br><img class="screenshot" src="{% static 'images/DVUI_ChartView.png' %}" 
+            alt="Screen-shot excerpt showing a dropdown choice of view options."/>
+        </p>
+        <p class="content indent">Click on <b>Update View</b> to see your institution’s assessment compared to the broader community, 
+            grouped by classification.
+        </p>
+        <p class="content indent">Now, to explore the topics within the Data Facing, click the 
+            <b>Facing Detail</b> select and choose <b>Data-Facing Topics</b> as shown in the image below:
+            <br><br><img class="screenshot" src="{% static 'images/DVUI_FacingsChoice.png' %}" 
+            alt="Screen-shot excerpt showing a dropdown choice of the five facings."/>
+        </p>
+        <p class="content indent">Click on <b>Update View</b> to see the results.
+        </p>
+        <p class="content indent">To filter just those institutions that have between $150 million and $250 million
+            in research expenditures, enter 150 and 250 in the lower and upper range values for 
+            <b>Research Expenditures</b> as shown in the image below:
+            <br><br><img class="screenshot" src="{% static 'images/DVUI_ResExp.png' %}" 
+            alt="Screen-shot excerpt showing two numeric entry inputs."/>
+        </p>
+        <p class="content indent">Click on <b>Update View</b> to see the results.
+        </p>
+    </p>
+    <p class="content"><b>Step 5) Experiment with the other filters </b> to narrow the set of institutions in your benchmarking group.
+        <p class="content indent">Note: If you have more than one assessment (e.g., if you did assessments in different years), 
+            the benchmarking view will include the <b>three most recent</b> assessments. For a simpler view you can hide any given 
+            assessment in the benchmarking view by clicking on the elements in the graph legend to the right of the graph.
+        </p>
+    </p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+
+
+
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <h3>Footnotes</h3>
+    <p class="footnote" id="ftnt1"><sup>1</sup> For more on the model, see the Introduction and Guide to use, 
+        available at <a href="https://docs.google.com/document/d/1s-rJhKewvzT0TnLokUlMwM6m5UYMKU3laagPFY-cJtE">
+            https://docs.google.com/document/d/1s-rJhKewvzT0TnLokUlMwM6m5UYMKU3laagPFY-cJtE</a>
+    </p>
+    <p class="footnote" id="ftnt2"><sup>2</sup> IPEDS is the Integrated Postsecondary Education Data System. 
+        It is a system of interrelated surveys conducted annually by the U.S. Department of Education’s 
+        National Center for Education Statistics (NCES). <a href="https://nces.ed.gov/ipeds/">https://nces.ed.gov/ipeds/</a>.
+    </p>
+    <p class="footnote" id="ftnt3"><sup>3</sup> Carnegie Classification of Institutions of Higher Education, 
+        <a href="https://carnegieclassifications.acenet.edu/">https://carnegieclassifications.acenet.edu/</a>
+    </p>
+    <p class="footnote" id="ftnt4"><sup>4</sup> This simple taxonomy is based upon ECAR research by Bramanet al. (2006). 
+        IT Engagement in Research: A Baseline Study. ECAR. <a href="https://www.academia.edu/4420620/IT_Engagement_in_Research_A_Baseline_Study">
+            https://www.academia.edu/4420620/IT_Engagement_in_Research_A_Baseline_Study</a> 
+    </p>
+    <p class="footnote" id="ftnt5"><sup>5</sup> See <a href="https://new.nsf.gov/funding/initiatives/epscor/epscor-criteria-eligibility">
+        https://new.nsf.gov/funding/initiatives/epscor/epscor-criteria-eligibility</a> for more information.
+    </p>
+    <p class="footnote" id="ftnt6"><sup>6</sup> Drawn from the FY 2023 Eligibility Index: 
+        <a href="https://www2.ed.gov/about/offices/list/ope/idues/eligibility.html">https://www2.ed.gov/about/offices/list/ope/idues/eligibility.html</a>.
+    </p>
+    <p class="footnote" id="ftnt7"><sup>7</sup> For more about the roles associated with these areas, see the 
+        initial draft of a “Research Computing and Data Professionals Job Elements and Career Guide”, available at: 
+        <a href="https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf">
+            https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf</a>.
+    </p>
+</section>
+
+{% endblock %}

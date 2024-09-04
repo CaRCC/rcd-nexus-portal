@@ -127,6 +127,7 @@ class RCDProfile(models.Model):
         choices=MissionChoices.choices,
         default=None,
         null=True,      # Allow this to be missing, especilaly on import
+        blank=False,    # Require user to set one
         help_text="Select the option that best describes your institution's mission.",
     )
 

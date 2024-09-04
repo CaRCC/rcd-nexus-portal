@@ -1,0 +1,765 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<style>
+    body>nav {
+        display:none;
+    }
+    body {
+        grid-template-areas:
+            "header"
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+    }
+    p, ul, ol {
+        line-height: 1.35;
+    }
+    section.helpdocs {
+        width: 80%;
+        max-width: 800px;
+        margin:10px 10px 10px 10px;
+        padding:1em .7in .7in .7in;
+    }
+    section.helpdocs h1, section.helpdocs h2, section.helpdocs h3 {
+        box-shadow: none;
+        background: none;
+    }
+    section.helpdocs h1.title {
+        font-size: 1.7em;
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 0px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    section.helpdocs ul {
+        list-style: disc outside;
+        margin-left: 1.5em;
+    }
+    section.helpdocs ul li{
+        padding-top:5px;
+        font-size: 14px;
+    }
+    section.helpdocs ul ul li {
+        font-size: 1em;
+    }
+    p.content, ol.content {
+        font-size: 14px;
+    }
+    ol.content.localtoc {
+        font-weight: bold;
+    }
+    ol.content li {
+        padding:.3em 0 0 0.4em;
+    }
+    ol.content ul li {
+        font-size: 1em;
+        padding:.2em 0 0 0;
+    }
+    img.screenshot {
+        /* border: 3px solid var(--logo-lt-blue);
+        margin: 3px var(--primary); */
+        box-shadow: 1px 3px 8px 0 rgba(0, 0, 0, 0.4), 0px -1px 8px 0px rgba(0, 0, 0, 0.4);
+    }
+
+    .indent {
+        margin-left: 2em;
+    }
+    span.topic {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+    p.content.emphasis {
+        background-color: #cbdcc3;
+        text-align: center;
+        padding:8px;
+        font-style: italic;
+        font-weight: bold;
+        font-size: 1em;
+        margin:15px 40px;
+    }
+    p.caption {
+        font-size: 0.8em;
+        font-style:italic;
+        text-align: center;
+        font-weight: bold;
+        color: var(--accent);
+    }
+    table.content {
+        border: solid thin var(--primary-fg);
+    }
+    table.content th {
+        border: solid thin var(--primary-fg);
+        background-color: lightgray;
+    }
+    table.content td {
+        border: solid thin var(--primary-fg);
+        background-color: var(--primary-fg-off);
+        vertical-align: middle;
+    }
+    table.content td p {
+        font-size: 0.83em;
+        margin:4px;
+    }
+    table.content th p {
+        font-size: 0.85em;
+        margin:4px;
+        font-weight: bold;
+        text-align: center;
+    }
+    p.update {
+        font-size: 0.8em;
+        font-style: italic;
+        color:var(--accent);
+    }
+    p.copyright {
+        border: solid black 2px;
+        padding: 10px;
+        margin: 20px;
+        font-size: .85em;
+    }
+    p.footnote {
+        margin: 10px;
+        text-align: left;
+        padding-left: 1.2em ;
+        text-indent: -1em ;
+    }
+    p.footnote.indent {
+        margin-left: 2em;
+    }
+
+    sup {
+        font-size: 0.75em;
+        vertical-align: .35em;
+    }
+    sup a:link, sup a:visited {
+        color: inherit;
+    }
+    span.tocentry {
+        display:block;
+        padding: .2em 0 0 1em;
+        font-size: 1em;
+    }
+    span.tocsubentry {
+        display:block;
+        padding-left: 40px;
+    }
+
+    h3.region {
+        margin-bottom: 0;
+        font-size: 0.9em;
+    }
+    ul.region, ul.region li {
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+        font-size: 1em;
+    }
+</style>
+
+<script>
+</script>
+
+{% endblock %}
+{% block title %}CaRCC Capabilities Model Data Viewer Intro and Guide to Use{% endblock %}
+
+{% block main %}
+<a id="top"></a>
+<section class="helpdocs" >
+    <h1 class="title">Data Viewer Introduction and Guide to Use</h1>
+	<p class="update">Initial version, Aug 2024</p>
+	<p><b>Table of Contents</b>:
+        <span class="tocentry"><a href="#Overview">Data Viewer overview</a></span>
+        <span class="tocentry"><a href="#KeyAspects">Understanding Key Aspects of the Data Viewer</a></span>
+        <span class="tocentry"><a href="#UsefulTools">Useful tools and features in the Data Viewer</a></span>
+        <span class="tocentry"><a href="#App1">Appendix I: Full feature list and notes</a></span>
+        <span class="tocentry"><a href="#App2">Appendix II - Region definitions</a></span>
+    </p>
+	<hr>
+    <h2 id="Overview">Data Viewer overview</h2>
+    <p class="content">These tools complement the CaRCC Capabilities Model with <b>interactive data visualizations to explore 
+        the community dataset</b> provided by institutions that are using and/or have completed assessments
+         using the Model. The Model was developed to identify the variety of relevant approaches taken to support
+          Research Computing and Data (RCD) and the key factors for providing that support. The Model is designed
+           for use as an input to strategic decision making and is intended to be inclusive across a broad range
+            of institutions.
+   </p>
+   <p class="content">The Data Viewer includes three types of views of the community dataset:</p>
+   <ul>
+    <li><b>Community Demographics</b> provides graphical displays of information about the institutions in the dataset, from map
+        views to charts to a scatter graph summary of the data. A set of view controls and filters allow users to focus the 
+        visualizations on a segment within the broader community. There is also a list of the contributing institutions by name. 
+     </li>
+     <li><b>Capabilities Data and Benchmarking</b> provides graphical displays of 
+        Capabilities Model Assessment Data in the community dataset, and the ability to benchmark assessment results
+        relative to others in the community dataset.
+     </li>
+    <li><b>Priorities Data</b> (coming in a future release) will provide information about the areas of capabilities that
+        institutions marked as a priority for attention when they completed their assessment. 
+     </li>
+   </ul>
+    <h3>Who can use the Data Viewer?</h3>
+    <p class="content emphasis">This tool is for anyone who wants to understand the state of <br>Research Computing and Data support 
+        across the community <br>and explore aspects of that by topic, region, types of institutions, etc.
+    </p>
+    <p class="content">The Data Viewer is designed to be useful to a diverse mix of stakeholders, including campus 
+        research computing and data practitioners, along with the principal investigators and research team members
+         (faculty, staff) with whom they work, as well as key partners (e.g., central IT), and campus leadership. 
+         Users who are unfamiliar with the CaRCC Capabilities Model may wish to review the associated 
+         <a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a>.
+    </p>
+    <h3>What are common uses for the Data Viewer?</h3>
+    <ul>
+        <li>To explore the areas of strength and weakness in RCD support across our community.</li>
+        <li>To benchmark an institution’s assessed RCD support relative to the community, or to a set of chosen peers (current or aspirational).</li>
+        <li>To understand the mix of institutions that are using the Model, and those that have completed and contributed an assessment.</li>
+    </ul>
+
+    <h2 id="ack">Acknowledgements</h2>
+    <img src="{% static 'images/NSF-logo-sm.png' %}" width="125" height="125" align="right" alt="NSF logo image"/>
+    <p class="content">The RCD Capabilities Model was developed through a collaboration of the Campus Research Computing Consortium 
+        (<a target="_blank" rel="noopener noreferrer" href="https://www.carcc.org">CaRCC</a>), <a target="_blank" rel="noopener noreferrer" href="https://internet2.edu">Internet2</a>, and 
+        <a target="_blank" rel="noopener noreferrer" href="https://educause.edu">EDUCAUSE</a>. This work is supported in part by National Science Foundation by an 
+        NSF RCN grant (<a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1620695">OAC-1620695</a>,
+         PI: Alex Feltus, "RCN: Advancing Research and Education through a national network of campus 
+         research computing infrastructures &ndash; The CaRCC Consortium"), and by an 
+         NSF Cyberinfrastructure Centers of Excellence (CI CoE) pilot award 
+         (<a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2100003">OAC-2100003</a> , 
+         PI Dana Brunson, "Advancing Research Computing and Data: Strategic Tools, Practices, and Professional Development"). 
+    </p>
+    <p class="copyright"><b>Copyright ©2023-{% now "Y" %} Internet2 and CaRCC</b>, and licensed for use under 
+        <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
+         usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
+
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+
+    <h2 id="KeyAspects">Understanding Key Aspects of the Data Viewer</h2>
+    <p class="content">The data includes self-reported capabilities across a range of different topics presented in 
+        the Model<sup><a href="#ftnt1" id="ftnt_ref1">[1]</a></sup>.
+        In addition, we have metadata about the institutions themselves that is used both to visualize the 
+        community of users, and to support filtering of the capabilities dataset.</p>
+    <p class="content">The key concepts that structure the data are:</p>
+    <ol class="content localtoc">
+        <li><a href="#InstMetadata">Institutional metadata</a></li>
+        <li><a href="#InstPops">Institutional Populations</a></li>
+        <li><a href="#Facings">The Five Facings</a></li>
+        <li><a href="#LocalPrio">Local Priority</a></li>
+    </ol>
+    <h3 id="InstMetadata">Institutional metadata</h3>
+    <p class="content">We have metadata about the institutions that are using the Model that we draw from the
+        Department of Education’s IPEDS data<sup><a href="#ftnt2" id="ftnt_ref2">[2]</a></sup>,
+        from the Carnegie Classification<sup><a href="#ftnt3" id="ftnt_ref3">[3]</a></sup>,
+        and from data that users provide when they create a profile to use the Model. 
+        The metadata values are used to provide different comparative views of the 
+        data and to filter the data to understand or benchmark a particular subset of institutions.
+    </p>
+    <p class="content"><b>Institutional classification</b>: Values are based upon the widely used 
+        Carnegie Classification with adjustments and extensions to support our community of users 
+        (e.g., to include additional types of institutions and those that are not U.S. Higher Education institutions).
+    </p>
+    <p class="content"><b>Institutional Mission</b>: this is a simpler classification that allows for 
+        grouping and comparison of institutions by their core mission (the balance of research and 
+        teaching)<sup><a href="#ftnt4" id="ftnt_ref4">[4]</a></sup>. 
+        Note that the dataset does not include this value for all institutions, however we are working to 
+        expand coverage to as many as possible. Values include:
+    </p>
+    <p class="content indent"><b>Research Essential</b>: Research is the primary or exclusive mission, 
+        and teaching does not significantly factor into faculty and institutional success 
+        (Research Labs, National Supercomputing Centers, etc.).
+    </p>
+    <p class="content indent"><b>Research Favored</b>: Research and teaching are the primary missions, 
+        but research is what really drives faculty and institutional success (e.g., Research-driven Universities).
+    </p>
+    <p class="content indent"><b>Balanced</b>: Research and teaching are both primary missions, 
+        and they are equally important for faculty and institutional success.
+    </p>
+    <p class="content indent"><b>Teaching Favored</b>: Teaching is the primary mission, but faculty research is rewarded.
+    </p>
+    <p class="content indent"><b>Teaching Essential</b>: Teaching is the primary mission, 
+        and faculty research does not factor heavily in faculty and institutional success.
+    </p>
+    <p class="content"><b>Public/Private</b>: (a.k.a. “Control” of the institution). 
+        Note that we can accommodate <em>private for-profit</em> institutions, but few such 
+        institutions are participating to date.
+    </p>
+    <p class="content"><b>EPSCoR Status</b>: for higher education institutions in EPSCoR jurisdictions, 
+        as defined by the National Science Foundation (NSF)<sup><a href="#ftnt5" id="ftnt_ref5">[5]</a>.
+    </p>
+    <p class="content"><b>Minority-Serving Status</b>: drawn from the US Department of Education 
+        Eligibility Matrix<sup><a href="#ftnt6" id="ftnt_ref6">[6]</a>.
+    </p>
+    <p class="content"><b>Region</b>: The geographic region in which the institution is located.
+        For a list of the regions and which states/provinces each includes, see Appendix II.
+    </p>
+    <p class="content"><b>Size</b>: The total number of students (graduate and undergraduate) 
+        as reported in the IPEDS dataset. Values are ranges (also defined by IPEDS).
+    </p>
+    <p class="content"><b>Research Expenditures</b>: The total US dollar value of research 
+        expenditures as reported by IPEDS; the most recent dataset we are using (as of 2024) 
+        includes values reported in the IPEDS survey for 2022. 
+        <em>Caveat Lector: these reported values may be out of date and/or 
+            may differ from what institutions currently report (e.g., on their website).</em>
+    </p>
+    <p class="content"><b>Organizational Model</b>: data provided by users when they create a Profile. 
+        Users choose the option that best describes how their institution's RCD 
+        services and staff are organized. Values include:
+    </p>
+    <p class="content indent"><b>Centralized</b>: Primarily within a central RCD/HPC group.
+    </p>
+    <p class="content indent"><b>In a School/Dept.</b>: Embedded within a single department or school.
+    </p>
+    <p class="content indent"><b>Decentralized across units</b>: Decentralized collaboration among several departments, schools, etc.
+    </p>
+    <p class="content indent"><b>No organized support</b>: No organized RCD support program currently exists.
+    </p>
+
+    <p class="content"><b>Reporting Structure</b>: data provided by users when they create a Profile.
+        Users choose the option that best describes where within the institution their RCD program 
+        ultimately reports. Values include:
+    </p>
+    <p class="content indent"><b>Information technology, e.g., the Chief Information Officer (CIO)</b></p>
+    <p class="content indent"><b>Research, e.g., a Vice Provost for Research (VPR)</b></p>
+    <p class="content indent"><b>Academic leadership (e.g., the Provost or a Dean)</b></p>
+    <p class="content indent"><b>Academic/Research Institute or Center</b></p>
+    <p class="content indent"><b>Other</b> <em>(not otherwise specified)</em></p>
+
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+
+    <h3 id="InstPops">Institutional Populations</h3>
+    <p class="content">There are two populations represented in the data view graphs:</p>
+    <ol class="content">
+        <li><b>All Users</b>: This includes all institutions that have created a profile on 
+            the RCD Nexus portal, and/or that requested and downloaded an earlier version of
+            the CaRCC Capabilities Model.
+        </li>
+        <li><b>Contributors</b>: This includes only those institutions that have completed 
+            an assessment using the CaRCC Capabilities Model, and agreed to contribute their 
+            data to the community dataset.
+            <ul>
+                <li>Users affiliated with an institution that is a current Contributor
+                    have access to benchmarking functionality as well as some additional, 
+                    more detailed data views. 
+                </li>
+                <li>Through the end of 2024, all institutions that contributed an assessment 
+                    to the community dataset are considered <em>current</em>. 
+                </li>
+                <li>Beginning in 2025, only institutions that contributed an assessment 
+                    within the previous three (3) years will be considered <em>current</em>. 
+                </li>
+            </ul>
+        </li>
+    </ol>
+    <p class="content">For the community demographics visualizations, 
+        users can select which population they are interested in using the
+        <em>Population</em> filter choices. The <em>Capabilities Data and Benchmarking and 
+        Priorities Data</em> visualizations are (of course) drawn only from <em>Contributors</em>.</p>
+    <p class="content">Note that for institutions that have completed and contributed more than one assessment 
+        (i.e., who have repeated the process in more than one year), the community dataset 
+        only uses the most recent assessment data for that institution.</p> 
+    
+    <h3 id="Facings">The Five Facings</h3>
+    <p class="content">The Model is organized into sections that reflect different roles that staff fill in supporting
+        Research Computing and Data, and are named to reflect who or what each role is "facing" 
+        (i.e., focused on).<sup><a href="#ftnt7" id="ftnt_ref7">[7]</a></sup>
+       Within each facing, the model poses questions about aspects of research computing and data for the associated role;
+        the questions are grouped into Topics.
+    </p>
+    <p class="content">Larger organizations may have a team associated with each facing role, while smaller organizations may have
+            just a few people who cover these different roles. In filling out the assessment tool, you will likely want
+            to involve people who work in the different roles; they can work to fill out their respective section of the assessment.
+    </p>
+    <table class="content">
+        <thead>
+            <tr>
+                <th><p>Facing Area</p></th>
+                <th><p>Description</p></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><p><b>Researcher-<br>Facing Topics</b></p></td>
+                <td><p class="content">Includes research computing and data staffing, outreach, and advanced support, as well as support
+                    in the management of the research lifecycle.</p>
+                </td>
+            </tr>
+            <tr>
+                <td><p><b>Data-Facing Topics</b></p></td>
+                <td>
+                    <p>Includes data creation; data discovery and collection; data analysis and visualization; 
+                        research data curation, storage, backup, and transfer; and research data policy compliance.
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td><p><b>Software- Facing Topics</b></p></td>
+                <td>
+                    <p>Includes software package management, research software development, research software optimization 
+                        or troubleshooting, workflow engineering, containers and cloud computing, securing access to software,
+                        and software associated with physical specimens.
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td><p><b>Systems- Facing Topics</b></p></td>
+                <td>
+                    <p>Includes infrastructure systems, systems operations, and systems security and compliance.</p>
+                </td>
+            </tr>
+            <tr>
+                <td><p><b>Strategy and Policy-Facing Topics</b></p></td>
+                <td>
+                    <p>Includes institutional alignment, culture for research support, funding, and partnerships and 
+                        engagement with external communities. </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="caption">Table 1 - Description and examples for the Five Facings</p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+
+    <h3 id="LocalPrio">Local Priority</h3>
+    <p class="content">Users can optionally mark each capability as a priority for your organization. 
+        This can be used, e.g., to mark items they want to address as part of strategic planning. 
+        The range of priority values is from 1 to 99 (where 1 is the top priority).</p>
+    <p class="content">These <em>Local Priority</em> values have no impact on the calculated coverage, 
+        however they may provide an indication of where RCD support organizations see challenges or 
+        opportunities and provide an additional lens on the state of RCD support across the community.</p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+
+    <h2 id="UsefulTools">Useful tools and features in the Data Viewer</h3>
+    <p class="content"><b>Benchmarking support</b>: Check the <b>Benchmark my Data</b> option as shown in the image below to
+        enable an overlay of your institution's coverage on any fo the Capabilities Data graphs. 
+        <p class="content indent">
+            <img class="screenshot" src="{% static 'images/DVUI_Benchmark.png' %}" 
+            alt="Screen-shot excerpt showing a checkbox to enable benchmarking."/><br><br>
+            Note: This option will only be shown if you are logged in and your institution has at least one completed assessment.
+        </p>
+    </p>
+    
+    <p class="content"><b>Share a visualization</b>: If you want to share a visualization with 
+        your colleagues, just copy the address bar contents and share the full URL via email, etc. 
+        <em><b>Note</b>: for benchmarking visualizations, users will have to authenticate to ensure they have access rights to the data</em>.</p>
+    <p class="content"><b>Download your visualization as an image</b>: If you want to use a particular 
+        visualization in a report or presentation, you can download an 
+        image of the view using the tools just above the upper-right hand corner of the graph, as in the 
+        image excerpt from the graph widget below:
+    </p>
+    <p class="content indent">
+        <img class="screenshot" src="{% static 'images/DVUI_ImgDownload.png' %}" 
+        alt="Screen-shot excerpt showing a camera icon used to download an image."/>
+    </p>
+        <ul>
+            <li>
+                You can adjust the size of the graph using the <b>View Options->Graph Scale</b> control. 
+                Choosing the Small or Medium size may produce a better result that resizing the downloaded image, for some visualizations.
+            </li>
+        </ul>
+    
+    <p class="content"><b>Things of note in the user interface</b>:
+        <ul>
+            <li>
+                The graph titles indicate how many institutions are in the filtered set.
+            </li>
+            <li>
+                In the Capabilities Data graphs, error bars show one standard deviation in the associated data, and 
+                indicate the variance among the represented institutions. In smaller Capabilities Data graphs
+                these error bars may partially obscure the rest of the graph; you can hide the error bars by unchecking the 
+                <b>View Options->Show Error bars</b> control.
+            </li>
+            <li>
+                The filters can be combined in many different ways to get a particular set of institutions.
+            </li>
+            <li>
+                Filters are hidden when they do not apply to a given <b>Compare By</b> view.  For example, 
+                if you select the <b>Public/Private</b> option for <b>Compare By</b> view, 
+                the filter for Public/Private will be hidden.
+            </li>
+            <li>
+                If there are too few institutions in the filtered set to reasonably represent the 
+                defined sub-community, no results will be shown (and a message to this effect will be displayed). 
+                This also ensures that institutional data is only shown in aggregate.
+            </li>
+            <li>
+                If you want to understand the institutions represented in the dataset, use the 
+                <a href="{% url 'dataviz:demographics' %}">Community Demographics</a> section of the 
+                data viewer to see the distribution of represented institutions across different metadata types.
+            </li>
+        </ul>
+    </p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+
+
+    <h2 id="App1">Appendix I: Full feature list and notes</h3>
+
+    <p class="content">The Data Viewer has three main areas of functionality: </p>
+    <ol class="content localtoc">
+        <li>Community Demographics</li>
+        <li>Capabilities Data and Benchmarking</li>
+        <li>Priorities Data (coming in a future release)</li>
+    </ol>
+<p class="content">Each of these shares some common functionality to filter and control the visualizations.
+    </p>
+
+    <p class="content"><b>Community Demographics</b> provides graphical displays of Information about the institutions in the dataset, including:
+        <ul>
+            <li>A <b>Map View</b> showing the geographical distribution of users/contributors. 
+                <em>Note that the current map is limited to North American institutions</em>.</li>
+            <li>A series of <b>Compare By</b> views showing institutions by different aspects of 
+                Institutional Metadata (as described above in the section on <a href="#InstMetadata">Institutional metadata</a>).</li>
+            <li>A <b>Scatter Plot</b> showing the considerable variation across the contributor community.</li>
+
+        </ul>
+    </p>
+
+    <p class="content"><b>Capabilities Data and Benchmarking</b> provides graphical displays of 
+        Capabilities Model Assessment Data in the community dataset, and (for users affiliated 
+        with current contributors) the ability to benchmark assessment results relative to others in the community dataset.</p>
+    <p class="content">A simple checkbox allows the user to overlay an indicator of their institution's coverage levels
+        on any of the Capabilities Data graphs to compare their results to the community (or a subset thereof). 
+        To use this feature, users must be logged in and affiliated to an institution that has completed an assessment
+        using the Capabilities Model, submitted it, and had it approved by the CaRCC data stewards. See the
+        <a href="{% url 'helpdocs:dv_quickstart' %}">Quick Start Guide</a> for a 
+        <a href="{% url 'helpdocs:dv_quickstart' %}#StepByStep">Step-by-Step example of benchmarking for your Institution</a>.
+    </p>
+    <p class="content">Two levels of detail are provided:
+    </p>
+    <ul>
+        <li><b>Summary Facing averages</b>: overall averages for the community (all contributors or as filtered by the user) for each Facing.</li>
+        <li><b>Topic-level data for each Facing</b>: users can select a Facing and see the averages for those included topics.</li>
+    </ul>
+    <p class="content">A series of visualization types are provided:
+    </p>
+    <ul>
+        <li><b>Summary data</b>: overall averages for the community (all contributors or as filtered by the user).</li>
+        <li>Comparison by <b>Institutional classification</b></li>
+        <li>Comparison by <b>Mission</b></li>
+        <li>Comparison by <b>Public/Private</b></li>
+        <li>Comparison by <b>EPSCoR Status</b></li>
+        <li>Comparison by <b>Minority-Serving Status</b></li>
+        <li>Comparison by <b>Organizational Model</b> (centralized, federated, etc.)</li>
+        <li>Comparison by <b>Reporting Structure</b> (IT/CIO, VPR, Dean, etc.)</li>
+    </ul>
+    <h3>Common functionality to filter data:</h3>
+    <p class="content">For each of the visualizations, users can filter the data to define and explore data 
+        about specific sub-communities. The full set of filters is described below, although not all filters 
+        are relevant to a given view (and will be hidden in those views).</p>
+    <p class="content">
+        <ul>
+            <li><b>Population</b>:  to view data for all <b>Users</b> or only for <b>Contributors</b> (see 
+                <a href="#InstPops">Institutional Populations</a> above).  
+                Users select one population to view. <em>Note: This does not apply to the Capabilities Data and Benchmarking 
+                functionality since that only presents data from Contributors</em>.
+            </li>
+            <li><b>Institutional classification</b> (simplified): Given the range of contributors, this is 
+                currently constrained to R1, R2, and Other Academic institutions (i.e., all academic institutions that 
+                are not R1 or R2 institutions; excludes those in the “Other” and “Unknown” classifications).  
+                Users can select one or more values.
+            </li>
+            <li><b>Institutional Mission</b>: as described above. Users can select one or more values.
+            </li>
+            <li><b>Public/Private</b>: as described above. Users can select one or both values.
+            </li>
+            <li><b>Region</b>: Based on the IPEDS regions, plus two additional regions: Canada and International 
+                (see <a href="#App2">Appendix II</a> for details). Users can select one or more regions.
+            </li>
+            <li><b>Size</b> (total number of students): in ranges defined in the IPEDS dataset. 
+                Users can select one or more values.
+            </li>
+            <li><b>Minority-Serving Status</b>  (simplified): Given the current range of contributors, 
+                this is constrained to <em>HBCU</em>, <em>HSI</em>, <em>Other MSI</em> and <em>Not Minority Serving</em>. 
+                Users can select one or more values.
+            </li>
+            <li><b>Year</b>: Reflects the year in which an institutional profile was created (for “All Users”) 
+                or the year in which an assessment was submitted (for “Contributors”). Users can select one or more years.
+            </li>
+            <li><b>Research Expenditures</b> Users can specify one or both of a minimum and maximum amount for 
+                research expenditures (in millions of dollars):
+                <ul>
+                    <li>If only a minimum value is specified it will exclude institutions below the specified minimum amount.
+                    </li>
+                    <li>If only a maximum value is specified it will exclude institutions above the specified maximum amount.
+                    </li>
+                    <li>If both values are specified only institutions within the range are included.
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </p>
+    <p class="content"><b>Filters can be combined</b> so that users can, for example, 
+        filter the view to include only <b>Public</b> institutions in <b>EPSCoR</b> jurisdictions with
+        <b>research expenditures under $200M</b>.</p>
+    <p class="content">If the specified filter(s) define a set of institutions fewer than five (5), no results will be shown. 
+        This is done to preclude incidentally (re-)identifying contributing institutions.</p>
+    <p class="content">Note that filters are adjusted depending on the visualization chosen, since it makes no sense e.g., 
+        to filter on <b>Public/Private</b> if the user has selected a comparison by <b>Public/Private</b> status.</p>
+
+    <h3>Common functionality to adjust visualizations:</h3>
+    <p class="content">
+        <ul>
+            <li><b>Adjust the size of the graph</b> using the <b>View Options->Graph Scale</b> control.
+                Choosing the Small or Medium size may produce a better result that resizing the downloaded image, for some visualizations.
+            </li>
+            <li><b>Hide the error bars</b>: Especially for smaller Capabilities Data graphs, the error bars that indicate the variance 
+                in the data can partially obscure the rest of the graph; you can hide the error bars by unchecking the 
+                <b>View Options->Show Error bars</b> control.
+            </li>
+            <li>The graphing widget also has several <b>built in controls</b> to zoom in or out, etc. 
+                When you hover over the visualization, a small toolbar appears in the upper right. 
+                In particular, these controls include a link to <b>generate and download an image</b> of the current visualization.
+            </li>
+        </ul>
+    </p>
+    <p class="content"><b>Sharing a visualization</b>: Once you have defined a view of interest that you would like to share, 
+        you can just copy/paste the browser URL to bookmark a view and/or to share with colleagues. 
+        <em>Note: if the view includes benchmarking data, users will have to login to the portal to see the benchmarking data</em>.</p>
+
+    <h3>Common functionality to adjust visualizations:</h3>
+    <p class="content">In addition to the display of community data, a user can choose to overlay values from an approved 
+        assessment for their institution to benchmark their capabilities coverage relative to a filtered set of peers. 
+        A user can benchmark at the summary (Facings) level, or drill down to benchmark on the topics in each Facing. 
+        (Support for benchmarking at the individual question level will be in a future release.) 
+        Note that in order to use the benchmarking functionality, a user must be logged in and must be 
+        affiliated to an institution that has a completed and approved assessment using the Capabilities Model.
+    </p>
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+          
+    <h2 id="App2">Appendix II: Region definitions</h2>
+
+    <p class="content">We use the IPEDS regions as defined here: 
+        <a href="https://nces.ed.gov/ipeds/search/viewtable?tableId=35945">https://nces.ed.gov/ipeds/search/viewtable?tableId=35945</a> 
+        and add two other regions: "Canada" (all provinces and territories) and "International"
+        (for institutions in countries other than the U.S. and Canada). </p>
+    <p class="content">We do not currently have users or contributors from the service academies*, and so do not currently 
+        include that IPEDS "region" in the interface.
+    </p>
+    <table style="width:95%; margin: 0 auto; border:1px solid black; padding: 0 1em 1em 1em;">
+        <tr>
+            <td style="width:33%">
+                <h3 class="region">New England region:</h3>
+                <ul class="region">
+                    <li>Connecticut</li>
+                    <li>Maine</li>
+                    <li>Massachusetts</li>
+                    <li>New Hampshire</li>
+                    <li>Rhode Island</li>
+                    <li>Vermont</li>
+                </ul class="region">
+                <h3 class="region">Mid East region:</h3>
+                <ul class="region">
+                    <li>Delaware</li>
+                    <li>District of Columbia</li>
+                    <li>Maryland</li>
+                    <li>New Jersey</li>
+                    <li>New York</li>
+                    <li>Pennsylvania</li>
+                </ul>
+                <h3 class="region">Great Lakes region:</h3>
+                <ul class="region">
+                    <li>Illinois</li>
+                    <li>Indiana</li>
+                    <li>Michigan</li>
+                    <li>Ohio</li>
+                    <li>Wisconsin</li>
+                </ul>
+            </td>
+            <td style="width:33%">
+                <h3 class="region">Plains region:</h3>
+                <ul class="region">
+                    <li>Iowa</li>
+                    <li>Kansas</li>
+                    <li>Minnesota</li>
+                    <li>Missouri</li>
+                    <li>Nebraska</li>
+                    <li>North Dakota</li>
+                    <li>South Dakota</li>
+                </ul>
+                <h3 class="region">Southeast region:</h3>
+                <ul class="region">
+                    <li>Alabama</li>
+                    <li>Arkansas</li>
+                    <li>Florida</li>
+                    <li>Georgia</li>
+                    <li>Kentucky</li>
+                    <li>Louisiana</li>
+                    <li>Mississippi</li>
+                    <li>North Carolina</li>
+                    <li>South Carolina</li>
+                    <li>Tennessee</li>
+                    <li>Virginia</li>
+                    <li>West Virginia</li>
+                </ul>
+                <h3 class="region">Southwest region:</h3>
+                <ul class="region">
+                    <li>Arizona</li>
+                    <li>New Mexico</li>
+                    <li>Oklahoma</li>
+                    <li>Texas</li>
+                </ul>
+            </td>
+            <td style="width:34%">
+                <h3 class="region">Rocky Mountains region:</h3>
+                <ul class="region">
+                    <li>Colorado</li>
+                    <li>Idaho</li>
+                    <li>Montana</li>
+                    <li>Utah</li>
+                    <li>Wyoming</li>
+                </ul>
+                <h3 class="region">Far West region:</h3>
+                <ul class="region">
+                    <li>Alaska</li>
+                    <li>California</li>
+                    <li>Hawaii</li>
+                    <li>Nevada</li>
+                    <li>Oregon</li>
+                    <li>Washington</li>
+                </ul>
+                <h3 class="region">Other U.S. jurisdictions:</h3>
+                <ul class="region">
+                    <li>American Samoa</li>
+                    <li>Micronesia</li>
+                    <li>Guam</li>
+                    <li>Marshall Islands</li>
+                    <li>Northern Mariana Islands</li>
+                    <li>Palau</li>
+                    <li>Puerto Rico</li>
+                    <li>U.S. Virgin Islands</li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+    <p class="footnote indent">* U.S. service academies include the U.S. Naval Academy, the U.S. Military Academy, 
+        the U.S. Coast Guard Academy, the U.S. Air Force Academy, and the U.S. Merchant Marine Academy. 
+    </p>
+          
+    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    <h3>Footnotes</h3>
+    <p class="footnote" id="ftnt1"><sup>1</sup> For more on the model, see the 
+        <a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a>.
+    </p>
+    <p class="footnote" id="ftnt2"><sup>2</sup> IPEDS is the Integrated Postsecondary Education Data System. 
+        It is a system of interrelated surveys conducted annually by the U.S. Department of Education’s 
+        National Center for Education Statistics (NCES). <a href="https://nces.ed.gov/ipeds/">https://nces.ed.gov/ipeds/</a>.
+    </p>
+    <p class="footnote" id="ftnt3"><sup>3</sup> Carnegie Classification of Institutions of Higher Education, 
+        <a href="https://carnegieclassifications.acenet.edu/">https://carnegieclassifications.acenet.edu/</a>
+    </p>
+    <p class="footnote" id="ftnt4"><sup>4</sup> This simple taxonomy is based upon ECAR research by Bramanet al. (2006). 
+        IT Engagement in Research: A Baseline Study. ECAR. <a href="https://www.academia.edu/4420620/IT_Engagement_in_Research_A_Baseline_Study">
+            https://www.academia.edu/4420620/IT_Engagement_in_Research_A_Baseline_Study</a> 
+    </p>
+    <p class="footnote" id="ftnt5"><sup>5</sup> See <a href="https://new.nsf.gov/funding/initiatives/epscor/epscor-criteria-eligibility">
+        https://new.nsf.gov/funding/initiatives/epscor/epscor-criteria-eligibility</a> for more information.
+    </p>
+    <p class="footnote" id="ftnt6"><sup>6</sup> Drawn from the FY 2023 Eligibility Index: 
+        <a href="https://www2.ed.gov/about/offices/list/ope/idues/eligibility.html">https://www2.ed.gov/about/offices/list/ope/idues/eligibility.html</a>.
+    </p>
+    <p class="footnote" id="ftnt7"><sup>7</sup> For more about the roles associated with these areas, see the 
+        initial draft of a “Research Computing and Data Professionals Job Elements and Career Guide”, available at: 
+        <a href="https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf">
+            https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf</a>.
+    </p>
+</section>
+
+{% endblock %}

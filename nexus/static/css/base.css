@@ -42,6 +42,8 @@
     --nexus-disabled: #CCCBCB;
     --nexus-filled-button:#861E90;
     --nexus-filled-button-hover:#dd80e5;
+
+    --font-family-primary: Arial,Helvetica,"Helvetica Neue",sans-serif;
 }
 
 * {
@@ -57,7 +59,9 @@ body {
     display: block;
     margin-top: 0;
     margin-bottom: 0;
-    font-family: 'Source Sans Pro', sans-serif;
+    font-family: var(--font-family-primary);
+    font-size: 14px;
+    line-height: 1.35;
 }
 
 body {
@@ -77,6 +81,18 @@ header {
     max-width: calc(1380px - 4em);
     width: 90%;
 }
+
+@media screen {#nsflogo {
+    width:40px;
+    height:40px;
+    position:absolute;
+    top: 25px;
+    right: 10px;
+}}
+/* Hide the logo when screen gets narrow (so it doesn't float over the menu) */
+@media screen and (max-width: 900px) { #nsflogo { display:none; } }
+/* Hide the logo when screen gets narrow (so it doesn't float over the menu) */
+@media print { #nsflogo { display:none; } }
 
 .messages {
     width: 100%;
@@ -200,16 +216,31 @@ main div.cardblock {
     flex-direction: row;
     flex-wrap: wrap;
     grid-auto-rows: 1fr;
-    padding-top:2em;
+    padding-top:1em;
 }
 main div.cardblock section.card {
     min-height: 250px;
-    height: 100%;
-    max-height: 400px;
+    max-height: 380px;
     flex-basis: 30%;
     min-width:250px;
     padding:auto;
     margin:10px auto;
+}
+main div.cardblock section.card.short {
+    min-height: 50px;
+    max-height: 150px;
+}
+main div.cardblock section.card h3{
+    margin: 0 auto;
+    text-align: center;
+}
+main div.cardblock section.card.banner {
+    flex-basis: 80%;
+    min-height: 50px;    
+    text-align: center;
+}
+main div.cardblock section.card.banner p {
+    margin: 10px 0 0 0;
 }
 main div.cardblock section.card div.imgcard {
     display:flex;
@@ -217,9 +248,10 @@ main div.cardblock section.card div.imgcard {
     align-items: center;
     height: 90%;
     width: 100%;
+    padding:5px;
 }
 main div.cardblock section.card div img {
-    width: 95%;
+    width: 100%;
 }
 
 section.card h2 {
@@ -254,6 +286,12 @@ main img.cardcontent {
     border-radius: 8px;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
     cursor: pointer;
+}
+main section.card.nyi h2 {
+    color: var(--primary);
+}
+main section.card.nyi img.cardcontent {
+    cursor: not-allowed;
 }
 
 main div.cardbutton img.cardcontent { 
@@ -301,6 +339,24 @@ main a.cardbutton.NYI {
     pointer-events: none;
     background-color: var(--primary-fg-off);
     color: var(--info-off);
+}
+
+p.totop {
+    padding:0;
+    margin:0 0 10px 0;
+    border-bottom: 1px solid var(--primary);
+    position:relative;
+    top: -5px;
+    font-size: 0.85em;
+}
+a.totop {
+    float:right;
+    margin: 0;
+    padding: 0 10px 0 0;
+    font-style:italic;
+    /* font-size:.85em; */
+    position:relative;
+    top: -2px;
 }
 
 img.main-bg {
@@ -404,11 +460,11 @@ header>nav li {
 
 header>nav .username {
     text-align: right;
-    font-size: 0.75em;
+    font-size: 12px;
     color: var(--logo-med-purple);
     font-weight: bold;
-    max-width: 14em;
-    margin:auto 1rem;
+    max-width: 15em;
+    margin:auto .5rem;
     text-transform: none;
 }
 
@@ -420,12 +476,20 @@ main>nav.breadcrumbs {
     align-self: flex-start;
     text-transform: uppercase;
     font-weight: bold;
-    font-size: 0.9em;
+    font-size: 15px;
     padding-left: 10px;
 }
 main>nav.breadcrumbs>p.breadcrumbs {
     margin-top: 0.7em;
     margin-bottom: 0.2em;
+}
+
+span.breadcrumbarrow {
+    font-weight: bold;
+    position: relative;
+    top:-1px;
+    font-family: "Arial Black";
+    color:var(--logo-dk-blue);
 }
 
 body>nav {
@@ -448,11 +512,16 @@ body>nav details ul {
     padding-left: 1.5em;
 }
 
+body>nav details summary, nav #filtertree details summary {
+    text-indent: -1.2em;
+    padding-left: 1.1em;
+}
+
 #filtertree {
     min-width: 15em;
 }
 #filtertree input#UpdateView {
-    font-size: 0.9em;
+    font-size: 1em;
     font-weight: bold;
     background-color: var(--logo-dk-blue-shadow);
     display:inline;
@@ -472,9 +541,8 @@ body>nav details ul {
 #filtertree li.skip, #filtertree li.skipFilter, #filtertree div.skip {
     display: none;
 }
-#filtertree div.viewChoices {
-    margin-left: 10px;
-    margin-bottom: 10px;
+#filtertree div.viewChoices, #filtertree div.viewOptions {
+    margin: 5px 0 10px 10px;
 }
 
 #filtertree summary, #filtertree div.viewselect {
@@ -483,19 +551,32 @@ body>nav details ul {
 
 #filtertree div.viewselect input[type='checkbox']{
     position:relative;
-    top: 0.15em;
+    top: 0;
+    margin-right: 5px;
 }
 
 #filtertree summary, #filtertree div.viewselect select{
     margin-left: 5px;
     padding:1px;
     font-weight: bold;
-    width: 16em;
+    width: 18em;
 }
 
 #filtertree label, #resexp_to {
     font-weight: bold;
-    font-size: .9em;
+    font-size: 13.5px;
+    color: var(--nexus-light-text);
+}
+#filtertree div>label {
+    font-size: 13px;
+}
+#filtertree .viewoption label, #filtertree .viewoption label option {
+    /* font-weight: normal; */
+    font-size: 1em;
+}
+#filtertree div.viewoption {
+    width: 16em;
+    margin-bottom: 2px;
 }
 #filtertree details summary label {
     pointer-events: none;
@@ -532,18 +613,24 @@ body>nav details ul {
 /* FilterTooltip container */
 .filtertip {
     position: relative;
-    color: var(--primary);
+    color: #6453AFA0;
+    border: 2px outset #99def94f;
+    border-radius: 1em;
+    border-width: 2px;
+    padding: 0 2px;
+    font-weight: bold;
+    font-size: 0.85em;
 }
 
 /* Tooltip text */
 .filtertip .filtertiptext {
     visibility: hidden;
-    min-width: 400px;
+    min-width: 22em;
     background-color: white;
     box-shadow: 0px 0px 3px 3px #FFFFFF;
     color: var(--nexus-dark-colored-text);
     text-align: left;
-    font-size: 0.9em;
+    font-size: 1em;
     font-weight: bold;
     padding: 1px;
 
@@ -551,21 +638,38 @@ body>nav details ul {
     position: absolute;
     z-index: 1;
     top: -1px;
-    left: 20px;
+    left: 2.5em;
 }
 
 /* Show the filtertip text when you mouse over the filtertip container */
+.filtertip:hover {
+    color: #6453AF;
+    border-color: #99def9;
+}
+
 .filtertip:hover .filtertiptext {
     visibility: visible;
 }
 
-nav p.FilterTitle {
-    margin:0 0 0.3em 0;
+nav p.FilterTitle{
+    margin:5px 0 0 0;
+    color: #5d4e9e;
+}
+nav p.FilterTitle.Update{
+    margin:0 0 18px 0;
+}
+nav p.FilterTitle.Update span.FilterTitle {
+    position: relative;
+    top:20px;
+}
+
+nav p.FilterTitle.Options{
+    margin-top:1em;
 }
 
 nav span.FilterTitle {
     font-weight: bold;
-    font-size: 1em;
+    font-size: 1.1em;
 }
 
 #canvas.viz {
@@ -786,6 +890,15 @@ main a.button {
 
     cursor: pointer;
     transition: 220ms all ease-in-out;
+}
+
+main a.button.discrete {
+    color: var(--nexus-light-text);
+    background-color: var(--info);
+    min-height: 2em;
+}
+main a.button.discrete:hover {
+    color: var(--primary-fg);
 }
 
 main a.button.center {

@@ -9,6 +9,16 @@ main section {
     align-self: center;
     width: 40em;
 }
+p.hint {
+    font-size: 0.9em;
+    font-style: italic;
+}
+.tooltip .tooltiptext {
+    width: 550px;
+    top:1;
+    left:0;
+  }
+
 </style>
 {% endblock %}
 
@@ -22,6 +32,18 @@ main section {
         <li><a href="{% url 'rcdprofile:detail' profile.pk %}">{{profile}}</a></li>
         {% endfor %}
     </ul>
+    {% for institution in request.user.institutions.all %}
+    <div class="tooltip">
+        <a class="button discrete" href="{% url 'rcdprofile:create' institution.pk %}">Start a new RCD profile for {{institution}}</a>
+        <p class="tooltiptext hint">
+            <b>Note</b>: You should generally only start a new profile for a new scope/context at your institution
+        (e.g., a medical school vs. the main campus). 
+        If there are multiple assessments for a given scope in the same year, 
+        they will be subject to extra review upon submission,
+        and only the latest to be submitted will be recognized in the community dataset.
+        </p>
+</div>
+{% endfor %}
     {% else %}
     <p>You are not a contributor to any RCD profiles for the current year.</p>
 

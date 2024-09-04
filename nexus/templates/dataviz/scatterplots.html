@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}RCD-Nexus Capabilities Model Demographics Data Visualizations{% endblock %}
+{% block title %}CaRCC Capabilities Model Demographics Data Visualizations{% endblock %}
 
 {% block nav %}
     <form id="filtertree" method="post" action="" autocomplete="off">
@@ -12,7 +12,9 @@
 <h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}CapsModel Data{%endif%}</h2>
 <div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
 <p class="viz_footnote">Note: Each vertical set/stripe is an institution (in no particular order), and each dot is the rolled up coverage for the associated Facing. </p>
+{{ nonDefs|json_script:"nonDefs" }}
 <script>
-    initDetailsFromStorage();
+    const nonDefs = JSON.parse(document.getElementById('nonDefs').textContent);
+    initDetailsFromStorage( nonDefs );
 </script>
 {% endblock %}

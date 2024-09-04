@@ -1,8 +1,9 @@
 import logging
 
+import csv
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -419,7 +420,156 @@ def priorities(request, profile_id):
 
     return render(request, "capmodel/priorities.html", context)
 
+def printable_report(request, profile_id):
+    profile = access_profile(request, profile_id, "view")
+    session_language = "en"  # TODO get session language
 
+    assessment = profile.capabilities_assessment
+    categories = assessment.answers.annotate_coverage().group_by_facing_topic()
+
+    nFacings = len(categories.keys())
+    for facing, topics in categories.items():
+        facing.content = facing.contents.get(language=session_language)
+        nTopicsRequired = len(topics.keys())  
+        nTopicsComplete = 0
+        aggSum = 0
+        for topic, answers in topics.items():
+            topic.content = topic.contents.get(language=session_language)
+            if answers.filter_unanswered().exists():
+                topic.coverage_pct = "-"
+            else:
+                agg = answers.filter(not_applicable=False).aggregate_score()
+                coverage = agg["average"]
+                coverage = min(1.0, max(0.0, coverage))
+                if coverage != None:
+                    covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
+                    topic.coverage_pct = mark_safe(f"{covstring}")
+                    topic.coverage_color = compute_answer_color(coverage)
+                    # Do not include domain coverage in the aggregated Facing coverage
+                    if(topic.slug==CapabilitiesTopic.domain_coverage_slug) :
+                        # Ignore the domain coverage topic in each facing, when present
+                        nTopicsRequired -= 1
+                    else:
+                        nTopicsComplete += 1
+                        aggSum += coverage
+                else:
+                    topic.coverage_pct = "-"
+                    topic.coverage_color = None
+            
+            # answers = answers.order_by("question_id")
+            for answer in answers:
+                answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
+                match answer.score_deployment:
+                    case CapabilitiesAnswer.ScoreDeploymentChoices.NONE:
+                        answer.avail = "None"
+                    case CapabilitiesAnswer.ScoreDeploymentChoices.TRACKING:
+                        answer.avail = "Tracking"
+                    case CapabilitiesAnswer.ScoreDeploymentChoices.DEVELOPING:
+                        answer.avail = "Planning"
+                    case CapabilitiesAnswer.ScoreDeploymentChoices.DEPLOYING:
+                        answer.avail = "Parts"
+                    case CapabilitiesAnswer.ScoreDeploymentChoices.COMPLETE:
+                        answer.avail = "All"
+                    case _ :
+                        answer.avail = ""
+
+                match answer.score_supportlevel:
+                    case CapabilitiesAnswer.ScoreSupportLevelChoices.NONE:
+                        answer.sol = "None"
+                    case CapabilitiesAnswer.ScoreSupportLevelChoices.UNRELIABLE:
+                        answer.sol = mark_safe(f"At&nbsp;Risk")
+                    case CapabilitiesAnswer.ScoreSupportLevelChoices.LIGHTS_ON:
+                        answer.sol = "Minimal"
+                    case CapabilitiesAnswer.ScoreSupportLevelChoices.BASIC:
+                        answer.sol = "Basic"
+                    case CapabilitiesAnswer.ScoreSupportLevelChoices.PREMIUM:
+                        answer.sol = "Strong"
+                    case _ :
+                        answer.sol = ""
+
+                match answer.score_collaboration:
+                    case CapabilitiesAnswer.ScoreCollaborationChoices.NONE:
+                        answer.comm = "None"
+                    case CapabilitiesAnswer.ScoreCollaborationChoices.TRACKING:
+                        answer.comm = "Exploring"
+                    case CapabilitiesAnswer.ScoreCollaborationChoices.DEVELOPING:
+                        answer.comm = "Engaging"
+                    case CapabilitiesAnswer.ScoreCollaborationChoices.SUSTAINING:
+                        answer.comm = "Supporting"
+                    case CapabilitiesAnswer.ScoreCollaborationChoices.LEADING:
+                        answer.comm = "Leading"
+                    case _ :
+                        answer.comm = ""
+
+                answer.coverage_color = None
+                match answer.state:
+                    case CapabilitiesAnswer.State.ANSWERED:
+                        # Max at 100% since the collaboration boost/discount can push coverage over 1.0 and under 0
+                        covvalue = min(1.0, max(0.0, answer.coverage))
+                        covstring = format(covvalue, ".1%" if covvalue<1.0 else ".0%")
+                        answer.coverage_percent = mark_safe(f"{covstring}")        
+                        answer.coverage_color = compute_answer_color(answer.coverage)
+                    case CapabilitiesAnswer.State.PARTIALLY_ANSWERED:
+                        answer.coverage_percent = "(WIP)"
+                        answer.cssclass = "WIP"
+                        all_answered = False
+                    case CapabilitiesAnswer.State.UNANSWERED:
+                        answer.coverage_percent = "-"
+                        all_answered = False
+                    case CapabilitiesAnswer.State.NOT_APPLICABLE:
+                        answer.coverage_percent = "N/A"
+                        answer.cssclass = "NA"
+                # print(f'Q: {answer}: {answer.html_display} {answer.coverage_percent}')
+
+
+        if nTopicsComplete == nTopicsRequired:
+            # For the Facing coverage, get the aggregate average of all questions in the Facing that are not marked N/A
+            facingAnswers = assessment.answers.filter(question__topic__facing=facing).filter(not_applicable=False)
+            facingCov = facingAnswers.aggregate_score()["average"]
+            covstring = format(facingCov, ".1%" if facingCov<1.0 else ".0%")
+            facing.coverage_pct = mark_safe(f"{covstring}")
+            facing.coverage_color = compute_answer_color(facingCov)
+
+
+    context = {
+        "profile": profile,
+        "categories": categories,
+        "navtree": rcdprofile_navtree(profile, rcdprofile_navtree.CAPABILITIES),
+    }
+
+    return render(request, "capmodel/printable_report.html", context)
+
+def csv_report(request, profile_id):
+    profile = access_profile(request, profile_id, "view")
+
+    filename = f"{profile.institution} ({profile.year}).csv"
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename='+filename},
+    )
+    writer = csv.writer(response)
+    writer.writerow(["Facing", "Topic", "Question", "Avail", "SOL", "Comm", "Cov", "Prio"])
+
+    session_language = "en"  # TODO get session language
+
+    assessment = profile.capabilities_assessment
+    categories = assessment.answers.annotate_coverage().group_by_facing_topic()
+
+    for facing, topics in categories.items():
+        for topic, answers in topics.items():           
+            for answer in answers:
+                match answer.state:
+                    case CapabilitiesAnswer.State.ANSWERED:
+                        # Max at 100% since the collaboration boost/discount can push coverage over 1.0 and under 0
+                        covvalue = min(1.0, max(0.0, answer.coverage))
+                    case CapabilitiesAnswer.State.NOT_APPLICABLE:
+                        covvalue = -1
+                    case _ :
+                        covvalue = ""
+                writer.writerow([facing, topic, answer.question.contents.get(language=session_language).text,
+                             answer.score_deployment, answer.score_supportlevel, answer.score_collaboration, covvalue, answer.priority ])
+
+    return response
 
 # delete?
 # def api_aggregate_score?

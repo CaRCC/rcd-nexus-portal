@@ -12,6 +12,9 @@
             "footer";
         grid-template-columns: 1fr;
     }
+    p, ul, ol {
+        line-height: 1.35;
+    }
     section.helpdocs {
         width: 80%;
         max-width: 800px;
@@ -32,7 +35,7 @@
     }
     section.helpdocs ul {
         list-style: disc outside;
-        margin: .1em 0 0 1em;
+        margin: 0 0 0 1em;
     }
     section.helpdocs ul li{
         font-size: 0.9em;
@@ -124,29 +127,14 @@
     sup a:link, sup a:visited {
         color: inherit;
     }
-    p.totop {
-        padding:0;
-        margin:0 0 10px 0;
-        border-bottom: 1px solid var(--primary);
-        position:relative;
-        top: -5px;
-    }
-    a.totop {
-        float:right;
-        margin: 0;
-        padding: 0 10px 0 0;
-        font-style:italic;
-        font-size:.85em;
-        position:relative;
-        top: -2px;
-    }
+
 </style>
 
 <script>
 </script>
 
 {% endblock %}
-{% block title %}RCD-Nexus Capabilities Model Printable Questions{% endblock %}
+{% block title %}CaRCC Capabilities Model Printable Questions{% endblock %}
 
 {% block main %}
 <section class="helpdocs" >
@@ -229,7 +217,7 @@
 	</table>
     <p class="caption">Table 1 - Description and examples for the Five Facings</p>
     <p class="copyright"><b>Copyright &copy; 2023 Internet2 and CaRCC</b>, and licensed for use under 
-        <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
+        <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
          usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
     <div>
         <p class="footnote"><a href="#ftnt_ref1" id="ftnt1">[1]</a>This is a supplement to the 
@@ -735,6 +723,9 @@
         </li>
         <li>
             Are research priorities, and Research Computing and Data (RCD) strategic priorities well-understood by your institution&#39;s management and planning groups?
+        </li>
+        <li>
+            Is there a Faculty Advisory Group (or equivalent) that provides review and advice on priorities for the Research Computing and Data (RCD) program?
         </li>
         <li>
             Does institution-level management and planning recognize and value the impact of Research Computing and Data (including return/value on investment)?

@@ -1,7 +1,7 @@
 {% load static %}
 <nav>
     <div class="logo">
-        <a href="https://www.rcd-nexus.org"><img src="{% static 'images/logo-wide-sm.png' %}" alt="RCD Nexus logo"
+        <a target="_blank" rel="noopener noreferrer" href="https://www.rcd-nexus.org"><img src="{% static 'images/logo-wide-sm.png' %}" alt="RCD Nexus logo"
                 width="334" height="76"></a>
     </div>
     <input id="menu-toggle" type="checkbox" />
@@ -11,13 +11,13 @@
         <ul class="menu">
             {% if not request.user.is_authenticated %}
             <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="/dataviz">Data Viewer</a></li>
-            <li><a href="/helpdocs">Help</a></li>
+            <li><a href="{% url 'dataviz:vizmain' %}">Data Viewer</a></li>
+            <li><a href="{% url 'helpdocs:main' %}">Help</a></li>
             <li><a href="{% url 'oidc_authentication_init' %}">Login</a></li>
             {% else %}
             <li><a href="{% url 'rcdprofile:list' %}">Home</a></li>
-            <li><a href="/dataviz">Data Viewer</a></li>
-            <li><a href="/helpdocs">Help</a></li>
+            <li><a href="{% url 'dataviz:vizmain' %}">Data Viewer</a></li>
+            <li><a href="{% url 'helpdocs:main' %}">Help</a></li>
             {% if request.user.is_staff %}
             <li><a href="{% url 'admin:index' %}">Admin</a></li>
             {% endif %}
@@ -38,7 +38,7 @@
             <button id="motdOKBtn" onclick="dismissMOTD(event)">OK</button>
             <div id="noshow">
                 <input type="checkbox" id="motd_noshow" value="Bike">
-                <label for="motd_noshow">Don't show this again (today).</label>
+                <label for="motd_noshow">Don't show this again for {% if dismissDays %}{{dismissDays}}{% else %}1{% endif %} days.</label>
             </div>
         </form>
     </dialog>
@@ -48,7 +48,7 @@
         var SHOWN ="1";
         var HIDDEN = "0";
         var MOTD_COOKIE = "MOTDSH";
-        var COOKIE_LIFE = 1*24*60*60*1000;  // Save state for a day
+        var COOKIE_LIFE = {% if dismissDays %}{{dismissDays}}{% else %}1{% endif %}*24*60*60*1000;  // Save state for a day
         const motdNoShowCB = document.getElementById("motd_noshow");
         const motdDialog = document.getElementById("motdPopup");
         var systemDown = false;
