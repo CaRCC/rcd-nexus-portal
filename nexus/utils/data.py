@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 from nexus.models import (
     CapabilitiesAssessment,
@@ -321,3 +321,29 @@ def load_legacy_profiles_data(path):
 
     print(f'Loaded {profiles_loaded} profiles.')
 
+
+def merge_institutions(*institutions):
+    """
+    Merge the institutions into the first one in the list, for deduplication.
+
+    WARNING: Make sure all FKs to the Institution model are included in this method before running it in prod. As of writing, there were 4.
+
+    Also double check that no data will be lost in the merge, e.g. important names/descriptions on each additional Institution record. This is a destructive operation.
+    """
+    first = institutions[0]
+    with transaction.atomic():
+        for institution in institutions[1:]:
+            for profile in institution.profiles.all():
+                profile.institution = first
+                profile.save()
+            for idp in institution.cilogon_idps.all():
+                idp.institution = first
+                idp.save()
+            for affiliation in institution.user_affiliations.all():
+                affiliation.institution = first
+                affiliation.save()
+            for request in institution.affiliation_requests.all():
+                request.institution = first
+                request.save()
+            institution.delete()
+    return first

@@ -53,10 +53,22 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             try:
                 details = get_cilogon_idp_details(idp.identifier)
                 internet_domain = domain_pattern.match(details["Home_Page"]).groups()[0]
-                idp.institution, created = models.Institution.objects.get_or_create(
-                    internet_domain=internet_domain,
-                    defaults={"name": idp.name or idp.identifier},
-                )
+
+                # Search for a matching existing institution, starting with the full domain and working up to the TLD.
+                domain_parts = internet_domain.split(".")
+                searched_part_count = len(domain_parts)
+                while searched_part_count > 2:
+                    idp.institution = models.Institution.objects.filter(internet_domain=".".join(domain_parts[-searched_part_count:])).first()
+                    if idp.institution:
+                        break
+                    searched_part_count -= 1
+
+                # No institution was found, so make one using the full domain name. Hopefully it wasn't already in IPEDS under a different domain name.
+                if not idp.institution:
+                    idp.institution = models.Institution.objects.create(
+                        internet_domain=internet_domain,
+                        name=idp.name or idp.identifier,
+                    )
             except ValueError:
                 pass
 
