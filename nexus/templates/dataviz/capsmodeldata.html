@@ -14,6 +14,11 @@
 {%if showErrBars %}
     <p class="viz_footnote">Note: "error bars" represent one standard deviation in the data, and illustrate the variation among institutions.</p>
 {%endif%}
+
+{%if facinglink %}
+    <p class="viz_footnote">See also the <a href="{% url 'helpdocs:printable_questions' %}#{{facinglink}}">set of questions associated with each topic
+         in this Facing</a></p>
+{%endif%}
 {{ nonDefs|json_script:"nonDefs" }}
 <script>
     const nonDefs = JSON.parse(document.getElementById('nonDefs').textContent);

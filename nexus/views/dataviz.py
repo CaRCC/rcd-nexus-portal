@@ -483,6 +483,7 @@ def data_viz_capsmodeldata(request):
     benchmarkInfo = None
     showErrBars = False
     nonDefs = ""
+    facinglink = None
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -569,6 +570,7 @@ def data_viz_capsmodeldata(request):
 
                 if facing != 'all':
                     grheight *= cmgraphs.CALCULATE_SCALED_HEIGHT
+                    facinglink = facing+'topics'
 
                 showErrBars = cleaned_dict.get('opt_show_errbars') != 'False'
                 # print("ShowErrBars: ",showErrBars)
@@ -669,6 +671,7 @@ def data_viz_capsmodeldata(request):
         "graphtitle":graphtitle,
         "chart":chart,
         "showErrBars":showErrBars,
+        "facinglink":facinglink,
         "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
