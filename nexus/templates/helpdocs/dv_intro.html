@@ -164,30 +164,30 @@
     <h1 class="title">Data Viewer Introduction and Guide to Use</h1>
 	<p class="update">Initial version, Sept. 2024</p>
 	<p><b>Table of Contents</b>:
-        <span class="tocentry"><a href="#Overview">Data Viewer overview</a></span>
+        <span class="tocentry"><a href="#Overview">Data Viewer Overview</a></span>
         <span class="tocentry"><a href="#KeyAspects">Understanding Key Aspects of the Data Viewer</a></span>
-        <span class="tocentry"><a href="#UsefulTools">Useful tools and features in the Data Viewer</a></span>
-        <span class="tocentry"><a href="#App1">Appendix I: Full feature list and notes</a></span>
-        <span class="tocentry"><a href="#App2">Appendix II - Region definitions</a></span>
+        <span class="tocentry"><a href="#UsefulTools">Useful Tools and Features in the Data Viewer</a></span>
+        <span class="tocentry"><a href="#App1">Appendix I: Full Feature List and Notes</a></span>
+        <span class="tocentry"><a href="#App2">Appendix II - Region Definitions</a></span>
     </p>
 	<hr>
-    <h2 id="Overview">Data Viewer overview</h2>
+    <h2 id="Overview">Data Viewer Overview</h2>
     <p class="content">These tools complement the CaRCC Capabilities Model with <b>interactive data visualizations to explore 
-        the community dataset</b> provided by institutions that are using and/or have completed assessments
+        the Community Dataset</b> provided by institutions that are using and/or have completed assessments
          using the Model. The Model was developed to identify the variety of relevant approaches taken to support
           Research Computing and Data (RCD) and the key factors for providing that support. The Model is designed
            for use as an input to strategic decision making and is intended to be inclusive across a broad range
             of institutions.
    </p>
-   <p class="content">The Data Viewer includes three types of views of the community dataset:</p>
+   <p class="content">The Data Viewer includes three types of views of the Community Dataset:</p>
    <ul>
     <li><b>Community Demographics</b> provides graphical displays of information about the institutions in the dataset, from map
-        views to charts to a scatter graph summary of the data. A set of view controls and filters allow users to focus the 
+        views to charts to a scatter graph summary of the data. A set of view controls and filters allow users to customize the 
         visualizations on a segment within the broader community. There is also a list of the contributing institutions by name. 
      </li>
      <li><b>Capabilities Data and Benchmarking</b> provides graphical displays of 
-        Capabilities Model Assessment Data in the community dataset, and the ability to benchmark assessment results
-        relative to others in the community dataset.
+        Capabilities Model Assessment Data in the Community Dataset, and the ability to benchmark assessment results
+        relative to others in the Community Dataset.
      </li>
     <li><b>Priorities Data</b> (coming in a future release) will provide information about the areas of capabilities that
         institutions marked as a priority for attention when they completed their assessment. 
@@ -198,29 +198,25 @@
         across the community <br>and explore aspects of that by topic, region, types of institutions, etc.
     </p>
     <p class="content">The Data Viewer is designed to be useful to a diverse mix of stakeholders, including campus 
-        research computing and data practitioners, along with the principal investigators and research team members
-         (faculty, staff) with whom they work, as well as key partners (e.g., central IT), and campus leadership. 
+        research computing and data practitioners, the researchers and educators they work with,
+         as well as key partners (e.g., central IT), and campus leadership. 
          Users who are unfamiliar with the CaRCC Capabilities Model may wish to review the associated 
          <a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a>.
     </p>
     <h3>What are common uses for the Data Viewer?</h3>
     <ul>
-        <li>To explore the areas of strength and weakness in RCD support across our community.</li>
+        <li>To explore the areas of strength and weakness in RCD support across the broader community of contributing institutions.</li>
         <li>To benchmark an institution’s assessed RCD support relative to the community, or to a set of chosen peers (current or aspirational).</li>
         <li>To understand the mix of institutions that are using the Model, and those that have completed and contributed an assessment.</li>
     </ul>
 
     <h2 id="ack">Acknowledgements</h2>
-    <img src="{% static 'images/NSF-logo-sm.png' %}" width="125" height="125" align="right" alt="NSF logo image"/>
+    <img id="AckNSFlogo" src="{% static 'images/NSF-logo-sm.png' %}" alt="NSF logo image"/>
     <p class="content">The RCD Capabilities Model was developed through a collaboration of the Campus Research Computing Consortium 
         (<a target="_blank" rel="noopener noreferrer" href="https://www.carcc.org">CaRCC</a>), <a target="_blank" rel="noopener noreferrer" href="https://internet2.edu">Internet2</a>, and 
-        <a target="_blank" rel="noopener noreferrer" href="https://educause.edu">EDUCAUSE</a>. This work is supported in part by National Science Foundation by an 
-        NSF RCN grant (<a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1620695">OAC-1620695</a>,
-         PI: Alex Feltus, "RCN: Advancing Research and Education through a national network of campus 
-         research computing infrastructures &ndash; The CaRCC Consortium"), and by an 
-         NSF Cyberinfrastructure Centers of Excellence (CI CoE) pilot award 
-         (<a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2100003">OAC-2100003</a> , 
-         PI Dana Brunson, "Advancing Research Computing and Data: Strategic Tools, Practices, and Professional Development"). 
+        <a target="_blank" rel="noopener noreferrer" href="https://educause.edu">EDUCAUSE</a>. This work has been supported in part by
+        the National Science Foundation via <a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1620695">OAC-1620695</a>
+         and <a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2100003">OAC-2100003</a>. 
     </p>
     <p class="copyright"><b>Copyright ©2023-{% now "Y" %} Internet2 and CaRCC</b>, and licensed for use under 
         <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
@@ -235,12 +231,12 @@
         community of users, and to support filtering of the capabilities dataset.</p>
     <p class="content">The key concepts that structure the data are:</p>
     <ol class="content localtoc">
-        <li><a href="#InstMetadata">Institutional metadata</a></li>
+        <li><a href="#InstMetadata">Institutional Metadata</a></li>
         <li><a href="#InstPops">Institutional Populations</a></li>
         <li><a href="#Facings">The Five Facings</a></li>
         <li><a href="#LocalPrio">Local Priority</a></li>
     </ol>
-    <h3 id="InstMetadata">Institutional metadata</h3>
+    <h3 id="InstMetadata">Institutional Metadata</h3>
     <p class="content">We have metadata about the institutions that are using the Model that we draw from the
         Department of Education’s IPEDS data<sup><a href="#ftnt2" id="ftnt_ref2">[2]</a></sup>,
         from the Carnegie Classification<sup><a href="#ftnt3" id="ftnt_ref3">[3]</a></sup>,
@@ -248,7 +244,7 @@
         The metadata values are used to provide different comparative views of the 
         data and to filter the data to understand or benchmark a particular subset of institutions.
     </p>
-    <p class="content"><b>Institutional classification</b>: Values are based upon the widely used 
+    <p class="content"><b>Institutional Classification</b>: Values are based upon the widely used 
         Carnegie Classification with adjustments and extensions to support our community of users 
         (e.g., to include additional types of institutions and those that are not U.S. Higher Education institutions).
     </p>
@@ -312,9 +308,9 @@
         Users choose the option that best describes where within the institution their RCD program 
         ultimately reports. Values include:
     </p>
-    <p class="content indent"><b>Information technology, e.g., the Chief Information Officer (CIO)</b></p>
+    <p class="content indent"><b>Information Technology, e.g., the Chief Information Officer (CIO)</b></p>
     <p class="content indent"><b>Research, e.g., a Vice Provost for Research (VPR)</b></p>
-    <p class="content indent"><b>Academic leadership (e.g., the Provost or a Dean)</b></p>
+    <p class="content indent"><b>Academic Leadership (e.g., the Provost or a Dean)</b></p>
     <p class="content indent"><b>Academic/Research Institute or Center</b></p>
     <p class="content indent"><b>Other</b> <em>(not otherwise specified)</em></p>
 
@@ -329,14 +325,14 @@
         </li>
         <li><b>Contributors</b>: This includes only those institutions that have completed 
             an assessment using the CaRCC Capabilities Model, and agreed to contribute their 
-            data to the community dataset.
+            data to the Community Dataset.
             <ul>
                 <li>Users affiliated with an institution that is a current Contributor
                     have access to benchmarking functionality as well as some additional, 
                     more detailed data views. 
                 </li>
                 <li>Through the end of 2024, all institutions that contributed an assessment 
-                    to the community dataset are considered <em>current</em>. 
+                    to the Community Dataset are considered <em>current</em>. 
                 </li>
                 <li>Beginning in 2025, only institutions that contributed an assessment 
                     within the previous three (3) years will be considered <em>current</em>. 
@@ -344,12 +340,12 @@
             </ul>
         </li>
     </ol>
-    <p class="content">For the community demographics visualizations, 
+    <p class="content">For the Community Demographics visualizations, 
         users can select which population they are interested in using the
         <em>Population</em> filter choices. The <em>Capabilities Data and Benchmarking and 
         Priorities Data</em> visualizations are (of course) drawn only from <em>Contributors</em>.</p>
     <p class="content">Note that for institutions that have completed and contributed more than one assessment 
-        (i.e., who have repeated the process in more than one year), the community dataset 
+        (i.e., who have repeated the process in more than one year), the Community Dataset 
         only uses the most recent assessment data for that institution.</p> 
     
     <h3 id="Facings">The Five Facings</h3>
@@ -413,15 +409,15 @@
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
 
     <h3 id="LocalPrio">Local Priority</h3>
-    <p class="content">Users can optionally mark each capability as a priority for your organization. 
+    <p class="content">Users of the assessment tool can optionally mark each capability as a priority for their organization. 
         This can be used, e.g., to mark items they want to address as part of strategic planning. 
-        The range of priority values is from 1 to 99 (where 1 is the top priority).</p>
+        Priority values range from 1 to 99 (where 1 is the top priority).</p>
     <p class="content">These <em>Local Priority</em> values have no impact on the calculated coverage, 
         however they may provide an indication of where RCD support organizations see challenges or 
         opportunities and provide an additional lens on the state of RCD support across the community.</p>
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
 
-    <h2 id="UsefulTools">Useful tools and features in the Data Viewer</h3>
+    <h2 id="UsefulTools">Useful Tools and Features in the Data Viewer</h3>
     <p class="content"><b>Benchmarking support</b>: Check the <b>Benchmark my Data</b> option as shown in the image below to
         enable an overlay of your institution's coverage on any fo the Capabilities Data graphs. 
         <p class="content indent">
@@ -484,7 +480,7 @@
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
 
 
-    <h2 id="App1">Appendix I: Full feature list and notes</h3>
+    <h2 id="App1">Appendix I: Full Feature List and Notes</h3>
 
     <p class="content">The Data Viewer has three main areas of functionality: </p>
     <ol class="content localtoc">
@@ -497,18 +493,18 @@
 
     <p class="content"><b>Community Demographics</b> provides graphical displays of Information about the institutions in the dataset, including:
         <ul>
-            <li>A <b>Map View</b> showing the geographical distribution of users/contributors. 
+            <li>A <b>Map View</b> showing the geographical distribution of Users/Contributors. 
                 <em>Note that the current map is limited to North American institutions</em>.</li>
             <li>A series of <b>Compare By</b> views showing institutions by different aspects of 
                 Institutional Metadata (as described above in the section on <a href="#InstMetadata">Institutional metadata</a>).</li>
-            <li>A <b>Scatter Plot</b> showing the considerable variation across the contributor community.</li>
+            <li>A <b>Scatter Plot</b> showing the considerable variation across the Contributor community.</li>
 
         </ul>
     </p>
 
     <p class="content"><b>Capabilities Data and Benchmarking</b> provides graphical displays of 
-        Capabilities Model Assessment Data in the community dataset, and (for users affiliated 
-        with current contributors) the ability to benchmark assessment results relative to others in the community dataset.</p>
+        Capabilities Model Assessment Data in the Community Dataset, and (for users affiliated 
+        with current Contributors) the ability to benchmark assessment results relative to others in the Community Dataset.</p>
     <p class="content">A simple checkbox allows the user to overlay an indicator of their institution's coverage levels
         on any of the Capabilities Data graphs to compare their results to the community (or a subset thereof). 
         To use this feature, users must be logged in and affiliated to an institution that has completed an assessment
@@ -519,14 +515,14 @@
     <p class="content">Two levels of detail are provided:
     </p>
     <ul>
-        <li><b>Summary Facing averages</b>: overall averages for the community (all contributors or as filtered by the user) for each Facing.</li>
+        <li><b>Summary Facing averages</b>: overall averages for the community (all Contributors or as filtered by the user) for each Facing.</li>
         <li><b>Topic-level data for each Facing</b>: users can select a Facing and see the averages for those included topics.</li>
     </ul>
     <p class="content">A series of visualization types are provided:
     </p>
     <ul>
-        <li><b>Summary data</b>: overall averages for the community (all contributors or as filtered by the user).</li>
-        <li>Comparison by <b>Institutional classification</b></li>
+        <li><b>Summary For All Institutions</b>: overall averages for the community (all Contributors or as filtered by the user).</li>
+        <li>Comparison by <b>Institutional Classification</b></li>
         <li>Comparison by <b>Mission</b></li>
         <li>Comparison by <b>Public/Private</b></li>
         <li>Comparison by <b>EPSCoR Status</b></li>
@@ -545,7 +541,7 @@
                 Users select one population to view. <em>Note: This does not apply to the Capabilities Data and Benchmarking 
                 functionality since that only presents data from Contributors</em>.
             </li>
-            <li><b>Institutional classification</b> (simplified): Given the range of contributors, this is 
+            <li><b>Institutional Classification</b> (simplified): Given the range of Contributors, this is 
                 currently constrained to R1, R2, and Other Academic institutions (i.e., all academic institutions that 
                 are not R1 or R2 institutions; excludes those in the “Other” and “Unknown” classifications).  
                 Users can select one or more values.
@@ -560,7 +556,7 @@
             <li><b>Size</b> (total number of students): in ranges defined in the IPEDS dataset. 
                 Users can select one or more values.
             </li>
-            <li><b>Minority-Serving Status</b>  (simplified): Given the current range of contributors, 
+            <li><b>Minority-Serving Status</b>  (simplified): Given the current range of Contributors, 
                 this is constrained to <em>HBCU</em>, <em>HSI</em>, <em>Other MSI</em> and <em>Not Minority Serving</em>. 
                 Users can select one or more values.
             </li>
@@ -608,7 +604,7 @@
         you can just copy/paste the browser URL to bookmark a view and/or to share with colleagues. 
         <em>Note: if the view includes benchmarking data, users will have to login to the portal to see the benchmarking data</em>.</p>
 
-    <h3>Common functionality to adjust visualizations:</h3>
+    <h3>Benchmarking institutional coverage:</h3>
     <p class="content">In addition to the display of community data, a user can choose to overlay values from an approved 
         assessment for their institution to benchmark their capabilities coverage relative to a filtered set of peers. 
         A user can benchmark at the summary (Facings) level, or drill down to benchmark on the topics in each Facing. 
@@ -618,13 +614,13 @@
     </p>
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
           
-    <h2 id="App2">Appendix II: Region definitions</h2>
+    <h2 id="App2">Appendix II: Region Definitions</h2>
 
     <p class="content">We use the IPEDS regions as defined here: 
         <a href="https://nces.ed.gov/ipeds/search/viewtable?tableId=35945">https://nces.ed.gov/ipeds/search/viewtable?tableId=35945</a> 
         and add two other regions: "Canada" (all provinces and territories) and "International"
         (for institutions in countries other than the U.S. and Canada). </p>
-    <p class="content">We do not currently have users or contributors from the service academies*, and so do not currently 
+    <p class="content">We do not currently have Users or Contributors from the service academies*, and so do not currently 
         include that IPEDS "region" in the interface.
     </p>
     <table style="width:95%; margin: 0 auto; border:1px solid black; padding: 0 1em 1em 1em;">

@@ -68,7 +68,7 @@
         margin-bottom:10px;
         counter-increment: item;
     }
-    ol.UI-Right li:before {
+    ol.UI-Right li.circle:before {
         margin-right: .8em;
         content: counter(item);
         background: #b7a209;
@@ -170,7 +170,7 @@
 	<p><b>Table of Contents</b>:
         <span class="tocentry"><a href="#Overview">Data Viewer overview</a></span>
         <span class="tocentry"><a href="#MainUIEls">Working with the Graph UI</a></span>
-        <span class="tocentry"><a href="#StepByStep">Step-by-Step example of benchmarking for your Institution</a></span>
+        <span class="tocentry"><a href="#StepByStep">Step-by-Step Example of Benchmarking for your Institution</a></span>
     </p>
 	<hr>
     <h2 id="Overview">Data Viewer overview</h2>
@@ -214,19 +214,19 @@
         <img class="screenshot UI-left" src="{% static 'images/Filter_sm.png' %}"
         alt="Screen-shot excerpt showing filter controls."/>
         <ol class="UI-Right">
-            <li>When viewing Capabilities Data, there is a dropdown to choose data at a <b>summary level across facings</b>,
+            <li class="circle">When viewing Capabilities Data, there is a dropdown to choose data at a <b>summary level across facings</b>,
                 or to focus on <b>topics within a chosen facing</b>.</li>
-            <li>Many graphs allow you to choose views that <b>compare subcommunities</b>, e.g., by the Institutional Classification, 
+            <li class="circle">Many graphs allow you to choose views that <b>compare subcommunities</b>, e.g., by the Institutional Classification, 
                 by the Public/Private status, etc.</li>
-            <li>Demographic visualizations include a filter to view <b>all institutions using the caps model ("Users")</b>, 
-                or just those that have <b>completed assessments ("Contributors")</b>.</li>
-            <li>A series of other filters allow you to filter on other institutional demographic metadata.
+            <li class="circle">A series of other filters allow you to filter on other institutional demographic metadata.
             <br>Filters can be combined to specify a particular subset of institutions to be graphed.</li>
-            <li>After selecting a set of desired views and/or filters, Click on <b>UpdateView</b> to see the results.</li> 
+            <li class="circle">After selecting a set of desired views and/or filters, Click on <b>UpdateView</b> to see the results.</li> 
+            <li><em>(Not shown at left)</em> Demographic visualizations include a filter to view <b>all institutions using the caps model ("Users")</b>, 
+                or just those that have <b>completed assessments ("Contributors")</b>.</li>
         </ol>
     </div>
 <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
-   <h2 id="StepByStep">Step-by-Step example of benchmarking for your Institution</h3>
+   <h2 id="StepByStep">Step-by-Step Example of Benchmarking for your Institution</h3>
     <p class="content">In order to use the benchmarking tool, you must be logged in and affiliated to an 
         institution that has completed an assessment using the Capabilities Model, submitted it, and had 
         it approved by the CaRCC data stewards. See also the 

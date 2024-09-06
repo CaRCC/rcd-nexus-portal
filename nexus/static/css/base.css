@@ -984,6 +984,16 @@ td.answer-field #id_priority {
     max-width: 3.5em;
 }
 
+img#AckNSFlogo {
+    width: 100px;
+    height: 100px;
+    float: right;
+    position:relative;
+    top:-15px;
+    margin-left: 10px;        
+}
+
+
 /* Tooltip container */
 .tooltip {
     position: relative;
