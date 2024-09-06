@@ -78,6 +78,7 @@
         <span class="tocentry"><a href="#PriosViz">When will priorities visualization be available?</a></span>
         <span class="tocentry"><a href="#InfoSources">Where does the information about institutions come from?</a></span>
         <span class="tocentry"><a href="#Contributor">What is a “Contributor” (vs. a “User”)?</a></span>
+        <span class="tocentry"><a href="#Coverage">What is “Coverage”?</a></span>
     </p>
     <p><em>See also</em> the Capabilities Model <a href="{% url 'helpdocs:faq' %}">Frequently Asked Questions (FAQ)</a></p>
     <hr>
@@ -91,8 +92,8 @@
             Click on the "Capabilities Data and Benchmarking" tile to see graphical displays of Capabilities Model Assessment Data in the community dataset. 
         </p>
         <p class="content">
-            Click on any of the Filters on the left of the individual visualization views to see options for narrowing the 
-            set of data you want to see. Once you have set your filters, click on "UpdateView" to see the graph. 
+            Click on any of the Filters on the left of a individual page visualization to see options for narrowing the 
+            set of data you want to view. Once you have set your Filters and View Options, click on "UpdateView" to see the graph. 
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
@@ -127,7 +128,7 @@
             National Center for Education Statistics (NCES). See <a href="https://nces.ed.gov/ipeds/">https://nces.ed.gov/ipeds/</a>.
         </p>
         <p class="content">
-            The <b>Institutional classification</b> values are based upon the widely used Carnegie Classification 
+            The <b>Institutional Classification</b> values are based upon the widely used Carnegie Classification 
             with adjustments and extensions to support our community of users (e.g., to include additional types of
             institutions and those that are not U.S. Higher Education institutions). For more on the 
             Carnegie Classification of Institutions of Higher Education, see
@@ -157,8 +158,36 @@
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
-
-
+    <div class="helptopic">
+        <h2 id="Coverage">What is “Coverage”?</h2>
+        <p class="content">The Capabilities Model presents roughly 150 capabilities (in the form of questions) structured 
+            around <a href="{% url 'helpdocs:intro_and_guide' %}#FiveFacings">the five Facings</a>. Within each Facing,
+            questions are grouped into <em>topics</em>.
+            Each question is considered through several lenses: <b>Availability across institution</b>, 
+            <b>Service Operating Level</b>, and <b>Community engagement and collaboration</b> 
+             (these are described in the 
+            <a href="{% url 'helpdocs:intro_and_guide' %}#KeyAspects">Understanding Key Aspects of the Model</a> 
+            section of the <a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a>).
+        </p>
+        <p class="content">For each question, users choose answers for the three lenses, 
+            and these are combined to produce a numerical <b>coverage</b> value for that capability.
+            Coverage values for the questions are averaged to produce a coverage value for the associated <em>topic</em>, 
+            and for each Facing overall. 
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+{% comment %} Template FAQ item
+    <div class="helptopic">
+        <h2 id="ID">Question?</h2>
+        <p class="content">
+            <Content
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+{% endcomment %}
+<p class="copyright noprint"><b>Copyright ©2023-{% now "Y" %} Internet2 and CaRCC</b>, and licensed for use under 
+    <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
+     usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
 </section>
 
 {% endblock %}

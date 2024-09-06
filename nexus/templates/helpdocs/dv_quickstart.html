@@ -57,12 +57,48 @@
         font-size: 1em;
         padding:.2em 0 0 0;
     }
+    ol.UI-Right {
+        flex-basis: 60%;
+        padding:auto;
+        margin:auto;
+        list-style: none;
+        counter-reset: item;
+    }
+    ol.UI-Right li {
+        margin-bottom:10px;
+        counter-increment: item;
+    }
+    ol.UI-Right li.circle:before {
+        margin-right: .8em;
+        content: counter(item);
+        background: #b7a209;
+        border-radius: 100%;
+        color: #782105;
+        /* width: 1.2em; */
+        margin-left: -2.3em;
+        padding: 1px;
+        width: 1.3em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.1em;
+        display: inline-block;
+        position: relative;
+        top: .3em;
+    }
     img.screenshot {
         /* border: 3px solid var(--logo-lt-blue);
         margin: 3px var(--primary); */
         box-shadow: 1px 3px 8px 0 rgba(0, 0, 0, 0.4), 0px -1px 8px 0px rgba(0, 0, 0, 0.4);
     }
-
+    img.screenshot.UI-left {
+        flex-basis: 30%;
+        padding:auto;
+        margin:auto;
+    }
+    main div.cardblock {
+        margin:0 auto 10px auto;
+        padding:0;
+    }
     .indent {
         margin-left: 2em;
     }
@@ -113,46 +149,9 @@
         font-style: italic;
         color:var(--accent);
     }
-    p.copyright {
-        border: solid black 2px;
-        padding: 10px;
-        margin: 20px;
-        font-size: .85em;
-    }
-    p.footnote {
-        margin: 10px;
-        text-align: left;
-        padding-left: 1.2em ;
-        text-indent: -1em ;
-    }
-    p.footnote.indent {
-        margin-left: 2em;
-    }
-
-    sup {
-        font-size: 0.75em;
-        vertical-align: .35em;
-    }
-    sup a:link, sup a:visited {
-        color: inherit;
-    }
     span.tocentry {
         display:block;
         padding: .2em 0 0 1em;
-        font-size: 1em;
-    }
-    span.tocsubentry {
-        display:block;
-        padding-left: 40px;
-    }
-    h3.region {
-        margin-bottom: 0;
-        font-size: 0.9em;
-    }
-    ul.region, ul.region li {
-        margin: 0;
-        padding: 0;
-        line-height: 1;
         font-size: 1em;
     }
 </style>
@@ -161,19 +160,73 @@
 </script>
 
 {% endblock %}
-{% block title %}CaRCC Capabilities Model Data Viewer Intro and Guide to Use{% endblock %}
+{% block title %}CaRCC Capabilities Model Data Viewer Quick Start Guide{% endblock %}
 
 {% block main %}
 <a id="top"></a>
 <section class="helpdocs" >
-    <h1 class="title">Data Viewer Introduction and Guide to Use</h1>
-	<p class="update">Initial version, Aug 2024</p>
+    <h1 class="title">Data Viewer Quick Start Guide</h1>
+	<p class="update">Initial version, Sept. 2024</p>
 	<p><b>Table of Contents</b>:
-        <span class="tocentry"><a href="#StepByStep">Step-by-Step example of benchmarking for your Institution</a></span>
+        <span class="tocentry"><a href="#Overview">Data Viewer overview</a></span>
+        <span class="tocentry"><a href="#MainUIEls">Working with the Graph UI</a></span>
+        <span class="tocentry"><a href="#StepByStep">Step-by-Step Example of Benchmarking for your Institution</a></span>
     </p>
 	<hr>
-
-    <h2 id="StepByStep">Step-by-Step example of benchmarking for your Institution</h3>
+    <h2 id="Overview">Data Viewer overview</h2>
+    <p class="content">These tools complement the CaRCC Capabilities Model with <b>interactive data visualizations to explore 
+        the community dataset</b> provided by institutions that are using and/or have completed assessments
+         using the Model. The Model was developed to identify the variety of relevant approaches taken to support
+          Research Computing and Data (RCD) and the key factors for providing that support. The Model is designed
+           for use as an input to strategic decision making and is intended to be inclusive across a broad range
+            of institutions.
+   </p>
+   <p class="content">The Data Viewer includes three types of views of the community dataset:</p>
+   <ul>
+    <li><b>Community Demographics</b> provides graphical displays of information about the institutions in the dataset, from map
+        views to charts to a scatter graph summary of the data. A set of view controls and filters allow users to focus the 
+        visualizations on a segment within the broader community. There is also a list of the contributing institutions by name. 
+     </li>
+     <li><b>Capabilities Data and Benchmarking</b> provides graphical displays of 
+        Capabilities Model Assessment Data in the community dataset, and the ability to benchmark assessment results
+        relative to others in the community dataset.
+     </li>
+    <li><b>Priorities Data</b> (coming in a future release) will provide information about the areas of capabilities that
+        institutions marked as a priority for attention when they completed their assessment. 
+     </li>
+    </ul>
+   <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>    
+   <h2 id="MainUIEls">Working with the Graph UI</h2>
+    <p class="content">The Data Viewer page layout includes a display area with a graphing widget, and a sidebar that
+        provides filtering and view controls.
+    </p>
+    <ul>
+        <li>The graphing widget in the main display area has built in controls to <b>download an graph as an image file</b> (e.g., to include in a report
+            document), zoom and pan controls, etc. These controls show in the upper left when you hover over the graph area.</li>
+        <img class="screenshot" src="{% static 'images/DVUI_ImgDownload.png' %}" 
+        alt="Screen-shot excerpt showing a camera icon used to download an image."/>
+        <li>Within the graph area, when a graph has a legend you can <b>click on legend elements to hide aspects of the data</b>.</li>
+    </ul>
+    <p class="content">The <b>Filter</b> panel on the left side provides a set of tools to change the type of data viewed, 
+        to filter the data according to a range of criteria, and some other view controls.
+    </p>
+    <div class="cardblock">
+        <img class="screenshot UI-left" src="{% static 'images/Filter_sm.png' %}"
+        alt="Screen-shot excerpt showing filter controls."/>
+        <ol class="UI-Right">
+            <li class="circle">When viewing Capabilities Data, there is a dropdown to choose data at a <b>summary level across facings</b>,
+                or to focus on <b>topics within a chosen facing</b>.</li>
+            <li class="circle">Many graphs allow you to choose views that <b>compare subcommunities</b>, e.g., by the Institutional Classification, 
+                by the Public/Private status, etc.</li>
+            <li class="circle">A series of other filters allow you to filter on other institutional demographic metadata.
+            <br>Filters can be combined to specify a particular subset of institutions to be graphed.</li>
+            <li class="circle">After selecting a set of desired views and/or filters, Click on <b>UpdateView</b> to see the results.</li> 
+            <li><em>(Not shown at left)</em> Demographic visualizations include a filter to view <b>all institutions using the caps model ("Users")</b>, 
+                or just those that have <b>completed assessments ("Contributors")</b>.</li>
+        </ol>
+    </div>
+<p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+   <h2 id="StepByStep">Step-by-Step Example of Benchmarking for your Institution</h3>
     <p class="content">In order to use the benchmarking tool, you must be logged in and affiliated to an 
         institution that has completed an assessment using the Capabilities Model, submitted it, and had 
         it approved by the CaRCC data stewards. See also the 
@@ -224,37 +277,9 @@
         </p>
     </p>
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
-
-
-
-    <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
-    <h3>Footnotes</h3>
-    <p class="footnote" id="ftnt1"><sup>1</sup> For more on the model, see the Introduction and Guide to use, 
-        available at <a href="https://docs.google.com/document/d/1s-rJhKewvzT0TnLokUlMwM6m5UYMKU3laagPFY-cJtE">
-            https://docs.google.com/document/d/1s-rJhKewvzT0TnLokUlMwM6m5UYMKU3laagPFY-cJtE</a>
-    </p>
-    <p class="footnote" id="ftnt2"><sup>2</sup> IPEDS is the Integrated Postsecondary Education Data System. 
-        It is a system of interrelated surveys conducted annually by the U.S. Department of Education’s 
-        National Center for Education Statistics (NCES). <a href="https://nces.ed.gov/ipeds/">https://nces.ed.gov/ipeds/</a>.
-    </p>
-    <p class="footnote" id="ftnt3"><sup>3</sup> Carnegie Classification of Institutions of Higher Education, 
-        <a href="https://carnegieclassifications.acenet.edu/">https://carnegieclassifications.acenet.edu/</a>
-    </p>
-    <p class="footnote" id="ftnt4"><sup>4</sup> This simple taxonomy is based upon ECAR research by Bramanet al. (2006). 
-        IT Engagement in Research: A Baseline Study. ECAR. <a href="https://www.academia.edu/4420620/IT_Engagement_in_Research_A_Baseline_Study">
-            https://www.academia.edu/4420620/IT_Engagement_in_Research_A_Baseline_Study</a> 
-    </p>
-    <p class="footnote" id="ftnt5"><sup>5</sup> See <a href="https://new.nsf.gov/funding/initiatives/epscor/epscor-criteria-eligibility">
-        https://new.nsf.gov/funding/initiatives/epscor/epscor-criteria-eligibility</a> for more information.
-    </p>
-    <p class="footnote" id="ftnt6"><sup>6</sup> Drawn from the FY 2023 Eligibility Index: 
-        <a href="https://www2.ed.gov/about/offices/list/ope/idues/eligibility.html">https://www2.ed.gov/about/offices/list/ope/idues/eligibility.html</a>.
-    </p>
-    <p class="footnote" id="ftnt7"><sup>7</sup> For more about the roles associated with these areas, see the 
-        initial draft of a “Research Computing and Data Professionals Job Elements and Career Guide”, available at: 
-        <a href="https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf">
-            https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf</a>.
-    </p>
-</section>
+    <p class="copyright noprint"><b>Copyright ©2023-{% now "Y" %} Internet2 and CaRCC</b>, and licensed for use under 
+        <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
+         usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
+    </section>
 
 {% endblock %}

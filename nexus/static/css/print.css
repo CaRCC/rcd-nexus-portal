@@ -8,7 +8,8 @@
         display: none;
     }
 
-    footer span.noprint, span.avoidwrap.noprint {
+    /* Since the footer is always printed, we can omit some copyright blocks */
+    footer span.noprint, span.avoidwrap.noprint, p.copyright.noprint {
         display: none;
     }
 

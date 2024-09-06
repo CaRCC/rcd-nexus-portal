@@ -10,11 +10,15 @@ from nexus.models import CapabilitiesAssessment
 def help_docs_home(request):
     return render(request, "helpdocs/main.html", {})
 
-def help_faq(request):
+def getNContribs():
     profiles = demogcharts.getAllProfiles(pop='contrib').filter(institution__list_as_contributor=True)
     institutions = profiles.values_list('institution__name')
     nInsts = institutions.count()
     nAssessments = RCDProfile.objects.filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED).count()
+    return nInsts, nAssessments
+
+def help_faq(request):
+    nInsts, nAssessments = getNContribs()
 
     context = {
         "nInsts":nInsts,
@@ -44,7 +48,12 @@ def help_dv_quickstart(request):
     return render(request, "helpdocs/dv_quickstart.html", context)
 
 def help_dv_faq(request):
-    context = {}
+    nInsts, nAssessments = getNContribs()
+
+    context = {
+        "nInsts":nInsts,
+        "nAssessments":nAssessments,
+    }
 
     return render(request, "helpdocs/dv_faq.html", context)
 

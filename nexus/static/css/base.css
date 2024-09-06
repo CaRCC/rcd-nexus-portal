@@ -340,6 +340,12 @@ main a.cardbutton.NYI {
     background-color: var(--primary-fg-off);
     color: var(--info-off);
 }
+p.copyright {
+    border: solid var(--primary) 1px;
+    padding: 10px;
+    margin: 20px;
+    font-size: .85em;
+}
 
 p.totop {
     padding:0;
@@ -696,9 +702,10 @@ h3.graphNYI {
 }
 
 p.viz_footnote {
-    font-size: 0.8em;
+    font-size: 0.9em;
     color: var(--nexus-light-text);
     z-index: 5;
+    margin: 5px 0 0 0;
 }
 
 .menu {
@@ -976,6 +983,16 @@ td.answer-field .errorlist {
 td.answer-field #id_priority {
     max-width: 3.5em;
 }
+
+img#AckNSFlogo {
+    width: 100px;
+    height: 100px;
+    float: right;
+    position:relative;
+    top:-15px;
+    margin-left: 10px;        
+}
+
 
 /* Tooltip container */
 .tooltip {
