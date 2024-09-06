@@ -340,6 +340,12 @@ main a.cardbutton.NYI {
     background-color: var(--primary-fg-off);
     color: var(--info-off);
 }
+p.copyright {
+    border: solid var(--primary) 1px;
+    padding: 10px;
+    margin: 20px;
+    font-size: .85em;
+}
 
 p.totop {
     padding:0;
