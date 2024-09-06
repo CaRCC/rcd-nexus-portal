@@ -321,8 +321,7 @@ def load_legacy_profiles_data(path):
 
     print(f'Loaded {profiles_loaded} profiles.')
 
-
-def merge_institutions(*institutions):
+def merge_institutions(institutions):
     """
     Merge the institutions into the first one in the list, for deduplication.
 
@@ -331,8 +330,10 @@ def merge_institutions(*institutions):
     Also double check that no data will be lost in the merge, e.g. important names/descriptions on each additional Institution record. This is a destructive operation.
     """
     first = institutions[0]
+    print(f"nexus.utils.data.merge_institutions first is: {first}")
     with transaction.atomic():
         for institution in institutions[1:]:
+            print(f"Next to merge is: {institution}")
             for profile in institution.profiles.all():
                 profile.institution = first
                 profile.save()
