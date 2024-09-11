@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block head %}
 <style>
@@ -11,6 +12,9 @@
             "main"
             "footer";
         grid-template-columns: 1fr;
+    }
+    p, ul, ol {
+        line-height: 1.35;
     }
     section.helpdocs {
         width: 80%;
@@ -35,10 +39,10 @@
     }
     section.helpdocs ul li{
         padding:5px;
-        font-size: 0.9em;
+        font-size: 14px;
     }
-    p.content {
-        font-size: 0.9em;
+    p.content, ol.content  {
+        font-size: 14px;
     }
     span.topic {
         font-weight: bold;
@@ -75,6 +79,7 @@
     }
     table.content td p {
         margin:4px;
+        font-size: 13px;
     }
     table.content th p {
         margin:4px;
@@ -85,12 +90,6 @@
         font-size: 0.85em;
         font-style: italic;
         color:var(--accent);
-    }
-    p.copyright {
-        border: solid black 2px;
-        padding: 10px;
-        margin: 20px;
-        font-size: .9em;
     }
     p.footnote {
         margin: 10px;
@@ -108,26 +107,12 @@
     span.tocentry {
         display:block;
         padding-left: 20px;
+        font-size: 1em;
     }
     span.tocsubentry {
         display:block;
         padding-left: 40px;
-    }
-    p.totop {
-        padding:0;
-        margin:0 0 10px 0;
-        border-bottom: 1px solid var(--primary);
-        position:relative;
-        top: -5px;
-    }
-    a.totop {
-        float:right;
-        margin: 0;
-        padding: 0 10px 0 0;
-        font-style:italic;
-        font-size:.85em;
-        position:relative;
-        top: -2px;
+        font-size: 1em;
     }
 </style>
 
@@ -135,7 +120,7 @@
 </script>
 
 {% endblock %}
-{% block title %}RCD-Nexus Capabilities Model Intro and Guide to Use{% endblock %}
+{% block title %}CaRCC Capabilities Model Intro and Guide to Use{% endblock %}
 
 {% block main %}
 <a id="top"></a>
@@ -184,7 +169,11 @@
         </li>
     </ul>
     <h3>What is the format for the Model?</h3>
-    <p class="content">An assessment tool is provided, formatted as a questionnaire, that allows institutions to conduct a self-assessment on a series of factors across a range of perspectives. The assessment tool is provided as a web-based spreadsheet to facilitate collaboration among individuals or teams involved in Research Computing and Data, who can work together to assess the current capabilities. The next section lays out key aspects of the Model assessment, and how organizations can go about using the tool.  </p>
+    <p class="content">An assessment tool is provided, formatted as a questionnaire, that allows institutions to conduct a 
+        self-assessment on a series of factors across a range of perspectives. 
+        The assessment tool is provided as a web-based application that allows collaboration among individuals or teams
+        involved in Research Computing and Data, who can work together to assess the current capabilities. 
+        The next section lays out key aspects of the Model assessment, and how organizations can go about using the tool.  </p>
     <p class="content">Some institutions consider this assessment work to be a measure of maturity, and are very much
          interested in ranking/benchmarking against their peers. Others prefer to focus on the capabilities 
         that are broadly understood to constitute Research Computing and Data, as an inspiration for next steps.
@@ -200,15 +189,12 @@
         </p>
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     <h2 id="ack">Acknowledgements</h2>
+    <img id="AckNSFlogo" src="{% static 'images/NSF-logo-sm.png' %}" alt="NSF logo image"/>
     <p class="content">The RCD Capabilities Model was developed through a collaboration of the Campus Research Computing Consortium 
-        (<a href="https://www.carcc.org">CaRCC</a>), <a href="https://internet2.edu">Internet2</a>, and 
-        <a href="https://educause.edu">EDUCAUSE</a>. This work is supported in part by National Science Foundation by an 
-        NSF RCN grant (<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1620695">OAC-1620695</a>,
-         PI: Alex Feltus, "RCN: Advancing Research and Education through a national network of campus 
-         research computing infrastructures &ndash; The CaRCC Consortium"), and by an 
-         NSF Cyberinfrastructure Centers of Excellence (CI CoE) pilot award 
-         (<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2100003">OAC-2100003</a> , 
-         PI Dana Brunson, "Advancing Research Computing and Data: Strategic Tools, Practices, and Professional Development"). 
+        (<a target="_blank" rel="noopener noreferrer" href="https://www.carcc.org">CaRCC</a>), <a target="_blank" rel="noopener noreferrer" href="https://internet2.edu">Internet2</a>, and 
+        <a target="_blank" rel="noopener noreferrer" href="https://educause.edu">EDUCAUSE</a>. This work has been supported in part by
+        the National Science Foundation via <a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1620695">OAC-1620695</a>
+         and <a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2100003">OAC-2100003</a>. 
     </p>
     <p class="content">The Assessment tool, this guide, and the other associated resources were developed with the generous contributions
          of time and expertise from the 2018 workshop participants, and the working group members: Alex Feltus, Ana Hunsinger,
@@ -217,13 +203,13 @@
             Mike Erickson, Patrick Schmitz, Preston Smith, Timothy Middelkoop, and Tom Cheatham. 
             In addition, individuals at a number of Universities provided valuable feedback on earlier versions, 
             for which the working group is very grateful.</p>
-    <p class="copyright"><b>Copyright &copy; 2023 Internet2 and CaRCC</b>, and licensed for use under 
-        <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
+    <p class="copyright"><b>Copyright ©2023-{% now "Y" %} Internet2 and CaRCC</b>, and licensed for use under 
+        <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
          usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
 
     <h2 id="KeyAspects">Understanding Key Aspects of the Model</h2>
-    <p>There are six key concepts that underlie the Model, around which the tool is organized. These are:</p>
-    <ol class="copyright">
+    <p class="content">There are six key concepts that underlie the Model, around which the tool is organized. These are:</p>
+    <ol class="content">
         <li><a href="#FiveFacings">The Five Facings</a></li>
         <li><a href="#Availability">Availability across institution</a></li>
         <li><a href="#SOL">Service Operating Level</a></li>
@@ -303,6 +289,18 @@
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
 
     <h2>Questions for each Capability</h2>
+    <p class="content">The Capabilities Model presents roughly 150 capabilities (in the form of questions) structured 
+        around <a href="#FiveFacings">the five Facings</a>. Within each Facing, questions are grouped into <em>topics</em>.
+        Each question is considered through several lenses (described below):
+        <a href="#Availability">Availability across institution</a>, 
+        <a href="#SOL">Service Operating Level</a>, and 
+        <a href="#CommunityEngagement">Community engagement and collaboration</a>.
+    </p>
+    <p class="content">For each question, users choose answers for the three lenses, 
+        and these are combined to produce a numerical <b>coverage</b> value for that capability.
+        Coverage values for the questions are averaged to produce a coverage value for the associated <em>topic</em>, 
+        and for each Facing overall. 
+        </p>
     <p class="content" id="Availability"><b>Availability across institution</b>: The Model assessment tool asks organizations 
     to rate the level of availability across their institution, for each capability associated with supporting
         Research Computing and Data. Note that it should not matter how or where support is implemented 
@@ -472,11 +470,11 @@
         Engagement and collaboration can range from participation in structured community forums to grant-funded regional 
         projects, and should involve engagement with other institutions and/or communities to develop and share leading 
         practices, get advice and training, etc. Examples of communities include the 
-        <a href="https://carcc.org/people-network/">CaRCC People Network</a>, 
-            <a href="https://www.xsede.org/community-engagement/campus-champions">Campus Champions</a>, 
+        <a target="_blank" rel="noopener noreferrer" href="https://carcc.org/people-network/">CaRCC People Network</a>, 
+            <a target="_blank" rel="noopener noreferrer" href="https://www.xsede.org/community-engagement/campus-champions">Campus Champions</a>, 
             and various open source projects related to RCD, as well as regional network collaborations like the         
-            <a href="https://www.greatplains.net/">The Great Plains Network</a>
-            and the <a href="https://www.ernrp.org/">Ecosystem for Research Networking</a>.<sup><a href="#ftnt6" id="ftnt_ref6">[6]</a></sup>
+            <a target="_blank" rel="noopener noreferrer" href="https://www.greatplains.net/">The Great Plains Network</a>
+            and the <a target="_blank" rel="noopener noreferrer" href="https://www.ernrp.org/">Ecosystem for Research Networking</a>.<sup><a href="#ftnt6" id="ftnt_ref6">[6]</a></sup>
     </p>
     <table class="content">
         <thead>
@@ -599,14 +597,14 @@
    </p>
    <p class="footnote" id="ftnt2"><sup>2</sup> For more about the roles associated with these areas, see the initial draft 
     of a "Research Computing and Data Professionals Job Elements and Career Guide", available at: 
-    <a href="https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf">
+    <a target="_blank" rel="noopener noreferrer" href="https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf">
         https://carcc.org/wp-content/uploads/2019/01/CI-Professionalization-Job-Families-and-Career-Guide.pdf</a>
     </p>
     <p class="footnote" id="ftnt3"><sup>3</sup>"CI Engineers" have different roles at different institutions, 
         and some might (also) be in the Systems Facing roles.</p>
     <p class="footnote" id="ftnt4"><sup>4</sup>When this value is chosen, the model will default to the 
         corresponding values for the other questions in the form.</p>
-    <p class="footnote" id="ftnt5"><sup>5</sup>See also <a href="https://en.wikipedia.org/wiki/IT_service_management">
+    <p class="footnote" id="ftnt5"><sup>5</sup>See also <a target="_blank" rel="noopener noreferrer" href="https://en.wikipedia.org/wiki/IT_service_management">
         https://en.wikipedia.org/wiki/IT_service_management</a></p>
     <p class="footnote" id="ftnt6"><sup>6</sup>(ERN, formerly the Eastern Regional Network)</p>
     <p class="footnote" id="ftnt7"><sup>7</sup>The assessment tool will default to this value for a given aspect/factor, 

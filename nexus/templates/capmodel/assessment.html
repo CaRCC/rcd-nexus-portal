@@ -201,7 +201,7 @@
         font-size: 0.85em;
     }
 
-    section.submission {
+    section.submission, section.reporting {
         text-align: center;
         align-self: center;
         padding: 4px;
@@ -223,7 +223,8 @@
         margin-bottom: 2px;
     }
 
-    section.submission section.actions {
+    section.submission section.actions,
+    section.reporting section.actions {
         margin: 5px;
     }
 
@@ -332,7 +333,7 @@
 </script>
 {% endblock %}
 
-{% block title %}RCD-Nexus Capabilities Model Assessment{% endblock %}
+{% block title %}CaRCC Capabilities Model Assessment{% endblock %}
 {% block main %}
 <h2>RCD Capabilities Assessment for {{ profile }}</h2>
 {% if profile.capabilities_assessment.review_status == "not_submitted" %}
@@ -470,6 +471,12 @@
         {% endif %}
     </section>
 
+    <section class="reporting">
+        <section class="actions">
+            <a href="{% url 'capmodel:printable_report' profile.pk %}"><button>Printable Report</button></a>
+            <a href="{% url 'capmodel:csv_report' profile.pk %}"><button>Download CSV Data</button></a>
+        </section>
+    </section>
 </div>
 
 <script>

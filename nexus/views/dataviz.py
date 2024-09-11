@@ -1,5 +1,7 @@
 import datetime
 import logging
+import math
+import textwrap
 import urllib.parse
 from django.contrib import messages
 from django.conf import settings
@@ -38,10 +40,56 @@ def data_viz_demographics(request):
         }
     return render(request, "dataviz/demographics.html", context)
 
+def data_viz_demographics_contriblist(request): 
+    profiles = demogcharts.getAllProfiles(pop='contrib').filter(institution__list_as_contributor=True)
+    institutions = profiles.values_list('institution__name')
+    instlist = []
+    nInsts = institutions.count()
+    nPerCol = math.floor(nInsts/3)
+    if (nInsts % 3) == 0:
+        col0Max = nPerCol
+        col1Max = col0Max+nPerCol
+        colmax = col0Max
+    elif (nInsts % 3) == 1:
+        col0Max = nPerCol
+        col1Max = col0Max+nPerCol+1
+        colmax = col0Max+1
+    else:
+        col0Max = nPerCol+1
+        col1Max = col0Max+nPerCol+1
+        colmax = col0Max+1
+
+    for inst in institutions:
+        instlist.append(inst[0])
+
+    instlist.sort()
+    rows = []
+    for i in range(colmax):    # Col1 (middle) is always the max
+        cols = [""]*3
+        if i < col0Max:         # Col0 may have one less than col1
+            cols[0] = instlist[i]
+        if (i+col0Max) < nInsts:
+            cols[1] = instlist[i+col0Max]
+            if (i+col1Max) < nInsts:
+                cols[2] = instlist[i+col1Max]
+        rows.append(cols)
+
+    context = {
+        "rows":rows,
+        "nInsts":nInsts,
+        "breadcrumbs":{
+            "Data Viewer":"dataviz:vizmain",
+            "Community Demographics":"dataviz:demographics",
+            "Contributor List":"dataviz:demographics_contriblist",
+            }
+        }
+    return render(request, "dataviz/contriblist.html", context)
+
 @never_cache
 def data_viz_demographics_maps(request): 
     graph = None
     graphtitle = None
+    nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -54,7 +102,8 @@ def data_viz_demographics_maps(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMultiSelectDictEntries(dict)
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            nonDefs = listNonDefaultFilters(cleaned_dict)
             filter_form = DataFilterForm(cleaned_dict)
             pop = cleaned_dict.get('population')
             if(pop == 'contrib'):
@@ -67,10 +116,29 @@ def data_viz_demographics_maps(request):
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
                 graphtitle = f'Too Few Institutions ({instCount}) to Map!'
-            elif graph := demogcharts.demographicsMap(profiles) :
-                graphtitle = f'Geographic Distribution of {instCount} {popName}'
-            else:
-                graphtitle = 'No Data to Chart!'
+            else :
+                grSize = cleaned_dict.get('graph_size')
+                match grSize:
+                    case "lg":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT
+                        grwidth = cmgraphs.DEFAULT_WIDTH
+                        #fontscale = 1
+                    case "med":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
+                        width_scale = 1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7)
+                        grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_MED_SCALE
+                        #grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
+                        #fontscale = width_scale
+                    case "sm":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                        width_scale = 1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7)
+                        grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                        #grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
+                        #fontscale = width_scale*1.1
+                if graph := demogcharts.demographicsMap(profiles,width=grwidth, height=grheight) :
+                    graphtitle = f'Geographic Distribution of {instCount} {popName}'
+                else:
+                    graphtitle = 'No Data to Graph!'
 
         else :
             #print( "GET with no params ")
@@ -87,6 +155,7 @@ def data_viz_demographics_maps(request):
         "filterform":filter_form,
         "graph":graph,
         "graphtitle":graphtitle,
+        "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Community Demographics":"dataviz:demographics",
@@ -107,6 +176,7 @@ def data_viz_demographics_charts(request):
     graphtitle = None
     footnote = None
     chart = None
+    nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -120,7 +190,10 @@ def data_viz_demographics_charts(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMultiSelectDictEntries(dict)
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            #print( "Cleaned dict: ",cleaned_dict)
+            nonDefs = listNonDefaultFilters(cleaned_dict)
+            #print( "Non default choices: ",nonDefs)
             filter_form = DataFilterForm(cleaned_dict)
             chart = cleaned_dict.get('chart_views')
             pop = cleaned_dict.get('population')
@@ -135,34 +208,43 @@ def data_viz_demographics_charts(request):
                 graph = None
                 graphtitle = f'Too Few Institutions ({instCount}) to Chart!'
             else:
+                grSize = cleaned_dict.get('graph_size')
+                match grSize:
+                    case "lg":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT
+                    case "med":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
+                    case "sm":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
+
                 match chart:
                     # Note that sum makes no sense for Charts, and will be hidden/disabled in the template
                     case "cc" :
-                        if graph := demogcharts.demographicsChartByCC(profiles) :
+                        if graph := demogcharts.demographicsChartByCC(profiles, height=grheight) :
                             graphtitle = f'Institutional Classification of {instCount} {popName}'
                     case "mission" :
-                        if graph := demogcharts.demographicsChartByMission(profiles) :
+                        if graph := demogcharts.demographicsChartByMission(profiles, height=grheight) :
                             graphtitle = f'Mission of {instCount} {popName}'
                     case "pub_priv" :
-                        graph, totalShown = demogcharts.demographicsChartByPubPriv(profiles)
+                        graph, totalShown = demogcharts.demographicsChartByPubPriv(profiles, height=grheight)
                         if graph :
                             graphtitle = f'Control (Public/Private) of {totalShown} {popName}'
                             if totalShown != instCount :
                                 footnote = FOOTNOTE_NOT_ALL_KNOWN
                     case "epscor" :
-                        graph, totalShown = demogcharts.demographicsChartByEPSCoR(profiles)
+                        graph, totalShown = demogcharts.demographicsChartByEPSCoR(profiles, height=grheight)
                         if graph :
                             graphtitle = f'EPSCoR status of {totalShown} {popName}'
                             if totalShown != instCount :
                                 footnote = FOOTNOTE_NOT_ALL_KNOWN
                     case "msi" :
-                        if graph := demogcharts.demographicsChartByMSI(profiles) :
+                        if graph := demogcharts.demographicsChartByMSI(profiles, height=grheight) :
                             graphtitle = f'Minority-serving status of {instCount} {popName}'
                     case "orgmodel" :
-                        if graph := demogcharts.demographicsChartByOrgModel(profiles) :
+                        if graph := demogcharts.demographicsChartByOrgModel(profiles, height=grheight) :
                             graphtitle = f'Organizational Model of {instCount} {popName}'
                     case "reporting" :
-                        if graph := demogcharts.demographicsChartByReporting(profiles) :
+                        if graph := demogcharts.demographicsChartByReporting(profiles, height=grheight) :
                             graphtitle = f'Reporting Structure of {instCount} {popName}'
                     case _ :
                         send_mail(
@@ -190,6 +272,7 @@ def data_viz_demographics_charts(request):
         "graphtitle":graphtitle,
         "footnote":footnote,
         "chart":chart,
+        "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Community Demographics":"dataviz:demographics",
@@ -202,6 +285,7 @@ def data_viz_demographics_charts(request):
 def data_viz_demographics_scatter(request): 
     graph = None
     graphtitle = None
+    nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -214,7 +298,9 @@ def data_viz_demographics_scatter(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMultiSelectDictEntries(dict)
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            nonDefs = listNonDefaultFilters(cleaned_dict)
+            #print( "Non default choices: ",nonDefs)
             filter_form = DataFilterForm(cleaned_dict)
             #print( "Cleaned dict: ",cleaned_dict)
             # Note we need the answers (not institutions) to group into facings for the scatter graph
@@ -222,8 +308,25 @@ def data_viz_demographics_scatter(request):
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
                 graphtitle = f'Too Few Institutions ({instCount}) to Chart!'
-            elif graph := demogcharts.scatterChart(answers, instCount) :
-                graphtitle = f'Scatter Graph of {instCount} Contributors'
+            else :
+                grSize = cleaned_dict.get('graph_size')
+                match grSize:
+                    case "lg":
+                        grheight = demogcharts.DEFAULT_SCATTER_HEIGHT
+                        grwidth = cmgraphs.DEFAULT_WIDTH
+                        fontscale = 1
+                    case "med":
+                        grheight = demogcharts.DEFAULT_SCATTER_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
+                        width_scale = 1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7)
+                        grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
+                        fontscale = width_scale
+                    case "sm":
+                        grheight = demogcharts.DEFAULT_SCATTER_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                        width_scale = 1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7)
+                        grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
+                        fontscale = width_scale*1.1
+                if graph := demogcharts.scatterChart(answers, instCount, height=grheight, width=grwidth, fontscale=fontscale) :
+                    graphtitle = f'Scatter Graph of {instCount} Contributors'
 
             if graph is None:
                 graphtitle = 'No Data to Graph!'
@@ -240,6 +343,7 @@ def data_viz_demographics_scatter(request):
         "filterform":filter_form,
         "graph":graph,
         "graphtitle":graphtitle,
+        "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Community Demographics":"dataviz:demographics",
@@ -255,16 +359,85 @@ def removeNullDictEntries(dict):
         del dict['resexp_max']
     return dict
 
+def fixMissingDictEntries(dict):
+    if dict.get('population') == None:
+        dict['population'] = 'all'
+    if dict.get('chart_views') == None:
+        dict['chart_views'] = 'cc'
+    if dict.get('facings') == None:
+        dict['sum'] = 'sum'
+    if dict.get('benchmark') == None:
+        dict['benchmark'] = False
+    if dict.get('graph_size') == None:
+        dict['graph_size'] = 'lg'
+    if dict.get('opt_show_errbars') == None:
+        dict['opt_show_errbars'] = True
+    return dict
+
+def listNonDefaultFilters(dict):
+    list = []
+    prefix = 'id_'
+    suffix = '_d'
+    if dict.get('population') != None and dict.get('population') == 'contrib':
+        list.append(prefix+'population'+suffix)
+    if dict.get('cc') != None and dict.get('cc') != [c[0] for c in DataFilterForm.CC_CHOICES]:
+        list.append(prefix+'cc'+suffix)
+    if dict.get('epscor') != None and dict.get('epscor') != [str(c[0]) for c in DataFilterForm.EPSCOR_CHOICES]:
+        list.append(prefix+'epscor'+suffix)
+    if dict.get('mission') != None and dict.get('mission') != [c[0] for c in DataFilterForm.MISSION_CHOICES]:
+        list.append(prefix+'mission'+suffix)
+    if dict.get('pub_priv') != None and dict.get('pub_priv') != [c[0] for c in DataFilterForm.PUB_PRIV_CHOICES]:
+        list.append(prefix+'pub_priv'+suffix)
+    if dict.get('region') != None and dict.get('region') != [str(c[0]) for c in DataFilterForm.REGION_CHOICES]:
+        list.append(prefix+'region'+suffix)
+    if dict.get('size') != None and dict.get('size') != [str(c[0]) for c in DataFilterForm.SIZE_CHOICES]:
+        list.append(prefix+'size'+suffix)
+    if dict.get('msi') != None and dict.get('msi') != [c[0] for c in DataFilterForm.MSI_CHOICES]:
+        list.append(prefix+'msi'+suffix)
+    if dict.get('year') != None and dict.get('year') != [str(c[0]) for c in DataFilterForm.YEAR_CHOICES]:
+        list.append(prefix+'year'+suffix)
+    return ';'.join(list)
+
 def fixMultiSelectDictEntries(dict):
     # These are passed as a quoted string so we need to turn them into a list
-    dict['cc'] = eval(dict['cc'])
-    dict['mission'] = eval(dict['mission'])
-    dict['pub_priv'] = eval(dict['pub_priv'])
-    dict['region'] = eval(dict['region'])
-    dict['size'] = eval(dict['size'])
-    dict['epscor'] = eval(dict['epscor'])
-    dict['msi'] = eval(dict['msi'])
-    dict['year'] = eval(dict['year'])
+    if 'cc' in dict:
+        dict['cc'] = eval(dict['cc'])
+    else:
+        dict['cc'] = [c[0] for c in DataFilterForm.CC_CHOICES]
+    
+    if 'mission' in dict:
+        dict['mission'] = eval(dict['mission'])
+    else: 
+        dict['mission'] = [c[0] for c in DataFilterForm.MISSION_CHOICES]
+    
+    if 'pub_priv' in dict:
+        dict['pub_priv'] = eval(dict['pub_priv'])
+    else: 
+        dict['pub_priv'] = [c[0] for c in DataFilterForm.PUB_PRIV_CHOICES]
+    
+    if 'region' in dict:
+        dict['region'] = eval(dict['region'])
+    else: 
+        dict['region'] = [str(c[0]) for c in DataFilterForm.REGION_CHOICES]
+    
+    if 'size' in dict:
+        dict['size'] = eval(dict['size'])
+    else: 
+        dict['size'] = [str(c[0]) for c in DataFilterForm.SIZE_CHOICES]
+
+    if 'epscor' in dict:
+        dict['epscor'] = eval(dict['epscor'])
+    else: 
+        dict['epscor'] = [str(c[0]) for c in DataFilterForm.EPSCOR_CHOICES]
+
+    if 'msi' in dict:
+        dict['msi'] = eval(dict['msi'])
+    else: 
+        dict['msi'] = [c[0] for c in DataFilterForm.MSI_CHOICES]
+    if 'year' in dict:
+        dict['year'] = eval(dict['year'])
+    else: 
+        dict['year'] = [str(c[0]) for c in DataFilterForm.YEAR_CHOICES]
     # print( "Fixed dict: ",dict)
     return dict
 
@@ -308,6 +481,9 @@ def data_viz_capsmodeldata(request):
     graphtitle = None
     chart = None
     benchmarkInfo = None
+    showErrBars = False
+    nonDefs = ""
+    facinglink = None
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -321,7 +497,9 @@ def data_viz_capsmodeldata(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMultiSelectDictEntries(dict)
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            nonDefs = listNonDefaultFilters(cleaned_dict)
+            # print( "Non default choices: ",nonDefs)
             filter_form = DataFilterForm(cleaned_dict)
             chart = cleaned_dict.get('chart_views')
             facing = cleaned_dict.get('facings')
@@ -334,16 +512,23 @@ def data_viz_capsmodeldata(request):
                     messages.info(request, f"You must be logged in to use benchmarking.")
                 else:
                     # print('Looking for approved assessment...')
-                    bmProfile = RCDProfile.objects.filter_can_view(request.user).exclude(archived=True)\
-                        .filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED).order_by('-year').first()
-                    if bmProfile is None:
+                    # Allow them to benchmark up to 3 assessments. If this is really a problem, they can go archive some to see the ones they want. 
+                    bmProfiles = RCDProfile.objects.filter_can_view(request.user).exclude(archived=True)\
+                        .filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED).order_by('-year')[:3]
+                    if not bmProfiles:
                         messages.info(request, f"You must have view rights on an approved assessment to use benchmarking.")
                     else:
-                        benchmarkAssessment = bmProfile.capabilities_assessment
+                        benchmarkInfo = []
+                        for bmprof in bmProfiles:
+                            benchmarkAssessment = bmprof.capabilities_assessment
+                            # The last 6 chars are always the year. Strip that, then cut the name short a bit, and rejoin
+                            yrstr = str(bmprof)[-6:]
+                            instName = textwrap.shorten(str(bmprof)[:-6], width=40, placeholder="...")
+                            shortprofname = instName+'<b>'+yrstr+'</b>'
+                            bmName = '<br>'.join(textwrap.wrap(shortprofname, 20))
+                            benchmarkInfo.append({ 'data':getInstAverages(benchmarkAssessment, facing), 'name':bmName })
+                            print('Adding Benchmark info for: ',bmName)
 
-            if benchmarkAssessment:
-                benchmarkInfo = getInstAverages(benchmarkAssessment, facing)
-                print('Benchmark info: ',benchmarkInfo)
 
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
@@ -359,70 +544,103 @@ def data_viz_capsmodeldata(request):
                 #   assert len(instVals) == 5, "showFacingsBarGraph passed bad instVals: "+str(instVals)
                 # pass into the graph tools. 
                 #   ax.scatter([0,1,2,3,4], instVals, color=[1,0.8,0], s=30, zorder=2, label=instName, **kwargs)
+
+                grSize = cleaned_dict.get('graph_size')
+                match grSize:
+                    case "lg":
+                        grheight = cmgraphs.DEFAULT_HEIGHT
+                        grwidth = cmgraphs.DEFAULT_WIDTH
+                        grwidth2 = grwidth
+                    case "med":
+                        grheight = cmgraphs.DEFAULT_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
+                        if benchmarkInfo :
+                            grwidth = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7))
+                            grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.6))
+                        else:
+                            grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_MED_SCALE
+                            grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7))
+                    case "sm":
+                        grheight = cmgraphs.DEFAULT_HEIGHT * (1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.8))
+                        if benchmarkInfo :
+                            grwidth = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7))
+                            grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.6))
+                        else:
+                            grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                            grwidth2 = cmgraphs.DEFAULT_WIDTH * (1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7))
+
+                if facing != 'all':
+                    grheight *= cmgraphs.CALCULATE_SCALED_HEIGHT
+                    facinglink = facing+'topics'
+
+                showErrBars = cleaned_dict.get('opt_show_errbars') != 'False'
+                # print("ShowErrBars: ",showErrBars)
+
                 match chart:
                     case "sum":
                         if facing == 'all':
-                            graph = cmgraphs.summaryDataGraph(answers, benchmark=benchmarkInfo)
+                            # Scale the size slightly since the summary graph has no legend
+                            graph = cmgraphs.summaryDataGraph(answers, benchmarks=benchmarkInfo,
+                                                              height=grheight*.9, width=grwidth*.9, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingSummaryDataGraph(answers, facingslug, benchmark=benchmarkInfo,
-                                                                    height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingSummaryDataGraph(answers, facingslug, benchmarks=benchmarkInfo, 
+                                                                    height=grheight, width=grwidth, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} ({instCount} Institutions)'
 
                     case "cc" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByCC(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByCC(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmark=benchmarkInfo,
-                                                                     height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmarks=benchmarkInfo, 
+                                                                     height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Institutional Classification ({instCount} Institutions)'
                     case "mission" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByMission(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByMission(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, benchmark=benchmarkInfo,
-                                                                          height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, benchmarks=benchmarkInfo, 
+                                                                          height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Mission ({instCount} Institutions)'
                     case "pub_priv" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByPubPriv(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByPubPriv(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, benchmark=benchmarkInfo,
-                                                                          height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, benchmarks=benchmarkInfo, 
+                                                                          height=grheight, width=grwidth, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Control (Public/Private) ({instCount} Institutions)'
                     case "epscor" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByEPSCoR(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByEPSCoR(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, benchmark=benchmarkInfo,
-                                                                         height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, benchmarks=benchmarkInfo, 
+                                                                         height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by EPSCoR status ({instCount} Institutions)'
                     case "msi" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByMSI(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByMSI(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, benchmark=benchmarkInfo,
-                                                                      height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, benchmarks=benchmarkInfo, 
+                                                                      height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Minority-serving status ({instCount} Institutions)'
                     case "orgmodel" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByOrgModel(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByOrgModel(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, benchmark=benchmarkInfo,
-                                                                           height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, benchmarks=benchmarkInfo, 
+                                                                           height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Organizational Model ({instCount} Institutions)'
                     case "reporting" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByReporting(answers, benchmark=benchmarkInfo)
+                            graph = cmgraphs.capsDataGraphByReporting(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, benchmark=benchmarkInfo,
-                                                                            height=cmgraphs.CALCULATE_SCALED_HEIGHT)
+                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, benchmarks=benchmarkInfo, 
+                                                                            height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Reporting Structure ({instCount} Institutions)'
                     case _ :
@@ -452,6 +670,9 @@ def data_viz_capsmodeldata(request):
         "graph":graph,
         "graphtitle":graphtitle,
         "chart":chart,
+        "showErrBars":showErrBars,
+        "facinglink":facinglink,
+        "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Capabilities Model Data":"dataviz:capsmodeldata",
@@ -462,6 +683,7 @@ def data_viz_capsmodeldata(request):
 def data_viz_prioritiessdata(request): 
     graph = None
     graphtitle = None
+    nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -474,7 +696,8 @@ def data_viz_prioritiessdata(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMultiSelectDictEntries(dict)
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            nonDefs = listNonDefaultFilters(cleaned_dict)
             filter_form = DataFilterForm(cleaned_dict)
             #print( "Cleaned dict: ",cleaned_dict)
             # This is where we would generate the graph
@@ -489,6 +712,7 @@ def data_viz_prioritiessdata(request):
         "filterform":filter_form,
         "graph":graph,
         "graphtitle":graphtitle,
+        "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",
             "Priorities Data":"dataviz:prioritiesdata",

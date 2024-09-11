@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}RCD-Nexus Capabilities Model Demographics Data Visualizations{% endblock %}
+{% block title %}CaRCC Capabilities Model Demographics Data Visualizations{% endblock %}
 
 {% block nav %}
     <form id="filtertree" method="post" action="" autocomplete="off">
@@ -15,8 +15,10 @@
 <p class="viz_footnote">Note: {{footnote}}.</p>
 {%endif%}
 
+{{ nonDefs|json_script:"nonDefs" }}
 <script>
-    initDetailsFromStorage();
+    const nonDefs = JSON.parse(document.getElementById('nonDefs').textContent);
+    initDetailsFromStorage( nonDefs );
     document.getElementById("id_chart_views").addEventListener("change", handleChartViewSelection );
     // There is no summary semantic for charts, so just hide that here. Also set disabled for older browsers. 
     if( chartselect = document.querySelector("select#id_chart_views")) {

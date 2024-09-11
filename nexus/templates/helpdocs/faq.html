@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block head %}
 <style>
@@ -12,6 +13,9 @@
             "main"
             "footer";
         grid-template-columns: 1fr;
+    }
+    p, ul, ol {
+        line-height: 1.35;
     }
     section.helpdocs {
         width: 80%;
@@ -56,29 +60,13 @@
         padding-left: 20px;
         padding-top:0.25em;
     }
-    p.totop {
-        padding:0;
-        margin:0 0 10px 0;
-        border-bottom: 1px solid var(--primary);
-        position:relative;
-        top: -5px;
-    }
-    a.totop {
-        float:right;
-        margin: 0;
-        padding: 0 10px 0 0;
-        font-style:italic;
-        font-size:.85em;
-        position:relative;
-        top: -2px;
-    }
 </style>
 
 <script>
 </script>
 
 {% endblock %}
-{% block title %}RCD-Nexus Capabilities Model FAQ{% endblock %}
+{% block title %}CaRCC Capabilities Model FAQ{% endblock %}
 
 {% block main %}
 <section class="helpdocs">
@@ -133,7 +121,8 @@
         </p>
         <p class="content">
             The RCD Nexus Portal and associated tools are freely available to everyone, subject only to our 
-            <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)</a> license.
+            <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons 
+                Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)</a> license.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
@@ -168,7 +157,7 @@
         </ul>
         </p>
         <p class="content">For a more complete discussion of this topic, 
-            <a href="https://carcc.org/2023/03/22/how-long-does-it-take-to-complete-the-rcd-capabilities-model/">see 
+            <a target="_blank" rel="noopener noreferrer" href="https://carcc.org/2023/03/22/how-long-does-it-take-to-complete-the-rcd-capabilities-model/">see 
                 this blog post</a></p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
@@ -176,7 +165,7 @@
         <h2 id="HelpAvail">What help is available?</h2>
         <p class="content">You can email the RCD CM working group at 
             <a href="mailto:capsmodel-help@carcc.org">capsmodel-help@carcc.org</a>, or subscribe to 
-            the <a href="https://groups.google.com/a/carcc.org/g/capsmodel-discuss">capsmodel-discuss@carcc.org</a> discussion list to
+            the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/a/carcc.org/g/capsmodel-discuss">capsmodel-discuss@carcc.org</a> discussion list to
             hear how other institutions are completing their assessments, and using them as part of strategic planning.
         </p>
         <p class="content">
@@ -185,7 +174,8 @@
 
             <a href="mailto:capsmodel-help@carcc.org">capsmodel-help@carcc.org</a>.
             You are also welcome to join us for Office Hours; see the Research Computing and Data Capabilities Model working
-            group website for the schedule, or subscribe to the <a href="https://groups.google.com/a/carcc.org/g/capsmodel-discuss">capsmodel-discuss@carcc.org</a>
+            group website for the schedule, or subscribe to the 
+            <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/a/carcc.org/g/capsmodel-discuss">capsmodel-discuss@carcc.org</a>
             discussion list for announcements about this and more related activities.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
@@ -201,11 +191,11 @@
         <p class="content">
             You can explore the demographics of the community of users (and contributors, i.e., those who have completed an assessment and contributed 
             it to the Community Dataset) using the <a href="{% url 'dataviz:demographics' %}">Community Demographics tools</a>
-             of our <a href="/dataviz">Data Viewer</a>.
+             of our <a href="{% url 'dataviz:vizmain' %}">Data Viewer</a>.
         </p>
         <p class="content">
-            As of early 2024, a total of 60 institutions have completed 87 assessments (many have repeated their assessment in successive
-            years). You can see the <a href="https://carcc.org/rcdcm/#contributors">list of contributors on the CaRCC Working Group page</a>.
+            A total of {{ nInsts }} institutions have completed {{ nAssessments }} assessments (many have repeated their assessment in successive
+            years). See also the <a href="{% url 'dataviz:demographics_contriblist' %}">list of contributors</a>.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
@@ -230,26 +220,25 @@
     </div>
     <div class="helptopic">
         <h2 id="WhoDevel">Who developed the Capabilities Model?</h2>
+        <img id="AckNSFlogo" src="{% static 'images/NSF-logo-sm.png' %}" alt="NSF logo image"/>
         <p class="content">
             The Research Computing and Data Capabilities Model was developed through a collaboration among 
-            <a href="https://internet2.edu/community/research-engagement/">Internet2</a>, 
-            <a href="https://carcc.org/rcdcm/">CaRCC</a>,
-            and <a href="https://www.educause.edu/">EDUCAUSE</a>,
+            <a target="_blank" rel="noopener noreferrer" href="https://internet2.edu/community/research-engagement/">Internet2</a>, 
+            <a target="_blank" rel="noopener noreferrer" href="https://carcc.org/rcdcm/">CaRCC</a>,
+            and <a target="_blank" rel="noopener noreferrer" href="https://www.educause.edu/">EDUCAUSE</a>,
              and drew upon the expertise of a range of institutions with various and distinct models of
             research computing and data support.
             In addition, individuals at a number of Universities have provided valuable feedback on earlier versions.
         </p>
         <p class="content">
-            The development of these tools has been supported in part by an RCN grant from the National Science Foundation 
-            (<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1620695">OAC-1620695</a>, PI: Alex Feltus, “RCN: Advancing Research and Education through a national network of campus 
-            research computing infrastructures – The CaRC Consortium”), and by an NSF Cyberinfrastructure Centers of Excellence
-             (CI CoE) pilot award (<a href="https://nsf.gov/awardsearch/showAward?AWD_ID=2100003">OAC-2100003</a>, PI Dana Brunson, “Advancing Research Computing and Data: Strategic Tools, 
-             Practices, and Professional Development”).
+            This work has been supported in part by
+        the National Science Foundation via <a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1620695">OAC-1620695</a>
+         and <a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2100003">OAC-2100003</a>.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
         <h2 id="Portal">How can I explore the Community Dataset?</h2>
         <p class="content">
-            Click on <a href="/dataviz">Data Viewer</a> in the main menu to explore the demographics of our users and contributors, as well as
+            Click on <a href="{% url 'dataviz:vizmain' %}">Data Viewer</a> in the main menu to explore the demographics of our users and contributors, as well as
             the community assessment data. Once you complete and submit an assessment, you can use the benchmarking support
             to explore how your capabilities coverage compares to other institutions. 
         </p>
@@ -258,17 +247,17 @@
     <div class="helptopic">
         <h2 id="ReadMore">Where can I read more about the model?</h2>
         <p class="content">
-            Our PEARC20 paper &ldquo;<a href="https://zenodo.org/records/7102470">A Research Computing and Data Capabilities Model 
+            Our PEARC20 paper &ldquo;<a target="_blank" rel="noopener noreferrer" href="https://zenodo.org/records/7102470">A Research Computing and Data Capabilities Model 
                 for Strategic Decision-Making</a>&rdquo; provides an introduction to the model and concepts.
         </p>
         <p class="content">
-            The PEARC21 paper &ldquo;<a href="https://zenodo.org/records/7102494">Assessing the Landscape of
+            The PEARC21 paper &ldquo;<a target="_blank" rel="noopener noreferrer" href="https://zenodo.org/records/7102494">Assessing the Landscape of
                 Research Computing and Data Support:
                 The 2020 RCD Capabilities Model Community Dataset</a>&rdquo; presents
                 initial conclusions from the first community dataset.
         </p>
         <p class="content">
-            See also our <a href="https://carcc.org/rcdcm/previous-rcd-cm-events-and-materials/">archive of materials from events, etc</a>.
+            See also our <a target="_blank" rel="noopener noreferrer" href="https://carcc.org/rcdcm/previous-rcd-cm-events-and-materials/">archive of materials from events, etc</a>.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>

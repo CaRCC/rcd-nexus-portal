@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<style>
+    body>nav {
+        display: none;
+    }
+
+    body {
+        grid-template-areas:
+            "header"
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+    }
+    p, ul, ol {
+        line-height: 1.35;
+    }
+    section.helpdocs {
+        width: 80%;
+        max-width: 800px;
+        margin:10px 10px 10px 10px;
+        padding:1em .7in .7in .7in;
+    }
+    section.helpdocs h2, section.helpdocs h3 {
+        box-shadow: none;
+        background: none;
+    }
+    section.helpdocs h1.title {
+        font-size: 1.7em;
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 0px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    section.helpdocs div.helptopic {
+        padding-left:5px;
+    }
+    section.helpdocs div.helptopic p{
+        padding-left:5px;
+    }
+    p.content {
+        font-size: 0.9em;
+        margin-top: 0.7em;
+        margin-bottom: 0.5em;
+    }
+    section.helpdocs ul {
+        list-style: disc outside;
+        margin-left: 1.5em;
+    }
+    section.helpdocs ul li{
+        font-size: 0.9em;
+        margin-top: 6px;
+        padding: 0;
+    }
+    span.tocentry {
+        display:block;
+        font-weight: bold;
+        padding-left: 20px;
+        padding-top:0.25em;
+    }
+</style>
+
+<script>
+</script>
+
+{% endblock %}
+{% block title %}CaRCC Capabilities Model FAQ{% endblock %}
+
+{% block main %}
+<section class="helpdocs">
+    <h1 class="title">Data Viewer Frequently Asked Questions (FAQ)</h1>
+    <p><b>Table of Contents</b>:
+        <span class="tocentry"><a href="#Start">Where do I start?</a></span>
+        <span class="tocentry"><a href="#Benchmark">How can I benchmark my institution relative to others?</a></span>
+        <span class="tocentry"><a href="#IndivQs">Can I explore data (or see benchmarking) on individual questions within the assessment?</a></span>
+        <span class="tocentry"><a href="#PriosViz">When will priorities visualization be available?</a></span>
+        <span class="tocentry"><a href="#InfoSources">Where does the information about institutions come from?</a></span>
+        <span class="tocentry"><a href="#Contributor">What is a “Contributor” (vs. a “User”)?</a></span>
+        <span class="tocentry"><a href="#Coverage">What is “Coverage”?</a></span>
+    </p>
+    <p><em>See also</em> the Capabilities Model <a href="{% url 'helpdocs:faq' %}">Frequently Asked Questions (FAQ)</a></p>
+    <hr>
+    <div class="helptopic">
+        <h2 id="Start">Where do I start?</h2>
+        <p class="content">
+            Click on the "Community Demographics" tile to see graphical displays of information about the institutions in the dataset. 
+            There are several different types of visualizations to explore. 
+        </p>
+        <p class="content">
+            Click on the "Capabilities Data and Benchmarking" tile to see graphical displays of Capabilities Model Assessment Data in the community dataset. 
+        </p>
+        <p class="content">
+            Click on any of the Filters on the left of a individual page visualization to see options for narrowing the 
+            set of data you want to view. Once you have set your Filters and View Options, click on "UpdateView" to see the graph. 
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+    <div class="helptopic">
+        <h2 id="Benchmark">How can I benchmark my institution relative to others?</h2>
+        <p class="content">See the <a href="{% url 'helpdocs:dv_quickstart' %}#StepByStep">Step-by-Step example of benchmarking 
+            for your Institution</a> in the <a href="{% url 'helpdocs:dv_quickstart' %}">Quick Start Guide</a>.
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+    <div class="helptopic">
+        <h2 id="IndivQs">Can I explore data (or see benchmarking) on individual questions within the assessment?</h2>
+        <p class="content">
+            This is a feature we will add soon. Note, however, that this level of data exploration will only be available to contributors
+            (i.e., those institutions that complete an assessment and submit it to the Community Dataset).
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+    <div class="helptopic">
+        <h2 id="PriosViz">When will priorities visualization be available?</h2>
+        <p class="content">
+            We are currently conducting focus groups to better understand what functionality people want for this. 
+            If you are willing to participate in a short discussion to help shape this feature, please email 
+            <a href="mailto:capsmodel-help@carcc.org?subject=Priorities Viz focus groups">capsmodel-help@carcc.org</a>.
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+    <div class="helptopic">
+        <h2 id="InfoSources">Where does the information about institutions come from?</h2>
+        <p class="content">Much of the institutional metadata comes from IPEDS, the Integrated Postsecondary Education Data System. 
+            This is a system of interrelated surveys conducted annually by the U.S. Department of Education’s 
+            National Center for Education Statistics (NCES). See <a href="https://nces.ed.gov/ipeds/">https://nces.ed.gov/ipeds/</a>.
+        </p>
+        <p class="content">
+            The <b>Institutional Classification</b> values are based upon the widely used Carnegie Classification 
+            with adjustments and extensions to support our community of users (e.g., to include additional types of
+            institutions and those that are not U.S. Higher Education institutions). For more on the 
+            Carnegie Classification of Institutions of Higher Education, see
+            <a href="https://carnegieclassifications.acenet.edu/">https://carnegieclassifications.acenet.edu/</a>
+        </p>
+        <p class="content">Metadata on <b>Institutional Mission</b>s, <b>Organizational Model</b>s, and <b>Reporting Structure</b>s 
+            is self-reported by institutions when they create an institutional profile to complete an assessment. 
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+    <div class="helptopic">
+        <h2 id="Contributor">What is a “Contributor” (vs. a “User”)?</h2>
+        <p class="content">
+            <em>Contributors</em> are those institutions that have completed an assessment using the CaRCC Capabilities Model, 
+            and agreed to contribute their data to the community dataset.
+            <br><em>Users</em> are those all institutions that have created a profile on the RCD Nexus portal, 
+            and/or that requested and downloaded an earlier version of the CaRCC Capabilities Model.
+        </p>
+        <p class="content">
+            You can explore the demographics of the community of users (and contributors, i.e., those who have completed an assessment and contributed 
+            it to the Community Dataset) using the <a href="{% url 'dataviz:demographics' %}">Community Demographics tools</a>
+             of our <a href="{% url 'dataviz:vizmain' %}">Data Viewer</a>.
+        </p>
+        <p class="content">
+            A total of {{ nInsts }} institutions have completed {{ nAssessments }} assessments (many have repeated their assessment in successive
+            years). See also the <a href="{% url 'dataviz:demographics_contriblist' %}">list of contributors</a>.
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+    <div class="helptopic">
+        <h2 id="Coverage">What is “Coverage”?</h2>
+        <p class="content">The Capabilities Model presents roughly 150 capabilities (in the form of questions) structured 
+            around <a href="{% url 'helpdocs:intro_and_guide' %}#FiveFacings">the five Facings</a>. Within each Facing,
+            questions are grouped into <em>topics</em>.
+            Each question is considered through several lenses: <b>Availability across institution</b>, 
+            <b>Service Operating Level</b>, and <b>Community engagement and collaboration</b> 
+             (these are described in the 
+            <a href="{% url 'helpdocs:intro_and_guide' %}#KeyAspects">Understanding Key Aspects of the Model</a> 
+            section of the <a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a>).
+        </p>
+        <p class="content">For each question, users choose answers for the three lenses, 
+            and these are combined to produce a numerical <b>coverage</b> value for that capability.
+            Coverage values for the questions are averaged to produce a coverage value for the associated <em>topic</em>, 
+            and for each Facing overall. 
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+{% comment %} Template FAQ item
+    <div class="helptopic">
+        <h2 id="ID">Question?</h2>
+        <p class="content">
+            <Content
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+{% endcomment %}
+<p class="copyright noprint"><b>Copyright ©2023-{% now "Y" %} Internet2 and CaRCC</b>, and licensed for use under 
+    <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
+     usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
+</section>
+
+{% endblock %}

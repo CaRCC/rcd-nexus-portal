@@ -8,6 +8,13 @@
     p.doc {
         font-size: 1.2em;
         font-weight: bold;
+        margin: 5px 0 0 0;
+    }
+    p.doc:first-of-type {
+        margin-top: 14px;
+    }
+    p.doc:last-of-type {
+        margin-bottom: 8px;
     }
     p.content {
         font-size: 1em;
@@ -34,7 +41,7 @@
 
 {% endblock %}
 
-{% block title %}RCD-Nexus Capabilities Model Help Documentation{% endblock %}
+{% block title %}CaRCC Capabilities Model Help Documentation{% endblock %}
 {% block main %}
 <div class="helpgrid">
     <section class="helpdocs" >
@@ -42,14 +49,20 @@
         <p class="doc"><a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a></p>
         <p class="doc"><a href="{% url 'helpdocs:quickstart' %}">Quick Start Guide</a></p>
         <p class="doc"><a href="{% url 'helpdocs:faq' %}">Frequently Asked Questions (FAQ)</a></p>
-        <p class="doc"><a href="{% url 'helpdocs:printable_questions' %}">Printable list of Questions by Facing</a></p>
+        <p class="doc"><a href="{% url 'helpdocs:printable_questions' %}">Printable List of Questions by Facing</a></p>
+    </section>
+    <section class="helpdocs" >
+        <h2>Data Viewer Documentation</h2>
+        <p class="doc"><a href="{% url 'helpdocs:dv_intro_and_guide' %}">Introduction and Guide to Use</a></p>
+        <p class="doc"><a href="{% url 'helpdocs:dv_quickstart' %}">Quick Start Guide</a></p>
+        <p class="doc"><a href="{% url 'helpdocs:dv_faq' %}">Frequently Asked Questions (FAQ)</a></p>
     </section>
 
     <section class="helpdocs" >
         <h2>Getting Help and providing Feedback</h2>
         <p class="content"><b>Join the discussion!</b>  You can email the RCD CM working group at 
             <a href="mailto:capsmodel-help@carcc.org">capsmodel-help@carcc.org</a>, 
-            or subscribe to the <a href="https://groups.google.com/a/carcc.org/g/capsmodel-discuss">capsmodel-discuss@carcc.org</a>
+            or subscribe to the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/a/carcc.org/g/capsmodel-discuss">capsmodel-discuss@carcc.org</a>
             discussion list to hear how other institutions are 
             completing their assessments, and using them as part of strategic planning. 
         </p>
@@ -57,8 +70,8 @@
             how to understand specific questions, etc., please share your questions with the working group
             by emailing <a href="mailto:capsmodel-help@carcc.org">capsmodel-help@carcc.org</a>.
             You are also welcome to join us for Office Hours; 
-            see the <a href="https://carcc.org/rcdcm/">Research Computing and Data Capabilities Model working group website</a>
-            for the schedule, or subscribe to the <a href="https://groups.google.com/a/carcc.org/g/capsmodel-discuss">capsmodel-discuss@carcc.org</a>
+            see the <a target="_blank" rel="noopener noreferrer" href="https://carcc.org/rcdcm/">Research Computing and Data Capabilities Model working group website</a>
+            for the schedule, or subscribe to the <a target="_blank" rel="noopener noreferrer" href="https://groups.google.com/a/carcc.org/g/capsmodel-discuss">capsmodel-discuss@carcc.org</a>
             discussion list for announcements about this and more related activities. 
         </p>
     </section>

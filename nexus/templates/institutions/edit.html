@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block head %}
 <style>
     h2 {
@@ -83,7 +84,7 @@
             <div class="fields-body even-field">
                 {{ form.state_or_province }} 
                 <span class="tooltip">
-                    <img class="tooltip" src="/static/images/help.png" alt="help icon">
+                    <img class="tooltip" src="{% static 'images/help.png' %}" alt="help icon">
                     <span class="tooltiptext">Use standard names with proper noun capitalization</span>                
                 </span>
                 {{ form.state_or_province.errors }}
@@ -101,7 +102,7 @@
             <div class="fields-body odd-field">
                 {{ form.student_pop }}
                 <span class="tooltip">
-                    <img class="tooltip" src="/static/images/help.png" alt="help icon">
+                    <img class="tooltip" src="{% static 'images/help.png' %}" alt="help icon">
                     <span class="tooltiptext">Enter the sum of undergraduate and graduate populations.</span>                
                 </span>
                 {{ form.student_pop.errors }}
@@ -142,7 +143,7 @@
             <div class="fields-body odd-field">
                 {{ form.ipeds_epscor }}
                 <span class="tooltip">
-                    <img class="tooltip" src="/static/images/help.png" alt="help icon">
+                    <img class="tooltip" src="{% static 'images/help.png' %}" alt="help icon">
                     <span class="tooltiptext">If you don't know what this is, it should probably be Not EPSCoR.</span>                
                 </span>
                 {{ form.ipeds_epscor.errors }}

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}RCD-Nexus Capabilities Model Priorities Data Visualizations{% endblock %}
+{% block title %}CaRCC Capabilities Model Priorities Data Visualizations{% endblock %}
 
 {% block nav %}
     <form id="filtertree" method="post" action="" autocomplete="off">
@@ -13,7 +13,9 @@
 <div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%else%}
     <p style="margin:3em auto;">Note: This feature is still under development and will be included in a future release.</p>{%endif%}</div>
 
+{{ nonDefs|json_script:"nonDefs" }}
 <script>
-    initDetailsFromStorage();
+    const nonDefs = JSON.parse(document.getElementById('nonDefs').textContent);
+    initDetailsFromStorage( nonDefs );
 </script>
 {% endblock %}

@@ -4,19 +4,19 @@
         //console.log(id, isOpen);
         window.localStorage.setItem('details-'+id, isOpen);
     }
-    function setDetailOpenStatus(item) {
+    function setDetailOpenStatus(item, nonDefaults) {
         if (item.includes('details-')) {
             var id = item.split('details-')[1];
             var status = window.localStorage.getItem(item);
-            if (status=='open') {
+            if (status=='open' || nonDefaults.includes(id)) {
                 document.getElementById(id).setAttribute('open', true);
             }
         }
     }
     // TODO: On initial GET (nav from UI, not refresh on view update), clear all the Open Status values. 
-    function initDetailsFromStorage() {
+    function initDetailsFromStorage(nonDefaults) {
         for (var i = 0; i < localStorage.length; i++) {
-            setDetailOpenStatus(localStorage.key(i));
+            setDetailOpenStatus(localStorage.key(i), nonDefaults);
         }
     }
     // Only callable when the detail is open. Find all the checkboxes under this and set them checked

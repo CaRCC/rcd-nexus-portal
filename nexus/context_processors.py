@@ -10,5 +10,5 @@ def base_template(request):
     return {"base_template": template}
 
 def motd_message(request):
-    message = MOTD.getMOTD()
-    return {"motd": message}
+    message, dismissDays = MOTD.getMOTD()
+    return {"motd": message, "dismissDays": dismissDays}

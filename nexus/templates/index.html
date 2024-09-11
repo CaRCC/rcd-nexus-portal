@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block head %}
 <style>
@@ -9,12 +10,19 @@ main {
     width: 95%;
     position: relative;
 }
+div.cardblock section.card {
+    height: 100%;
+}
+main div.cardblock div.cardbutton img.cardcontent { 
+    width:85%;
+}
+
 
 </style>
 {% endblock %}
 
 {% block main %}
-<img class="main-bg" src="/static/images/cropped-CaRCC-Banner-new-v4.png" alt="Banner image showing a diverse community">
+<img class="main-bg" src="{% static 'images/cropped-CaRCC-Banner-new-v4.png' %}" alt="Banner image showing a diverse community">
 <h1>Welcome to the RCD Nexus user portal!</h1>
 <div class="cardblock">
     <section class="card">
@@ -41,8 +49,8 @@ main {
         <h2>Browse Data</h2>
         <p style="margin-bottom: 0px;">You may also view the public portions of the Community Dataset without logging in.</p>
         <div class="cardbutton">
-            <a href="/dataviz">
-                <img class="cardcontent" src="/static/images/epscor_DFTopicsCardImg.png" alt="Graph showing example of capabilities coverage data">
+            <a href="{% url 'dataviz:vizmain' %}">
+                <img class="cardcontent" src="{% static 'images/epscor_DFTopicsCardImg.png' %}" alt="Graph showing example of capabilities coverage data">
                 <p class="cardbutton" style="margin-top: 1em;">Explore public data</p>
             </a>
         </div>

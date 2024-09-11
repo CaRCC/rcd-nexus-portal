@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block head %}
 <style>
@@ -13,7 +14,7 @@ main {
 </style>
 {% endblock %}
 
-{% block title %}RCD-Nexus Capabilities Model Data Visualizations{% endblock %}
+{% block title %}CaRCC Capabilities Model Data Visualizations{% endblock %}
 
 {% block main %}
 <div class="cardblock">
@@ -21,26 +22,60 @@ main {
         <h2>Community Demographics</h2>
         <div class="imgcard">
             <a href="{% url 'dataviz:demographics' %}">
-                <img class="cardcontent" src="/static/images/demogMapCardImg.png" alt="Map showing distribution of community contributors">
+                <img class="cardcontent" src="{% static 'images/demogMapCardImg.png' %}" alt="Map showing distribution of community contributors">
             </a>
         </div>
     </section>
     <section class="card">
-        <h2>Capabilities Data and Benchmarking</h2>
+        <h2>Capabilities Data+Benchmarking</h2>
         <div class="imgcard">
             <a href="{% url 'dataviz:capsmodeldata' %}">
-                <img class="cardcontent" src="/static/images/epscor_DFTopicsCardImg.png" alt="Bar graph showing example capabilities model data">
+                <img class="cardcontent" src="{% static 'images/summary_bars_sm.png' %}" alt="Bar graph showing example capabilities model data">
+            </a>
+        </div>
+    </section>
+    <section class="card nyi">
+        <h2>Priorities Data (Coming soon)</h2>
+        <div class="imgcard">
+            {% comment %} <a href="{% url 'dataviz:prioritiesdata' %}">{% endcomment %}
+                <img class="cardcontent" src="{% static 'images/prioDistCardImg.png' %}" alt="Bar graph showing example capabilities model priorities data">
+            {% comment %} </a>{% endcomment %}
+        </div>
+    </section>
+    <section class="card banner">
+        <h3>New to the Data Viewer?</h3>
+        <div>
+            <p>These tools complement the CaRCC Capabilities Model with interactive data visualizations
+                to explore the community dataset provided by institutions that are using and/or have completed assessments
+                using the Model. <br>See the <a href="{% url 'helpdocs:dv_quickstart' %}"><b>Quick Start Guide</b></a> or 
+                <b>click on one of the examples below</b> to dive right in! <br>
+                Review the <a href="{% url 'helpdocs:dv_intro_and_guide' %}">Introduction and Guide to Use</a> for a detailed 
+                description of the tools and options available.</p>
+        </div>
+    </section>
+    <section class="card">
+        <h3>Types of Contributing Institutions</h3>
+        <div class="imgcard">
+            <a href="{% url 'dataviz:demographics_chartviews' %}?population=contrib&chart_views=cc">
+                <img class="cardcontent" src="{% static 'images/ContribMix.png' %}" alt="Bar graph showing example capabilities model data">
             </a>
         </div>
     </section>
     <section class="card">
-        <h2>Priorities Data</h2>
+        <h3>EPSCoR Gaps in Data Topics</h3>
         <div class="imgcard">
-            <a href="{% url 'dataviz:prioritiesdata' %}">
-                <img class="cardcontent" src="/static/images/prioDistCardImg.png" alt="Bar graph showing example capabilities model priorities data">
+            <a href="{% url 'dataviz:capsmodeldata' %}?facings=df&chart_views=epscor">
+                <img class="cardcontent" src="{% static 'images/epscor_DFTopicsCardImg.png' %}" alt="Bar graph showing example capabilities model data">
             </a>
         </div>
     </section>
-
+    <section class="card">
+        <h3>Reporting Structures</h3>
+        <div class="imgcard">
+            <a href="{% url 'dataviz:demographics_chartviews' %}?chart_views=reporting">
+                <img class="cardcontent" src="{% static 'images/reporting.png' %}" alt="Pie chart showing reporting structures for the community">
+            </a>
+        </div>
+    </section>
 </div>
 {% endblock %}

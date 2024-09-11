@@ -35,6 +35,7 @@ edit_roles = {roles.CONTRIBUTOR, roles.MANAGER, roles.SUBMITTER}
 manage_roles = {roles.MANAGER, roles.SUBMITTER}
 submit_roles = {roles.SUBMITTER}
 
+from django.contrib import messages
 
 def index(request):
     if request.user.is_authenticated:
