@@ -374,7 +374,7 @@ def filterAssessmentData(dict):
 
     return answers, instCount
 
-def applyStandardVBarFormatting(fig, width=None):
+def applyStandardVBarFormatting(fig, width=None, textscale=1):
     # Apply standard font size and font type
     fig.update_layout(
         xaxis=dict(title=dict(text='', font=dict(size=16, family='Arial'))),
@@ -383,9 +383,11 @@ def applyStandardVBarFormatting(fig, width=None):
         margin_t=25,autosize=True,
         legend_title_text='',
         #legend_traceorder="normal",
+        legend = dict(font=dict(size=14*textscale, )),
         )
     fig.update_traces(error_y_color=colorPalette['errBars'], 
-                      marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{y:.1f}%')
+                      marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{y:.1f}%',
+                      showlegend=False)
     fig.update_yaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
 
 def applyStandardHBarFormatting(fig, width=None, textscale=1):
@@ -443,15 +445,19 @@ def summaryDataGraph(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAU
     data['Average Values'] *= 100
     data['Std Dev'] *= 100
 
+    markerscale = 1.3-((1-(abs(height)/DEFAULT_HEIGHT))*1.4)
+    textscale = 1-((1.3-markerscale)*.4)
+
     # Create a All Summary Data bar chart
     fig = px.bar(data, x='Facings', y= 'Average Values', error_y='Std Dev' if showErrBars else None,
                     #width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
                     width=width, height=height,color='Facings', color_discrete_sequence=colorSeqForFacings)
-    applyStandardVBarFormatting(fig, width=0.6)
+    applyStandardVBarFormatting(fig, width=0.6, textscale=textscale)
     fig.update_layout(showlegend=False)
 
     # If benchmark data passed in, layer that over
-    scale = (height/DEFAULT_HEIGHT)
+    #scale = (height/DEFAULT_HEIGHT)
+
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         # Legendrank is SUPPOSED to let us order with the most recent year on top, but seems not to work.
@@ -460,10 +466,11 @@ def summaryDataGraph(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAU
             bm = benchmarks[imarker]
             fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name'],
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name'],
                                         legendrank=(5-imarker)))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
+        fig.update_layout(showlegend=True)
    
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
@@ -492,7 +499,7 @@ def calculateScaledHeight(nTopics, height):
 
 def facingSummaryDataGraph(answers, facing, benchmarks=None,
                            width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
-    print(f"Facing: [{facing}] SummaryDataGraph with: {answers.count()} answers")
+    #print(f"Facing: [{facing}] SummaryDataGraph with: {answers.count()} answers")
     #instCount = answers.values('assessment__id').distinct().count()
     if (answers.count() == 0): 
         return None
@@ -524,7 +531,7 @@ def facingSummaryDataGraph(answers, facing, benchmarks=None,
     data['Std Dev'] *= 100
 
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
         height = calculateScaledHeight(len(yvalues), abs(height))
@@ -543,7 +550,7 @@ def facingSummaryDataGraph(answers, facing, benchmarks=None,
             bm = benchmarks[imarker]
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
    
