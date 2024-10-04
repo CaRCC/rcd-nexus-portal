@@ -9,7 +9,12 @@
             var id = item.split('details-')[1];
             var status = window.localStorage.getItem(item);
             if (status=='open' || nonDefaults.includes(id)) {
-                document.getElementById(id).setAttribute('open', true);
+                elToSet = document.getElementById(id)
+                if(elToSet) {
+                    elToSet.setAttribute('open', true);
+                } else {
+                    console.log("setDetailOpenStatus: Could not find element: "+id)
+                }                
             }
         }
     }
@@ -44,7 +49,12 @@
             }
         }
         if(id) {
-            document.getElementById(id).classList.add("skipFilter");
+            elToSkip = document.getElementById(id)
+            if(elToSkip) {
+                elToSkip.classList.add("skipFilter");
+            } else {
+                console.log("hideFilter: Could not find element: "+id)
+            }
             // Reset the choices to all so we do not mess up the filtering
             setAll(id);
         }

@@ -524,10 +524,10 @@ def data_viz_capsmodeldata(request):
                             # The last 6 chars are always the year. Strip that, then cut the name short a bit, and rejoin
                             yrstr = str(bmprof)[-6:]
                             instName = textwrap.shorten(str(bmprof)[:-6], width=40, placeholder="...")
-                            shortprofname = instName+'<b>'+yrstr+'</b>'
-                            bmName = '<br>'.join(textwrap.wrap(shortprofname, 20))
+                            shortprofname = instName+yrstr
+                            bmName = '<b>'+'<br>'.join(textwrap.wrap(shortprofname, 20))+'</b>'
                             benchmarkInfo.append({ 'data':getInstAverages(benchmarkAssessment, facing), 'name':bmName })
-                            print('Adding Benchmark info for: ',bmName)
+                            # print('Adding Benchmark info for: ',bmName)
 
 
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
