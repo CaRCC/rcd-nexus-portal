@@ -578,6 +578,8 @@ def capsDataGraphByCC(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFA
     # Map the facings values to names
     df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping)
     df['simpleCC'] = df['simpleCC'].map(cc_mapping)
+    # print('Filtered data has ', df['simpleCC'].nunique(),' of 3 expected CC values')
+    missing_cats = True if df['simpleCC'].nunique() < 3 else False
 
     # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
     df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
@@ -612,7 +614,7 @@ def capsDataGraphByCC(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFA
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def facingCapsDataGraphByCC(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByCC with: ", answers.count()," answers")

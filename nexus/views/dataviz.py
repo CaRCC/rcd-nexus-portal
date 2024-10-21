@@ -575,6 +575,7 @@ def data_viz_capsmodeldata(request):
                 showErrBars = cleaned_dict.get('opt_show_errbars') != 'False'
                 # print("ShowErrBars: ",showErrBars)
 
+                missing_cats = False    # when filters results in partial data for compare-by graphs
                 match chart:
                     case "sum":
                         if facing == 'all':
@@ -589,7 +590,7 @@ def data_viz_capsmodeldata(request):
 
                     case "cc" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByCC(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph, missing_cats = cmgraphs.capsDataGraphByCC(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
                             graph = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                      height=grheight, width=grwidth2, showErrBars=showErrBars)
@@ -671,6 +672,7 @@ def data_viz_capsmodeldata(request):
         "graphtitle":graphtitle,
         "chart":chart,
         "showErrBars":showErrBars,
+        "missingCats":missing_cats,
         "facinglink":facinglink,
         "nonDefs":nonDefs,
         "breadcrumbs":{

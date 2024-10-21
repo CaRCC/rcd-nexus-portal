@@ -14,6 +14,9 @@
 {%if showErrBars %}
     <p class="viz_footnote">Note: "error bars" represent one standard deviation in the data, and illustrate the variation among institutions.</p>
 {%endif%}
+{%if missingCats %}
+    <p class="viz_footnote">Note: The specified filters resulted in no values for certain categories, and so these are not shown in the graph.</p>
+{%endif%}
 
 {%if facinglink %}
     <p class="viz_footnote">See also the <a href="{% url 'helpdocs:printable_questions' %}#{{facinglink}}">set of questions associated with each topic
