@@ -11,11 +11,15 @@
 {% block main %}
 <h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}CapsModel Data{%endif%}</h2>
 <div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
-{%if showErrBars %}
-    <p class="viz_footnote">Note: "error bars" represent one standard deviation in the data, and illustrate the variation among institutions.</p>
-{%endif%}
-{%if missingCats %}
-    <p class="viz_footnote">Note: The specified filters resulted in no values for certain categories, and so these are not shown in the graph.</p>
+{%if showErrBars or missingCats %}
+    <p class="viz_footnote">
+    {%if showErrBars %}
+        Note: "error bars" represent one standard deviation in the data, and illustrate the variation among institutions.<br>
+    {%endif%}
+    {%if missingCats %}
+        Note: The dataset (as filtered) has no values for certain categories; these are omitted in the graph.<br>
+    {%endif%}
+    </p>
 {%endif%}
 
 {%if facinglink %}

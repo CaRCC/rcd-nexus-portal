@@ -482,6 +482,7 @@ def data_viz_capsmodeldata(request):
     chart = None
     benchmarkInfo = None
     showErrBars = False
+    missing_cats = False    # when filters results in partial data for compare-by graphs
     nonDefs = ""
     facinglink = None
     if request.method == "POST":
@@ -575,7 +576,6 @@ def data_viz_capsmodeldata(request):
                 showErrBars = cleaned_dict.get('opt_show_errbars') != 'False'
                 # print("ShowErrBars: ",showErrBars)
 
-                missing_cats = False    # when filters results in partial data for compare-by graphs
                 match chart:
                     case "sum":
                         if facing == 'all':
@@ -592,55 +592,55 @@ def data_viz_capsmodeldata(request):
                         if facing == 'all':
                             graph, missing_cats = cmgraphs.capsDataGraphByCC(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                      height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Institutional Classification ({instCount} Institutions)'
                     case "mission" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByMission(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph, missing_cats = cmgraphs.capsDataGraphByMission(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                           height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Mission ({instCount} Institutions)'
                     case "pub_priv" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByPubPriv(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph, missing_cats = cmgraphs.capsDataGraphByPubPriv(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                           height=grheight, width=grwidth, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Control (Public/Private) ({instCount} Institutions)'
                     case "epscor" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByEPSCoR(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph, missing_cats = cmgraphs.capsDataGraphByEPSCoR(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                          height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by EPSCoR status ({instCount} Institutions)'
                     case "msi" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByMSI(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
+                            graph, missing_cats = cmgraphs.capsDataGraphByMSI(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                       height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Minority-serving status ({instCount} Institutions)'
                     case "orgmodel" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByOrgModel(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
+                            graph, missing_cats = cmgraphs.capsDataGraphByOrgModel(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                            height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Organizational Model ({instCount} Institutions)'
                     case "reporting" :
                         if facing == 'all':
-                            graph = cmgraphs.capsDataGraphByReporting(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
+                            graph, missing_cats = cmgraphs.capsDataGraphByReporting(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
                         else:
-                            graph = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                             height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
                             graphtitle = f'{facingname[0][1]} by Reporting Structure ({instCount} Institutions)'
