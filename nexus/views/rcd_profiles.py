@@ -211,8 +211,11 @@ def rcd_profile_create(request, institution_pk):
     return render(request, "rcdprofile/create.html", context)
 
 
-def rcd_profile_edit(request, pk):
-    profile = access_profile(request, pk, "edit")
+def rcd_profile_view(request, pk):
+    return rcd_profile_edit(request, pk, action="view")
+
+def rcd_profile_edit(request, pk, action="edit" ):
+    profile = access_profile(request, pk, action)
 
     form = RCDProfileForm(request.POST or None, instance=profile)
     form.customize_choices(request, profile.institution)
