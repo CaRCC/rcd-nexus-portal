@@ -1,5 +1,5 @@
 # from django.shortcuts import render
-from django.db.models import Q, Case, Value, When, F
+from django.db.models import Q, Case, Value, When, F, Count
 from functools import reduce
 from operator import or_
 from math import ceil
@@ -573,12 +573,19 @@ def capsDataGraphByCC(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFA
         When(assessment__profile__institution__carnegie_classification=15, then=Value(15)),
         When(assessment__profile__institution__carnegie_classification=16, then=Value(16)),
         default=Value(CC_OTHERACAD) ))
+    
+    # instCount = answers.values('assessment__id').distinct().count()
+    # Need to count distinct institutions in answers grouped by simpleCC
+    # simpleCCValueCounts = annotatedAnswers.values('simpleCC').annotate(count=Count('simpleCC'))
+    # print('simpleCCValueCounts: ', simpleCCValueCounts)
+
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = annotatedAnswers.aggregate_score('question__topic__facing','simpleCC').values('question__topic__facing','simpleCC','average','stddev')
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
     # Map the facings values to names
     df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping)
     df['simpleCC'] = df['simpleCC'].map(cc_mapping)
+
     # print('Filtered data has ', df['simpleCC'].nunique(),' of 3 expected CC values')
     missing_cats = True if df['simpleCC'].nunique() < 3 else False
 

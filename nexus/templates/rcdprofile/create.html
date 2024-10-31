@@ -80,6 +80,15 @@
     div#id_mission label[for="id_mission_0"] {
         display: none;
     }
+    /* Fix weird layout thing with the open access checkbox */
+    p.help:has(> input#id_open_access) {
+        margin-left: 25px;
+        text-indent: -25px;
+    }
+    p.help>input#id_open_access {
+        width: auto;
+    }
+
 </style>
 {% endblock %}
 
