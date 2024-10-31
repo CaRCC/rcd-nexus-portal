@@ -36,9 +36,17 @@
     div.field-body p.help span {
         font-size: 1.2em;
     }
+    div.field-body p.help input[type=checkbox] {
+        width: auto;
+        float: left;
+        margin-right: 0.8em;
+        vertical-align: middle;
+        position: relative;
+        top: 0.5em;
+    }
     form section.fields {
-    display: grid;
-    grid-template-columns: 1fr .7fr;
+        display: grid;
+        grid-template-columns: 1fr .7fr;
     }
     form section.fields div.field-body p select,
     form section.fields div.field-body p input,
@@ -79,14 +87,6 @@
     /* Hack to hide "Unknown" in the list of choices for mission */
     div#id_mission label[for="id_mission_0"] {
         display: none;
-    }
-    /* Fix weird layout thing with the open access checkbox */
-    p.help:has(> input#id_open_access) {
-        margin-left: 25px;
-        text-indent: -25px;
-    }
-    p.help>input#id_open_access {
-        width: auto;
     }
 
 </style>
