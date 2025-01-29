@@ -815,7 +815,7 @@
         "diversity"
       ],
       "language": "en",
-      "display_name": "Diversity, Equity, and Inclusion",
+      "display_name": "Broadening Participation and Inclusion",
       "description": ""
     }
   },
@@ -5846,8 +5846,8 @@
         "policy-practice"
       ],
       "language": "en",
-      "text": "Is there a <b>policy and practice</b> to ensure (and if necessary, improve) <b>diversity, equity, and inclusion</b>, on the Research Computing and Data (RCD) staff?",
-      "help_text": "For example: <ul><li>   Are RCD staff regularly surveyed on engagement, cultural climate, etc.?</li> <li>  Does RCD management track this over time?</li> <li> Are the results used to develop ongoing strategies to improve diversity, equity, and inclusion?</li></ul>"
+      "text": "Is there a <b>policy and practice</b> to ensure (and if necessary, improve) <b>broad participation and inclusion</b> on the Research Computing and Data (RCD) staff?",
+      "help_text": "For example: <ul><li>   Are RCD staff regularly surveyed on engagement, cultural climate, etc.?</li> <li>  Does RCD management track this over time?</li> <li> Are the results used to develop ongoing strategies for broad participation and inclusion?</li></ul>"
     }
   },
   {
@@ -5872,7 +5872,7 @@
         "training"
       ],
       "language": "en",
-      "text": "Do Research Computing and Data staff have <b>access to diversity, equity, and inclusion training</b>?",
+      "text": "Do Research Computing and Data staff have <b>access to training related to broadening participation and inclusion</b>?",
       "help_text": "For example, on unconscious bias, communication styles, multicultural awareness, etc."
     }
   },
