@@ -32,7 +32,14 @@ class TopicAdmin(admin.ModelAdmin):
 
 @admin.register(CapabilitiesQuestion)
 class QuestionAdmin(admin.ModelAdmin):
+    list_display = ["legacy_qid", "fully_qualified_slug", "get_shorttext", "is_essential"]
+    list_filter = ["is_essential"]
     inlines = [QuestionContentInline]
+    ordering = ["topic__facing__index", "topic__index", "index"]
+    
+    def get_shorttext(self, obj):
+        return obj.contents.get(language="en").shorttext
+
 
 
 @admin.register(CapabilitiesAssessment)

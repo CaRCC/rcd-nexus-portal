@@ -888,6 +888,7 @@
         "staffing"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "R1.1"
       },
@@ -968,6 +969,7 @@
         "outreach"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "R2.1"
       },
@@ -1000,6 +1002,7 @@
         "outreach"
       ],
       "index": 2,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "R2.3"
       },
@@ -1064,6 +1067,7 @@
         "consulting"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "R3.1"
       },
@@ -1160,6 +1164,7 @@
         "creation"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "D1.1"
       },
@@ -1176,6 +1181,7 @@
         "creation"
       ],
       "index": 1,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "D2.1"
       },
@@ -1240,6 +1246,7 @@
         "analysis"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "D3.1"
       },
@@ -1256,6 +1263,7 @@
         "analysis"
       ],
       "index": 1,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "D3.2"
       },
@@ -1368,6 +1376,7 @@
         "curation"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "D5.1"
       },
@@ -1400,6 +1409,7 @@
         "curation"
       ],
       "index": 2,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "D5.3"
       },
@@ -1432,6 +1442,7 @@
         "curation"
       ],
       "index": 4,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "D5.5"
       },
@@ -1624,6 +1635,7 @@
         "management"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SW1.1"
       },
@@ -1880,6 +1892,7 @@
         "portability"
       ],
       "index": 1,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SW5.2"
       },
@@ -1912,6 +1925,7 @@
         "access"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SW6.1"
       },
@@ -1928,6 +1942,7 @@
         "access"
       ],
       "index": 1,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SW6.2"
       },
@@ -2024,6 +2039,7 @@
         "infrastructure"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY1.1"
       },
@@ -2104,6 +2120,7 @@
         "compute"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY2.1"
       },
@@ -2120,6 +2137,7 @@
         "compute"
       ],
       "index": 1,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY2.2"
       },
@@ -2152,6 +2170,7 @@
         "compute"
       ],
       "index": 3,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY2.4"
       },
@@ -2168,6 +2187,7 @@
         "compute"
       ],
       "index": 4,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY2.5"
       },
@@ -2216,6 +2236,7 @@
         "storage"
       ],
       "index": 1,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY3.2"
       },
@@ -2312,6 +2333,7 @@
         "network"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY4.1"
       },
@@ -2440,6 +2462,7 @@
         "specialized"
       ],
       "index": 2,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY5.3"
       },
@@ -2744,6 +2767,7 @@
         "recordkeeping"
       ],
       "index": 3,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY8.4"
       },
@@ -2856,6 +2880,7 @@
         "planning"
       ],
       "index": 3,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY10.4"
       },
@@ -2888,6 +2913,7 @@
         "security"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SY11.1"
       },
@@ -2936,6 +2962,7 @@
         "alignment"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP1.1"
       },
@@ -3000,6 +3027,7 @@
         "alignment"
       ],
       "index": 4,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP1.8"
       },
@@ -3016,6 +3044,7 @@
         "alignment"
       ],
       "index": 5,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP1.5"
       },
@@ -3032,6 +3061,7 @@
         "alignment"
       ],
       "index": 6,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP1.6"
       },
@@ -3048,6 +3078,7 @@
         "alignment"
       ],
       "index": 7,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP1.7"
       },
@@ -3064,6 +3095,7 @@
         "culture"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP2.1"
       },
@@ -3080,6 +3112,7 @@
         "culture"
       ],
       "index": 1,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP2.2"
       },
@@ -3112,6 +3145,7 @@
         "funding"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP3.1"
       },
@@ -3192,6 +3226,7 @@
         "partnerships"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP4.1"
       },
@@ -3240,6 +3275,7 @@
         "professionalization"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP5.1"
       },
@@ -3272,6 +3308,7 @@
         "professionalization"
       ],
       "index": 2,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP5.3"
       },
@@ -3288,6 +3325,7 @@
         "diversity"
       ],
       "index": 0,
+      "is_essential": true,
       "attrs": {
         "legacy_qid": "SP6.1"
       },
@@ -3897,7 +3935,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>introductory user support and training</b> related to the use of research computing and data resources available at local, regional, and national level?",
-      "help_text": "That is, are there researcher-facing engagement and support staff who provide this? This often includes staff (and, at some institutions, students) who have the role of training and consulting on basic use of resources. This may include a combination of Research Computing and Data staff, Data Librarians, and staff in partner organizations. It will generally include training and support materials (documentation, recorded webinars and/or presentations, etc.)."
+      "help_text": "That is, are there researcher-facing engagement and support staff who provide this? This often includes staff (and, at some institutions, students) who have the role of training and consulting on basic use of resources. This may include a combination of Research Computing and Data staff, Data Librarians, and staff in partner organizations. It will generally include training and support materials (documentation, recorded webinars and/or presentations, etc.).",
+      "shorttext" : "Intro User Support &amp; Training"
     }
   },
   {
@@ -3910,7 +3949,8 @@
       ],
       "language": "en",
       "text": "Are researcher-facing staff provided with <b>professional development and networking opportunities</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Prof. Dev. &amp; Networking Opportunities"
     }
   },
   {
@@ -3923,7 +3963,8 @@
       ],
       "language": "en",
       "text": "Do researcher-facing staff have the skills and capacity to <b>broadly support researchers across levels</b> (graduate students to PIs) and across domains with information about the use and effectiveness of new technologies?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Support for Researchers Across Levels"
     }
   },
   {
@@ -3936,7 +3977,8 @@
       ],
       "language": "en",
       "text": "Can researcher-facing staff effectively <b>serve as advocates</b> for the research community <b>to leadership and IT governance</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "RF Staff Advocates to Leadership"
     }
   },
   {
@@ -3949,7 +3991,8 @@
       ],
       "language": "en",
       "text": "To what extent is there <b>a clear vision, effective guidance, and strategy</b> for the allocation and prioritization of support resources/personnel?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Support Resources Vision &amp; Strategy"
     }
   },
   {
@@ -3962,7 +4005,8 @@
       ],
       "language": "en",
       "text": "Is there an institutional practice to <b>proactively reach out to researchers, new faculty, or prospective faculty</b> to explain research support services and help with computing beyond the desktop?",
-      "help_text": "For example, this could happen during discussions with prospective faculty or graduate students, or as part of the onboarding or orientation for new researchers."
+      "help_text": "For example, this could happen during discussions with prospective faculty or graduate students, or as part of the onboarding or orientation for new researchers.",
+      "shorttext" : "Proactive Outreach as Practice"
     }
   },
   {
@@ -3975,7 +4019,8 @@
       ],
       "language": "en",
       "text": "Do researcher-facing staff have the skills and capacity to <b>effectively engage in community outreach</b> and broader impacts?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Skills for Community Outreach"
     }
   },
   {
@@ -3988,7 +4033,8 @@
       ],
       "language": "en",
       "text": "Are researchers made aware of research computing and data related resources?",
-      "help_text": "i.   intra-campus resources (e.g., support, training, engineering, central IT services, library services, related centers or institutes)\r\n  ii.  cross-institution, regional, national, and/or international entities that comprise the larger ecosystem of Research Computing and Data (e.g., ACI-REF, Campus Champions, Research Software Engineers, CASC, CaRCC, CI Engineers, PEARC)?"
+      "help_text": "i.   intra-campus resources (e.g., support, training, engineering, central IT services, library services, related centers or institutes)\r\n  ii.  cross-institution, regional, national, and/or international entities that comprise the larger ecosystem of Research Computing and Data (e.g., ACI-REF, Campus Champions, Research Software Engineers, CASC, CaRCC, CI Engineers, PEARC)?",
+      "shorttext" : "Researchers&apos; Awareness of RCD"
     }
   },
   {
@@ -4001,7 +4047,8 @@
       ],
       "language": "en",
       "text": "Does your institution have a process to <b>assess researcher awareness, satisfaction, and engagement</b> related to Research Computing and Data services and support?",
-      "help_text": "This might include periodic satisfaction surveys, or another assessment mechanism."
+      "help_text": "This might include periodic satisfaction surveys, or another assessment mechanism.",
+      "shorttext" : "Assessment of RCD Outreach"
     }
   },
   {
@@ -4014,7 +4061,8 @@
       ],
       "language": "en",
       "text": "Does your institution have a process to <b>assess the impact</b> of research computing and data support?",
-      "help_text": "This often includes things like publications, grants, etc. for active users, as well as faculty and graduate student recruitment and retention cases supported. It may include profiles of and quotes from active research users."
+      "help_text": "This often includes things like publications, grants, etc. for active users, as well as faculty and graduate student recruitment and retention cases supported. It may include profiles of and quotes from active research users.",
+      "shorttext" : "Assessment of RCD Impact"
     }
   },
   {
@@ -4027,7 +4075,8 @@
       ],
       "language": "en",
       "text": "Does your institution have <b>marketing/communication resources</b> (staff) with the skills and capacity to help publicize and explain research support services?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "MarComm Support for RCD"
     }
   },
   {
@@ -4040,7 +4089,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to application <b>support </b>(training, help) for standard <b>software packages, middleware, libraries, and modules</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Packages/Modules Training/Help"
     }
   },
   {
@@ -4053,7 +4103,8 @@
       ],
       "language": "en",
       "text": "Do researcher-facing staff have the skills and capacity to <b>diagnose inefficiencies, monitor usage, and advise on policies and optimizations</b> to make for more efficient utilization of research computing and data resources?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Software Optimization Support"
     }
   },
   {
@@ -4066,7 +4117,8 @@
       ],
       "language": "en",
       "text": "Are researcher-facing staff engaged with <b>exploring, testing, and deploying emerging or advanced technologies</b> to help research?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Emerging RCD Tech Support"
     }
   },
   {
@@ -4079,7 +4131,8 @@
       ],
       "language": "en",
       "text": "Do researcher-facing staff regularly and effectively <b>document processes, policies, and resources</b> both internally and for the user community?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "RCD Support Documentation"
     }
   },
   {
@@ -4092,7 +4145,8 @@
       ],
       "language": "en",
       "text": "Are researchers <b>supported across the full research lifecycle</b>?",
-      "help_text": "I.e., are researchers supported during proposal development, during the active award, and post funding? This may include support for project planning and proposal development, as well as providing research computing and data services."
+      "help_text": "I.e., are researchers supported during proposal development, during the active award, and post funding? This may include support for project planning and proposal development, as well as providing research computing and data services.",
+      "shorttext" : "Full Research Lifecycle Support"
     }
   },
   {
@@ -4105,7 +4159,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>advice on research compute and data compliance, security, management, and governance</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Compliance/Governance Advice"
     }
   },
   {
@@ -4118,7 +4173,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>consulting or other resources on data lifecycle requirements</b> during data creation?",
-      "help_text": "For example, consulting, websites, hand-outs, or other resources providing support to anticipate requirements for metadata, storage, and reuse; publisher requirements; and/or funder requirements."
+      "help_text": "For example, consulting, websites, hand-outs, or other resources providing support to anticipate requirements for metadata, storage, and reuse; publisher requirements; and/or funder requirements.",
+      "shorttext" : "Data Creation Resources"
     }
   },
   {
@@ -4131,7 +4187,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>consulting or other resources supporting data discovery</b>?",
-      "help_text": "I.e., consulting, websites, hand-outs, or other resources to help identify appropriate data repositories (on campus, in domains, and more generally). Note: this may come from Research Computing and Data staff, library staff, or other partners."
+      "help_text": "I.e., consulting, websites, hand-outs, or other resources to help identify appropriate data repositories (on campus, in domains, and more generally). Note: this may come from Research Computing and Data staff, library staff, or other partners.",
+      "shorttext" : "Data Discovery Resources"
     }
   },
   {
@@ -4144,7 +4201,8 @@
       ],
       "language": "en",
       "text": "Do researchers have <b>access to expertise about common Terms of Service</b> for frequently crawled websites/data repositories and best practices guidance?",
-      "help_text": "Examples of this can include: <ul><li>Are there library or other staff with knowledge about common Terms of Service for frequently crawled websites/data repositories and <b>best practices guidance</b>?</li> <li>  Are there library or other staff with skills and capacity to <b>inform policies and educate researchers on data use agreements</b> (DUAs)?</li></ul>"
+      "help_text": "Examples of this can include: <ul><li>Are there library or other staff with knowledge about common Terms of Service for frequently crawled websites/data repositories and <b>best practices guidance</b>?</li> <li>  Are there library or other staff with skills and capacity to <b>inform policies and educate researchers on data use agreements</b> (DUAs)?</li></ul>",
+      "shorttext" : "Data Crawling Expertise"
     }
   },
   {
@@ -4157,7 +4215,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>software supporting data collection</b>?",
-      "help_text": "For example, do they have access to software for data crawling, for web-scraping, for data-gathering, and similar activities to collect data?"
+      "help_text": "For example, do they have access to software for data crawling, for web-scraping, for data-gathering, and similar activities to collect data?",
+      "shorttext" : "Data Collection Software Tools"
     }
   },
   {
@@ -4170,7 +4229,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>resources </b>(e.g., staff) to <b>develop software supporting data discovery and collection</b>?",
-      "help_text": "For example, do they have access to software developers to develop software for: <ul><li>data collection (including web crawling/scraping/etc.).</li> <li>  user interfaces or web applications to collect and interact with data with appropriate security protocols and policies.</li></ul>"
+      "help_text": "For example, do they have access to software developers to develop software for: <ul><li>data collection (including web crawling/scraping/etc.).</li> <li>  user interfaces or web applications to collect and interact with data with appropriate security protocols and policies.</li></ul>",
+      "shorttext" : "Data Collection Tool Development"
     }
   },
   {
@@ -4183,7 +4243,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>consulting, expertise, or other resources on data wrangling/manipulation and data analysis</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Analysis Consulting"
     }
   },
   {
@@ -4196,7 +4257,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>software that supports data wrangling/manipulation and data analysis</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Analysis Tools"
     }
   },
   {
@@ -4209,7 +4271,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>dedicated resources</b> (e.g., staff) who can <b>perform data wrangling/manipulation and data analysis</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Analysis Staff"
     }
   },
   {
@@ -4222,7 +4285,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>resources </b>(e.g., staff) for <b>software development </b>of tools that support <b> data wrangling/manipulation and data analysis</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Analysis Tool Development"
     }
   },
   {
@@ -4235,7 +4299,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>consulting, expertise, or other resources on data visualization</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Resources for data visualization"
     }
   },
   {
@@ -4248,7 +4313,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>software that supports data visualization</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Visualization Tools"
     }
   },
   {
@@ -4261,7 +4327,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>dedicated resources</b> (e.g., staff) who can <b>perform data visualization</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Visualization Staff"
     }
   },
   {
@@ -4274,7 +4341,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>resources </b>(e.g., staff) for <b>software development</b> of tools that support <b>data visualization</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Visualization Tool Development"
     }
   },
   {
@@ -4287,7 +4355,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>consulting, expertise, or other resources</b> to help them <b>identify appropriate data repositories</b> (on campus, in domains, and more generally) to place their data?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Repository Consulting"
     }
   },
   {
@@ -4300,7 +4369,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>resources </b>(e.g., staff) who can advise and assist with <b>database creation and data organization</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Database Advice and Assistance"
     }
   },
   {
@@ -4313,7 +4383,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>tools/software</b> that supports <b>data backup, storage, and integrity checking</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Management Tools"
     }
   },
   {
@@ -4326,7 +4397,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>resources </b>(e.g., staff) who will <b>develop tools/software</b> that supports <b>data backup, storage, and integrity checking</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Management Tool Development"
     }
   },
   {
@@ -4339,7 +4411,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to software and/or environments to deal with datasets that exceed what is generally available to individuals on a workstation or personal storage subscription?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Resources for Large Datasets"
     }
   },
   {
@@ -4352,7 +4425,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>consulting, expertise, or other resources on metadata design and use</b>?",
-      "help_text": "Example areas of available consulting, expertise, websites, hand-outs, or other resources could include: <ul><li>Establishing controlled vocabularies for metadata and metadata fields for repository systems.</li> <li>  Help with designing metadata applicable to their research.</li> <li> Assistance in setting up metadata for reusable data sets, physical samples, research software.</li></ul>"
+      "help_text": "Example areas of available consulting, expertise, websites, hand-outs, or other resources could include: <ul><li>Establishing controlled vocabularies for metadata and metadata fields for repository systems.</li> <li>  Help with designing metadata applicable to their research.</li> <li> Assistance in setting up metadata for reusable data sets, physical samples, research software.</li></ul>",
+      "shorttext" : "Support for Metadata Design &amp; Use"
     }
   },
   {
@@ -4365,7 +4439,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>tools, consulting, expertise, or other resources on good practices for use of identifiers</b>?",
-      "help_text": "Examples of good practice include: <ul><li>researchers are encouraged to use researcher identifiers; e.g., <b>ORCiD </b>(https://orcid.org/), <b>ResearcherID </b>(https://www.researcherid.com/), <b>Scopus Author ID</b>, etc.</li> <li>  researcher identifiers are supported in the enterprise directory.</li> <li> researchers have access to mechanisms/services to establish unique digital identifiers (DOIs) for data.</li></ul>"
+      "help_text": "Examples of good practice include: <ul><li>researchers are encouraged to use researcher identifiers; e.g., <b>ORCiD </b>(https://orcid.org/), <b>ResearcherID </b>(https://www.researcherid.com/), <b>Scopus Author ID</b>, etc.</li> <li>  researcher identifiers are supported in the enterprise directory.</li> <li> researchers have access to mechanisms/services to establish unique digital identifiers (DOIs) for data.</li></ul>",
+      "shorttext" : "Support for Use of Identifiers"
     }
   },
   {
@@ -4378,7 +4453,8 @@
       ],
       "language": "en",
       "text": "Does your institution have <b>research data governance processes</b> in place to establish data policies for research data?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Governance and Policies"
     }
   },
   {
@@ -4391,7 +4467,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>information and training on research data policy</b>?",
-      "help_text": "Example areas of information and training could include: <ul><li>Processes to support and inform users on policy compliance.</li> <li>  Training on research <b>data security protocols</b>.</li> <li> Support for <b>Data Management Plan (DMP) development</b>.</li></ul>"
+      "help_text": "Example areas of information and training could include: <ul><li>Processes to support and inform users on policy compliance.</li> <li>  Training on research <b>data security protocols</b>.</li> <li> Support for <b>Data Management Plan (DMP) development</b>.</li></ul>",
+      "shorttext" : "Training On Data Policy"
     }
   },
   {
@@ -4404,7 +4481,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to support for <b>analysis of research data sensitivity</b>?",
-      "help_text": "This may include: <ul><li><b>Data Use Agreement (DUA) review/analysis</b> and consulting.</li> <li>  <b>Institutional Review Board (IRB) templates</b> for datasets (with human or animal subjects), from small datasets that don't need HPC, up to large datasets that need HPC or Cloud services.</li> <li> Support at the nexus of the IRB, legal counsel, and an office of sponsored programs.</li></ul>"
+      "help_text": "This may include: <ul><li><b>Data Use Agreement (DUA) review/analysis</b> and consulting.</li> <li>  <b>Institutional Review Board (IRB) templates</b> for datasets (with human or animal subjects), from small datasets that don't need HPC, up to large datasets that need HPC or Cloud services.</li> <li> Support at the nexus of the IRB, legal counsel, and an office of sponsored programs.</li></ul>",
+      "shorttext" : "Support for Data Sensitivity Analysis"
     }
   },
   {
@@ -4417,7 +4495,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>expertise and policy infrastructure to manage and use sensitive data</b>?",
-      "help_text": "This may include: <ul><li>Data Management Plan (DMP) compliance services (institutional framework, etc.).</li> <li>  Consulting, expertise, or other resources on contracts and government mandated data controls (e.g. FISMA, CUI, NIST 800-171, FEDRAMP, HIPAA, NAGPRA/Indigenous data rights).</li></ul>"
+      "help_text": "This may include: <ul><li>Data Management Plan (DMP) compliance services (institutional framework, etc.).</li> <li>  Consulting, expertise, or other resources on contracts and government mandated data controls (e.g. FISMA, CUI, NIST 800-171, FEDRAMP, HIPAA, NAGPRA/Indigenous data rights).</li></ul>",
+      "shorttext" : "Policy Infrastructure for Sensitive Data"
     }
   },
   {
@@ -4430,7 +4509,8 @@
       ],
       "language": "en",
       "text": "Has your institution defined and deployed a <b>process for identifying which research data to archive, preserve, or discard</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Archival Policy &amp; Process"
     }
   },
   {
@@ -4443,7 +4523,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>planning expertise for storing, archival and preservation of research data beyond the term of grant funding</b>?",
-      "help_text": "For example, do researchers' DMPs regularly include planning for the physical and/or cyber resources and facilities (including those supplied by third parties) that will provide data storage, archival, and/or preservation after the grant ends?"
+      "help_text": "For example, do researchers' DMPs regularly include planning for the physical and/or cyber resources and facilities (including those supplied by third parties) that will provide data storage, archival, and/or preservation after the grant ends?",
+      "shorttext" : "Post-Award Data Preservation Support"
     }
   },
   {
@@ -4456,7 +4537,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>compute and data environments to manage and use moderately sensitive data</b>?",
-      "help_text": "For example, NIH dbGaP data controls. Support can include: <ul><li><b>tools, systems, and environments that can scale</b> from small to large data sets (i.e., from workstations to VMs and up to high performance computing).</li> <li>  data security protocols in use, and monitored.</li></ul>"
+      "help_text": "For example, NIH dbGaP data controls. Support can include: <ul><li><b>tools, systems, and environments that can scale</b> from small to large data sets (i.e., from workstations to VMs and up to high performance computing).</li> <li>  data security protocols in use, and monitored.</li></ul>",
+      "shorttext" : "Support for Moderately Sensitive Data"
     }
   },
   {
@@ -4469,7 +4551,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>compute and data environments to manage and use “notice triggering” data</b>?",
-      "help_text": "For example,  PHI, HIPAA, Export Control, licensed data. Support can include: <ul><li>   tools, systems, and environments that can scale from small to large data sets (i.e., up to high performance computing).</li> <li>  data security protocols in use, and monitored.</li></ul>"
+      "help_text": "For example,  PHI, HIPAA, Export Control, licensed data. Support can include: <ul><li>   tools, systems, and environments that can scale from small to large data sets (i.e., up to high performance computing).</li> <li>  data security protocols in use, and monitored.</li></ul>",
+      "shorttext" : "Support for Notice Triggering Data"
     }
   },
   {
@@ -4482,7 +4565,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>compute and data environments to manage and use extremely sensitive data</b>?",
-      "help_text": "For example, data requiring cold room/air-gapped storage and computing, closely monitored access, dedicated data stewardship etc."
+      "help_text": "For example, data requiring cold room/air-gapped storage and computing, closely monitored access, dedicated data stewardship etc.",
+      "shorttext" : "Support for Extremely Sensitive Data"
     }
   },
   {
@@ -4495,7 +4579,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to support for research <b>software package compilation and installation</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Software Package Installation Support"
     }
   },
   {
@@ -4508,7 +4593,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>support, facilitation or training on how to compile, install, and deploy research software</b>?",
-      "help_text": "For example, The Carpentries, documentation on how to install and deploy anaconda environment, etc."
+      "help_text": "For example, The Carpentries, documentation on how to install and deploy anaconda environment, etc.",
+      "shorttext" : "Training For Software Deployment"
     }
   },
   {
@@ -4521,7 +4607,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to support for <b>research software package assessment, documentation, and validation</b>?",
-      "help_text": "That is, support to assess and document security issues, sustainability issues, export control issues, etc. associated with a software package of possible interest to researchers."
+      "help_text": "That is, support to assess and document security issues, sustainability issues, export control issues, etc. associated with a software package of possible interest to researchers.",
+      "shorttext" : "Software Assessment &amp; Validation"
     }
   },
   {
@@ -4534,7 +4621,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>resources </b>(e.g., staff) who can <b>develop research software</b>?",
-      "help_text": "For example, staff to be written into grants to architect or develop specific research applications or workflow components."
+      "help_text": "For example, staff to be written into grants to architect or develop specific research applications or workflow components.",
+      "shorttext" : "Research Software Development Staff"
     }
   },
   {
@@ -4547,7 +4635,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>resources </b>(e.g., staff) who can <b>develop software for wide usage</b>?",
-      "help_text": "This may include software for websites, portals, etc."
+      "help_text": "This may include software for websites, portals, etc.",
+      "shorttext" : "Website, Portal, etc. Support"
     }
   },
   {
@@ -4560,7 +4649,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>security validation for research software</b>?",
-      "help_text": "For example, analysis for vulnerabilities that can be exploited by hackers, especially for locally developed software."
+      "help_text": "For example, analysis for vulnerabilities that can be exploited by hackers, especially for locally developed software.",
+      "shorttext" : "Research Software Security Validation"
     }
   },
   {
@@ -4573,7 +4663,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>usability testing for research software</b> developed on campus?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Research Software Usability Testing"
     }
   },
   {
@@ -4586,7 +4677,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to software or website <b>accessibility consulting, expertise, or other resources</b> (e.g., assessment tools, etc.)?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Support for Accessibility Assessment"
     }
   },
   {
@@ -4599,7 +4691,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>performance optimizing tools</b>?",
-      "help_text": "For example, Allinea/ARM Map, Intel VTune, etc."
+      "help_text": "For example, Allinea/ARM Map, Intel VTune, etc.",
+      "shorttext" : "Performance Optimization Tools"
     }
   },
   {
@@ -4612,7 +4705,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>support and consulting to optimize software</b>?",
-      "help_text": "For example, to parallelize code, to port to GPUs or other new architectures, to analyze and improve efficiency, etc."
+      "help_text": "For example, to parallelize code, to port to GPUs or other new architectures, to analyze and improve efficiency, etc.",
+      "shorttext" : "Performance Optimization Consulting"
     }
   },
   {
@@ -4625,7 +4719,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>diagnostic and troubleshooting software</b>?",
-      "help_text": "For example, Allinea DDT, Intel Inspector, etc."
+      "help_text": "For example, Allinea DDT, Intel Inspector, etc.",
+      "shorttext" : "Diagnostic &amp; Troubleshooting Tools"
     }
   },
   {
@@ -4638,7 +4733,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>support and consulting for diagnosing and troubleshooting</b> software?",
-      "help_text": "For example, when migrating codes to new cluster environments, new operating systems, etc. This does not include deeper code porting or rewrite for new hardware, GPUs, etc."
+      "help_text": "For example, when migrating codes to new cluster environments, new operating systems, etc. This does not include deeper code porting or rewrite for new hardware, GPUs, etc.",
+      "shorttext" : "Diagnostic &amp; Troubleshooting Consulting"
     }
   },
   {
@@ -4651,7 +4747,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>support for research workflow packages</b>?",
-      "help_text": "For example, Toil, Pegasus, NextFlow, etc."
+      "help_text": "For example, Toil, Pegasus, NextFlow, etc.",
+      "shorttext" : "Support for Research Workflow Tools"
     }
   },
   {
@@ -4664,7 +4761,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>expertise and basic support to develop or script data workflows</b>?",
-      "help_text": "For example: <ul><li>  support for initializing a research computing and data workflow?</li> <li> consulting on basic, common workflows, or guidance on good practices in developing custom workflows?</li></ul>"
+      "help_text": "For example: <ul><li>  support for initializing a research computing and data workflow?</li> <li> consulting on basic, common workflows, or guidance on good practices in developing custom workflows?</li></ul>",
+      "shorttext" : "Data Workflow Scripting Support"
     }
   },
   {
@@ -4677,7 +4775,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>dedicated staff resources to develop or script data workflows</b>?",
-      "help_text": "For example: <ul><li>  authoring of advanced or specific workflows for given research areas (e.g., for genomics, for clinical research, for social sciences, etc.).</li> <li> support for optimizing a research computing and data workflow?</li></ul> <br>This does not/need not include complete implementation of workflows."
+      "help_text": "For example: <ul><li>  authoring of advanced or specific workflows for given research areas (e.g., for genomics, for clinical research, for social sciences, etc.).</li> <li> support for optimizing a research computing and data workflow?</li></ul> <br>This does not/need not include complete implementation of workflows.",
+      "shorttext" : "Data Workflow Development Staff"
     }
   },
   {
@@ -4690,7 +4789,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>support for making software portable</b>?",
-      "help_text": "For example, software repositories, containerization, etc."
+      "help_text": "For example, software repositories, containerization, etc.",
+      "shorttext" : "Software Portability Support"
     }
   },
   {
@@ -4703,7 +4803,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>guidance or training for cloud computing</b>?",
-      "help_text": "This can include: <ul><li>   Local private campus cloud infrastructure</li> <li>  National (e.g., XSEDE-supported) cloud infrastructure</li> <li> Commercial cloud platforms (e.g., AWS, Azure, GCP, etc.)</li></ul>"
+      "help_text": "This can include: <ul><li>   Local private campus cloud infrastructure</li> <li>  National (e.g., XSEDE-supported) cloud infrastructure</li> <li> Commercial cloud platforms (e.g., AWS, Azure, GCP, etc.)</li></ul>",
+      "shorttext" : "Training for Cloud Computing"
     }
   },
   {
@@ -4716,7 +4817,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>dedicated resources</b> (e.g., staff) for <b>architecting and deploying cloud solutions</b>?",
-      "help_text": "This can be platform independent, and may include: <ul><li>   Platform evaluation/comparison, cost estimation</li> <li>  Orchestration design and development (Kubernetes, Puppet, Chef, etc.)</li></ul>"
+      "help_text": "This can be platform independent, and may include: <ul><li>   Platform evaluation/comparison, cost estimation</li> <li>  Orchestration design and development (Kubernetes, Puppet, Chef, etc.)</li></ul>",
+      "shorttext" : "Cloud Solutions Development Staff"
     }
   },
   {
@@ -4729,7 +4831,8 @@
       ],
       "language": "en",
       "text": "Do researchers have <b>access to credential systems</b> as an element of software security?",
-      "help_text": "For example, access to and support for integration with systems like CAS, Shibboleth, SAML, Single-Sign-on, etc."
+      "help_text": "For example, access to and support for integration with systems like CAS, Shibboleth, SAML, Single-Sign-on, etc.",
+      "shorttext" : "Credential Systems for Security"
     }
   },
   {
@@ -4742,7 +4845,8 @@
       ],
       "language": "en",
       "text": "Do researchers have <b>access to support for utilizing licensed software</b> on shared resources?",
-      "help_text": "For example, do researchers have access to a common / shared <b>software license server</b>?"
+      "help_text": "For example, do researchers have access to a common / shared <b>software license server</b>?",
+      "shorttext" : "Licensed Software Support"
     }
   },
   {
@@ -4755,7 +4859,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to support for <b>managing export controlled software</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Export Controlled Software Mgmnt"
     }
   },
   {
@@ -4768,7 +4873,8 @@
       ],
       "language": "en",
       "text": "Are processes defined and adhered to for <b>educating, monitoring, and auditing</b> Research Computing and Data staff, other IT professionals, and researchers, to <b>comply with software license agreements</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "License Compliance Processes"
     }
   },
   {
@@ -4781,7 +4887,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>management software for physical collections</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Physical Collections Management Systems"
     }
   },
   {
@@ -4794,7 +4901,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>software for discovery and research use of physical collections</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Physical Collections Discovery Tools"
     }
   },
   {
@@ -4807,7 +4915,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>resources </b>(e.g., staff) for <b>software development</b> for discovery and research use of physical collections?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Physical Collections Tools Development"
     }
   },
   {
@@ -4820,7 +4929,8 @@
       ],
       "language": "en",
       "text": "Do your systems-facing staff have access to a <b>fully functional and reliable data center</b>?",
-      "help_text": "For example, a full time IT operations and equipment facility?"
+      "help_text": "For example, a full time IT operations and equipment facility?",
+      "shorttext" : "Data Center Access/Availability"
     }
   },
   {
@@ -4833,7 +4943,8 @@
       ],
       "language": "en",
       "text": "Is the <b>data center professionally managed</b>?",
-      "help_text": "For example are there dedicated FTEs, change management, 24/7, person-trap, closed circuit video, appropriate access controls and auditing?"
+      "help_text": "For example are there dedicated FTEs, change management, 24/7, person-trap, closed circuit video, appropriate access controls and auditing?",
+      "shorttext" : "Data Center Professionally Managed"
     }
   },
   {
@@ -4846,7 +4957,8 @@
       ],
       "language": "en",
       "text": "Are there institutional <b>resources for leveraging commercial cloud services</b> for research computing and researchers?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Resources for Commercial Cloud Use"
     }
   },
   {
@@ -4859,7 +4971,8 @@
       ],
       "language": "en",
       "text": "Are <b>deployment, operations, and maintenance of your infrastructure automated</b>?",
-      "help_text": "For example, using foreman, razor, puppet, ansible, chef, etc."
+      "help_text": "For example, using foreman, razor, puppet, ansible, chef, etc.",
+      "shorttext" : "IT Infrastructure Automation Support"
     }
   },
   {
@@ -4872,7 +4985,8 @@
       ],
       "language": "en",
       "text": "Do systems staff have the <b>skills and capacity to support container deployment and orchestration</b>?",
-      "help_text": "For example, APIs, kubernetes, docker, singularity, etc."
+      "help_text": "For example, APIs, kubernetes, docker, singularity, etc.",
+      "shorttext" : "Container &amp; Orchestration Support"
     }
   },
   {
@@ -4885,7 +4999,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>high performance</b> (batch) <b>computing </b>(HPC)?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Support for HPC"
     }
   },
   {
@@ -4898,7 +5013,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>high throughput computing</b> (HTC)?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Support for HTC"
     }
   },
   {
@@ -4911,7 +5027,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to a <b>production-level compute, storage, and network environment</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Production-Level Research CI"
     }
   },
   {
@@ -4924,7 +5041,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>specialized hardware capabilities, such as accelerators</b>?",
-      "help_text": "For example, GPUs, TPUs, FPGAs, etc."
+      "help_text": "For example, GPUs, TPUs, FPGAs, etc.",
+      "shorttext" : "Specialized Hardware Support"
     }
   },
   {
@@ -4937,7 +5055,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>interactive computing services</b>?",
-      "help_text": "For example, support for VDI, Gateways, JupyterHub, etc."
+      "help_text": "For example, support for VDI, Gateways, JupyterHub, etc.",
+      "shorttext" : "Interactive Computing Support"
     }
   },
   {
@@ -4950,7 +5069,8 @@
       ],
       "language": "en",
       "text": "Is a <b>standardized set of operating systems</b> supported for HPC, workstations, and/or virtual machines?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Standardized Operating Systems"
     }
   },
   {
@@ -4963,7 +5083,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>active data storage services</b> (a.k.a., &quot;scratch&quot; storage, often a parallel filesystem) sufficient for HTC/HPC?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Active Storage for HTC/HPC"
     }
   },
   {
@@ -4976,7 +5097,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to sufficient <b>storage to support researchers' data intensive computing needs</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Storage for Data Intensive Research"
     }
   },
   {
@@ -4989,7 +5111,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to mechanisms for <b>isolated and secure support for storage of sensitive/secure data</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Storage of Sensitive/Secure Data"
     }
   },
   {
@@ -5002,7 +5125,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>policies and technologies that facilitate management and wide access to data</b>?",
-      "help_text": "For example: <ul><li>   Automated tiering and data migration.</li> <li>  Security/compliance management support for sensitive/controlled data that require special access/export controls.</li></ul>"
+      "help_text": "For example: <ul><li>   Automated tiering and data migration.</li> <li>  Security/compliance management support for sensitive/controlled data that require special access/export controls.</li></ul>",
+      "shorttext" : "Automated Data Management"
     }
   },
   {
@@ -5015,7 +5139,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>data archival and preservation services</b> (e.g. tape, cloud)?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Data Archival &amp; Preservation Support"
     }
   },
   {
@@ -5028,7 +5153,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to a <b>place to store final research data</b> to address <b>institutional policy and/or funding agency requirements</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Research Data Repository Support"
     }
   },
   {
@@ -5041,7 +5167,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to support for <b>collaborative data grids and/or data repositories</b>?",
-      "help_text": "These may be national, local, or commercial. For example, OSN, iRODS, etc."
+      "help_text": "These may be national, local, or commercial. For example, OSN, iRODS, etc.",
+      "shorttext" : "Collaborative Data Grid/Repo Support"
     }
   },
   {
@@ -5054,7 +5181,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to a <b>high-performance network</b> that supports research <b>within campus</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "High-Performance Research Network"
     }
   },
   {
@@ -5067,7 +5195,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to a <b>protected subnet or Science DMZ</b>?",
-      "help_text": "A Science DMZ is a means to securely enable high performance inter-campus data flows that bypass campus firewalls."
+      "help_text": "A Science DMZ is a means to securely enable high performance inter-campus data flows that bypass campus firewalls.",
+      "shorttext" : "Science DMZ Support"
     }
   },
   {
@@ -5080,7 +5209,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to support for <b>high performance data movement</b> with dedicated <b>data transfer nodes</b> (DTN) and associated <b>data movement software</b>?",
-      "help_text": "Software may include Globus, FDT, BBCP, or rclone, among others."
+      "help_text": "Software may include Globus, FDT, BBCP, or rclone, among others.",
+      "shorttext" : "Big Data Movement Tools"
     }
   },
   {
@@ -5093,7 +5223,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>infrastructure for data buffering</b> between <b>high I/O lab instruments</b> and the data center, and/or external resources?",
-      "help_text": "Examples may include “data capacitors” or “burst buffers”."
+      "help_text": "Examples may include “data capacitors” or “burst buffers”.",
+      "shorttext" : "High I/O Instrument Support"
     }
   },
   {
@@ -5106,7 +5237,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to mechanisms for <b>isolated and secure support for movement of sensitive/secure data</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Sensitive/Secure Data Movement"
     }
   },
   {
@@ -5119,7 +5251,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>virtualized networking techniques</b> such as Software Defined Networks, overlays, etc.?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Virtualized Networking Support"
     }
   },
   {
@@ -5132,7 +5265,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to  support for <b>edge computing and data resources</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Edge Computing Support"
     }
   },
   {
@@ -5145,7 +5279,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to support for <b>sensors, internet of things</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Sensor &amp; IOT Support"
     }
   },
   {
@@ -5158,7 +5293,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to support for <b>researcher workstations or laptops</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Researcher Workstations Support"
     }
   },
   {
@@ -5171,7 +5307,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to support for <b>special science instruments</b>?",
-      "help_text": "Examples may include Cryogenic electron microscopes (cryo-EM), DNA sequencers, telescopes, etc."
+      "help_text": "Examples may include Cryogenic electron microscopes (cryo-EM), DNA sequencers, telescopes, etc.",
+      "shorttext" : "Science Instrument Support"
     }
   },
   {
@@ -5184,7 +5321,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>specialized compute capability</b>?",
-      "help_text": "Examples may include bare metal hardware, reconfigurable BIOS, OS, and network, or experimental cloud testbeds."
+      "help_text": "Examples may include bare metal hardware, reconfigurable BIOS, OS, and network, or experimental cloud testbeds.",
+      "shorttext" : "Specialized Computing Support"
     }
   },
   {
@@ -5197,7 +5335,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>resource management and/or queuing software</b> for managing access to resources (e.g.  <b>SLURM, Torque</b>)?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "HPC Queuing Support"
     }
   },
   {
@@ -5210,7 +5349,8 @@
       ],
       "language": "en",
       "text": "Can researchers leverage <b>institutional-level Identity and Access Management</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Institutional IAM Support"
     }
   },
   {
@@ -5223,7 +5363,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>2-factor authentication</b> (where prudent)?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "2-Factor Authentication Support"
     }
   },
   {
@@ -5236,7 +5377,8 @@
       ],
       "language": "en",
       "text": "Is <b>researcher access</b> to systems and data managed with a common, <b>project-based or role-based</b> tool?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Role-Based System Access"
     }
   },
   {
@@ -5249,7 +5391,8 @@
       ],
       "language": "en",
       "text": "Are <b>researchers&#39; external collaborators</b> able to use their <b>home organization credentials</b> (or ORCID IDs, etc.) to access systems and data?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Federated IAM for External Collaborators"
     }
   },
   {
@@ -5262,7 +5405,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>modules support</b> to provide access to <b>system-wide software libraries and applications</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Support for Shared Libs &amp; Modules"
     }
   },
   {
@@ -5275,7 +5419,8 @@
       ],
       "language": "en",
       "text": "Is there a practice in place for <b>monitoring infrastructure at the node (individual unit) level</b> for resources that support research?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Research Infrastructure Monitoring"
     }
   },
   {
@@ -5288,7 +5433,8 @@
       ],
       "language": "en",
       "text": "Is there a practice in place utilizing <b>active network measurement tools</b> (i.e. perfSONAR) for the research-supporting network, DMZ, DTN etc.?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Active Network Measurement"
     }
   },
   {
@@ -5301,7 +5447,8 @@
       ],
       "language": "en",
       "text": "Is there a practice in place for <b>whole system testing</b> (e.g./chaos monkey) on resources that support research?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Whole System Testing Support"
     }
   },
   {
@@ -5314,7 +5461,8 @@
       ],
       "language": "en",
       "text": "Is there a practice in place for both <b>active and passive measurement of infrastructure</b> that supports research?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Active &amp; Passive CI Measurement"
     }
   },
   {
@@ -5327,7 +5475,8 @@
       ],
       "language": "en",
       "text": "Do researchers have access to <b>monitoring tools</b> as part of their workflow?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Research Workflow Monitoring Tools"
     }
   },
   {
@@ -5340,7 +5489,8 @@
       ],
       "language": "en",
       "text": "Is <b>performance data</b> (on resources that support research) <b>analyzed and used for operational decision making</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Operations Informed by Performance Data"
     }
   },
   {
@@ -5353,7 +5503,8 @@
       ],
       "language": "en",
       "text": "Is a method in place to <b>track and report resource usage at the researcher/project level</b>?",
-      "help_text": "For example, for institutional and funding agency reporting purposes."
+      "help_text": "For example, for institutional and funding agency reporting purposes.",
+      "shorttext" : "Tracking of Researcher/Project Usage"
     }
   },
   {
@@ -5366,7 +5517,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data staff <b>follow a documented change management process</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Change Management Processes"
     }
   },
   {
@@ -5379,7 +5531,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data staff utilize <b>version control repositories of services and infrastructure data</b>?",
-      "help_text": "Also referred to as configuration management."
+      "help_text": "Also referred to as configuration management.",
+      "shorttext" : "Version Control for CI &amp; Services"
     }
   },
   {
@@ -5392,7 +5545,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data staff leverage a <b>ticketing system for user support</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Ticketing System for User Support"
     }
   },
   {
@@ -5405,7 +5559,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data staff <b>follow an established procedure for privileged account management</b> among the administrators, including tracking of elevated privileges?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Privileged Account Management Procedures"
     }
   },
   {
@@ -5418,7 +5573,8 @@
       ],
       "language": "en",
       "text": "Have Research Computing and Data staff established a <b>workflow environment to support end-to-end network performance troubleshooting</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Network Performance Analysis Tools"
     }
   },
   {
@@ -5431,7 +5587,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data staff <b>produce and regularly maintain systems facing documentation</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "RCD Systems Documentation Practices"
     }
   },
   {
@@ -5444,7 +5601,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data staff have <b>documented processes, procedures, and policies for infrastructure management</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "RCD Infrastructure Mngmt. Processes"
     }
   },
   {
@@ -5457,7 +5615,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data <b>planning processes include/incorporate security and compliance </b>considerations?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Planning for Security &amp; Compliance"
     }
   },
   {
@@ -5470,7 +5629,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data staff follow a <b>formal process for procuring research computing, data, networking, etc. resources</b>?",
-      "help_text": "For example, noting requirements, benchmarks, cost analysis, acceptance plans, terms and conditions, etc."
+      "help_text": "For example, noting requirements, benchmarks, cost analysis, acceptance plans, terms and conditions, etc.",
+      "shorttext" : "Resource Procurement Processes"
     }
   },
   {
@@ -5483,7 +5643,8 @@
       ],
       "language": "en",
       "text": "Is a <b>systems and infrastructure lifecycle plan </b>defined and maintained?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Infrastructure Lifecycle Planning"
     }
   },
   {
@@ -5496,7 +5657,8 @@
       ],
       "language": "en",
       "text": "Are <b>researchers and governance roles engaged</b> to explore gaps and to address emerging needs and technologies?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Engagement on Emerging Needs/Gaps"
     }
   },
   {
@@ -5509,7 +5671,8 @@
       ],
       "language": "en",
       "text": "Are <b>systems-facing staff engaged</b> with exploring, testing, and deploying <b>emerging or advanced technologies</b> to help research?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Staff Exploring Emerging Technologies"
     }
   },
   {
@@ -5522,7 +5685,8 @@
       ],
       "language": "en",
       "text": "Is Research Computing and Data (RCD) <b>security coordinated with institutional IT Security and Compliance</b>?",
-      "help_text": "For example: <ul><li>   Is the institutional IT security team leveraged for training and education?</li> <li>  Do RCD staff leverage institutional compliance resources/offices?</li></ul>"
+      "help_text": "For example: <ul><li>   Is the institutional IT security team leveraged for training and education?</li> <li>  Do RCD staff leverage institutional compliance resources/offices?</li></ul>",
+      "shorttext" : "Coordination w/ Institutional IT Security"
     }
   },
   {
@@ -5535,7 +5699,8 @@
       ],
       "language": "en",
       "text": "Are <b>Security Best practices implemented</b> (such as those from NIST, trusted CI, CVE, and others)?",
-      "help_text": "Example practices include: <ul><li>   Are <b>security zones</b> defined for different data sets and science workflows?</li> <li>  Is <b>monitoring </b>in use for <b>intrusion detection, malware</b>, and other threats?</li></ul>"
+      "help_text": "Example practices include: <ul><li>   Are <b>security zones</b> defined for different data sets and science workflows?</li> <li>  Is <b>monitoring </b>in use for <b>intrusion detection, malware</b>, and other threats?</li></ul>",
+      "shorttext" : "Use of Security Best Practices"
     }
   },
   {
@@ -5548,7 +5713,8 @@
       ],
       "language": "en",
       "text": "Is there a <b>security incident response plan</b>, and an associated response team?",
-      "help_text": "Example practices include: <ul><li>  Are the associated procedures followed when incidents arise?</li> <li> Are the plan and team membership reviewed on a regular basis (e.g., annually)?</li></ul>"
+      "help_text": "Example practices include: <ul><li>  Are the associated procedures followed when incidents arise?</li> <li> Are the plan and team membership reviewed on a regular basis (e.g., annually)?</li></ul>",
+      "shorttext" : "Security Incident Response Planning"
     }
   },
   {
@@ -5561,7 +5727,8 @@
       ],
       "language": "en",
       "text": "Does your Research Computing and Data (RCD) team/group have <b>a strategic plan</b>, and is this strategic plan <b>updated on a regular basis</b>?",
-      "help_text": "For example, is there an annual or bi-annual review of your plan?"
+      "help_text": "For example, is there an annual or bi-annual review of your plan?",
+      "shorttext" : "RCD Strategic Planning"
     }
   },
   {
@@ -5574,7 +5741,8 @@
       ],
       "language": "en",
       "text": "Is your Research Computing and Data (RCD) <b>strategic plan aligned to campus plans</b>?",
-      "help_text": "For example: <ul><li>   Does the RCD plan connect/relate to an institutional (campus-wide) strategic IT plan?</li> <li>  Does the RCD plan connect/relate to an overall institutional (campus-wide) strategic plan?</li></ul>"
+      "help_text": "For example: <ul><li>   Does the RCD plan connect/relate to an institutional (campus-wide) strategic IT plan?</li> <li>  Does the RCD plan connect/relate to an overall institutional (campus-wide) strategic plan?</li></ul>",
+      "shorttext" : "RCD Strategic Plan Aligned to Campus"
     }
   },
   {
@@ -5587,7 +5755,8 @@
       ],
       "language": "en",
       "text": "Do the Research Computing and Data (RCD) service and support community and underlying IT service providers have a good <b>awareness and understanding of major research efforts/initiatives across the institution</b>?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Awareness of Institutional Research Goals"
     }
   },
   {
@@ -5600,7 +5769,8 @@
       ],
       "language": "en",
       "text": "Are research priorities, and <b>Research Computing and Data (RCD) strategic priorities well-understood by your institution&#39;s management</b> and planning groups?",
-      "help_text": "Example measures may include: <ul><li>   Are the institution&#39;s research priorities well-understood by campus leadership?</li> <li>  Are RCD strategic priorites understood and supported by campus leadership?</li></ul>"
+      "help_text": "Example measures may include: <ul><li>   Are the institution&#39;s research priorities well-understood by campus leadership?</li> <li>  Are RCD strategic priorites understood and supported by campus leadership?</li></ul>",
+      "shorttext" : "Inst. Leaders Aware of RCD Priorities"
     }
   },
   {
@@ -5613,7 +5783,8 @@
       ],
       "language": "en",
       "text": "Is there a <b>Faculty Advisory Group</b> (or equivalent) that provides review and advice on priorities for the Research Computing and Data (RCD) program?",
-      "help_text": "<ul><li>Does this group meet regularly (e.g., quarterly or once a semester) to review and advise?</li> <li>This is generally a dedicated group for RCD, although it may be part of a larger research or IT advisory body.</li></ul>"
+      "help_text": "<ul><li>Does this group meet regularly (e.g., quarterly or once a semester) to review and advise?</li> <li>This is generally a dedicated group for RCD, although it may be part of a larger research or IT advisory body.</li></ul>",
+      "shorttext" : "Faculty Advisory Group Engagement"
     }
   },
   {
@@ -5626,7 +5797,8 @@
       ],
       "language": "en",
       "text": "Does institution-level <b>management and planning recognize and value the impact</b> of Research Computing and Data (including return/value on investment)?",
-      "help_text": "For example, are research computing and data services valued at the same level as or higher than other enterprise services when discussing of prioritization of campus (budget) resources?"
+      "help_text": "For example, are research computing and data services valued at the same level as or higher than other enterprise services when discussing of prioritization of campus (budget) resources?",
+      "shorttext" : "Inst. Leaders See &amp; Value RCD Impact"
     }
   },
   {
@@ -5639,7 +5811,8 @@
       ],
       "language": "en",
       "text": "Are researchers effectively <b>informed and made aware</b> of Research Computing and Data (RCD) <b>resources and services</b>?",
-      "help_text": "For example: <ul><li>   Is there an institutionally defined role that includes responsibility to create awareness of RCD resources and services available on campus or externally?</li> <li>  Are RCD services documented in an accessible platform, such as an IT service catalog?</li> <li> Is the importance of outreach and training recognized by campus leadership?</li></ul>"
+      "help_text": "For example: <ul><li>   Is there an institutionally defined role that includes responsibility to create awareness of RCD resources and services available on campus or externally?</li> <li>  Are RCD services documented in an accessible platform, such as an IT service catalog?</li> <li> Is the importance of outreach and training recognized by campus leadership?</li></ul>",
+      "shorttext" : "Researchers Aware of RCD Resources"
     }
   },
   {
@@ -5652,7 +5825,8 @@
       ],
       "language": "en",
       "text": "Are Research Computing and Data (RCD) <b>resources and services available in support of instruction</b> or other pedagogical uses?",
-      "help_text": "For example: <ul><li>   Can and do instructors leverage research computing resources for instruction?</li> <li>  Are instructors effectively informed about available resources?</li></ul>"
+      "help_text": "For example: <ul><li>   Can and do instructors leverage research computing resources for instruction?</li> <li>  Are instructors effectively informed about available resources?</li></ul>",
+      "shorttext" : "RCD Support for Instruction"
     }
   },
   {
@@ -5665,7 +5839,8 @@
       ],
       "language": "en",
       "text": "Is there an <b>understanding </b>across the IT organization, research community, and institutional leadership of the <b>distinction between Research Computing and Data services and standard (enterprise) IT services</b>?",
-      "help_text": "Note: This does not imply greater importance of one or the other, nor is it meant to imply how an organization should support each. Rather, it is a recognition that the goals, constraints, metrics, and support models tend to be quite different."
+      "help_text": "Note: This does not imply greater importance of one or the other, nor is it meant to imply how an organization should support each. Rather, it is a recognition that the goals, constraints, metrics, and support models tend to be quite different.",
+      "shorttext" : "Understanding of RCD vs. Enterprise IT"
     }
   },
   {
@@ -5678,7 +5853,8 @@
       ],
       "language": "en",
       "text": "Is <b>facilitation</b> of Research Computing and Data services <b>recognized as an important role</b> to the campus?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Recognized Value of RCD Facilitation"
     }
   },
   {
@@ -5691,7 +5867,8 @@
       ],
       "language": "en",
       "text": "Are Research Computing and Data <b>operating metrics captured and reported</b> to leadership?",
-      "help_text": "For example, is this data shared with IT leadership, Office of Research, or other institutional leadership)?"
+      "help_text": "For example, is this data shared with IT leadership, Office of Research, or other institutional leadership)?",
+      "shorttext" : "RCD Metrics Reported to Leadership"
     }
   },
   {
@@ -5704,7 +5881,8 @@
       ],
       "language": "en",
       "text": "Are Research Computing and Data <b>services funded in a sustainable manner</b>?",
-      "help_text": "For example: <ul><li>   Is there recurring program budget for the staff and services operations (i.e., not primarily dependent upon grants or other non-recurring funding)?</li> <li>  Are campus funding partnerships formalized with an MOU or equivalent agreement?</li> <li> For activities funded from contracts and grants, is there a strong track-record of renewed funding?</li></ul>"
+      "help_text": "For example: <ul><li>   Is there recurring program budget for the staff and services operations (i.e., not primarily dependent upon grants or other non-recurring funding)?</li> <li>  Are campus funding partnerships formalized with an MOU or equivalent agreement?</li> <li> For activities funded from contracts and grants, is there a strong track-record of renewed funding?</li></ul>",
+      "shorttext" : "Sustainable Funding for RCD Services"
     }
   },
   {
@@ -5717,7 +5895,8 @@
       ],
       "language": "en",
       "text": "Are <b>new funding opportunities proactively identified and assessed</b> at an institutional level, for relevance to institutional mission and alignment to Research Computing and Data needs and priorities?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "New Funding Opportunities Identified"
     }
   },
   {
@@ -5730,7 +5909,8 @@
       ],
       "language": "en",
       "text": "Do <b>research funding activities actively integrate the Research Computing and Data</b> (RCD) services group?",
-      "help_text": "For example: <ul><li>   Do RCD groups/teams collaborate with the Contracts and Grants groups/teams?</li> <li>   Do RCD staff assist Principle Investigators (PIs) with proposal preparation?</li></ul>"
+      "help_text": "For example: <ul><li>   Do RCD groups/teams collaborate with the Contracts and Grants groups/teams?</li> <li>   Do RCD staff assist Principle Investigators (PIs) with proposal preparation?</li></ul>",
+      "shorttext" : "Research Funding Engaged with RCD"
     }
   },
   {
@@ -5743,7 +5923,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data (RCD) services groups/teams <b>submit</b> (extramural) <b>grant proposals</b> for RCD investments and innovations?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "RCD Teams Submit Grant Proposals"
     }
   },
   {
@@ -5756,7 +5937,8 @@
       ],
       "language": "en",
       "text": "Have Research Computing and Data (RCD) services groups/teams been <b>awarded </b>(extramural) <b>grants they applied for</b>, in support of RCD investments and innovation?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "RCD Teams Awarded Grants"
     }
   },
   {
@@ -5769,7 +5951,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data (RCD) services groups/teams <b>actively engage with regional and/or national Research Computing and Data peers/communities</b>?",
-      "help_text": "For example, regional research network providers, CaRCC, CASC, Internet2, Campus Champions, NSF regional Big Data Hub, etc."
+      "help_text": "For example, regional research network providers, CaRCC, CASC, Internet2, Campus Champions, NSF regional Big Data Hub, etc.",
+      "shorttext" : "RCD Teams Engaged Regionally/Nationally"
     }
   },
   {
@@ -5782,7 +5965,8 @@
       ],
       "language": "en",
       "text": "Are institutional Research Computing and Data <b>services provided to external users</b>, such as hosting data repositories, providing computing resources, etc.?",
-      "help_text": "For example, are you a provider to XSEDE or the Open Science Grid (OSG)?"
+      "help_text": "For example, are you a provider to XSEDE or the Open Science Grid (OSG)?",
+      "shorttext" : "External Access to RCD Services"
     }
   },
   {
@@ -5795,7 +5979,8 @@
       ],
       "language": "en",
       "text": "Is there a practice of <b>active engagement</b> of your institution in <b>external partnerships</b> (for funding, or for advancing Research Computing and Data activities and interests?",
-      "help_text": "For example, are there regional partnerships, and/or active industry partnerships?"
+      "help_text": "For example, are there regional partnerships, and/or active industry partnerships?",
+      "shorttext" : "External Partnership Engagement"
     }
   },
   {
@@ -5808,7 +5993,8 @@
       ],
       "language": "en",
       "text": "Are Research Computing and Data (RCD) <b>staff provided with professional training opportunities</b>?",
-      "help_text": "For example: <ul><li>   Do RCD staff have access to funding for training?</li> <li>  Does each RCD staff member have a professional development plan?</li></ul>"
+      "help_text": "For example: <ul><li>   Do RCD staff have access to funding for training?</li> <li>  Does each RCD staff member have a professional development plan?</li></ul>",
+      "shorttext" : "Professional Training for RCD Staff"
     }
   },
   {
@@ -5821,7 +6007,8 @@
       ],
       "language": "en",
       "text": "Are Research Computing and Data <b>staff provided with opportunities for career advancement</b>?",
-      "help_text": "For example: <ul><li>   Are there clear career paths defined for each role?</li> <li>  Are staff encouraged/supported in pursuing career advancement opportunities?</li></ul>"
+      "help_text": "For example: <ul><li>   Are there clear career paths defined for each role?</li> <li>  Are staff encouraged/supported in pursuing career advancement opportunities?</li></ul>",
+      "shorttext" : "RCD Career Advancement Support"
     }
   },
   {
@@ -5834,7 +6021,8 @@
       ],
       "language": "en",
       "text": "Are Research Computing and Data (RCD) <b>staff permitted to use staff time to engage in regional or national community efforts</b>?",
-      "help_text": "For example: <ul><li>   Do RCD staff participate in regional networks, Campus Champions work, Linux user groups, CaRCC, etc.?</li> <li>  Do RCD staff contribute to the Carpentries work (training materials or activities)?</li></ul>"
+      "help_text": "For example: <ul><li>   Do RCD staff participate in regional networks, Campus Champions work, Linux user groups, CaRCC, etc.?</li> <li>  Do RCD staff contribute to the Carpentries work (training materials or activities)?</li></ul>",
+      "shorttext" : "Staff Time for Professional Communities"
     }
   },
   {
@@ -5847,7 +6035,8 @@
       ],
       "language": "en",
       "text": "Is there a <b>policy and practice</b> to ensure (and if necessary, improve) <b>broad participation and inclusion</b> on the Research Computing and Data (RCD) staff?",
-      "help_text": "For example: <ul><li>   Are RCD staff regularly surveyed on engagement, cultural climate, etc.?</li> <li>  Does RCD management track this over time?</li> <li> Are the results used to develop ongoing strategies for broad participation and inclusion?</li></ul>"
+      "help_text": "For example: <ul><li>   Are RCD staff regularly surveyed on engagement, cultural climate, etc.?</li> <li>  Does RCD management track this over time?</li> <li> Are the results used to develop ongoing strategies for broad participation and inclusion?</li></ul>",
+      "shorttext" : "Inclusive Policies and Practices"
     }
   },
   {
@@ -5860,7 +6049,8 @@
       ],
       "language": "en",
       "text": "Are Research Computing and Data <b>recruitments</b> (job listings) reviewed for <b>inclusive language</b> to attract a broad range of applicants?",
-      "help_text": " "
+      "help_text": " ",
+      "shorttext" : "Inclusive Language in Recruitment"
     }
   },
   {
@@ -5873,7 +6063,8 @@
       ],
       "language": "en",
       "text": "Do Research Computing and Data staff have <b>access to training related to broadening participation and inclusion</b>?",
-      "help_text": "For example, on unconscious bias, communication styles, multicultural awareness, etc."
+      "help_text": "For example, on unconscious bias, communication styles, multicultural awareness, etc.",
+      "shorttext" : "Training for Inclusion"
     }
   },
   {
@@ -5886,7 +6077,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Arts and Humanities?",
-      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc."
+      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc.",
+      "shorttext" : "RF Arts and Humanities"
     }
   },
   {
@@ -5899,7 +6091,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Earth and Geosciences?",
-      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc."
+      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc.",
+      "shorttext" : "RF Earth and Geosciences"
     }
   },
   {
@@ -5912,7 +6105,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Computer and Information Sciences?",
-      "help_text": "This can include Computer Science, Information Science, etc."
+      "help_text": "This can include Computer Science, Information Science, etc.",
+      "shorttext" : "RF CompSci, InfoSci"
     }
   },
   {
@@ -5925,7 +6119,8 @@
       ],
       "language": "en",
       "text": "Do you support research in a Medical School?",
-      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Question not Applicable.”)"
+      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Question not Applicable.”)",
+      "shorttext" : "RF Medical School"
     }
   },
   {
@@ -5938,7 +6133,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Engineering?",
-      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc."
+      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc.",
+      "shorttext" : "RF Engineering"
     }
   },
   {
@@ -5951,7 +6147,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Social, Behavioral, and Economic Sciences?",
-      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc."
+      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc.",
+      "shorttext" : "RF Soc., Behav., &amp; Econ. Sciences"
     }
   },
   {
@@ -5964,7 +6161,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Biological and Life Sciences?",
-      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc."
+      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc.",
+      "shorttext" : "RF Biological and Life Sciences"
     }
   },
   {
@@ -5977,7 +6175,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Chemistry, Physics, and Astronomy/Space Sciences?",
-      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc."
+      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc.",
+      "shorttext" : "RF Chem., Physics, Astro/Space Sci."
     }
   },
   {
@@ -5990,7 +6189,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Arts and Humanities?",
-      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc."
+      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc.",
+      "shorttext" : "DF Arts and Humanities"
     }
   },
   {
@@ -6003,7 +6203,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Earth and Geosciences?",
-      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc."
+      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc.",
+      "shorttext" : "DF Earth and Geosciences"
     }
   },
   {
@@ -6016,7 +6217,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Computer and Information Sciences?",
-      "help_text": "This can include Computer Science, Information Science, etc."
+      "help_text": "This can include Computer Science, Information Science, etc.",
+      "shorttext" : "DF CompSci, InfoSci"
     }
   },
   {
@@ -6029,7 +6231,8 @@
       ],
       "language": "en",
       "text": "Do you support research in a Medical School?",
-      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Question not Applicable.”)"
+      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Question not Applicable.”)",
+      "shorttext" : "DF Medical School"
     }
   },
   {
@@ -6042,7 +6245,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Engineering?",
-      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc."
+      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc.",
+      "shorttext" : "DF Engineering"
     }
   },
   {
@@ -6055,7 +6259,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Social, Behavioral, and Economic Sciences?",
-      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc."
+      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc.",
+      "shorttext" : "DF Soc., Behav., &amp; Econ. Sciences"
     }
   },
   {
@@ -6068,7 +6273,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Biological and Life Sciences?",
-      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc."
+      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc.",
+      "shorttext" : "DF Biological and Life Sciences"
     }
   },
   {
@@ -6081,7 +6287,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Chemistry, Physics, and Astronomy/Space Sciences?",
-      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc."
+      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc.",
+      "shorttext" : "DF Chem., Physics, Astro/Space Sci."
     }
   },
   {
@@ -6094,7 +6301,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Arts and Humanities?",
-      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc."
+      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc.",
+      "shorttext" : "SWF Arts and Humanities"
     }
   },
   {
@@ -6107,7 +6315,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Earth and Geosciences?",
-      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc."
+      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc.",
+      "shorttext" : "SWF Earth and Geosciences"
     }
   },
   {
@@ -6120,7 +6329,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Computer and Information Sciences?",
-      "help_text": "This can include Computer Science, Information Science, etc."
+      "help_text": "This can include Computer Science, Information Science, etc.",
+      "shorttext" : "SWF CompSci, InfoSci"
     }
   },
   {
@@ -6133,7 +6343,8 @@
       ],
       "language": "en",
       "text": "Do you support research in a Medical School?",
-      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Question not Applicable.”)"
+      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Question not Applicable.”)",
+      "shorttext" : "SWF Medical School"
     }
   },
   {
@@ -6146,7 +6357,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Engineering?",
-      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc."
+      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc.",
+      "shorttext" : "SWF Engineering"
     }
   },
   {
@@ -6159,7 +6371,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Social, Behavioral, and Economic Sciences?",
-      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc."
+      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc.",
+      "shorttext" : "SWF Soc., Behav., &amp; Econ. Sciences"
     }
   },
   {
@@ -6172,7 +6385,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Biological and Life Sciences?",
-      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc."
+      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc.",
+      "shorttext" : "SWF Biological and Life Sciences"
     }
   },
   {
@@ -6185,7 +6399,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Chemistry, Physics, and Astronomy/Space Sciences?",
-      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc."
+      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc.",
+      "shorttext" : "SWF Chem., Physics, Astro/Space Sci."
     }
   },
   {
@@ -6198,7 +6413,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Arts and Humanities?",
-      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc."
+      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc.",
+      "shorttext" : "SYF Arts and Humanities"
     }
   },
   {
@@ -6211,7 +6427,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Earth and Geosciences?",
-      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc."
+      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc.",
+      "shorttext" : "SYF Earth and Geosciences"
     }
   },
   {
@@ -6224,7 +6441,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Computer and Information Sciences?",
-      "help_text": "This can include Computer Science, Information Science, etc."
+      "help_text": "This can include Computer Science, Information Science, etc.",
+      "shorttext" : "SYF CompSci, InfoSci"
     }
   },
   {
@@ -6237,7 +6455,8 @@
       ],
       "language": "en",
       "text": "Do you support research in a Medical School?",
-      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Question not Applicable.”)"
+      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Question not Applicable.”)",
+      "shorttext" : "SYF Medical School"
     }
   },
   {
@@ -6250,7 +6469,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Engineering?",
-      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc."
+      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc.",
+      "shorttext" : "SYF Engineering"
     }
   },
   {
@@ -6263,7 +6483,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Social, Behavioral, and Economic Sciences?",
-      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc."
+      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc.",
+      "shorttext" : "SYF Soc., Behav., &amp; Econ. Sciences"
     }
   },
   {
@@ -6276,7 +6497,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Biological and Life Sciences?",
-      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc."
+      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc.",
+      "shorttext" : "SYF Biological and Life Sciences"
     }
   },
   {
@@ -6289,7 +6511,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Chemistry, Physics, and Astronomy/Space Sciences?",
-      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc."
+      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc.",
+      "shorttext" : "SYF Chem., Physics, Astro/Space Sci."
     }
   },
   {
@@ -6302,7 +6525,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Arts and Humanities?",
-      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc."
+      "help_text": "This can include: Languages and Language Arts, History, Philosophy, Performing Arts, Visual Arts, etc.",
+      "shorttext" : "SPF Arts and Humanities"
     }
   },
   {
@@ -6315,7 +6539,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Earth and Geosciences?",
-      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc."
+      "help_text": "This can include: Atmospheric Science, Ecology, Environmental Sciences, Geography, Geology, Hydrology, Oceanography, Soil Sciences, etc.",
+      "shorttext" : "SPF Earth and Geosciences"
     }
   },
   {
@@ -6328,7 +6553,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Computer and Information Sciences?",
-      "help_text": "This can include Computer Science, Information Science, etc."
+      "help_text": "This can include Computer Science, Information Science, etc.",
+      "shorttext" : "SPF CompSci, InfoSci"
     }
   },
   {
@@ -6341,7 +6567,8 @@
       ],
       "language": "en",
       "text": "Do you support research in a Medical School?",
-      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Question not Applicable.”)"
+      "help_text": "If your institution has a separate medical school, how well are researchers there supported? (If your institution does not have a medical school, you can mark this as “Question not Applicable.”)",
+      "shorttext" : "SPF Medical School"
     }
   },
   {
@@ -6354,7 +6581,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Engineering?",
-      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc."
+      "help_text": "This can include: Chemical Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering, etc.",
+      "shorttext" : "SPF Engineering"
     }
   },
   {
@@ -6367,7 +6595,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Social, Behavioral, and Economic Sciences?",
-      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc."
+      "help_text": "This can include: Anthropology, Archaeology, Communication Science, Economics, Human Geography, Linguistics, Management Science, Political science, etc.",
+      "shorttext" : "SPF Soc., Behav., &amp; Econ. Sciences"
     }
   },
   {
@@ -6380,7 +6609,8 @@
       ],
       "language": "en",
       "text": "Do you support research in the Biological and Life Sciences?",
-      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc."
+      "help_text": "This can include: Anatomy, Bacteriology, Bioinformatics, Biology, Botany, Entomology, Genetics, Immunology, Microbiology, Molecular and Cell Biology, Neuroscience, Physiology,  Virology, Zoology, etc.",
+      "shorttext" : "SPF Biological and Life Sciences"
     }
   },
   {
@@ -6393,7 +6623,8 @@
       ],
       "language": "en",
       "text": "Do you support research in Chemistry, Physics, and Astronomy/Space Sciences?",
-      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc."
+      "help_text": "This can include: Biochemistry, Inorganic Chemistry, Organic Chemistry, Physical Chemistry, Materials Science, Physics, Astronomy, Astrophysics,Cosmology, Planetary Sciences, Space Sciences, etc.",
+      "shorttext" : "SPF Chem., Physics, Astro/Space Sci."
     }
   }
 ]

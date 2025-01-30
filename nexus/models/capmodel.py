@@ -102,6 +102,9 @@ class CapabilitiesQuestion(models.Model):
             at = at or timezone.now()
             return self.filter(valid_after__lte=at).exclude(valid_before__lt=at)
 
+        def filter_essential(self):
+            return self.exclude(is_essential=True)
+
     objects = QuerySet.as_manager()
 
     slug = models.SlugField(
@@ -117,6 +120,12 @@ class CapabilitiesQuestion(models.Model):
 
     index = models.PositiveSmallIntegerField(
         help_text="The index of this question in its topic.",
+    )
+
+    is_essential = models.BooleanField(
+        default=False,
+        editable=True,
+        help_text="Whether this question is in the essential set.",
     )
 
     attrs = models.JSONField(
@@ -177,9 +186,17 @@ class CapabilitiesQuestionContent(models.Model):
         blank=True,
         null=True,
     )
+    # This might  be a CharField with Max 40, but let's allow for flexibility
+    shorttext = models.TextField(
+        blank=True,
+        null=True,
+    )  
 
     def natural_key(self):
         return (self.question.topic.facing.slug, self.question.topic.slug, self.question.slug, self.language)
+
+    def fully_qualified_slug(self):
+        return f"{self.question.topic.facing.slug}.{self.question.topic.slug}.{self.question.slug}"
 
     def __str__(self):
         return f"[{self.language.upper()}] {self.question}"
