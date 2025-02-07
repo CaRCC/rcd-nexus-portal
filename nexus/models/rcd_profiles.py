@@ -20,7 +20,7 @@ class RCDProfile(models.Model):
     class ArchiveManager(models.Manager):
         def create(self, *args, **kwargs):
             """
-            Create a new RCDProfile, and associated assessments, for an institution.
+            Create a new RCDProfile for an institution.
             """
             profile = super().create(*args, **kwargs)
             profile.memberships.create(
@@ -30,11 +30,12 @@ class RCDProfile(models.Model):
 
         def copy(self, existing, created_by):
             """
-            Prepopulate a profile, and associated assessments, with data from a previous profile.
+            Prepopulate a profile (but not an assessment), with data from a previous profile.
             """
             profile = self.create(
                 institution=existing.institution,
                 institution_subunit=existing.institution_subunit,
+                mission=existing.mission,
                 structure=existing.structure,
                 org_chart=existing.org_chart,
                 profile_reason=existing.profile_reason,
@@ -42,11 +43,11 @@ class RCDProfile(models.Model):
                 created_by=created_by,
             )
 
-            # TODO is this best flow? Or should assessment import be decoupled
-            if hasattr(existing, "capabilities_assessment"):
-                profile.capabilities_assessment = apps.get_model(
-                    "nexus", "CapabilitiesAssessment"
-                ).objects.copy(existing.capabilities_assessment, profile=profile)
+            # This is the old flow but not assessment import is decoupled
+            #if hasattr(existing, "capabilities_assessment"):
+            #    profile.capabilities_assessment = apps.get_model(
+            #        "nexus", "CapabilitiesAssessment"
+            #    ).objects.copy(existing.capabilities_assessment, profile=profile)
 
             profile.save()
             return profile

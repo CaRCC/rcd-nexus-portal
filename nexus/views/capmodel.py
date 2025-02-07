@@ -1,6 +1,7 @@
 import logging
 
 import csv
+from django.apps import apps
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import HttpResponseBadRequest, HttpResponseRedirect, HttpResponse, JsonResponse
@@ -9,6 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_page
+from django.core.exceptions import ValidationError
 
 from nexus.forms.capmodel import *
 from nexus.models.capmodel import *
@@ -33,9 +35,42 @@ def assessment(request, profile_id):
     try:
         assessment = profile.capabilities_assessment
     except CapabilitiesAssessment.DoesNotExist:
-        assessment, _ = CapabilitiesAssessment.objects.get_or_create(
-            profile_id=profile_id
-        )
+        # print("assessment view with no assessment")
+        if(request.GET) :
+            dict = request.GET.dict()
+            atype = dict.get('atype')
+            # print(f"assessment GET with atype [{atype}]")
+            if atype==CapabilitiesAssessment.AssessmentTypeChoices.FULL \
+                or atype==CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
+                assessment, _ = CapabilitiesAssessment.objects.get_or_create(profile_id=profile_id)
+            elif atype==CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+                copy_from = int(dict.get('copy_from'))
+                # print(f"CYOJ with copy_from: [{copy_from}]")
+                if copy_from == 0:
+                    assessment, _ = CapabilitiesAssessment.objects.get_or_create(profile_id=profile_id)
+                else:
+                    sourceprofile = access_profile(request, copy_from, "view")
+                    if hasattr(sourceprofile, "capabilities_assessment"):
+                        profile.capabilities_assessment = apps.get_model(
+                            "nexus", "CapabilitiesAssessment"
+                        ).objects.copy(sourceprofile.capabilities_assessment, profile=profile)
+                        profile.save()
+                        profile.refresh_from_db()
+                        assessment = profile.capabilities_assessment
+                        # print(f"CYOJ copied assessment from copy_from: [{copy_from}] new assessment is: [{assessment.pk}] state: [{assessment.state}]")
+                    else: # Source profile has no assessment - should never happen!
+                        logger.error(f"Creating Assessment from Source [{copy_from}]; Profile has no assessment!!")
+                        assessment, _ = CapabilitiesAssessment.objects.get_or_create(profile_id=profile_id)
+            else: 
+                logger.error(f"Got Assessment type: [{atype}]")
+                # Default to FULL assessment
+                assessment, _ = CapabilitiesAssessment.objects.get_or_create(profile_id=profile_id)
+                atype=CapabilitiesAssessment.AssessmentTypeChoices.FULL
+            assessment.assessment_type = atype
+            assessment.save()
+        else: # No assessment and no context to create one - redirect to the profile. 
+            return redirect("rcdprofile:detail", profile.pk)
+
         profile.refresh_from_db()
 
     can_submit = request.user.rcd_profile_memberships.filter(profile=profile, role=roles.SUBMITTER).exists() and assessment.state == CapabilitiesAssessment.State.COMPLETE and assessment.review_status == CapabilitiesAssessment.ReviewStatusChoices.NOT_SUBMITTED
@@ -153,8 +188,16 @@ def assessment(request, profile_id):
     for answer in top_priorities:
         answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
 
+    atypeStr = ""
+    match assessment.assessment_type:
+        case CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
+            atypeStr = "Essentials "
+        case CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+            atypeStr = "CYOJ "
+
     context = {
         "profile": profile,
+        "atype": atypeStr,
         "submit_form": submit_form,
 #        "facing_coverages": facing_coverages,
         "categories": categories,

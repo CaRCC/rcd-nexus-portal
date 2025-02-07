@@ -247,6 +247,31 @@ class CapabilitiesAssessment(AssessmentBase):
         related_name="capabilities_assessment",
     )
 
+    class AssessmentTypeChoices(models.TextChoices): 
+        FULL = "full", "Full Assessment"
+        ESSENTIAL = "essential", "Essentials Assessment"
+        CYOJ = "cyoj", "Chart Your Own Journey Assessment"
+        
+    assessment_type = models.CharField(
+        "Assessment Type",
+        max_length=32,
+        choices=AssessmentTypeChoices.choices,
+        default=AssessmentTypeChoices.FULL,
+        null=True,      # Allow this to be missing, especially on import
+        blank=False,    # Require user to set one
+        help_text="Select the type of Assessment you would like to use.",
+    )
+
+    copied_from = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        # I considered adding limit_choices_to={"state": CapabilitiesAssessment.State.COMPLETE},
+        # but they might want to restart from a partially completed one. 
+        related_name="derivative_copies"
+    )
+
     class State(Enum):
         NOT_STARTED = "not_started"
         IN_PROGRESS = "in_progress"

@@ -93,7 +93,7 @@
 {% block main %}
 <h2>New RCD Nexus Profile for: <span class="Instname">{{institution}}</span></h2>
 {% if importable_profiles.exists %}
-<h3 class="intro">You can either import data from an existing profile:</h3>
+<h3 class="intro">You can either import information from an existing profile:</h3>
 <form action="{% url 'rcdprofile:import' %}" method="post">
     <section class="wrapper">
         <section class="fields">

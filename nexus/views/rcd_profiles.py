@@ -269,6 +269,10 @@ def rcd_profile_detail(request, pk):
         "can_submit": request.user.rcd_profile_memberships.filter(
             profile=profile, role=roles.SUBMITTER
         ).exists(),
+        "importable_profiles": RCDProfile.objects.filter_can_view(request.user)
+            .order_by("-year")
+            .filter(),
+
         "join_note": mark_safe(f"<a href='{reverse('rcdprofile:request-access', kwargs={'pk': pk})}'>Request access</a>"),
     }
 

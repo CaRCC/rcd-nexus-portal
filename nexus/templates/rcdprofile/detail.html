@@ -1,5 +1,94 @@
 {% extends "base.html" %}
 
+{% block head %}
+<style>
+  form section.wrapper section.fields {
+    grid-template-columns: 1fr;
+  }
+  section.fields div {
+  }
+  section.fields div select {
+    padding: 2px 4px;
+  }
+  section.fields div label {
+    display:block;
+    padding-bottom: 10px;
+    margin-left: 26px;
+    text-indent: -26px;
+  }
+  #cyojExtra {
+    display:none;
+    padding: 0 30px 0 40px;
+  }
+  #cyojExtra p {
+    margin-top: 0;
+    font-size: .95em;
+    font-style: italic;
+  }
+  p:has(#submitBtn) {
+    text-align: center;
+    margin-bottom: 0;
+  }
+</style>
+
+<script>
+  function showHideCYOJExtra(show) {
+      var cyojExtra = document.getElementById("cyojExtra");
+      if(cyojExtra) {
+        cyojExtra.style.display = show?"block":"none";
+      }
+  }
+
+  function atypeChanged() {
+    var submitBtnEl = document.getElementById("submitBtn");
+    var cyojEl = document.getElementById("cyoj");
+    if (cyojEl && cyojEl.checked) {
+      showHideCYOJExtra(true);
+      if (submitBtnEl) {
+        submitBtnEl.innerHTML = "Begin with a blank Assessment";
+      }
+    } else if (submitBtnEl) {
+      showHideCYOJExtra(false);
+      var fullEl = document.getElementById("full");
+      if (fullEl && fullEl.checked) {
+        submitBtnEl.innerHTML = "Begin a Full Assessment";
+      } else {
+        var essentialEl = document.getElementById("essential");
+        if (essentialEl) {
+          submitBtnEl.innerHTML = "Begin an Essentials Assessment";
+        }
+      }
+    }
+  }
+
+  function cyojSourceChanged(select) {
+    var submitBtnEl = document.getElementById("submitBtn");
+    if (submitBtnEl) {
+      if(select.value == 0) {
+        submitBtnEl.innerHTML = "Begin with a blank Assessment";
+      } else {
+        submitBtnEl.innerHTML = "Copy the Assessment and Begin";
+      }
+    }
+  }
+
+  function createNewAssessment(selectEl) {
+    var essentialsEl = document.getElementById("essential");
+    var cyojEl = document.getElementById("cyoj");
+    var atype = "full";
+    var toCopy = null;
+    if(essentialsEl && essentialsEl.checked) {
+      atype = "essential";
+    } else if(cyojEl && cyojEl.checked) {
+      atype = "cyoj";
+    }
+
+    // window.location.href="{% url 'capmodel:assessment' profile.pk %}?type="+atype;
+    alert("Navigate to "+"{% url 'capmodel:assessment' profile.pk %}?type="+atype);
+  }
+</script>
+
+{% endblock %}
 {% block title %}RCD-Nexus Profile Home: {{profile}}{% endblock %}
 {% block main %}
 <h1>Profile: {{profile}}</h1>
@@ -24,8 +113,58 @@
           <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
         {% endif %}
       {% else %}
-        <p>You have not started a RCD Capabilities Model Assessment.</p>
-        <a style="text-align:center" class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Begin</a>
+        <p>You have not started a RCD Capabilities Model Assessment. Choose one of the following:</p>
+        <form action="{% url 'capmodel:assessment' profile.pk %}" method="get">
+          <section class="wrapper">
+            <section class="fields">
+              <div>
+                <label for="full">
+                  <input type="radio" id="full" name="atype" value="full" checked onchange="atypeChanged()">
+                  Begin a <b>Full Assessment</b>, answering all the questions.
+                  This is the usual route for established RCD programs who want a full
+                  assessment of their capabilities.
+                </label>
+              </div>
+              <div>
+                <label for="essential">
+                  <input type="radio" id="essential" name="atype" value="essential" onchange="atypeChanged()">
+                  Begin an <b><em>Essentials</em> Assessment</b> answering
+                  a subset of questions that has been identified for new and
+                  emerging RCD programs who want to focus on the essential questions.
+                </label>
+                </div>
+              <div>
+                <label for="cyoj">
+                  <input type="radio" id="cyoj" name="atype" value="cyoj" onchange="atypeChanged()">
+                  Begin a <b><em>Chart Your Own Journey</em> Assessment</b>, selecting only
+                  those topics and questions that you want to focus on. This option is intended
+                  for RCD programs conducting a follow-up assessment who want to focus on just
+                  those areas that are likely to have changed since you last completed an assessment,
+                  or those that want to conduct a partial assessment of capabilities.
+                </label>
+                </div>
+              <div id="cyojExtra">
+                <p>You can optionally choose a previous assessment from which to copy answers or
+                  select "None" and start from a blank assessment.</p>
+                <p>Copy answers from:
+                  </select>
+                  <select id="copy_from" name="copy_from" onchange="cyojSourceChanged(this)">
+                    <option value="0">(None: start blank)</option>
+                    {% for profile in importable_profiles %}
+                      <option value="{{profile.pk}}">{{profile}}</option>
+                    {% endfor %}
+                    {% comment %}
+                    <option value="23">Assessment from 2024</option>
+                    <option value="23">Assessment from 2020</option>
+                    {% endcomment %}
+                  </select>
+                </p>
+              </div>
+            </section>
+            <section class="actions">
+                <button id="submitBtn" type="submit">Begin a Full Assessment</button>
+            </section>
+          </section>
       {% endif %}
     </section>
 

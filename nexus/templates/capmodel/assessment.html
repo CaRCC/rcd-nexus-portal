@@ -335,7 +335,7 @@
 
 {% block title %}CaRCC Capabilities Model Assessment{% endblock %}
 {% block main %}
-<h2>RCD Capabilities Assessment for {{ profile }}</h2>
+<h2><em>{{ atype }}</em>Capabilities Assessment for {{ profile }}</h2>
 {% if profile.capabilities_assessment.review_status == "not_submitted" %}
 <section class="status">
     <p>In progress, {{completed_questions}} of {{total_questions}} questions ({% widthratio pct_complete 1 100 %}%)
