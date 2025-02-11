@@ -193,7 +193,7 @@ def assessment(request, profile_id):
         case CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
             atypeStr = "Essentials "
         case CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
-            atypeStr = "CYOJ "
+            atypeStr = "Custom "
 
     context = {
         "profile": profile,
@@ -362,6 +362,7 @@ def answer(request, profile_id, question_pk):
     session_language = "en"  # TODO get session language
     question = answer.question.contents.get(language=session_language)
     question.slug = answer.question.slug
+    question.is_essential = answer.question.is_essential
 
     match answer.state:
         case CapabilitiesAnswer.State.ANSWERED:
@@ -377,9 +378,18 @@ def answer(request, profile_id, question_pk):
     other_answers = CapabilitiesAnswer.objects.order_by("question_id").filter(
         assessment__profile_id=profile_id
     )
+    if answer.assessment.assessment_type==CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+        cyoj = True
+        cyoj_copied = not answer.assessment.copied_from is None
+    else :
+        cyoj = False
+        cyoj_copied = False
 
     context = {
         "profile": profile,
+        "essentialAssmnt": answer.assessment.assessment_type==CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL ,
+        "cyojAssmnt": cyoj,
+        "cyojAssmntCopied": cyoj_copied,
         "answer": answer,
         "question": question,
         "can_edit": request.user.rcd_profile_memberships.filter(
@@ -401,6 +411,39 @@ def answer(request, profile_id, question_pk):
     }
 
     return render(request, "capmodel/answer.html", context)
+
+
+def includequestion(request, profile_id, question_pk):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Invalid method.")
+
+    profile = access_profile(request, profile_id, "view")
+    answer = CapabilitiesAnswer.objects.annotate_coverage().get(
+        assessment=profile.capabilities_assessment, question_id=question_pk
+        #assessment=profile.capabilities_assessment, question__slug=question_slug, question__topic__slug=topic_slug, question__topic__facing__slug=facing_slug
+    )
+    if answer.is_included:
+        raise ValidationError("Attempt to include a question that is already included.")
+    answer.is_included = True
+    answer.save()
+
+    return redirect("capmodel:answer", profile_id, question_pk)
+
+def removequestion(request, profile_id, question_pk):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Invalid method.")
+
+    profile = access_profile(request, profile_id, "view")
+    answer = CapabilitiesAnswer.objects.annotate_coverage().get(
+        assessment=profile.capabilities_assessment, question_id=question_pk
+        #assessment=profile.capabilities_assessment, question__slug=question_slug, question__topic__slug=topic_slug, question__topic__facing__slug=facing_slug
+    )
+    if not answer.is_included:
+        raise ValidationError("Attempt to remove a question that is already included.")
+    answer.is_included = False
+    answer.save()
+
+    return redirect("capmodel:answer", profile_id, question_pk)
 
 
 def legacy_benchmark_report(request, profile_id):

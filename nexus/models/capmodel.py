@@ -103,7 +103,7 @@ class CapabilitiesQuestion(models.Model):
             return self.filter(valid_after__lte=at).exclude(valid_before__lt=at)
 
         def filter_essential(self):
-            return self.exclude(is_essential=True)
+            return self.filter(is_essential=True)
 
     objects = QuerySet.as_manager()
 
@@ -379,6 +379,11 @@ class CapabilitiesAnswer(models.Model):
         def filter_unanswered(self):
             return self.exclude(not_applicable=True).filter(models.Q(score_deployment__isnull=True) | models.Q(score_collaboration__isnull=True) | models.Q(score_supportlevel__isnull=True))
 
+        # This covers both the Essentials and CYOJ cases. Note that will not work with a full assessment unless
+        # assessment creation code sets all answers to is_included=True. 
+        def filter_included(self):
+            return self.filter(question__is_essential=True) | self.filter(is_included=True)
+
         def annotate_coverage(self):
             return self.annotate(coverage=CapabilitiesAnswer.QuerySet.COVERAGE_FORMULA)
 
@@ -458,10 +463,17 @@ class CapabilitiesAnswer(models.Model):
         on_delete=models.CASCADE,
         related_name="answers",
     )
+    
     question = models.ForeignKey(
         CapabilitiesQuestion,
         on_delete=models.RESTRICT,
         related_name="answers",
+    )
+
+    is_included = models.BooleanField(
+        default=False,
+        editable=True,
+        help_text="Whether this question is included in and Essentials or CYOJ assessment.",
     )
 
     class ScoreDeploymentChoices(FloatChoices):

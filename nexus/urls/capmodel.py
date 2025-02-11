@@ -20,4 +20,6 @@ urlpatterns = [
     path("<int:profile_id>/unsubmit", assessment_unsubmit, name="assessment-unsubmit"),
     path("<int:profile_id>/questions/<slug:facing>/<slug:topic>", topic, name="topic"),
     path("<int:profile_id>/<int:question_pk>", answer, name="answer"),
+    path("<int:profile_id>/<int:question_pk>/includequestion", includequestion, name="includequestion"),
+    path("<int:profile_id>/<int:question_pk>/removequestion", removequestion, name="removequestion"),
 ]
