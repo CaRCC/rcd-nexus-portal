@@ -140,6 +140,7 @@ class CapabilitiesQuestion(models.Model):
     )
     valid_before = models.DateTimeField(
         null=True,
+        blank=True,      
         db_index=True,
         help_text="This question will only be included in assessments created before this time.",
     )
