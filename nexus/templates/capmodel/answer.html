@@ -209,7 +209,7 @@
         {% elif cyojAssmnt and not answer.is_included %} 
             </fieldset>
             <p class="includeQ">
-                {% if cyojAssmntCopied %}
+                {% if cyojAssmntCopied and coverage|length > 0 %}
                     <b>The answer to this question was copied.</br> 
                     Click here to clear the answer and include in your assessment:&nbsp;&nbsp;</b>
                     <input class="inc_rem_q" type="submit" value="Clear and Include Question">

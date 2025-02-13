@@ -57,6 +57,7 @@ def assessment(request, profile_id):
                         profile.save()
                         profile.refresh_from_db()
                         assessment = profile.capabilities_assessment
+                        assessment.copied_from = sourceprofile.capabilities_assessment
                         # print(f"CYOJ copied assessment from copy_from: [{copy_from}] new assessment is: [{assessment.pk}] state: [{assessment.state}]")
                     else: # Source profile has no assessment - should never happen!
                         logger.error(f"Creating Assessment from Source [{copy_from}]; Profile has no assessment!!")
@@ -416,15 +417,19 @@ def answer(request, profile_id, question_pk):
 def includequestion(request, profile_id, question_pk):
     if request.method != "POST":
         return HttpResponseBadRequest("Invalid method.")
-
+    
     profile = access_profile(request, profile_id, "view")
-    answer = CapabilitiesAnswer.objects.annotate_coverage().get(
-        assessment=profile.capabilities_assessment, question_id=question_pk
-        #assessment=profile.capabilities_assessment, question__slug=question_slug, question__topic__slug=topic_slug, question__topic__facing__slug=facing_slug
-    )
+    assessment=profile.capabilities_assessment
+    answer = CapabilitiesAnswer.objects.get(assessment=assessment, question_id=question_pk)
     if answer.is_included:
         raise ValidationError("Attempt to include a question that is already included.")
     answer.is_included = True
+
+    # TODO If a CYOJ with a source from which this was copied, clear the answer
+    if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ \
+        and not assessment.copied_from is None:
+        answer.clear()
+
     answer.save()
 
     return redirect("capmodel:answer", profile_id, question_pk)
@@ -434,13 +439,19 @@ def removequestion(request, profile_id, question_pk):
         return HttpResponseBadRequest("Invalid method.")
 
     profile = access_profile(request, profile_id, "view")
-    answer = CapabilitiesAnswer.objects.annotate_coverage().get(
-        assessment=profile.capabilities_assessment, question_id=question_pk
-        #assessment=profile.capabilities_assessment, question__slug=question_slug, question__topic__slug=topic_slug, question__topic__facing__slug=facing_slug
-    )
+    assessment=profile.capabilities_assessment
+    answer = CapabilitiesAnswer.objects.get(assessment=assessment, question_id=question_pk)
+    
     if not answer.is_included:
         raise ValidationError("Attempt to remove a question that is already included.")
     answer.is_included = False
+
+    # TODO If a CYOJ with a source from which this was copied, and if the answer exists in the copied_from assessment, restore that answer
+    if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ \
+        and not assessment.copied_from is None:
+        answer_from_copied = CapabilitiesAnswer.objects.get(assessment=assessment.copied_from, question_id=question_pk)
+        answer.copy_from(answer_from_copied)
+
     answer.save()
 
     return redirect("capmodel:answer", profile_id, question_pk)

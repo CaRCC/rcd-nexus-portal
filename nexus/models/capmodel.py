@@ -234,10 +234,7 @@ class CapabilitiesAssessment(AssessmentBase):
                     question=answer.question).first()
                 if not ex_answer:
                     continue
-                answer.score_deployment = ex_answer.score_deployment
-                answer.score_collaboration = ex_answer.score_collaboration
-                answer.score_supportlevel = ex_answer.score_supportlevel
-                answer.work_notes = ex_answer.work_notes
+                answer.copy_from(ex_answer)
                 answer.save()
 
     objects = QuerySet.as_manager()
@@ -476,6 +473,24 @@ class CapabilitiesAnswer(models.Model):
         editable=True,
         help_text="Whether this question is included in and Essentials or CYOJ assessment.",
     )
+
+    def clear(self):    # remove all answers and reset to unmodified
+        self.score_deployment = None
+        self.score_supportlevel = None
+        self.score_collaboration = None
+        self.priority = None
+        self.work_notes = None
+        self.not_applicable = False
+        self.is_modified = False
+
+    def copy_from(self, copy_source):
+        self.score_deployment = copy_source.score_deployment
+        self.score_collaboration = copy_source.score_collaboration
+        self.score_supportlevel = copy_source.score_supportlevel
+        self.not_applicable = copy_source.not_applicable
+        self.work_notes = copy_source.work_notes
+        self.priority = copy_source.priority
+        self.is_modified = True
 
     class ScoreDeploymentChoices(FloatChoices):
         NONE = 0.00, _("1 - No availability or support")

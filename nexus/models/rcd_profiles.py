@@ -10,6 +10,7 @@ from django.db.models.query import QuerySet
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.safestring import mark_safe
+from nexus.models.capmodel import CapabilitiesAssessment
 
 from nexus.utils.time import next_week
 
@@ -231,10 +232,19 @@ class RCDProfile(models.Model):
 
     def __str__(self):
         archived = "[ARCHIVED] " if self.archived else ""
+
+        if not hasattr(self, "capabilities_assessment"):
+            atype = ""
+        elif self.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
+            atype = " Essential"
+        elif self.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+            atype = " Custom"
+        else: 
+            atype = " Full"
         subunit = (
             f"({self.institution_subunit}) at " if self.institution_subunit else ""
         )
-        return f"{archived}{subunit}{self.institution} ({self.year})"
+        return f"{archived}{subunit}{self.institution} ({self.year}{atype})"
 
 
 class RCDProfileMember(models.Model):
