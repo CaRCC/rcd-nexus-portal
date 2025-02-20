@@ -5,8 +5,19 @@
   form section.wrapper section.fields {
     grid-template-columns: 1fr;
   }
-  section.fields div {
+  div.mainContainer {
+    max-width: 600px;
   }
+  div.mainContainer section p{
+    text-align: center;
+  }
+  span.atype {
+    font-weight: bold;
+  }
+  span.copied_from {
+    font-style: italic;
+  }
+
   section.fields div select {
     padding: 2px 4px;
   }
@@ -92,28 +103,28 @@
 {% block title %}RCD-Nexus Profile Home: {{profile}}{% endblock %}
 {% block main %}
 <h1>Profile: {{profile}}</h1>
-<div>
+<div class="mainContainer">
     <section>
-      <h2>RCD Capabilities Model Assessment</h2>
+      <h2>Capabilities Model Assessment</h2>
       {% if profile.capabilities_assessment %}
         {% if profile.capabilities_assessment.review_status == "not_submitted" %}
-          <p>Your RCD Capabilities Model Assessment has not been submitted yet.</p>
+          <p>Your {{adesc}} has not been submitted yet.</p>
           <p>Click the button below to continue working on the assessment.</p>
           <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Continue Working</a>
         {% elif profile.capabilities_assessment.review_status == "pending" %}
-          <p>Your RCD Capabilities Model Assessment has been submitted, and is pending review by Program Staff.</p>
+          <p>Your {{adesc}} has been submitted, and is pending review by Program Staff.</p>
           <p>Click the button below to review your work, and optionally unsubmit to update any answers.</p>
           <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
         {% elif profile.capabilities_assessment.review_status == "denied" %}
-          <p>Your RCD Capabilities Model Assessment was submitted and rejected.</p>
+          <p>Your {{adesc}} was submitted and rejected.</p>
           <p>Click the button below for details on the reasons for rejection.</p>
           <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
         {% else %}
-          <p>Your RCD Capabilities Model Assessment has been submitted and accepted.</p>
+          <p>Your {{adesc}} has been submitted and accepted.</p>
           <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
         {% endif %}
       {% else %}
-        <p>You have not started a RCD Capabilities Model Assessment. Choose one of the following:</p>
+        <p>You have not started a Capabilities Model Assessment. Choose one of the following:</p>
         <form action="{% url 'capmodel:assessment' profile.pk %}" method="get">
           <section class="wrapper">
             <section class="fields">

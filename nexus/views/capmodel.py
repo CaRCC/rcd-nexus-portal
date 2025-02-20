@@ -245,6 +245,23 @@ def assessment_unsubmit(request, profile_id):
 
     return redirect("capmodel:assessment", profile_id)
 
+"""  Thought these night be needed, but may not be
+def topic_is_included(assessment, facing, topic):
+    # Topic.included == If any subsumed questions are included (equivalent to NOT(all subsumed questions are NOT included).
+    answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk)
+    for answer in answers:
+        if answer.is_included:
+            return True
+    return False
+    
+def topic_is_essential(assessment, facing, topic):
+    #Topic.essential == any subsumed question is essential
+    answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk)
+    for answer in answers:
+        if answer.question.is_essential:
+            return True
+    return False
+"""
 
 def topic(request, profile_id, facing, topic):
     profile = access_profile(request, profile_id, "view")
@@ -257,8 +274,20 @@ def topic(request, profile_id, facing, topic):
 
     session_language = "en"  # TODO get session language
     all_answered = True
+    is_essential = False
+    has_nonessential = False
+    is_included = False
+    has_nonincluded = False
     for answer in answers:
         #answer.qid = {answer.question.legacy.qid if hasattr(answer.question, "legacy") else 'Q'}
+        if answer.question.is_essential:
+            is_essential = True
+        else:
+            has_nonessential = True
+        if answer.is_included:
+            is_included = True
+        else:
+            has_nonincluded = True
         answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
         answer.coverage_color = None
         match answer.state:
@@ -299,16 +328,20 @@ def topic(request, profile_id, facing, topic):
         facing__slug=facing.slug, index__gt=topic.index
     ).first()
 
-
-
     return render(
         request,
         "capmodel/topic.html",
         {
             "answers": answers,
             "assessment": assessment,
+            "atype": assessment.assessment_type,
+            "cyoj_copied": not assessment.copied_from is None,
             "facing": facing.contents.get(language=session_language),
             "topic": topic.contents.get(language=session_language),
+            "is_included": is_included,
+            "has_nonincluded": has_nonincluded,
+            "is_essential": is_essential,
+            "has_nonessential": has_nonessential,
             "coverage_pct": coverage_pct,
             "coverage_color": coverage_color,
             "prev_topic": prev_topic,
@@ -418,14 +451,14 @@ def includequestion(request, profile_id, question_pk):
     if request.method != "POST":
         return HttpResponseBadRequest("Invalid method.")
     
-    profile = access_profile(request, profile_id, "view")
+    profile = access_profile(request, profile_id, "edit")
     assessment=profile.capabilities_assessment
     answer = CapabilitiesAnswer.objects.get(assessment=assessment, question_id=question_pk)
     if answer.is_included:
         raise ValidationError("Attempt to include a question that is already included.")
     answer.is_included = True
 
-    # TODO If a CYOJ with a source from which this was copied, clear the answer
+    # If a CYOJ with a source from which this was copied, clear the answer
     if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ \
         and not assessment.copied_from is None:
         answer.clear()
@@ -438,7 +471,7 @@ def removequestion(request, profile_id, question_pk):
     if request.method != "POST":
         return HttpResponseBadRequest("Invalid method.")
 
-    profile = access_profile(request, profile_id, "view")
+    profile = access_profile(request, profile_id, "edit")
     assessment=profile.capabilities_assessment
     answer = CapabilitiesAnswer.objects.get(assessment=assessment, question_id=question_pk)
     
@@ -447,14 +480,67 @@ def removequestion(request, profile_id, question_pk):
     answer.is_included = False
 
     # TODO If a CYOJ with a source from which this was copied, and if the answer exists in the copied_from assessment, restore that answer
-    if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ \
-        and not assessment.copied_from is None:
-        answer_from_copied = CapabilitiesAnswer.objects.get(assessment=assessment.copied_from, question_id=question_pk)
-        answer.copy_from(answer_from_copied)
+    if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+        if not assessment.copied_from is None:
+            answer_from_copied = CapabilitiesAnswer.objects.get(assessment=assessment.copied_from, question_id=question_pk)
+            answer.copy_from(answer_from_copied)
+        else: 
+            answer.clear()
+
+    if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
+        answer.clear()
 
     answer.save()
 
     return redirect("capmodel:answer", profile_id, question_pk)
+
+def includetopic(request, profile_id, facing, topic):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Invalid method.")
+    
+    profile = access_profile(request, profile_id, "edit")
+    assessment=profile.capabilities_assessment
+
+    facingObj = Facing.objects.get(slug=facing)
+    topicObj = facingObj.capmodel_topics.get(slug=topic)
+
+    answers = assessment.answers.filter(question__topic__facing_id=facingObj.pk, question__topic_id=topicObj.pk).order_by("question_id")
+
+    for answer in answers:
+        # Ignore current included state  since they might add a topic after adding a question or two
+        answer.is_included = True
+        # If a CYOJ with a source from which this was copied, clear the answer
+        if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ \
+            and not assessment.copied_from is None:
+            answer.clear()
+        answer.save()
+
+    return redirect("capmodel:topic", profile_id, facing, topic)
+
+def removetopic(request, profile_id, facing, topic):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Invalid method.")
+
+    profile = access_profile(request, profile_id, "edit")
+    assessment=profile.capabilities_assessment
+
+    facingObj = Facing.objects.get(slug=facing)
+    topicObj = facingObj.capmodel_topics.get(slug=topic)
+
+    answers = assessment.answers.filter(question__topic__facing_id=facingObj.pk, question__topic_id=topicObj.pk).order_by("question_id")
+
+    for answer in answers:
+        # Ignore current included state  since they might add a topic after adding a question or two
+        answer.is_included = False
+        if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+            if not assessment.copied_from is None:
+                answer_from_copied = CapabilitiesAnswer.objects.get(assessment=assessment.copied_from, question_id=answer.question.pk)
+                answer.copy_from(answer_from_copied)
+            else: 
+                answer.clear()
+        answer.save()
+
+    return redirect("capmodel:topic", profile_id, facing, topic)
 
 
 def legacy_benchmark_report(request, profile_id):

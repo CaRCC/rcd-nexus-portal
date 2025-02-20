@@ -25,6 +25,7 @@ from nexus.models import (
     RCDProfileMemberRequest,
     InstitutionAffiliation,
 )
+from nexus.models.capmodel import CapabilitiesAssessment
 from nexus.utils.navtree import NavNode
 
 logger = logging.getLogger(__name__)
@@ -250,6 +251,19 @@ def rcd_profile_import(request):
 
     return redirect("rcdprofile:create")
 
+def assessment_desc(profile):
+    if not hasattr(profile, "capabilities_assessment"):
+        adesc = ""
+    elif profile.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
+        adesc = ' <span class="atype">Essentials</span> Capabilities Model Assessment'
+    elif profile.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+        adesc = ' <span class="atype">Custom (Chart You Own Journey)</span> Capabilities Model Assessment'
+        if not profile.capabilities_assessment.copied_from is None:
+            adesc += ' based upon [<span class="copied_from">'+str(profile.capabilities_assessment.copied_from.profile)+"</span>]"
+    else: 
+        adesc = " Full Capabilities Model Assessment"
+    return mark_safe(adesc)
+
 
 def rcd_profile_detail(request, pk):
     profile = access_profile(request, pk, "view", allow_archive=True)
@@ -259,6 +273,7 @@ def rcd_profile_detail(request, pk):
 
     context = {
         "profile": profile,
+        "adesc": assessment_desc(profile),
         "navtree": navtree(profile, re.escape(str(profile))),
         "can_edit": request.user.rcd_profile_memberships.filter(
             profile=profile, role__in=edit_roles

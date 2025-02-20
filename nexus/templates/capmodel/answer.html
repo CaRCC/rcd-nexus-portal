@@ -74,12 +74,11 @@
     }
     form.capabilities-answer-form p.includeQ  {
         margin: auto;
-        padding-top: 2em;
+        text-align: center;
+        padding-top: 1.5em;
     }
     form.capabilities-answer-form input.inc_rem_q {
-        margin-left:3em;
-        position: relative;
-        top:-.5em;
+        margin-top:.5em;
     }
     form.capabilities-answer-form input.inc_rem_q_1 {
         margin-left:3em;
@@ -203,38 +202,46 @@
             </fieldset>
             <p class="includeQ">
                 <b>This is not an Essential question.</br>
-                Click here to add and include in your computed coverage:&nbsp;&nbsp;</b>
+                Click here to add and include in your computed coverage:&nbsp;&nbsp;</b><br>
                 <input class="inc_rem_q" type="submit" value="Include Question">
             </p>
         {% elif cyojAssmnt and not answer.is_included %} 
             </fieldset>
-            <p class="includeQ">
                 {% if cyojAssmntCopied and coverage|length > 0 %}
-                    <b>The answer to this question was copied.</br> 
-                    Click here to clear the answer and include in your assessment:&nbsp;&nbsp;</b>
-                    <input class="inc_rem_q" type="submit" value="Clear and Include Question">
+                    <p class="modify_note">Recorded coverage: {{ coverage }}</p>
+                    <p class="includeQ">
+                        <b>The answer to this question was copied.</br> 
+                        Click here to clear the answer and include in your assessment:&nbsp;&nbsp;</b><br>
+                        <input class="inc_rem_q" type="submit" value="Clear and Include Question">
+                    </p>
                 {% else %}
-                <b>Click here to include this question in your assessment:&nbsp;&nbsp;</b>
-                    <input class="inc_rem_q_1" type="submit" value="Include Question">
+                    <p class="includeQ">
+                        <b>Click here to include this question in your assessment:&nbsp;&nbsp;</b><br>
+                        <input class="inc_rem_q" type="submit" value="Include Question">
+                    </p>
                 {% endif %}
-            </p>
         {% else %}
-            <input type="submit" value="Save" {% if answer.assessment.is_frozen %}disabled{%endif%}>
-            {% if essentialAssmnt and not question.is_essential and answer.is_included %} 
+            <input type="submit" value="Save Answers" {% if answer.assessment.is_frozen %}disabled{%endif%}>
+            {% if not answer.is_modified %}
+            <p class="modify_note">This answer has not been modified from the original.</p>
+            {% else %}
+            <p class="modify_note">Recorded coverage: {{ coverage }}</p>
+            {% endif %}
+                {% if essentialAssmnt and not question.is_essential and answer.is_included %} 
                 <p class="includeQ">
                     <b>This is not an Essential question, but has been included.</br>
-                    Click here to remove from your computed coverage:&nbsp;&nbsp;</b>
-                    <input class="inc_rem_q" type="submit" formaction="{{ request.path }}/removequestion" value="Remove Question">
+                    Click here to remove from your computed coverage:&nbsp;&nbsp;</b><br>
+                    <input class="inc_rem_q" type="submit" formaction="{{ request.path }}/removequestion" value="Clear and Remove Question">
                 </p>
             {% elif cyojAssmnt and answer.is_included %} 
                 <p class="includeQ">
                     {% if cyojAssmntCopied %}
                         <b>Click here to remove this question from your assessment</br> 
-                        and restore the answer from the copied assessment:&nbsp;&nbsp;</b>
+                        and restore the answer from the copied assessment:&nbsp;&nbsp;</b><br>
                         <input class="inc_rem_q" type="submit" formaction="{{ request.path }}/removequestion" value="Remove and Restore Copied Answer">
                     {% else %}
-                        <b>Click here to remove this question from your assessment:&nbsp;&nbsp;</b>
-                        <input class="inc_rem_q_1" type="submit" formaction="{{ request.path }}/removequestion" value="Remove Question">
+                        <b>Click here to remove this question from your assessment:&nbsp;&nbsp;</b><br>
+                        <input class="inc_rem_q_1" type="submit" formaction="{{ request.path }}/removequestion" value="Clear and Remove Question">
                     {% endif %}
                 </p>
             {% endif %}
@@ -245,11 +252,6 @@
     {% elif not can_edit  %} 
         <p class="noEdit">You do not have edit rights for this assessment.
             <br>Select the profile (in the left navbar) to request access. </p>
-    {% endif %}
-    {% if not answer.is_modified %}
-    <p class="modify_note">This answer has not been modified from the original.</p>
-    {% else %}
-    <p class="modify_note">Recorded coverage: {{ coverage }}</p>
     {% endif %}
 </section>
 
