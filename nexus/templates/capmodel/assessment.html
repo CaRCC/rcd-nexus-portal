@@ -210,6 +210,27 @@
         box-shadow: none;
     }
 
+    section.submission div.field-head {
+        text-align: right;
+        font-size: 13px;
+    }
+    section.submission div.field-head label{
+        position: relative;
+        top: .2em;
+        font-weight: bold;
+    }
+    section.submission div.field-body {
+        text-align: left;
+        margin-left: 26px;
+        text-indent: -26px;
+    }
+    section.submission div.field-head.odd-field, section.submission div.field-body.odd-field {
+        background-color: inherit;
+    }
+    section.submission div.field-body input{
+        position: relative;
+        top: .2em;
+    }
     section.submission,
     section.submission section.actions {
         background-color: lavender;
@@ -335,7 +356,7 @@
 
 {% block title %}CaRCC Capabilities Model Assessment{% endblock %}
 {% block main %}
-<h2><em>{{ atype }}</em>Capabilities Assessment for {{ profile }}</h2>
+<h2>Capabilities Assessment for {{ profile }}</h2>
 {% if profile.capabilities_assessment.review_status == "not_submitted" %}
 <section class="status">
     <p>In progress, {{completed_questions}} of {{total_questions}} questions ({% widthratio pct_complete 1 100 %}%)
