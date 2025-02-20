@@ -239,7 +239,7 @@
                         </tr>
                     {%endif%}
                 {%endif%}
-            {%elif atype == "cyoj"%}
+            {%elif atype == "cyoj" %}
                 {%if not is_included %}
                     <tr class="headline extras">
                         <td>Questions in topic{%if cyoj_copied %} with copied answers{%else%} (none included){%endif%}</td>
@@ -262,7 +262,7 @@
                                 <p>
                                 <b>Click here to {%if cyoj_copied %}clear all answers and {%endif%}include the entire topic in your assessment:</b><br>
                                     {% csrf_token %}
-                                    <input class="inc_rem_q" type="submit" value="Clear and Include Topic">
+                                    <input class="inc_rem_q" type="submit" value="{%if cyoj_copied %}Clear and {%endif%}Include Entire Topic">
                                 </p>
                             </form>
                         </td>
@@ -305,14 +305,17 @@
                             {%endif%}
                         {% endfor %}
                     {%endif%}
-                    {%if cyoj_copied %}
+                    {%if cyoj_copied or atype == "cyoj" and is_included %}
                         <tr class="question includeQ">
                             <td>
                                 <form action="{{ request.path }}/removetopic" method="post">
                                     <p><b>Click here to remove this topic from your assessment
-                                        and restore all answers from the copied assessment:</b><br>
+                                        and 
+                                        {%if cyoj_copied %}restore all answers from the copied assessment:{%else%}clear all answers:{%endif%}
+                                        </b><br>
                                         {% csrf_token %}
-                                        <input class="inc_rem_q" type="submit" value="Remove Topic and Restore Copied Answers">
+                                        <input class="inc_rem_q" type="submit" 
+                                            value="Remove Topic and {%if cyoj_copied %}Restore Copied Answers{%else%}Clear all Answers{%endif%}">
                                     </p>
                                 </form>
                             </td>
