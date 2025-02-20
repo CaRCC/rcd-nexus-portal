@@ -213,6 +213,31 @@
                         </tr>
                         {%endif%}
                     {% endfor %}
+                    {%if has_nonincluded %}
+                        <tr class="question includeQ">
+                            <td><form action="{{ request.path }}/includetopic" method="post">
+                                    <p>
+                                    <b>Click here to include the entire topic in your assessment:</b><br>
+                                        {% csrf_token %}
+                                        <input class="inc_rem_q" type="submit" value="Include Entire Topic">
+                                    </p>
+                                </form></td>
+                            <td></td>
+                        </tr>
+                    {%elif not is_essential%}
+                        <tr class="question includeQ">
+                            <td>
+                                <form action="{{ request.path }}/removetopic" method="post">
+                                    <p><b>Click here to remove this (non-essential) topic from your assessment
+                                        and clear all answers:</b><br>
+                                        {% csrf_token %}
+                                        <input class="inc_rem_q" type="submit" value="Remove Topic and Clear Answers">
+                                    </p>
+                                </form>
+                            </td>
+                            <td></td>
+                        </tr>
+                    {%endif%}
                 {%endif%}
             {%elif atype == "cyoj"%}
                 {%if not is_included %}

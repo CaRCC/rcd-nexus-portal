@@ -109,11 +109,30 @@ def assessment(request, profile_id):
     nFacings = len(categories.keys())
     for facing, topics in categories.items():
         facing.content = facing.contents.get(language=session_language)
+        facing.has_included = False
+        facing.has_nonincluded = False
+        facing.has_essential = False
+        facing.has_nonessential = False
         nTopicsRequired = len(topics.keys())  
         nTopicsComplete = 0
         aggSum = 0
         for topic, answers in topics.items():
             topic.content = topic.contents.get(language=session_language)
+            if(topic.slug!=CapabilitiesTopic.domain_coverage_slug):
+                if assessment.assessment_type != CapabilitiesAssessment.AssessmentTypeChoices.FULL:
+                    if answers.filter(is_included=True).exists():
+                        facing.has_included = True
+                        topic.is_included = True
+                    else:
+                        facing.has_nonincluded = True
+                        topic.is_included = False
+                    if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
+                        if answers.filter(question__is_essential=True).exists():
+                            facing.has_essential = True
+                            topic.is_essential = True
+                        else:
+                            facing.has_nonessential = True
+                            topic.is_essential = False
             if answers.filter_unanswered().exists():
                 answers.coverage_color = None
                 incomplete = answers.filter_unanswered().count()
@@ -189,16 +208,10 @@ def assessment(request, profile_id):
     for answer in top_priorities:
         answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
 
-    atypeStr = ""
-    match assessment.assessment_type:
-        case CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
-            atypeStr = "Essentials "
-        case CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
-            atypeStr = "Custom "
-
     context = {
         "profile": profile,
-        "atype": atypeStr,
+        "atype": assessment.assessment_type,
+        "cyoj_copied": not assessment.copied_from is None,
         "submit_form": submit_form,
 #        "facing_coverages": facing_coverages,
         "categories": categories,
@@ -245,23 +258,15 @@ def assessment_unsubmit(request, profile_id):
 
     return redirect("capmodel:assessment", profile_id)
 
-"""  Thought these night be needed, but may not be
 def topic_is_included(assessment, facing, topic):
     # Topic.included == If any subsumed questions are included (equivalent to NOT(all subsumed questions are NOT included).
-    answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk)
-    for answer in answers:
-        if answer.is_included:
-            return True
-    return False
+    answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk, question__is_included=True)
+    return True if answers else False
     
 def topic_is_essential(assessment, facing, topic):
     #Topic.essential == any subsumed question is essential
-    answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk)
-    for answer in answers:
-        if answer.question.is_essential:
-            return True
-    return False
-"""
+    answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk, question__is_essential=True)
+    return True if answers else False
 
 def topic(request, profile_id, facing, topic):
     profile = access_profile(request, profile_id, "view")
@@ -530,14 +535,14 @@ def removetopic(request, profile_id, facing, topic):
     answers = assessment.answers.filter(question__topic__facing_id=facingObj.pk, question__topic_id=topicObj.pk).order_by("question_id")
 
     for answer in answers:
-        # Ignore current included state  since they might add a topic after adding a question or two
+        # Ignore current included state since they might add a topic after adding a question or two
         answer.is_included = False
-        if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
-            if not assessment.copied_from is None:
-                answer_from_copied = CapabilitiesAnswer.objects.get(assessment=assessment.copied_from, question_id=answer.question.pk)
-                answer.copy_from(answer_from_copied)
-            else: 
-                answer.clear()
+        if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ \
+            and not assessment.copied_from is None:
+            answer_from_copied = CapabilitiesAnswer.objects.get(assessment=assessment.copied_from, question_id=answer.question.pk)
+            answer.copy_from(answer_from_copied)
+        else: # No source for CYOJ or Essentials assessment
+            answer.clear()
         answer.save()
 
     return redirect("capmodel:topic", profile_id, facing, topic)
