@@ -260,7 +260,7 @@ def assessment_unsubmit(request, profile_id):
 
 def topic_is_included(assessment, facing, topic):
     # Topic.included == If any subsumed questions are included (equivalent to NOT(all subsumed questions are NOT included).
-    answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk, question__is_included=True)
+    answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk, is_included=True)
     return True if answers else False
     
 def topic_is_essential(assessment, facing, topic):
@@ -324,14 +324,31 @@ def topic(request, profile_id, facing, topic):
             coverage_pct = mark_safe(f"{covstring}")
             coverage_color = compute_answer_color(coverage)
 
+    prev_topic_list = CapabilitiesTopic.objects.filter(facing__slug=facing.slug, index__lt=topic.index)
+    next_topic_list = CapabilitiesTopic.objects.filter(facing__slug=facing.slug, index__gt=topic.index)
 
-    prev_topic = CapabilitiesTopic.objects.filter(
-        facing__slug=facing.slug, index__lt=topic.index
-    ).last()
+    showExtraTopics = request.COOKIES.get('showEX')=="1"
+    print(f"Topic view, showExtraTopics is: [{showExtraTopics}]")
+    if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.FULL or showExtraTopics:
+        prev_topic = prev_topic_list.last()
+        next_topic = next_topic_list.first()
+    else:
+        prev_topic = None
+        next_topic = None
+        if prev_topic_list.count() > 0:
+            for i in range(prev_topic_list.count()-1,-1,-1):
+                ptopic = prev_topic_list[i]
+                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and topic_is_essential(assessment, facing, ptopic) \
+                    or topic_is_included(assessment, facing, ptopic):
+                    prev_topic = ptopic
+                    break
+        if next_topic_list.count() > 0:
+            for ntopic in next_topic_list:
+                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and topic_is_essential(assessment, facing, ntopic) \
+                    or topic_is_included(assessment, facing, ntopic):
+                    next_topic = ntopic
+                    break
 
-    next_topic = CapabilitiesTopic.objects.filter(
-        facing__slug=facing.slug, index__gt=topic.index
-    ).first()
 
     return render(
         request,
