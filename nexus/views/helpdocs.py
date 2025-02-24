@@ -8,7 +8,11 @@ from nexus.models.rcd_profiles import RCDProfile
 from nexus.models import CapabilitiesAssessment
 
 def help_docs_home(request):
-    return render(request, "helpdocs/main.html", {})
+    version = settings.VERSION_STR
+    context = {
+        "version":version,
+    }
+    return render(request, "helpdocs/main.html", context)
 
 def getNContribs():
     profiles = demogcharts.getAllProfiles(pop='contrib').filter(institution__list_as_contributor=True)
