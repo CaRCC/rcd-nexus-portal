@@ -4,7 +4,7 @@ import re
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.mail import send_mail
 from django.http import (
     HttpResponse,
@@ -17,13 +17,14 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from nexus.forms import RCDProfileForm, RCDProfileMemberInviteForm
+from nexus.forms import RCDProfileForm, RCDProfileMemberInviteForm, PostCompletionSurveyForm
 from nexus.models import (
     RCDProfile,
     RCDProfileMember,
     RCDProfileMemberInvite,
     RCDProfileMemberRequest,
     InstitutionAffiliation,
+    CapabilitiesAssessment,
 )
 from nexus.utils.navtree import NavNode
 
@@ -488,6 +489,33 @@ def rcd_profile_invite_accept(request):
             return redirect("rcdprofile:detail", invitation.profile.pk)
 
     return render(request, "rcdprofile/invite_accept.html")
+
+def rcd_profile_survey(request, pk):
+    profile = access_profile(request, pk, "submit") # Assume the submitter is the one to assess this
+    
+    assessment = profile.capabilities_assessment
+
+    # Let them do the survey as soon as they submit. They can revise if it is rejected and they have to do more
+    if assessment.review_status == CapabilitiesAssessment.ReviewStatusChoices.NOT_SUBMITTED:
+        raise ValidationError("Cannot complete survey until the associated assessment has been submitted.")
+
+
+    form = PostCompletionSurveyForm(request.POST or None, instance=profile.survey)
+
+    if request.method == "POST":
+        if form.is_valid():
+            model_instance = form.save()
+            print(f"Survey results: {vars(model_instance)}")
+            profile.survey = model_instance
+            profile.save()
+            messages.success(request, f"Survey completed for {profile}")
+            return redirect("rcdprofile:detail", profile.pk)
+
+    context = {
+        "form": form,
+    }
+
+    return render(request, "rcdprofile/survey.html", context)
 
 
 # TODO needs work

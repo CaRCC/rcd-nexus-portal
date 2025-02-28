@@ -38,9 +38,10 @@ def assessment(request, profile_id):
         )
         profile.refresh_from_db()
 
-    can_submit = request.user.rcd_profile_memberships.filter(profile=profile, role=roles.SUBMITTER).exists() and assessment.state == CapabilitiesAssessment.State.COMPLETE and assessment.review_status == CapabilitiesAssessment.ReviewStatusChoices.NOT_SUBMITTED
+    can_submit = request.user.rcd_profile_memberships.filter(profile=profile, role=roles.SUBMITTER).exists()
+    submittable = can_submit and assessment.state == CapabilitiesAssessment.State.COMPLETE and assessment.review_status == CapabilitiesAssessment.ReviewStatusChoices.NOT_SUBMITTED
 
-    if can_submit:
+    if submittable:
         submit_form = CapabilitiesAssessmentSubmitForm(request.POST or None)
         if request.method == "POST":
             if (
@@ -155,6 +156,7 @@ def assessment(request, profile_id):
 
     context = {
         "profile": profile,
+        "can_submit": can_submit,
         "submit_form": submit_form,
 #        "facing_coverages": facing_coverages,
         "categories": categories,
