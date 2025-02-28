@@ -470,25 +470,11 @@
         </section>
     </form>
 </section>
-    {% if can_submit %}
-        <section class="survey">
-        <h3>Experience Survey</h3>
-        <p>Please complete this short survey about your experience with the Capabilities Assessment tool.</p>
-            <a class="button center" href="{% url 'rcdprofile:survey' profile.pk %}">Go to Survey</a>
-        </section>
-    {% endif %}
 {% elif profile.capabilities_assessment.review_status == "approved" %}
 <h3>Approved</h3>
 <section class="status">
     <p>This assessment has been approved for inclusion in RCD Nexus community datasets and can no longer be altered.</p>
 </section>
-    {% if can_submit %}
-        <section class="survey">
-        <h3>Experience Survey</h3>
-        <p>Please complete this short survey about your experience with the Capabilities Assessment tool.</p>
-            <a class="button center" href="{% url 'rcdprofile:survey' profile.pk %}">Go to Survey</a>
-        </section>
-    {% endif %}
 {% elif profile.capabilities_assessment.review_status == "denied" %}
 <h3><em><strong></em>Rejected</strong></em></h3>
 <section class="status">
@@ -512,6 +498,14 @@
         Hide Extra Topics (i.e., {%if atype == "essential" %}Non-Essential Topics and {% endif %}those not included in this Assessment).</p>
 </section>
 {% endif %}
+{% if profile.capabilities_assessment.review_status != "not_submitted" and can_submit %}
+    <section class="survey">
+    <h3>Experience Survey</h3>
+    <p>Please complete this short survey about your experience with the Capabilities Assessment tool.</p>
+        <a class="button center" href="{% url 'rcdprofile:survey' profile.pk %}">Go to Survey</a>
+    </section>
+{% endif %}
+
 
 
 <div class="topicgrid">

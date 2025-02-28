@@ -1,7 +1,13 @@
 {% extends "base.html" %}
-
 {% block head %}
 <style>
+  section.survey h2 {
+      background-color: var(--logo-lt-blue);
+      padding: 5px 20px;
+  }
+  section.survey p {
+    font-style: italic;
+  }
   form section.wrapper section.fields {
     grid-template-columns: 1fr;
   }
@@ -204,6 +210,14 @@
         <p>This profile is currently archived. Click below to restore it.</p>
         <a class="button center" href="{% url 'rcdprofile:recovery' profile.pk %}">Restore Profile</a>
         {% endif %}
+      </section>
+  {% endif %}
+
+  {% if can_submit and profile.capabilities_assessment and profile.capabilities_assessment.review_status != "not_submitted" %}
+      <section class="survey">
+        <h2>Experience Survey</h2>
+        <p>Please complete this short survey about your experience with the Capabilities Assessment tool.</p>
+          <a class="button center" href="{% url 'rcdprofile:survey' profile.pk %}">Go to Survey</a>
       </section>
   {% endif %}
 </div>
