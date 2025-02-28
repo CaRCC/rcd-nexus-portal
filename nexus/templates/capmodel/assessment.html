@@ -27,11 +27,22 @@
         max-width: 600px;
     }
 
-    section.topicblock {
+    section.topicblock, section.survey {
         text-align: left;
         align-self: center;
         padding: 4px;
         margin: 10px;
+    }
+
+    section.survey {
+        width: 80%;
+        max-width: 580px;
+    }
+    section.survey p {
+        max-width: 580px;
+        font-size: .9em;
+        padding:0 20px;
+        font-style: italic;
     }
 
     section.topicblock div.facinghdr {
@@ -39,6 +50,16 @@
         margin: 0px;
         padding: 5px 20px;
         box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+
+    section.survey h3 {
+        background-color: var(--logo-lt-blue);
+        margin: 0px;
+        padding: 5px 20px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    section.survey a.button {
+        min-height: 2em;
     }
 
     section.topicblock div.facinghdr span.facingcov {
@@ -449,11 +470,25 @@
         </section>
     </form>
 </section>
+    {% if can_submit %}
+        <section class="survey">
+        <h3>Experience Survey</h3>
+        <p>Please complete this short survey about your experience with the Capabilities Assessment tool.</p>
+            <a class="button center" href="{% url 'rcdprofile:survey' profile.pk %}">Go to Survey</a>
+        </section>
+    {% endif %}
 {% elif profile.capabilities_assessment.review_status == "approved" %}
 <h3>Approved</h3>
 <section class="status">
     <p>This assessment has been approved for inclusion in RCD Nexus community datasets and can no longer be altered.</p>
 </section>
+    {% if can_submit %}
+        <section class="survey">
+        <h3>Experience Survey</h3>
+        <p>Please complete this short survey about your experience with the Capabilities Assessment tool.</p>
+            <a class="button center" href="{% url 'rcdprofile:survey' profile.pk %}">Go to Survey</a>
+        </section>
+    {% endif %}
 {% elif profile.capabilities_assessment.review_status == "denied" %}
 <h3><em><strong></em>Rejected</strong></em></h3>
 <section class="status">

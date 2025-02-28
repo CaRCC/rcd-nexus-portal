@@ -4,6 +4,7 @@ from nexus.models import (
     RCDProfileMember,
     Facing,
     FacingContent,
+    PostCompletionSurvey,
 )
 
 from django.contrib import admin
@@ -27,3 +28,7 @@ class RCDProfileAdmin(admin.ModelAdmin):
     list_filter = ["archived", "year", "mission", "org_chart"]
     search_fields = ["institution__name", "institution_subunit"]
     inlines = [RCDProfileMemberInline]
+
+@admin.register(PostCompletionSurvey)
+class PostCompletionSurveyAdmin(admin.ModelAdmin):
+    list_display = ["profile"]
