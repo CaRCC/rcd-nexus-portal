@@ -70,7 +70,8 @@
   {% if can_submit and profile.capabilities_assessment and profile.capabilities_assessment.review_status != "not_submitted" %}
       <section class="survey">
         <h2>Experience Survey</h2>
-        <p>Please complete this short survey about your experience with the Capabilities Assessment tool.</p>
+        <p>{% if profile.survey %}Review the (previously completed){%else%}Please complete this short{%endif%} survey
+           about your experience with the Capabilities Assessment tool.</p>
           <a class="button center" href="{% url 'rcdprofile:survey' profile.pk %}">Go to Survey</a>
       </section>
   {% endif %}
