@@ -276,7 +276,11 @@ class CapabilitiesAssessment(AssessmentBase):
         COMPLETE = "complete"
 
     def filtered_answers(self, excludeNotApplicable=True):
+        # Need to consider the type of assessment, and filter out all the unused questions. 
+        # For Essentials, include only those marked as essential OR included
+        # For CYOJ, IF copied from another, include everything; ELSE include only those marked as included
         answers = self.answers.exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug)
+        answers = answers.filter_included(self)
         if(excludeNotApplicable):
             answers = answers.filter(not_applicable=False)
         return answers
@@ -377,10 +381,14 @@ class CapabilitiesAnswer(models.Model):
         def filter_unanswered(self):
             return self.exclude(not_applicable=True).filter(models.Q(score_deployment__isnull=True) | models.Q(score_collaboration__isnull=True) | models.Q(score_supportlevel__isnull=True))
 
-        # This covers both the Essentials and CYOJ cases. Note that will not work with a full assessment unless
-        # assessment creation code sets all answers to is_included=True. 
-        def filter_included(self):
-            return self.filter(question__is_essential=True) | self.filter(is_included=True)
+        def filter_included(self, for_assessment):
+            if for_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
+                return self.filter(question__is_essential=True) | self.filter(is_included=True)
+            elif for_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ and \
+                for_assessment.copied_from == None:
+                return self.filter(is_included=True)
+            else:
+                return self     # No filtering for full (or copied) assessments. 
 
         def annotate_coverage(self):
             return self.annotate(coverage=CapabilitiesAnswer.QuerySet.COVERAGE_FORMULA)

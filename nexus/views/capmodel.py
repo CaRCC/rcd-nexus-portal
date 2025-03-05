@@ -117,34 +117,47 @@ def assessment(request, profile_id):
         nTopicsRequired = len(topics.keys())  
         nTopicsComplete = 0
         aggSum = 0
+        # print(f"Working through facing {facing.slug}...")
         for topic, answers in topics.items():
             topic.content = topic.contents.get(language=session_language)
             if(topic.slug!=CapabilitiesTopic.domain_coverage_slug):
                 if assessment.assessment_type != CapabilitiesAssessment.AssessmentTypeChoices.FULL:
+                    topic.is_included = False
                     if answers.filter(is_included=True).exists():
                         facing.has_included = True
                         topic.is_included = True
                     else:
                         facing.has_nonincluded = True
-                        topic.is_included = False
+                        
+                    topic.is_essential = False
                     if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
                         if answers.filter(question__is_essential=True).exists():
                             facing.has_essential = True
                             topic.is_essential = True
                         else:
                             facing.has_nonessential = True
-                            topic.is_essential = False
-            if answers.filter_unanswered().exists():
+                    # if this topic won't be included, don't consider it in count for completeness
+                    if not topic.is_included and not topic.is_essential:
+                        nTopicsRequired -= 1
+            filtered_answers = answers.filter_included(assessment)
+            if not filtered_answers.exists():
                 answers.coverage_color = None
-                incomplete = answers.filter_unanswered().count()
-                totalForTopic = answers.count()
+                answers.coverage_pct = "-"
+                if(topic.slug==CapabilitiesTopic.domain_coverage_slug) :
+                    nTopicsRequired -= 1
+                # print(f"Topic {topic.slug} has no questions used.")
+            elif filtered_answers.filter_unanswered().exists():
+                answers.coverage_color = None
+                incomplete = filtered_answers.filter_unanswered().count()
+                totalForTopic = filtered_answers.count()
                 if incomplete != totalForTopic:
                     answers.coverage_pct = mark_safe("<span class=\"wip\">(WIP: "+str(totalForTopic-incomplete)
                                                 +" of "+str(totalForTopic)+")</span>")
                 else :
                     answers.coverage_pct = "-"
+                # print(f"Topic {topic.slug} has {incomplete} unanswered questions out of {totalForTopic} used.")
             else:
-                agg = answers.filter(not_applicable=False).aggregate_score()
+                agg = filtered_answers.filter(not_applicable=False).aggregate_score()
                 coverage = agg["average"]
                 coverage = min(1.0, max(0.0, coverage))
                 if coverage != None:
@@ -161,13 +174,16 @@ def assessment(request, profile_id):
                 else:
                     answers.coverage_pct = "-"
                     answers.coverage_color = None
-        if nTopicsComplete == nTopicsRequired:
+                # print(f"Topic {topic.slug} has no unanswered questions; coverage is {coverage} for questions used.")
+        if nTopicsComplete >= nTopicsRequired and nTopicsRequired > 0:
             # For the Facing coverage, get the aggregate average of all questions in the Facing that are not marked N/A
             facingAnswers = assessment.answers.filter(question__topic__facing=facing).filter(not_applicable=False)
             facingCov = facingAnswers.aggregate_score()["average"]
             covstring = format(facingCov, ".1%" if facingCov<1.0 else ".0%")
             facing.coverage_pct = mark_safe(f"{covstring}")
             facing.coverage_color = compute_answer_color(facingCov)
+        #else:
+            #print(f"Facing only has {nTopicsComplete} topics complete out of {nTopicsRequired} required.")
 #        elif nTopicsComplete == 0:
 #            facing.coverage_pct = "-"
 #        else:
@@ -297,28 +313,36 @@ def topic(request, profile_id, facing, topic):
             has_nonincluded = True
         answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
         answer.coverage_color = None
-        match answer.state:
-            case CapabilitiesAnswer.State.ANSWERED:
-                # Max at 100% since the collaboration boost/discount can push coverage over 1.0 and under 0
-                covvalue = min(1.0, max(0.0, answer.coverage))
-                covstring = format(covvalue, ".1%" if covvalue<1.0 else ".0%")
-                answer.coverage_percent = mark_safe(f"{covstring}")        
-                answer.coverage_color = compute_answer_color(answer.coverage)
-            case CapabilitiesAnswer.State.PARTIALLY_ANSWERED:
-                answer.coverage_percent = "(WIP)"
-                answer.cssclass = "WIP"
-                all_answered = False
-            case CapabilitiesAnswer.State.UNANSWERED:
+        # Need to ignore questions not included in this assessment
+        if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and \
+            answer.question.is_essential == False and answer.is_included == False:
                 answer.coverage_percent = "-"
-                all_answered = False
-            case CapabilitiesAnswer.State.NOT_APPLICABLE:
-                answer.coverage_percent = "N/A"
-                answer.cssclass = "NA"
+        elif assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ and \
+            assessment.copied_from == None and answer.is_included == False:
+                answer.coverage_percent = "-"
+        else:
+            match answer.state:
+                case CapabilitiesAnswer.State.ANSWERED:
+                    # Max at 100% since the collaboration boost/discount can push coverage over 1.0 and under 0
+                    covvalue = min(1.0, max(0.0, answer.coverage))
+                    covstring = format(covvalue, ".1%" if covvalue<1.0 else ".0%")
+                    answer.coverage_percent = mark_safe(f"{covstring}")        
+                    answer.coverage_color = compute_answer_color(answer.coverage)
+                case CapabilitiesAnswer.State.PARTIALLY_ANSWERED:
+                    answer.coverage_percent = "(WIP)"
+                    answer.cssclass = "WIP"
+                    all_answered = False
+                case CapabilitiesAnswer.State.UNANSWERED:
+                    answer.coverage_percent = "-"
+                    all_answered = False
+                case CapabilitiesAnswer.State.NOT_APPLICABLE:
+                    answer.coverage_percent = "N/A"
+                    answer.cssclass = "NA"
 
     coverage_pct = None
     coverage_color = None
     if all_answered:
-        agg = answers.filter(not_applicable=False).aggregate_score()
+        agg = answers.filter(not_applicable=False).filter_included(assessment).aggregate_score()
         coverage = agg["average"]
         if coverage != None:
             coverage = min(1.0, max(0.0, coverage))
@@ -330,7 +354,7 @@ def topic(request, profile_id, facing, topic):
     next_topic_list = CapabilitiesTopic.objects.filter(facing__slug=facing.slug, index__gt=topic.index)
 
     showExtraTopics = request.COOKIES.get('showEX')=="1"
-    print(f"Topic view, showExtraTopics is: [{showExtraTopics}]")
+    # print(f"Topic view, showExtraTopics is: [{showExtraTopics}]")
     if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.FULL or showExtraTopics:
         prev_topic = prev_topic_list.last()
         next_topic = next_topic_list.first()
