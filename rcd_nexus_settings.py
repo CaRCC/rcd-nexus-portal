@@ -15,8 +15,6 @@ SECRET_KEY = "django-insecure-d=j15d$97td$27$3xwx!wz0^%!#d3#_l7h_*mr043p47wn5@7d
 
 BASE_URL = "http://localhost:8000"
 
-VERSION_STR = "2.1.5"
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",

@@ -6,9 +6,10 @@ from django.shortcuts import redirect, render
 from nexus.utils import demogcharts
 from nexus.models.rcd_profiles import RCDProfile
 from nexus.models import CapabilitiesAssessment
-
+import importlib.metadata
+ 
 def help_docs_home(request):
-    version = settings.VERSION_STR
+    version = importlib.metadata.version('rcd-nexus-portal')
     context = {
         "version":version,
     }
