@@ -1,0 +1,16 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<div class="staging-controls" style="max-width:40em">
+    <h1>Staging environment controls</h1>
+    <p>These actions can only be run from the live site, and will only affect the staging site <a
+            href="https://portal-test.rcd-nexus.org">portal-test.rcd-nexus.org</a>.</p>
+    <form method="post" action="{% url 'staging-command' %}" style="display:flex; flex-direction:column; gap:1em;">
+        {% csrf_token %}
+        <button type="submit" name="form-action" value="reset-db">Reset DB to last daily prod backup</button>
+        <button type="submit" name="form-action" value="reset-app">Reset app to `staging` branch and run
+            migrations</button>
+    </form>
+</div>
+{{ block.super }}
+{% endblock %}

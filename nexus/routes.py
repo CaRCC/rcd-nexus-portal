@@ -14,16 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import include, path
 
 from nexus.views.rcd_profiles import index
+from nexus.views.staging import staging_command
 
 admin.site.site_header = "RCD Nexus administration"
 admin.site.site_title = "RCD Nexus admin"
 
 urlpatterns = [
     path("", index, name="index"),
+    path("admin/staging", lambda request: render(request, "admin/staging.html")),
+    path("admin/staging-command/", staging_command, name="staging-command"),
     path("admin/", admin.site.urls),
     path("oidc/", include("mozilla_django_oidc.urls")),
     path("profiles/", include("nexus.urls.rcd_profiles")),
