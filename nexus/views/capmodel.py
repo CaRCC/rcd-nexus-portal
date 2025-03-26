@@ -527,7 +527,6 @@ def removequestion(request, profile_id, question_pk):
         raise ValidationError("Attempt to remove a question that is already included.")
     answer.is_included = False
 
-    # TODO If a CYOJ with a source from which this was copied, and if the answer exists in the copied_from assessment, restore that answer
     if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
         if not assessment.copied_from is None:
             answer_from_copied = CapabilitiesAnswer.objects.get(assessment=assessment.copied_from, question_id=question_pk)

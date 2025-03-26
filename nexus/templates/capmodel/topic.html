@@ -157,7 +157,7 @@
                 </tr>
                 {% endfor %}
             {%elif atype == "essential" %}
-                {%if is_essential %}
+                {%if is_essential %} {% comment %} Topic has essential questions {% endcomment %}
                     <tr class="headline">
                         <td>Essential Questions in topic</td>
                         <td class="cov">Computed Coverage</td>
@@ -176,68 +176,59 @@
                         {%endif%}
                     {% endfor %}
                 {%endif%}
-                {%if has_nonessential and is_included %}
-                    <tr class="headline {%if is_essential %}included{%endif%}">
-                        <td>Non-Essential Questions included in Coverage</td>
-                        <td></td>
-                    </tr>
-                    {% for answer in answers %}
-                        {%if answer.is_included %}
-                        <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
-                            <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
-                                <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
-                                    title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
-                            </td>
-                            <td {% if answer.coverage_color %} class="cov" {% else %} class="nocov" {% endif %}>
-                                {{answer.coverage_percent}}
-                            </td>
-                        </tr>
-                        {%endif%}
-                    {% endfor %}
-                {%endif%}
-                {%if has_nonessential %}
-                    <tr class="headline extras">
-                        <td>Non-Essential Questions in topic</td>
-                        <td></td>
-                    </tr>
-                    {% for answer in answers %}
-                        {%if not answer.question.is_essential and not answer.is_included %}
-                        <tr class="question extras {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
-                            <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
-                                <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
-                                    title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
-                            </td>
-                            <td {% if answer.coverage_color %} class="cov" {% else %} class="nocov" {% endif %}>
-                                {{answer.coverage_percent}}
-                            </td>
-                        </tr>
-                        {%endif%}
-                    {% endfor %}
-                    {%if has_nonincluded %}
-                        <tr class="question includeQ">
-                            <td><form action="{{ request.path }}/includetopic" method="post">
-                                    <p>
-                                    <b>Click here to include the entire topic in your assessment:</b><br>
-                                        {% csrf_token %}
-                                        <input class="inc_rem_q" type="submit" value="Include Entire Topic">
-                                    </p>
-                                </form></td>
+                {%if has_nonessential%} {% comment %} Topic has additional non-essential questions {% endcomment %}
+                    {%if is_included %} {% comment %} Topic has non-essential questions that have been included by user {% endcomment %}
+                        <tr class="headline {%if is_essential %}included{%endif%}">
+                            <td>Non-Essential Questions included in Coverage</td>
                             <td></td>
                         </tr>
-                    {%elif not is_essential%}
+                        {% for answer in answers %}
+                            {%if answer.is_included %}
+                            <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
+                                <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                                    <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
+                                        title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
+                                </td>
+                                <td {% if answer.coverage_color %} class="cov" {% else %} class="nocov" {% endif %}>
+                                    {{answer.coverage_percent}}
+                                </td>
+                            </tr>
+                            {%endif%}
+                        {% endfor %}
+                    {%endif%}
+                    {%if has_nonincluded %}
+                        <tr class="headline extras">
+                            <td>Non-Essential Questions in topic</td>
+                            <td></td>
+                        </tr>
+                        {% for answer in answers %}
+                            {%if not answer.question.is_essential and not answer.is_included %}
+                            <tr class="question extras {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
+                                <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                                    <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
+                                        title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
+                                </td>
+                                <td {% if answer.coverage_color %} class="cov" {% else %} class="nocov" {% endif %}>
+                                    {{answer.coverage_percent}}
+                                </td>
+                            </tr>
+                            {%endif%}
+                        {% endfor %}
+                    {%endif%}
+                    {%if is_included and not is_essential %} {% comment %} Topic has non-essential questions included - let them revert all these. {% endcomment %}
                         <tr class="question includeQ">
                             <td>
                                 <form action="{{ request.path }}/removetopic" method="post">
-                                    <p><b>Click here to remove this (non-essential) topic from your assessment
-                                        and clear all answers:</b><br>
+                                    <p><b>Click here to clear any answers for this (non-essential) topic and skip it in your assessment:</b><br>
                                         {% csrf_token %}
-                                        <input class="inc_rem_q" type="submit" value="Remove Topic and Clear Answers">
+                                        <input class="inc_rem_q" type="submit" value="Clear Answers and Skip Topic">
                                     </p>
                                 </form>
                             </td>
                             <td></td>
                         </tr>
                     {%endif%}
+                    {% comment %} Note we do not support adding the whole topic for an Essential assessment - they can add question by question {% endcomment %}
                 {%endif%}
             {%elif atype == "cyoj" %}
                 {%if not is_included %}
@@ -260,7 +251,7 @@
                         <td>
                             <form action="{{ request.path }}/includetopic" method="post">
                                 <p>
-                                <b>Click here to {%if cyoj_copied %}clear all answers and {%endif%}include the entire topic in your assessment:</b><br>
+                                <b>Click here to {%if cyoj_copied %}clear the copied answers and {%endif%}include the entire topic in your assessment:</b><br>
                                     {% csrf_token %}
                                     <input class="inc_rem_q" type="submit" value="{%if cyoj_copied %}Clear and {%endif%}Include Entire Topic">
                                 </p>
@@ -309,13 +300,12 @@
                         <tr class="question includeQ">
                             <td>
                                 <form action="{{ request.path }}/removetopic" method="post">
-                                    <p><b>Click here to remove this topic from your assessment
-                                        and 
-                                        {%if cyoj_copied %}restore all answers from the copied assessment:{%else%}clear all answers:{%endif%}
-                                        </b><br>
+                                    <p><b>Click here to {%if cyoj_copied %}restore all answers for this topic 
+                                        from the copied assessment{%else%}clear any answers for this topic{%endif%}
+                                        and skip this topic in this assessment.</b><br>
                                         {% csrf_token %}
                                         <input class="inc_rem_q" type="submit" 
-                                            value="Remove Topic and {%if cyoj_copied %}Restore Copied Answers{%else%}Clear all Answers{%endif%}">
+                                            value="{%if cyoj_copied %}Restore Copied Answers{%else%}Clear all Answers{%endif%} and Skip Topic">
                                     </p>
                                 </form>
                             </td>

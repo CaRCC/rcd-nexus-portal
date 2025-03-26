@@ -537,14 +537,6 @@ def data_viz_capsmodeldata(request):
             else:
                 facingname = [item for item in DataFilterForm.FACINGS_CHOICES if item[0] == facing]
                 facingslug = facing_sel_mapping.get(facing)
-                # ignore caps feature for now
-                # TODO: add support to overlay the benchmarking data
-                # Need to get the authenticated user request.user.is_authenticated and request.user.institutions.first(?)
-                # instVales = facingstotals2022.loc[facingstotals2022['Inst']==inst]['2021 Calc'].tolist()
-                # if(instVals!=None) :
-                #   assert len(instVals) == 5, "showFacingsBarGraph passed bad instVals: "+str(instVals)
-                # pass into the graph tools. 
-                #   ax.scatter([0,1,2,3,4], instVals, color=[1,0.8,0], s=30, zorder=2, label=instName, **kwargs)
 
                 grSize = cleaned_dict.get('graph_size')
                 match grSize:

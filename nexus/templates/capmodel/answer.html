@@ -230,18 +230,18 @@
                 {% if essentialAssmnt and not question.is_essential and answer.is_included %} 
                 <p class="includeQ">
                     <b>This is not an Essential question, but has been included.</br>
-                    Click here to remove from your computed coverage:&nbsp;&nbsp;</b><br>
+                    Click here to clear your answer and skip this question in this assessment:&nbsp;&nbsp;</b><br>
                     <input class="inc_rem_q" type="submit" formaction="{{ request.path }}/removequestion" value="Clear and Remove Question">
                 </p>
             {% elif cyojAssmnt and answer.is_included %} 
                 <p class="includeQ">
                     {% if cyojAssmntCopied %}
-                        <b>Click here to remove this question from your assessment</br> 
-                        and restore the answer from the copied assessment:&nbsp;&nbsp;</b><br>
-                        <input class="inc_rem_q" type="submit" formaction="{{ request.path }}/removequestion" value="Remove and Restore Copied Answer">
+                        <b>Click here to restore the answer from the copied assessment <br>
+                            (i.e., you will not answer it this time):&nbsp;&nbsp;</b><br>
+                        <input class="inc_rem_q" type="submit" formaction="{{ request.path }}/removequestion" value="Restore Copied Answer">
                     {% else %}
-                        <b>Click here to remove this question from your assessment:&nbsp;&nbsp;</b><br>
-                        <input class="inc_rem_q_1" type="submit" formaction="{{ request.path }}/removequestion" value="Clear and Remove Question">
+                        <b>Click here to clear your answer and skip this question in this assessment:&nbsp;&nbsp;</b><br>
+                        <input class="inc_rem_q_1" type="submit" formaction="{{ request.path }}/removequestion" value="Clear and Skip Question">
                     {% endif %}
                 </p>
             {% endif %}
