@@ -520,7 +520,9 @@
             <p id="{{facing.slug}}SH" class="toggle" onclick="toggleSection(this, '{{facing.slug}}')"><span>Show Topics</span></p>
         </div>
         <div class="facingdesc" style="display:block;">
-            <p>{{facing.content.description}}</p>
+            <p>{%if facing.questionCount %}<span class="facingqcount"></span>{{facing.questionCount}} questions:</span>{%endif%}
+                {{facing.content.description}}                  
+            </p>
         </div>
         <div class="topics">
             {%if atype == "full" %}

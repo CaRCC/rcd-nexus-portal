@@ -119,6 +119,7 @@ def assessment(request, profile_id):
         topic_sum_count=0
         included_topic_count=0
         # print(f"Working through facing {facing.slug}...")
+        facing.questionCount = assessment.answers.filter(question__topic__facing=facing).filter_included(assessment).count()
         for topic, answers in topics.items():
             topic.content = topic.contents.get(language=session_language)
             topic.is_partial = False
@@ -129,6 +130,7 @@ def assessment(request, profile_id):
                 topic.is_essential = False
                 topic.is_included = False
                 facing.has_nonincluded = True
+                facing.has_nonessential = True
                 # print(f"Topic {topic.slug} has no questions used.")
                 if(topic.slug!=CapabilitiesTopic.domain_coverage_slug):
                     facing.is_partial = True    # Any missing topic except domain means a partial facing
