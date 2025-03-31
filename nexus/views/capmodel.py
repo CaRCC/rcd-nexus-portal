@@ -150,7 +150,9 @@ def assessment(request, profile_id):
 
                 if filtered_answers.filter_unanswered().exists():
                     answers.coverage_color = None
-                    facing_coverage_sum = None
+                    # Do not have domain coverage contribute to facing coverage, even if they included it explicitly
+                    if topic.slug!=CapabilitiesTopic.domain_coverage_slug:
+                        facing_coverage_sum = None
                     incomplete = filtered_answers.filter_unanswered().count()
                     totalForTopic = filtered_answers.count()
                     if incomplete != totalForTopic:
@@ -174,7 +176,8 @@ def assessment(request, profile_id):
                         covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
                         answers.coverage_pct = mark_safe(f"{covstring}")
                         answers.coverage_color = compute_answer_color(coverage)
-                        if facing_coverage_sum != None:
+                        # Do not have domain coverage contribute to facing coverage, even if they included it explicitly
+                        if facing_coverage_sum != None and topic.slug!=CapabilitiesTopic.domain_coverage_slug:
                             facing_coverage_sum += coverage
                             topic_sum_count += 1
                     # print(f"Topic {topic.slug} has no unanswered questions; coverage is {coverage} for questions used.")
