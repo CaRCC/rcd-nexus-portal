@@ -670,6 +670,9 @@
         </form>
         {% else %}
         <p>Once you have answered all the questions, you can submit your assessment.</p>
+            {% if atype == "cyoj" and pct_complete == 1 %}
+                <p>Note that you must include (and answer) at least one question in this assessment.</p>
+            {% endif %}
         <section class="actions">
             <button type="button" disabled>Submit</button>
         </section>

@@ -114,83 +114,81 @@ def assessment(request, profile_id):
         facing.has_nonincluded = False
         facing.has_essential = False
         facing.has_nonessential = False
-        nTopicsRequired = len(topics.keys())  
-        nTopicsComplete = 0
-        aggSum = 0
+        facing.is_partial = False
+        facing_coverage_sum=0
+        topic_sum_count=0
+        included_topic_count=0
         # print(f"Working through facing {facing.slug}...")
         for topic, answers in topics.items():
             topic.content = topic.contents.get(language=session_language)
-            if(topic.slug!=CapabilitiesTopic.domain_coverage_slug):
+            topic.is_partial = False
+            filtered_answers = answers.filter_included(assessment)  # set aside the not applicable and not included ones
+            if not filtered_answers.exists():
+                answers.coverage_color = None
+                answers.coverage_pct = "-"
+                topic.is_essential = False
+                topic.is_included = False
+                facing.has_nonincluded = True
+                # print(f"Topic {topic.slug} has no questions used.")
+                if(topic.slug!=CapabilitiesTopic.domain_coverage_slug):
+                    facing.is_partial = True    # Any missing topic except domain means a partial facing
+            else: # There are some questions that are applicable, essential, and/or included
+                included_topic_count += 1
                 if assessment.assessment_type != CapabilitiesAssessment.AssessmentTypeChoices.FULL:
-                    topic.is_included = False
+                    # filtered answers may have copied but not included questions for a cloned CYOJ
                     if answers.filter(is_included=True).exists():
                         facing.has_included = True
                         topic.is_included = True
                     else:
                         facing.has_nonincluded = True
-                        
-                    topic.is_essential = False
                     if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
-                        if answers.filter(question__is_essential=True).exists():
+                        if filtered_answers.filter(question__is_essential=True).exists():
                             facing.has_essential = True
                             topic.is_essential = True
-                        else:
+                        else :  # this topic has no essential questions, so the facing has non-essential topics
                             facing.has_nonessential = True
-                    # if this topic won't be included, don't consider it in count for completeness
-                    if not topic.is_included and not topic.is_essential:
-                        nTopicsRequired -= 1
-            filtered_answers = answers.filter_included(assessment)
-            if not filtered_answers.exists():
-                answers.coverage_color = None
-                answers.coverage_pct = "-"
-                if(topic.slug==CapabilitiesTopic.domain_coverage_slug) :
-                    nTopicsRequired -= 1
-                # print(f"Topic {topic.slug} has no questions used.")
-            elif filtered_answers.filter_unanswered().exists():
-                answers.coverage_color = None
-                incomplete = filtered_answers.filter_unanswered().count()
-                totalForTopic = filtered_answers.count()
-                if incomplete != totalForTopic:
-                    answers.coverage_pct = mark_safe("<span class=\"wip\">(WIP: "+str(totalForTopic-incomplete)
-                                                +" of "+str(totalForTopic)+")</span>")
-                else :
-                    answers.coverage_pct = "-"
-                # print(f"Topic {topic.slug} has {incomplete} unanswered questions out of {totalForTopic} used.")
-            else:
-                agg = filtered_answers.filter(not_applicable=False).aggregate_score()
-                coverage = agg["average"]
-                coverage = min(1.0, max(0.0, coverage))
-                if coverage != None:
-                    covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
-                    answers.coverage_pct = mark_safe(f"{covstring}")
-                    answers.coverage_color = compute_answer_color(coverage)
-                    # Do not include domain coverage in the aggregated Facing coverage
-                    if(topic.slug==CapabilitiesTopic.domain_coverage_slug) :
-                        # Ignore the domain coverage topic in each facing, when present
-                        nTopicsRequired -= 1
-                    else:
-                        nTopicsComplete += 1
-                        aggSum += coverage
-                else:
-                    answers.coverage_pct = "-"
+
+                if filtered_answers.filter_unanswered().exists():
                     answers.coverage_color = None
-                # print(f"Topic {topic.slug} has no unanswered questions; coverage is {coverage} for questions used.")
-        if nTopicsComplete >= nTopicsRequired and nTopicsRequired > 0:
-            # For the Facing coverage, get the aggregate average of all questions in the Facing that are not marked N/A
-            facingAnswers = assessment.answers.filter(question__topic__facing=facing).filter(not_applicable=False)
-            facingCov = facingAnswers.aggregate_score()["average"]
+                    facing_coverage_sum = None
+                    incomplete = filtered_answers.filter_unanswered().count()
+                    totalForTopic = filtered_answers.count()
+                    if incomplete != totalForTopic:
+                        answers.coverage_pct = mark_safe("<span class=\"wip\">(WIP: "+str(totalForTopic-incomplete)
+                                                    +" of "+str(totalForTopic)+")</span>")
+                    else :
+                        answers.coverage_pct = "-"
+                    # print(f"Topic {topic.slug} has {incomplete} unanswered questions out of {totalForTopic} used.")
+                else: # All included answers for this topic are answered
+                    if topic.slug!=CapabilitiesTopic.domain_coverage_slug and filtered_answers.count() != answers.count():
+                        # Topic does not include all the questions and is not a domain coverage topic
+                        topic.is_partial = True     # Any missing  means a partial topic
+                        facing.is_partial = True    # Any partial topic except domain means a partial facing
+                    agg = filtered_answers.filter(not_applicable=False).aggregate_score()
+                    coverage = agg["average"]
+                    coverage = min(1.0, max(0.0, coverage))
+                    if coverage == None:    # Safety check - should not obtain
+                        answers.coverage_pct = "-"
+                        answers.coverage_color = None
+                    else:
+                        covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
+                        answers.coverage_pct = mark_safe(f"{covstring}")
+                        answers.coverage_color = compute_answer_color(coverage)
+                        if facing_coverage_sum != None:
+                            facing_coverage_sum += coverage
+                            topic_sum_count += 1
+                    # print(f"Topic {topic.slug} has no unanswered questions; coverage is {coverage} for questions used.")
+        # Close for topic, answers
+        if facing_coverage_sum != None and facing_coverage_sum > 0: # we have coverage on all required/included topics
+            facingCov = facing_coverage_sum/topic_sum_count
             covstring = format(facingCov, ".1%" if facingCov<1.0 else ".0%")
             facing.coverage_pct = mark_safe(f"{covstring}")
             facing.coverage_color = compute_answer_color(facingCov)
-        #else:
-            #print(f"Facing only has {nTopicsComplete} topics complete out of {nTopicsRequired} required.")
-#        elif nTopicsComplete == 0:
-#            facing.coverage_pct = "-"
-#        else:
-#            facing.coverage_pct = mark_safe("<span class=\"wip\">WIP: "+str(nTopicsComplete)
-#                                                +" of "+str(nTopics)+"</span>")
-            
+    # Close for facing, topics
 
+    # Aggregate the domain coverage answers across all the facings. 
+    # Note that this is orthogonal to the assessment type (it is either there or not)
+    # They can choose to include it for an Essential or CYIG assessment, but it is still handled separately like this. 
     domains = {}
     for d in CapabilitiesQuestion.domain_lookup.keys():
         domaincovs = assessment.answers.filter(question__slug=d, not_applicable=False)

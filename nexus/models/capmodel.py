@@ -296,17 +296,21 @@ class CapabilitiesAssessment(AssessmentBase):
 
     @property
     def state(self) -> "CapabilitiesAssessment.State":
-        # Filter the domain coverage questions when calculating whether assessment is complete
-        answers = self.filtered_answers()
-        total = answers.count()
-        answered = answers.filter(score_deployment__isnull=False, score_collaboration__isnull=False, score_supportlevel__isnull=False).count()
-
-        if answered == 0:
+        # If they created a CYOJ assessment and haven't included anything (yet), force the state to not started
+        if self.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ and not self.answers.filter(is_included=True).exists():
             return CapabilitiesAssessment.State.NOT_STARTED
-        elif answered < total:
-            return CapabilitiesAssessment.State.IN_PROGRESS
-        else:
-            return CapabilitiesAssessment.State.COMPLETE
+        else: 
+            # Filter the domain coverage questions when calculating whether assessment is complete
+            answers = self.filtered_answers()
+            total = answers.count()
+            answered = answers.filter(score_deployment__isnull=False, score_collaboration__isnull=False, score_supportlevel__isnull=False).count()
+
+            if answered == 0:
+                return CapabilitiesAssessment.State.NOT_STARTED
+            elif answered < total:
+                return CapabilitiesAssessment.State.IN_PROGRESS
+            else:
+                return CapabilitiesAssessment.State.COMPLETE
 
 
 
@@ -384,9 +388,15 @@ class CapabilitiesAnswer(models.Model):
         def filter_included(self, for_assessment):
             if for_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
                 return self.filter(question__is_essential=True) | self.filter(is_included=True)
-            elif for_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ and \
-                for_assessment.copied_from == None:
-                return self.filter(is_included=True)
+            elif for_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+                if for_assessment.copied_from == None:
+                    return self.filter(is_included=True)
+                else:  
+                    # include all answered questions as well as included ones. Basically, if they are working from an Essentials
+                    # or earlier CYOJ assessment, we ignore all the unanswered questions in the source assessment, and just consider
+                    # the ones they answered, and any they included in this one. May yield some odd cases if they clone a barely started
+                    # assessment.
+                    return self.filter(is_included=True) | self.filter(score_deployment__isnull=False, score_collaboration__isnull=False, score_supportlevel__isnull=False)
             else:
                 return self     # No filtering for full (or copied) assessments. 
 
