@@ -458,7 +458,7 @@ class CapabilitiesAnswer(models.Model):
                 for topic in facing.capmodel_topics.all():
                     answers = self.filter(question__topic=topic)
                     if answers:
-                        results[facing][topic] = answers
+                        results[facing][topic] = answers.order_by("question_id")
 
             return results
 

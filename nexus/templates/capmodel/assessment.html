@@ -356,7 +356,6 @@
     }
 
     function resizeFacingSection(facing) {
-        facing+SHOW_HIDE_SUFFIX
         var facingEl = document.getElementById(facing+SHOW_HIDE_SUFFIX);
         var facingTopics = facingEl.parentNode.nextElementSibling.nextElementSibling;
         if (facingTopics.style.maxHeight) { // If showing Topics, resize 
@@ -408,27 +407,27 @@
         d.setTime(d.getTime() + COOKIE_LIFE);
         let expires = "expires="+ d.toUTCString();
         document.cookie = cname + "=" + shown + ";" + expires + ";path=/";
-        //console.log("Set cookie for section: "+section+" to: "+shown);
     }
 
     function setToggleStateCookie(section, shown) {
         setCookie(section+SHOW_HIDE_SUFFIX, shown);
+        //console.log("Set cookie for section: "+section+" to: "+shown);
     }
 
     function setExtraTopicsStateCookie(shown) {
         setCookie(SHOW_HIDE_EXTRAS, shown);
-        console.log("Set Show/Hide Extras from cookie: "+show);
+        //console.log("Set Show/Hide Extras cookie: "+show);
     }
 
     function initExtraTopicsFromCookie() {
         // Get the cookie and then call the method
         var shown = getStateCookie(SHOW_HIDE_EXTRAS)
-        console.log("Show Extras cookie val: "+shown);
+        //console.log("Show Extras cookie val: "+shown);
         showExtras(shown==SHOWN);
         cb = document.getElementById("showHideExtrasCB");
         if( cb ) {
             cb.checked = shown!=SHOWN;
-            console.log("Init Hide Extras CB from cookie: "+shown!=SHOWN);
+            //console.log("Init Hide Extras CB from cookie: "+shown!=SHOWN);
         }
     }
 
