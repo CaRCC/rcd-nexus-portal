@@ -168,21 +168,26 @@ def assessment(request, profile_id):
                         # Topic does not include all the questions and is not a domain coverage topic
                         topic.is_partial = True     # Any missing  means a partial topic
                         facing.is_partial = True    # Any partial topic except domain means a partial facing
-                    agg = filtered_answers.filter(not_applicable=False).aggregate_score()
-                    coverage = agg["average"]
-                    coverage = min(1.0, max(0.0, coverage))
-                    if coverage == None:    # Safety check - should not obtain
-                        answers.coverage_pct = "-"
+                    filtered_topic_answers = filtered_answers.filter(not_applicable=False)
+                    if not filtered_topic_answers.exists(): # Can happen if all questions are marked N/A
+                        answers.coverage_pct = "N/A"
                         answers.coverage_color = None
-                    else:
-                        covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
-                        answers.coverage_pct = mark_safe(f"{covstring}")
-                        answers.coverage_color = compute_answer_color(coverage)
-                        # Do not have domain coverage contribute to facing coverage, even if they included it explicitly
-                        if facing_coverage_sum != None and topic.slug!=CapabilitiesTopic.domain_coverage_slug:
-                            facing_coverage_sum += coverage
-                            topic_sum_count += 1
-                    # print(f"Topic {topic.slug} has no unanswered questions; coverage is {coverage} for questions used.")
+                    else: 
+                        agg = filtered_topic_answers.aggregate_score()
+                        coverage = agg["average"]
+                        coverage = min(1.0, max(0.0, coverage))
+                        if coverage == None:    # Safety check - should not obtain
+                            answers.coverage_pct = "-"
+                            answers.coverage_color = None
+                        else:
+                            covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
+                            answers.coverage_pct = mark_safe(f"{covstring}")
+                            answers.coverage_color = compute_answer_color(coverage)
+                            # Do not have domain coverage contribute to facing coverage, even if they included it explicitly
+                            if facing_coverage_sum != None and topic.slug!=CapabilitiesTopic.domain_coverage_slug:
+                                facing_coverage_sum += coverage
+                                topic_sum_count += 1
+                        # print(f"Topic {topic.slug} has no unanswered questions; coverage is {coverage} for questions used.")
         # Close for topic, answers
         if facing_coverage_sum != None and facing_coverage_sum > 0: # we have coverage on all required/included topics
             facingCov = facing_coverage_sum/topic_sum_count
