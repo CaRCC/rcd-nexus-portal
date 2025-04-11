@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rcd-nexus-portal"
-version = "2.1.5b"
+version = "2.1.5c"
 description = ""
 authors = ["Paul Fischer <p.fischer@utah.edu>", "Patrick Schmitz <patrick@sempercogito.com>"]
 readme = "README.md"
@@ -13,7 +13,7 @@ redis = "^4.6.0"
 mozilla-django-oidc = "^3.0.0"
 
 # production
-gunicorn = { version = "^20.1.0", optional = true }
+gunicorn = { version = "^23.0.0", optional = true }
 psycopg = { extras = ["c"], version = "^3.1.8", optional = true }
 hiredis = { version = "^2.2.2", optional = true }
 pandas = "^2.2.1"
