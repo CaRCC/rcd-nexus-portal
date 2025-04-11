@@ -88,23 +88,30 @@ def assessment(request, profile_id):
                 else :
                     answers.coverage_pct = "-"
             else:
-                agg = answers.filter(not_applicable=False).aggregate_score()
-                coverage = agg["average"]
-                coverage = min(1.0, max(0.0, coverage))
-                if coverage != None:
-                    covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
-                    answers.coverage_pct = mark_safe(f"{covstring}")
-                    answers.coverage_color = compute_answer_color(coverage)
-                    # Do not include domain coverage in the aggregated Facing coverage
-                    if(topic.slug==CapabilitiesTopic.domain_coverage_slug) :
-                        # Ignore the domain coverage topic in each facing, when present
-                        nTopicsRequired -= 1
-                    else:
-                        nTopicsComplete += 1
-                        aggSum += coverage
-                else:
-                    answers.coverage_pct = "-"
+                filtered_topic_answers = answers.filter(not_applicable=False)
+                if not filtered_topic_answers.exists(): # Can happen if all questions are marked N/A
+                    answers.coverage_pct = "N/A"
                     answers.coverage_color = None
+                    # Ignore this topic for the facing
+                    nTopicsRequired -= 1
+                else: 
+                    agg = filtered_topic_answers.aggregate_score()
+                    coverage = agg["average"]
+                    coverage = min(1.0, max(0.0, coverage))
+                    if coverage != None:
+                        covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
+                        answers.coverage_pct = mark_safe(f"{covstring}")
+                        answers.coverage_color = compute_answer_color(coverage)
+                        # Do not include domain coverage in the aggregated Facing coverage
+                        if(topic.slug==CapabilitiesTopic.domain_coverage_slug) :
+                            # Ignore the domain coverage topic in each facing, when present
+                            nTopicsRequired -= 1
+                        else:
+                            nTopicsComplete += 1
+                            aggSum += coverage
+                    else:
+                        answers.coverage_pct = "-"
+                        answers.coverage_color = None
         if nTopicsComplete == nTopicsRequired:
             # For the Facing coverage, get the aggregate average of all questions in the Facing that are not marked N/A
             facingAnswers = assessment.answers.filter(question__topic__facing=facing).filter(not_applicable=False)
