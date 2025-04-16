@@ -248,7 +248,7 @@ def rcd_profile_import(request):
             request, request.POST.get("imported-profile"), "view"
         )
         new_profile = RCDProfile.objects.copy(profile, request.user)
-        return redirect("rcdprofile:detail", new_profile.pk)
+        return redirect("rcdprofile:edit", new_profile.pk)
 
     return redirect("rcdprofile:create")
 

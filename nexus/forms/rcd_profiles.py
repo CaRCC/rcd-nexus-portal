@@ -14,6 +14,7 @@ class RCDProfileForm(forms.ModelForm):
             "created_by",
             "users",
             "archived",
+            "survey",
         ]
         widgets = {
             "mission":forms.RadioSelect,
