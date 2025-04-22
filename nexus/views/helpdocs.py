@@ -15,6 +15,12 @@ def help_docs_home(request):
     }
     return render(request, "helpdocs/main.html", context)
 
+def getNUsers():
+    profiles = demogcharts.getAllProfiles()
+    institutions = profiles.values_list('institution__name')
+    nInsts = institutions.count()
+    return nInsts
+
 def getNContribs():
     profiles = demogcharts.getAllProfiles(pop='contrib').filter(institution__list_as_contributor=True)
     institutions = profiles.values_list('institution__name')
@@ -26,6 +32,7 @@ def help_faq(request):
     nInsts, nAssessments = getNContribs()
 
     context = {
+        "nUsers":getNUsers(),
         "nInsts":nInsts,
         "nAssessments":nAssessments,
     }
@@ -56,6 +63,7 @@ def help_dv_faq(request):
     nInsts, nAssessments = getNContribs()
 
     context = {
+        "nUsers":getNUsers(),
         "nInsts":nInsts,
         "nAssessments":nAssessments,
     }

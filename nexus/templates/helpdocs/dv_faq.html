@@ -153,8 +153,11 @@
              of our <a href="{% url 'dataviz:vizmain' %}">Data Viewer</a>.
         </p>
         <p class="content">
-            A total of {{ nInsts }} institutions have completed {{ nAssessments }} assessments (many have repeated their assessment in successive
+            A total of {{ nInsts }} <em>Contributor</em> institutions have completed {{ nAssessments }} assessments (many have repeated their assessment in successive
             years). See also the <a href="{% url 'dataviz:demographics_contriblist' %}">list of contributors</a>.
+        </p>
+        <p class="content">
+            There are {{nUsers}} <em>User</em> institutions that have created an assessment instance (or requested a copy in v1) of the Capabilities Model assessment tool.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
