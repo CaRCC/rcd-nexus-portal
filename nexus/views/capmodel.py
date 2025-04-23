@@ -748,20 +748,26 @@ def printable_report(request, profile_id):
                         # Topic does not include all the questions and is not a domain coverage topic
                         topic.is_partial = True     # Any missing  means a partial topic
                         facing.is_partial = True    # Any partial topic except domain means a partial facing
-                    agg = filtered_answers.filter(not_applicable=False).aggregate_score()
-                    coverage = agg["average"]
-                    coverage = min(1.0, max(0.0, coverage))
-                    if coverage == None:    # Safety check - should not obtain
-                        topic.coverage_pct = "-"
+
+                    filtered_topic_answers = answers.filter(not_applicable=False)
+                    if not filtered_topic_answers.exists(): # Can happen if all questions are marked N/A
+                        topic.coverage_pct = "N/A"
                         topic.coverage_color = None
-                    else:
-                        covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
-                        topic.coverage_pct = mark_safe(f"{covstring}")
-                        topic.coverage_color = compute_answer_color(coverage)
-                        # Do not have domain coverage contribute to facing coverage, even if they included it explicitly
-                        if facing_coverage_sum != None and topic.slug!=CapabilitiesTopic.domain_coverage_slug:
-                            facing_coverage_sum += coverage
-                            topic_sum_count += 1
+                    else: 
+                        agg = filtered_topic_answers.aggregate_score()
+                        coverage = agg["average"]
+                        coverage = min(1.0, max(0.0, coverage))
+                        if coverage == None:    # Safety check - should not obtain
+                            topic.coverage_pct = "-"
+                            topic.coverage_color = None
+                        else:
+                            covstring = format(coverage, ".1%" if coverage<1.0 else ".0%")
+                            topic.coverage_pct = mark_safe(f"{covstring}")
+                            topic.coverage_color = compute_answer_color(coverage)
+                            # Do not have domain coverage contribute to facing coverage, even if they included it explicitly
+                            if facing_coverage_sum != None and topic.slug!=CapabilitiesTopic.domain_coverage_slug:
+                                facing_coverage_sum += coverage
+                                topic_sum_count += 1
             #answers = answers.order_by("question_id")
             for answer in answers:
                 answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
