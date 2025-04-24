@@ -453,26 +453,34 @@ def getInstAverages(benchmarkAssessment, selFacing):
         answersByFacing = allAnswers.group_by_facing()
         # Get the average of all questions in each facing.
         for facing in Facing.objects.all():
-            answers = answersByFacing[facing]
-            agg = answers.aggregate_score()
-            coverage = agg["average"]
-            coverage = min(1.0, max(0.0, coverage))
-            # print(f'getInstAvgs(sum) Facing {facing} avg coverage: {coverage}')
-            values.append(coverage*100)   # Convert to percent, since that's what we graph
+            # For the sparse facings, we need to filter to just the questions that were answered
+            if facing in answersByFacing:
+                answers = answersByFacing[facing]
+                agg = answers.aggregate_score()
+                coverage = agg["average"]
+                coverage = min(1.0, max(0.0, coverage))
+                # print(f'getInstAvgs(sum) Facing {facing} avg coverage: {coverage}')
+                values.append(coverage*100)   # Convert to percent, since that's what we graph
+            else: # No data for this facing
+                values.append(None)
     else:  
         facing_slug = facing_sel_mapping.get(selFacing)
         facing = Facing.objects.get(slug=facing_slug) 
 
         answersByFacingTopic = allAnswers.group_by_facing_topic()
-        answersForFacingTopics = answersByFacingTopic[facing]
+        answersForFacingTopic = answersByFacingTopic[facing]
         # Get the average of all questions in each topic in the specified facing.
-        for topic in answersForFacingTopics:
-            answers = answersForFacingTopics[topic]
-            agg = answers.aggregate_score()
-            coverage = agg["average"]
-            coverage = min(1.0, max(0.0, coverage))
-            # print(f'getInstAvgs(facing:{facing_slug}) Topic {topic} avg coverage: {coverage}')
-            values.append(coverage*100)   # Convert to percent, since that's what we graph
+        # for topic in answersForFacingTopic:
+        for topic in facing.capmodel_topics.all(): # review all topics in the facing, not just those with answers
+            if topic in answersForFacingTopic:
+                answers = answersForFacingTopic[topic]
+                agg = answers.aggregate_score()
+                coverage = agg["average"]
+                coverage = min(1.0, max(0.0, coverage))
+                # print(f'getInstAvgs(facing:{facing_slug}) Topic {topic} avg coverage: {coverage}')
+                values.append(coverage*100)   # Convert to percent, since that's what we graph
+            else: # No data for this topic
+                values.append(None)
     return values
 
 @never_cache
