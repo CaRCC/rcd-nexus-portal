@@ -46,6 +46,10 @@
     text-align: center;
     margin-bottom: 0;
   }
+
+  main a.button.center {
+    max-width: 40%;
+  }
 </style>
 
 <script>
@@ -106,9 +110,9 @@
 </script>
 
 {% endblock %}
-{% block title %}RCD-Nexus Profile Home: {{profile}}{% endblock %}
+{% block title %}RCD-Nexus Institution Profile for: {{profile}}{% endblock %}
 {% block main %}
-<h1>Profile: {{profile}}</h1>
+<h1>Institution Profile for: {{profile}}</h1>
 <div class="mainContainer">
     <section>
       <h2>Capabilities Model Assessment</h2>
@@ -187,28 +191,28 @@
 
   {% if can_manage %}
     <section>
-      <h2>Review/Edit Institutional Profile</h2>
-      <p>Click the button below to review and/or edit your institutional profile attributes. </p>
-      <a class="button center" href="{% url 'rcdprofile:edit' profile.pk %}">Review/Edit</a>
+      <h2>Review/Edit Institution Profile</h2>
+      <p>Click the button below to review and/or edit your institution profile.</p>
+      <a class="button center" href="{% url 'rcdprofile:edit' profile.pk %}">Review/Edit Institution Profile</a>
     </section>
   {% else %}
     <section>
-      <h2>View Institutional Profile</h2>
-      <p>Click the button below to review your institutional profile attributes. </p>
-      <a class="button center" href="{% url 'rcdprofile:view' profile.pk %}">View Profile</a>
+      <h2>View Institution Profile</h2>
+      <p>Click the button below to review your institution profile.</p>
+      <a class="button center" href="{% url 'rcdprofile:view' profile.pk %}">View Institution Profile</a>
     </section>
   {% endif %}
 
   {% if can_manage %}
       <section>
         {% if not profile.archived %}
-        <h2>Delete Institutional Profile</h2>
-        <p>Click the button below to delete this profile. It can be restored if necessary.</p>
-        <a class="button center" href="{% url 'rcdprofile:archive' profile.pk %}">Delete Profile</a>
+        <h2>Delete Institution Profile</h2>
+        <p>Click the button below to delete this institution profile. It can be restored if necessary.</p>
+        <a class="button center" href="{% url 'rcdprofile:archive' profile.pk %}">Delete Institution Profile</a>
         {% else %}
-        <h2>Restore Institutional Profile</h2>
-        <p>This profile is currently archived. Click below to restore it.</p>
-        <a class="button center" href="{% url 'rcdprofile:recovery' profile.pk %}">Restore Profile</a>
+        <h2>Restore Institution Profile</h2>
+        <p>This institution profile is currently archived. Click below to restore it.</p>
+        <a class="button center" href="{% url 'rcdprofile:recovery' profile.pk %}">Restore Institution Profile</a>
         {% endif %}
       </section>
   {% endif %}

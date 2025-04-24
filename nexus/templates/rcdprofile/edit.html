@@ -10,12 +10,12 @@
         color: black;
         font-size: 1.1em;
     }
-    span#IPEDS_Edit_link {
-        float: right;
-        margin: 0px;
-        padding: 3px 6px 3px 0px;
-        font-size: smaller;
+    p#IPEDS_Edit_link {
+        text-align: center;
+        font-size: 1em;
+        font-weight: bold;
         cursor: pointer;
+        margin:5px 0 0 0;
     }
     form section.fields div.field-head {
         height: 100%;
@@ -101,17 +101,17 @@
 
 {% endblock %}
 
-{% block title %}RCD-Nexus Edit Profile: {{form.instance}}{% endblock %}
+{% block title %}RCD-Nexus Edit Institution Profile: {{form.instance}}{% endblock %}
 {% block main %}
-<h2>{% if can_manage %}Edit{% else %}View{% endif %} Institutional Profile for: <span class="Instname">{{form.instance}}</span></h2>
+<h2>{% if can_manage %}Review/Edit{% else %}View{% endif %} Institution Profile for: <span class="Instname">{{form.instance}}</span></h2>
     <form id="EditForm" method="post" onsubmit="setFormSubmitting()">
         <section class="wrapper">
             {% csrf_token %}
             {% if can_manage %}
-                <p class="intro">Please tell us a little about your institution. <br>
-                    This will provide valuable context in the Community datasets.</p>
+                <p class="intro">Please provide the following information about your institution.<br> 
+                    This provides valuable context in the Community datasets.</p>
             {% else %}
-                <p class="intro">You can view but do not have rights to change this information about your institution.</p>
+                <p class="intro">You can view but do not have rights to change the information about your institution.</p>
             {% endif %}
                 {{ form }}
             {% if can_manage %}
@@ -125,11 +125,10 @@
         <div class="IPEDS">
             <section class="fields">
                 <div class="IPEDShdr">
-                    <h3>Institutional data from Carnegie/IPEDS/Dept of Education (2022)
-                        {%if can_edit_inst %}
-                            <span id="IPEDS_Edit_link"><a href="{% url 'institutions:edit' form.instance.institution.pk %}">Edit Info</a></span>
-                        {% endif %}
-                    </h3>
+                    <h3>Institution metadata from Carnegie/IPEDS/Dept of Education (2022)</h3>
+                    {%if can_edit_inst %}
+                        <p id="IPEDS_Edit_link"><a href="{% url 'institutions:edit' form.instance.institution.pk %}">Edit Institution metadata</a></p>
+                    {% endif %}
                 </div>
                 <div class="fields-head even-field">
                     <label>{% get_verbose_name form.instance.institution 'carnegie_classification' %}:</label>

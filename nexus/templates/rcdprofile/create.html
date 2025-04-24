@@ -83,23 +83,29 @@
     div#id_mission label[for="id_mission_0"] {
         display: none;
     }
+    p.note {
+        font-size: .9em;
+        font-style: italic;
+        text-align: center;
+        margin: 0 0 4px 0;
+    }
 
 </style>
 {% endblock %}
 
 
-{% block title %}RCD-Nexus New Profile{% endblock %}
+{% block title %}RCD-Nexus New Institution Profile{% endblock %}
 
 {% block main %}
-<h2>New RCD Nexus Profile for: <span class="Instname">{{institution}}</span></h2>
+<h2>New RCD Nexus Institution Profile for: <span class="Instname">{{institution}}</span></h2>
 {% if importable_profiles.exists %}
-<h3 class="intro">You can either import information from an existing profile:</h3>
+<h3 class="intro">You can either copy the information from an existing institution profile:</h3>
 <form action="{% url 'rcdprofile:import' %}" method="post">
     <section class="wrapper">
         <section class="fields">
             {% csrf_token %}
             <div class="field-head">
-                <label for="imported-profile" style="right: 0.5em;">Import from:</label>
+                <label for="imported-profile" style="right: 0.5em;">Copy from:</label>
             </div>
             <div class="field-body">
                 <div>
@@ -113,18 +119,19 @@
             </div>
         </section>
         <section class="actions">
-            <button type="submit">Import</button>
+            <button type="submit">Copy</button>
         </section>
+        <p class="note">Note that this only copies the institution information, and not any assessment data.</p>
     </section>
 </form>
 
-<h3 class="intro">...or create a new profile for {{institution}}</h3>
+<h3 class="intro">...or create a new institution profile for {{institution}} and enter the information:</h3>
 {% endif %}
 <form method="post">
         {% csrf_token %}
     <section class="wrapper">
-        <p class="intro">Please tell us a little about your institution.<br> 
-            This will provide valuable context in the Community datasets.</p>
+        <p class="intro">Please provide the following information about your institution.<br> 
+            This provides valuable context in the Community datasets.</p>
             {{ form }}
         <section class="actions">
             <button type="submit">Create</button>
@@ -135,7 +142,7 @@
         <div class="IPEDS">
         <section class="fields">
             <div class="IPEDShdr">
-                <h3>Institutional data from Carnegie/IPEDS/Dept of Education (2022)</h3>
+                <h3>Institution data from Carnegie/IPEDS/Dept of Education (2022)</h3>
             </div>
             <div class="fields-head even-field">
                 <label>{% get_verbose_name institution 'carnegie_classification' %}:</label>
