@@ -423,12 +423,15 @@
             <img class="screenshot" src="{% static 'images/DVUI_Benchmark.png' %}" 
             alt="Screen-shot excerpt showing a checkbox to enable benchmarking."/><br><br>
             Note: This option will only be shown if you are logged in and your institution has at least one completed assessment.
+            Also, the 2.5 version of the portal does not fully support benchmarking of Essential and Chart-Your-Own-Journey 
+            assessments; the next release will add this support. 
         </p>
     </p>
     
     <p class="content"><b>Share a visualization</b>: If you want to share a visualization with 
         your colleagues, just copy the address bar contents and share the full URL via email, etc. 
-        <em><b>Note</b>: for benchmarking visualizations, users will have to authenticate to ensure they have access rights to the data</em>.</p>
+        <em><b>Note</b>: for benchmarking visualizations, users with whom you share a link will have
+             to login to the portal to ensure they have rights to view the benchmarking data</em>.</p>
     <p class="content"><b>Download your visualization as an image</b>: If you want to use a particular 
         visualization in a report or presentation, you can download an 
         image of the view using the tools just above the upper-right hand corner of the graph, as in the 
@@ -507,7 +510,11 @@
     <p class="content">A simple checkbox allows the user to overlay an indicator of their institution's coverage levels
         on any of the Capabilities Data graphs to compare their results to the community (or a subset thereof). 
         To use this feature, users must be logged in and affiliated to an institution that has completed an assessment
-        using the Capabilities Model, submitted it, and had it approved by the CaRCC data stewards. See the
+        using the Capabilities Model, submitted it, and had it approved by the CaRCC data stewards. 
+        <br><em>Note: The 2.5 version of the portal does not fully support benchmarking of Essential and Chart-Your-Own-Journey 
+        assessments (the community data is not correctly filtered to only compare data for the included questions in
+        an Essential or Chart-Your-Own-Journey assessment); the next release will add this support.</em>
+        <br>See the
         <a href="{% url 'helpdocs:dv_quickstart' %}">Quick Start Guide</a> for a 
         <a href="{% url 'helpdocs:dv_quickstart' %}#StepByStep">Step-by-Step example of benchmarking for your Institution</a>.
     </p>
@@ -601,15 +608,19 @@
     </p>
     <p class="content"><b>Sharing a visualization</b>: Once you have defined a view of interest that you would like to share, 
         you can just copy/paste the browser URL to bookmark a view and/or to share with colleagues. 
-        <em>Note: if the view includes benchmarking data, users will have to login to the portal to see the benchmarking data</em>.</p>
+        <em>Note: if the view includes benchmarking data, users with whom you share a view will have to
+             login to the portal to ensure they have rights to view the benchmarking data</em>.</p>
 
     <h3>Benchmarking institutional coverage:</h3>
     <p class="content">In addition to the display of community data, a user can choose to overlay values from an approved 
         assessment for their institution to benchmark their capabilities coverage relative to a filtered set of peers. 
         A user can benchmark at the summary (Facings) level, or drill down to benchmark on the topics in each Facing. 
         (Support for benchmarking at the individual question level will be in a future release.) 
-        Note that in order to use the benchmarking functionality, a user must be logged in and must be 
+        In order to use the benchmarking functionality, a user must be logged in and must be 
         affiliated to an institution that has a completed and approved assessment using the Capabilities Model.
+        <br><em>Note: The 2.5 version of the portal does not fully support benchmarking of Essential and Chart-Your-Own-Journey 
+            assessments (the community data is not correctly filtered to only compare data for the included questions in
+            an Essential or Chart-Your-Own-Journey assessment); the next release will add this support.</em>
     </p>
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
           
