@@ -749,7 +749,7 @@ def printable_report(request, profile_id):
                         topic.is_partial = True     # Any missing  means a partial topic
                         facing.is_partial = True    # Any partial topic except domain means a partial facing
 
-                    filtered_topic_answers = answers.filter(not_applicable=False)
+                    filtered_topic_answers = filtered_answers.filter(not_applicable=False)
                     if not filtered_topic_answers.exists(): # Can happen if all questions are marked N/A
                         topic.coverage_pct = "N/A"
                         topic.coverage_color = None
