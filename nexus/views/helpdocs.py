@@ -3,9 +3,10 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import HttpRequest
 from django.shortcuts import redirect, render
+from django.utils.safestring import mark_safe
 from nexus.utils import demogcharts
 from nexus.models.rcd_profiles import RCDProfile
-from nexus.models import CapabilitiesAssessment
+from nexus.models import CapabilitiesAssessment, CapabilitiesTopic, CapabilitiesQuestion
 import importlib.metadata
  
 def help_docs_home(request):
@@ -71,7 +72,36 @@ def help_dv_faq(request):
     return render(request, "helpdocs/dv_faq.html", context)
 
 def printable_questions(request):
-    context = {}
+    session_language = "en"  # TODO get session language
+
+    categories = CapabilitiesQuestion.objects.filter_valid().group_by_facing_topic()
+    nFacings = len(categories.keys())
+    for facing, topics in categories.items():
+        facing.content = facing.contents.get(language=session_language)
+        match facing.slug:
+            case "researcher":
+                facing.anchorid = "rftopics"
+            case "data":
+                facing.anchorid = "dftopics"
+            case "software":
+                facing.anchorid = "swftopics"
+            case "systems":
+                facing.anchorid = "syftopics"
+            case "strategy":
+                facing.anchorid = "spftopics"
+        for topic, questions in topics.items():
+            topic.content = topic.contents.get(language=session_language)
+            topic.is_essential = False
+            if(topic.slug==CapabilitiesTopic.domain_coverage_slug):
+                topic.isdomain = True
+            for question in questions:
+                question.html_display = mark_safe(f"{question.contents.get(language=session_language).text}")
+                if question.is_essential:
+                    topic.is_essential = True
+
+    context = {
+        "categories": categories,
+    }
 
     return render(request, "helpdocs/printable_questions.html", context)
 

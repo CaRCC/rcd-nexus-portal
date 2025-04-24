@@ -104,6 +104,20 @@ class CapabilitiesQuestion(models.Model):
 
         def filter_essential(self):
             return self.filter(is_essential=True)
+        
+        def group_by_facing_topic(self):
+            results = dict()
+            # TODO can filter by facing and topic with arguments
+
+            for facing in Facing.objects.all():
+                results[facing] = dict()
+                for topic in facing.capmodel_topics.all():
+                    questions = self.filter(topic=topic)
+                    if questions:
+                        results[facing][topic] = questions.order_by("index")
+
+            return results
+
 
     objects = QuerySet.as_manager()
 
