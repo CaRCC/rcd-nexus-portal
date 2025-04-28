@@ -2,6 +2,18 @@
 
 {% block head %}
 <style>
+    section.status {
+        margin: 0px 10px;
+        padding-top: 0px;
+        align-self: center;
+        background-color: transparent;
+        box-shadow: none;
+    }
+
+    section.status p {
+        margin: 0.1em 1em;
+        text-align: center;
+    }
 
     div.report {
         align-self: center;
@@ -30,17 +42,46 @@
         border: solid grey thin;
     }
 
+    h3.non_included, div.reporttopic.non_included h4 {
+        color: var(--primary);
+        font-style: italic;
+    }
+
+    div.report p.topicheader.ifhidden {
+        font-weight: bold;
+        color: var(--primary);
+        font-style: italic;
+        display: none;
+    }
+
+    tr.headline td {
+        font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
+        padding: 0px 0px 0px 5px;
+    }
+    tr.headline.extras, tr.question.extras td {
+        font-style: italic;
+        color: var(--primary);
+    }
+
+    tr.headline.extras:not(:first-child) td, tr.headline.included:not(:first-child) td {
+        border-top: 1px solid var(--primary);
+        padding: 4px 0px 4px 5px;
+    }
     td.prio {
         font-weight: bold;
         text-align: right;
     }
 
     th, td {
-        font-size: 0.8em;
+        font-size: .9em;
         padding: 4px 6px 4px 6px;
         border-bottom: solid grey thin;
     }
     td.question.NA {
+        font-style: italic;
+        text-decoration: line-through;
         color:grey;
     }
     td.prio {
@@ -68,6 +109,100 @@
         }
     }
 </style>
+<script>
+    var SHOWN ="1";
+    var HIDDEN = "0";
+    var SHOW_HIDE_EXTRAS = "showEX";
+    var SECT_SUFFIX = "_sect";
+    var COOKIE_LIFE = 7*24*60*60*1000;  // Save state for a week
+
+    function getStateCookie(name) {
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i <ca.length; i++) {
+            let c = ca[i];
+            let cpair = c.split('=');
+            if (cpair[0].trim() == name) {
+                var shown = cpair[1].trim();
+                //console.log("Cookie found for section:"+section+" value: "+shown)
+                return shown != HIDDEN;
+            }
+        }
+        //console.log("No cookie found for showing section: "+section);
+        return false;   // If can't find the cookie, don't show the section
+    }
+
+    function setCookie(cname, shown) {
+        const d = new Date();
+        d.setTime(d.getTime() + COOKIE_LIFE);
+        let expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + shown + ";" + expires + ";path=/";
+        //console.log("Set cookie for section: "+section+" to: "+shown);
+    }
+
+    function onShowExtrasChange(cbEl) {
+        //alert("onShowExtrasChange checked: "+cbEl.checked?"Yes":"No");
+        show = !cbEl.checked;
+        showExtras(show);
+        setExtraTopicsStateCookie(show?SHOWN:HIDDEN);
+    }
+
+    /*
+    function resizeFacingSection(facing) {
+        var facingEl = document.getElementById(facing+SECT_SUFFIX);
+        //var facingTopics = facingEl.parentNode.nextElementSibling.nextElementSibling;
+        if (facingEl.style.maxHeight) { // If showing Topics, resize 
+            facingEl.style.maxHeight = facingEl.scrollHeight + "px";
+        }
+    }
+    */
+
+    function showExtras(show) {
+        const trList = document.querySelectorAll("tr.extras");
+        //alert("showExtras found: "+nodeList.length+" p.extra nodes");
+        for (let i = 0; i < trList.length; i++) {
+            trList[i].style.display = show?"table-row":"none";
+        }
+        const topicList = document.querySelectorAll("div.reporttopic.non_included");
+        //alert("showExtras found: "+nodeList.length+" p.extra nodes");
+        for (let i = 0; i < topicList.length; i++) {
+            topicList[i].style.display = show?"block":"none";
+        }
+    
+        /*
+        if(show) {
+            resizeFacingSection("researcher");
+            resizeFacingSection("data");
+            resizeFacingSection("software");
+            resizeFacingSection("systems");
+            resizeFacingSection("strategy");
+            resizeFacingSection("domaincov");
+        }
+        */    
+        ifHiddenList = document.querySelectorAll("p.ifhidden");
+        for (let i = 0; i < ifHiddenList.length; i++) {
+            ifHiddenList[i].style.display = show?"none":"block";
+        }
+    }
+    function setExtraTopicsStateCookie(shown) {
+        setCookie(SHOW_HIDE_EXTRAS, shown);
+        //console.log("Set Show/Hide Extras cookie: "+show);
+    }
+
+    function initExtraTopicsFromCookie() {
+        // Get the cookie and then call the method
+        var shown = getStateCookie(SHOW_HIDE_EXTRAS)
+        //console.log("Show Extras cookie val: "+shown);
+        showExtras(shown==SHOWN);
+        cb = document.getElementById("showHideExtrasCB");
+        if( cb ) {
+            cb.checked = shown!=SHOWN;
+            //console.log("Init Hide Extras CB from cookie: "+((shown!=SHOWN)?"Hide":"Show"));
+        }
+    }
+
+
+</script>
 {% endblock %}
 
 {% block title %}CaRCC Capabilities Model Assessment{% endblock %}
@@ -85,59 +220,109 @@
     <span class="status">(Unknown state)</span>
     {% endif %}
 </h2>
+{%if atype != "full" %}
+<section class="status showHideExtras">
+    <p><input type="checkbox" id="showHideExtrasCB" onchange="onShowExtrasChange(this)">
+        Hide Extra Topics (i.e., {%if atype == "essential" %}Non-Essential Topics and {% endif %}those not included in this Assessment).</p>
+</section>
+{% endif %}
 
 <div class="report">
 {% for facing, topics in categories.items %}
-    <section>
-        <h3 id="{{facing.slug}}">
+    <section id="{{facing.slug}}_sect">
+        <h3 id="{{facing.slug}}" {%if atype == "cyoj" and not facing.has_included %}class="non_included"{%endif%}>
             {{facing.content.display_name}}-Facing Topics 
             {%if facing.coverage_pct %}<span class="facingcov">Avg. Coverage:&nbsp;&nbsp;
                 <span class="facingcovpcnt">{{facing.coverage_pct}}</span>{% endif %}
-        </h3>    
+        </h3>
+        {%if atype == "cyoj" and not facing.has_included %}
+            <p class="tname topicheader ifhidden">No Topics included in this Assessment</p>
+            <p class="tname topicheader ifhidden"></p>
+        {%endif%}
+
         {% for topic, answers in topics.items %}
+            {%if atype == "full" %}
             <div class="reporttopic">
-            <h4 id="{{topic.slug}}">{{topic.content.display_name}}
+            {%else%}
+            <div class="reporttopic {%if topic.is_essential or topic.is_included %}included{%else%}non_included{%endif%}">
+            {%endif%}
+                <h4 id="{{topic.slug}}">{{topic.content.display_name}}
                 {%if topic.coverage_pct %}
                     <span class="topiccov">Avg. Coverage:&nbsp;&nbsp;
                         <span class="tcov">{{topic.coverage_pct}}</span>
                     </span>
                 {% endif %}
-            </h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Question/Capability</th>
-                        <th class="lens avail">Avail.</th>
-                        <th class="lens sol">SOL</th>
-                        <th class="lens">Comm.</th>
-                        <th class="cov">Cov.</th>
-                        <th class="prio">Prio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for answer in answers %}
-                        <tr class="question"
-                            {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
-                            <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
-                                {{answer.html_display }}
-                            </td>
-                            <td class="lens avail">{{answer.avail}}</td>
-                            <td class="lens sol">{{answer.sol}}</td>
-                            <td class="lens">{{answer.comm}}</td>
-                            <td {%if answer.coverage_color %} class="cov" {% else %} class="nocov" {% endif %}>
-                                {{answer.coverage_percent}}
-                            </td>
-                            <td class="prio">
-                                {% if answer.priority %}{{answer.priority}}{% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                </h4>
+                <table>
+                    <tbody>
+                        {%if atype == "full" or topic.is_essential or topic.is_included %}
+                            {%comment%}Produce a normal header since there is at least one essential or included question{%endcomment%}
+                            <tr class="headline">
+                                <td>{%if atype == "essential" %}Essential/{%endif%}{%if atype != "full" %}Included{%endif%} Questions/Capabilities</td>                            
+                                <td class="lens avail">Avail.</td>
+                                <td class="lens sol">SOL</td>
+                                <td class="lens">Comm.</td>
+                                <td class="cov">Cov.</td>
+                                <td class="prio">Prio</td>
+                            </tr>
+                            {%comment%}Add all the included/essential questions (or all of them if this is a full assessment{%endcomment%}
+                            {% for answer in answers %}
+                                {%if atype == "full" or answer.question.is_essential or answer.is_included %}
+                                    <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}"
+                                        {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
+                                        <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                                            {{answer.html_display }}
+                                        </td>
+                                        <td class="lens avail">{{answer.avail}}</td>
+                                        <td class="lens sol">{{answer.sol}}</td>
+                                        <td class="lens">{{answer.comm}}</td>
+                                        <td {%if answer.coverage_color %} class="cov" {% else %} class="nocov" {% endif %}>
+                                            {{answer.coverage_percent}}
+                                        </td>
+                                        <td class="prio">
+                                            {% if answer.priority %}{{answer.priority}}{% endif %}
+                                        </td>
+                                    </tr>
+                                {%endif%}
+                            {% endfor %}
+                        {%endif%}
+                        {%comment%}If there are also non-essential or non-included questions, include those as well{%endcomment%}
+                        {%if atype != "full" and topic.has_nonincluded or topic.has_nonessential%}
+                            <tr class="headline extras">
+                                <td>{%if atype == "essential" %}Non-Essential Questions/Capabilities{%else%}Questions/Capabilities not included{%endif%}</td>
+                                <td></td><td></td><td></td><td></td><td></td>
+                            </tr>
+                            {%comment%}Add all the non-included/non-essential questions. Note that for CYOJ copies some may be answered.{%endcomment%}
+                            {% for answer in answers %}
+                                {%if not answer.question.is_essential and not answer.is_included %}
+                                    <tr class="question extras {% cycle 'odd-field' 'even-field' as fieldcycle %}"
+                                        {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
+                                        <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                                            {{answer.html_display }}
+                                        </td>
+                                        <td class="lens avail">{{answer.avail}}</td>
+                                        <td class="lens sol">{{answer.sol}}</td>
+                                        <td class="lens">{{answer.comm}}</td>
+                                        <td {%if answer.coverage_color %} class="cov" {% else %} class="nocov" {% endif %}>
+                                            {{answer.coverage_percent}}
+                                        </td>
+                                        <td class="prio">
+                                            {% if answer.priority %}{{answer.priority}}{% endif %}
+                                        </td>
+                                    </tr>
+                                {%endif%}
+                            {% endfor %}
+                        {%endif%}
+                    </tbody>
+                </table>
             </div>
         {% endfor %}
     </section>
 {% endfor %}
 </div>
 <div class="footer">RCD Capabilities Assessment for {{ profile }}</div>
+
+<script>
+    initExtraTopicsFromCookie();
+</script>
 {% endblock %}

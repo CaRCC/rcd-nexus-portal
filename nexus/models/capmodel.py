@@ -102,6 +102,23 @@ class CapabilitiesQuestion(models.Model):
             at = at or timezone.now()
             return self.filter(valid_after__lte=at).exclude(valid_before__lt=at)
 
+        def filter_essential(self):
+            return self.filter(is_essential=True)
+        
+        def group_by_facing_topic(self):
+            results = dict()
+            # TODO can filter by facing and topic with arguments
+
+            for facing in Facing.objects.all():
+                results[facing] = dict()
+                for topic in facing.capmodel_topics.all():
+                    questions = self.filter(topic=topic)
+                    if questions:
+                        results[facing][topic] = questions.order_by("index")
+
+            return results
+
+
     objects = QuerySet.as_manager()
 
     slug = models.SlugField(
@@ -119,6 +136,12 @@ class CapabilitiesQuestion(models.Model):
         help_text="The index of this question in its topic.",
     )
 
+    is_essential = models.BooleanField(
+        default=False,
+        editable=True,
+        help_text="Whether this question is in the essential set.",
+    )
+
     attrs = models.JSONField(
         default=dict,
         help_text="A JSON object containing additional queryable attributes for this question.",
@@ -131,6 +154,7 @@ class CapabilitiesQuestion(models.Model):
     )
     valid_before = models.DateTimeField(
         null=True,
+        blank=True,      
         db_index=True,
         help_text="This question will only be included in assessments created before this time.",
     )
@@ -177,9 +201,17 @@ class CapabilitiesQuestionContent(models.Model):
         blank=True,
         null=True,
     )
+    # This might  be a CharField with Max 40, but let's allow for flexibility
+    shorttext = models.TextField(
+        blank=True,
+        null=True,
+    )  
 
     def natural_key(self):
         return (self.question.topic.facing.slug, self.question.topic.slug, self.question.slug, self.language)
+
+    def fully_qualified_slug(self):
+        return f"{self.question.topic.facing.slug}.{self.question.topic.slug}.{self.question.slug}"
 
     def __str__(self):
         return f"[{self.language.upper()}] {self.question}"
@@ -216,10 +248,7 @@ class CapabilitiesAssessment(AssessmentBase):
                     question=answer.question).first()
                 if not ex_answer:
                     continue
-                answer.score_deployment = ex_answer.score_deployment
-                answer.score_collaboration = ex_answer.score_collaboration
-                answer.score_supportlevel = ex_answer.score_supportlevel
-                answer.work_notes = ex_answer.work_notes
+                answer.copy_from(ex_answer)
                 answer.save()
 
     objects = QuerySet.as_manager()
@@ -230,13 +259,42 @@ class CapabilitiesAssessment(AssessmentBase):
         related_name="capabilities_assessment",
     )
 
+    class AssessmentTypeChoices(models.TextChoices): 
+        FULL = "full", "Full Assessment"
+        ESSENTIAL = "essential", "Essentials Assessment"
+        CYOJ = "cyoj", "Chart Your Own Journey Assessment"
+        
+    assessment_type = models.CharField(
+        "Assessment Type",
+        max_length=32,
+        choices=AssessmentTypeChoices.choices,
+        default=AssessmentTypeChoices.FULL,
+        null=True,      # Allow this to be missing, especially on import
+        blank=False,    # Require user to set one
+        help_text="Select the type of Assessment you would like to use.",
+    )
+
+    copied_from = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        # I considered adding limit_choices_to={"state": CapabilitiesAssessment.State.COMPLETE},
+        # but they might want to restart from a partially completed one. 
+        related_name="derivative_copies"
+    )
+
     class State(Enum):
         NOT_STARTED = "not_started"
         IN_PROGRESS = "in_progress"
         COMPLETE = "complete"
 
     def filtered_answers(self, excludeNotApplicable=True):
+        # Need to consider the type of assessment, and filter out all the unused questions. 
+        # For Essentials, include only those marked as essential OR included
+        # For CYOJ, IF copied from another, include everything; ELSE include only those marked as included
         answers = self.answers.exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug)
+        answers = answers.filter_included(self)
         if(excludeNotApplicable):
             answers = answers.filter(not_applicable=False)
         return answers
@@ -252,17 +310,21 @@ class CapabilitiesAssessment(AssessmentBase):
 
     @property
     def state(self) -> "CapabilitiesAssessment.State":
-        # Filter the domain coverage questions when calculating whether assessment is complete
-        answers = self.filtered_answers()
-        total = answers.count()
-        answered = answers.filter(score_deployment__isnull=False, score_collaboration__isnull=False, score_supportlevel__isnull=False).count()
-
-        if answered == 0:
+        # If they created a CYOJ assessment and haven't included anything (yet), force the state to not started
+        if self.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ and not self.answers.filter(is_included=True).exists():
             return CapabilitiesAssessment.State.NOT_STARTED
-        elif answered < total:
-            return CapabilitiesAssessment.State.IN_PROGRESS
-        else:
-            return CapabilitiesAssessment.State.COMPLETE
+        else: 
+            # Filter the domain coverage questions when calculating whether assessment is complete
+            answers = self.filtered_answers()
+            total = answers.count()
+            answered = answers.filter(score_deployment__isnull=False, score_collaboration__isnull=False, score_supportlevel__isnull=False).count()
+
+            if answered == 0:
+                return CapabilitiesAssessment.State.NOT_STARTED
+            elif answered < total:
+                return CapabilitiesAssessment.State.IN_PROGRESS
+            else:
+                return CapabilitiesAssessment.State.COMPLETE
 
 
 
@@ -337,6 +399,21 @@ class CapabilitiesAnswer(models.Model):
         def filter_unanswered(self):
             return self.exclude(not_applicable=True).filter(models.Q(score_deployment__isnull=True) | models.Q(score_collaboration__isnull=True) | models.Q(score_supportlevel__isnull=True))
 
+        def filter_included(self, for_assessment):
+            if for_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
+                return self.filter(question__is_essential=True) | self.filter(is_included=True)
+            elif for_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+                if for_assessment.copied_from == None:
+                    return self.filter(is_included=True)
+                else:  
+                    # include all answered questions as well as included ones. Basically, if they are working from an Essentials
+                    # or earlier CYOJ assessment, we ignore all the unanswered questions in the source assessment, and just consider
+                    # the ones they answered, and any they included in this one. May yield some odd cases if they clone a barely started
+                    # assessment.
+                    return self.filter(is_included=True) | self.filter(score_deployment__isnull=False, score_collaboration__isnull=False, score_supportlevel__isnull=False)
+            else:
+                return self     # No filtering for full (or copied) assessments. 
+
         def annotate_coverage(self):
             return self.annotate(coverage=CapabilitiesAnswer.QuerySet.COVERAGE_FORMULA)
 
@@ -395,7 +472,7 @@ class CapabilitiesAnswer(models.Model):
                 for topic in facing.capmodel_topics.all():
                     answers = self.filter(question__topic=topic)
                     if answers:
-                        results[facing][topic] = answers
+                        results[facing][topic] = answers.order_by("question_id")
 
             return results
 
@@ -416,11 +493,36 @@ class CapabilitiesAnswer(models.Model):
         on_delete=models.CASCADE,
         related_name="answers",
     )
+    
     question = models.ForeignKey(
         CapabilitiesQuestion,
         on_delete=models.RESTRICT,
         related_name="answers",
     )
+
+    is_included = models.BooleanField(
+        default=False,
+        editable=True,
+        help_text="Whether this question is included in and Essentials or CYOJ assessment.",
+    )
+
+    def clear(self):    # remove all answers and reset to unmodified
+        self.score_deployment = None
+        self.score_supportlevel = None
+        self.score_collaboration = None
+        self.priority = None
+        self.work_notes = None
+        self.not_applicable = False
+        self.is_modified = False
+
+    def copy_from(self, copy_source):
+        self.score_deployment = copy_source.score_deployment
+        self.score_collaboration = copy_source.score_collaboration
+        self.score_supportlevel = copy_source.score_supportlevel
+        self.not_applicable = copy_source.not_applicable
+        self.work_notes = copy_source.work_notes
+        self.priority = copy_source.priority
+        self.is_modified = True
 
     class ScoreDeploymentChoices(FloatChoices):
         NONE = 0.00, _("1 - No availability or support")

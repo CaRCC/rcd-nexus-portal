@@ -41,7 +41,7 @@
         padding-left:5px;
     }
     p.content {
-        font-size: 0.9em;
+        font-size: 14px;
         margin-top: 0.7em;
         margin-bottom: 0.5em;
     }
@@ -50,7 +50,7 @@
         margin-left: 1.5em;
     }
     section.helpdocs ul li{
-        font-size: 0.9em;
+        font-size: 14px;
         margin-top: 6px;
         padding: 0;
     }
@@ -72,20 +72,21 @@
 <section class="helpdocs">
     <h1 class="title">Capabilities Model Frequently Asked Questions (FAQ)</h1>
     <p><b>Table of Contents</b>:
-        <span class="tocentry"><a href="#WhatIs">What is the Capabilities Model and why should I use it?</a></span>
-        <span class="tocentry"><a href="#CommonUses">What are common uses for the Model?</a></span>
+        <span class="tocentry"><a href="#WhatIs">What is the Capabilities Model and who is it for?</a></span>
+        <span class="tocentry"><a href="#CommonUses">How are institutions using the Model?</a></span>
         <span class="tocentry"><a href="#WhoCanUSe">Who can use the Capabilities Model?</a></span>
         <span class="tocentry"><a href="#HowLong">How long does it take to complete the RCD Capabilities Model?</a></span>
         <span class="tocentry"><a href="#HelpAvail">What help is available?</a></span>
         <span class="tocentry"><a href="#WhoUsing">Which institutions are already using the Capabilities Model?</a></span>
         <span class="tocentry"><a href="#Emerging">Our research computing and data effort is still emerging. Is this assessment for us?</a></span>
+        <span class="tocentry"><a href="#Repeating">We already completed the Model once. When (and why) should we do a follow-up assessment?</a></span>
         <span class="tocentry"><a href="#WhoDevel">Who developed the Capabilities Model?</a></span>
         <span class="tocentry"><a href="#Portal">How can I explore the Community Dataset?</a></span>
         <span class="tocentry"><a href="#ReadMore">Where can I read more about the model?</a></span>
     </p>
     <hr>
     <div class="helptopic">
-        <h2 id="WhatIs">What is the Capabilities Model and why should I use it?</h2>
+        <h2 id="WhatIs">What is the Capabilities Model and who is it for?</h2>
         <p class="content">
             Research Computing and Data (computing, data, and related infrastructure, services, and people) is changing at
             an accelerating rate, while the range of academic fields and disciplines depending on this infrastructure is
@@ -99,7 +100,7 @@
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
     <div class="helptopic">
-        <h2 id="CommonUses">What are common uses for the Model?</h2>
+        <h2 id="CommonUses">How are institutions using the Model?</h2>
         <p class="content">Some common uses for the Model are:
             <ul>
                 <li>To identify and understand areas of strength and weakness in an institution&rsquo;s support, e.g., as when
@@ -121,8 +122,7 @@
         </p>
         <p class="content">
             The RCD Nexus Portal and associated tools are freely available to everyone, subject only to our 
-            <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons 
-                Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)</a> license.
+            <a target="_blank" rel="noopener noreferrer" href="{{cc_license_url}}">{{cc_license_string}}</a> license.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
@@ -144,9 +144,9 @@
             A second factor is how you are using the Capabilities Model as part of your strategic planning:
         <ul>
             <li>
-                If your goal is a simple information gathering exercise, it may be sufficient for an RCD team lead to do a
-                relatively quick pass through the RCD Capabilities Model, and just ask a few questions of others (or just
-                use estimates/educated guesses) for specific questions.
+                If your goal is a simple information gathering exercise, it may be sufficient for an RCD team lead (or equivalent) 
+                to do a relatively quick pass through the RCD Capabilities Model, and reach out to partners at your institution 
+                (or even use estimates/educated guesses) for specific capabilities outside your service portfolio.
             </li>
             <li>
                 If you are using the tool as part of a broader RCD strategic planning process, you may draw together
@@ -183,10 +183,10 @@
     <div class="helptopic">
         <h2 id="WhoUsing">Which institutions are already using the Capabilities Model?</h2>
         <p class="content">
-            Over 200 different institutions have created a an assessment instance (or requested a copy in v1) of the Capabilities Model assessment tool.
+            To date {{nUsers}} different institutions have created an assessment instance (or requested a copy in v1) of the Capabilities Model assessment tool.
             These institutions represent all 50 U.S. States, two U.S. territories plus the District of Columbia, several Canadian provinces and a few other
             countries. Roughly half of these institutions are classified as R1 (Very High Research Activity), and a wide range
-            of institutions are using the model.
+            of institutions other than R1s are also using the model.
         </p>
         <p class="content">
             You can explore the demographics of the community of users (and contributors, i.e., those who have completed an assessment and contributed 
@@ -194,27 +194,43 @@
              of our <a href="{% url 'dataviz:vizmain' %}">Data Viewer</a>.
         </p>
         <p class="content">
-            A total of {{ nInsts }} institutions have completed {{ nAssessments }} assessments (many have repeated their assessment in successive
+            A total of {{ nInsts }} <em>Contributor</em> institutions have completed {{ nAssessments }} assessments (many have repeated their assessment in successive
             years). See also the <a href="{% url 'dataviz:demographics_contriblist' %}">list of contributors</a>.
+        </p>
+        <p class="content">
+            There are {{nUsers}} <em>User</em> institutions that have created an assessment instance (or requested a copy in v1) of the Capabilities Model assessment tool.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
     <div class="helptopic">
         <h2 id="Emerging">Our research computing and data effort is still emerging. Is this assessment for us?</h2>
         <p class="content">
-            Many institutions find the model a helpful introduction to the range of capabilities they may want to consider
-            as they plan for and build out their program.
+            Smaller and emerging RCD programs can choose to complete an Essentials assessment, which reduces the effort considerably 
+            and allows you to focus on the most important capabilities. There are also some optional components that can be skipped 
+            (e.g., Domain Coverage and prioritization) to minimize the effort involved.
         </p>
         <p class="content">
-            Some institutions choose to do a simpler assessment their first time, and just include a few key participants
-            (e.g., an RCD support lead or equivalent plus someone from the library). The resulting assessment data may not
-            be complete and accurate in every detail, but this can be a quick way to learn about the RCD Capabilities Model
-            and explore how the resulting data, benchmarking reports, etc. can inform strategic planning, etc. at your
-            institution.
+            Regardless of which type of assessment is chosen, some institutions choose to do a more streamlined assessment their 
+            first time, and just include a few key participants (e.g., an RCD support lead or equivalent plus someone from the library).
+            The resulting assessment data may not be completely accurate and complete, but this can be a quick way to learn about the 
+            CaRCC RCD Capabilities Model and explore how the resulting data, benchmarking reports, etc. can inform strategic planning, etc. at your institution.
         </p>
         <p class="content">
-            We&rsquo;re also planning a feature in which you can choose a smaller set of topics from the model, and focus on
-            those. We&rsquo;ll announce more about this in the coming months.
+            See also <a href="#HowLong">How long does it take to complete the RCD Capabilities Model?</a> above. 
+        </p>
+        <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+    <div class="helptopic">
+        <h2 id="Repeating">We already completed the Model once. When (and why) should we do a follow-up assessment?</h2>
+        <p class="content">
+            Many institutions use the Model to inform their strategic planning process, and that in turn leads to initiatives to 
+            address gaps and areas for improvement. These often take a couple of years to complete and see adoption, and so it 
+            can make sense to do an assessment every two to three years to track the impact of work to improve your RCP support. 
+            You may choose to do a Chart Your Own Journey assessment for the follow-up, and concentrate on the areas that you think 
+            are likely to have changed, to streamline the effort needed to complete the assessment.
+        </p>
+        <p class="content">
+            We also see some institutions complete an assessment once a year, allowing them to track any changes in their RCD program support in a more fine-grained manner.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
@@ -236,11 +252,23 @@
          and <a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2100003">OAC-2100003</a>.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
+    </div>
+    <div class="helptopic">
         <h2 id="Portal">How can I explore the Community Dataset?</h2>
         <p class="content">
             Click on <a href="{% url 'dataviz:vizmain' %}">Data Viewer</a> in the main menu to explore the demographics of our users and contributors, as well as
             the community assessment data. Once you complete and submit an assessment, you can use the benchmarking support
             to explore how your capabilities coverage compares to other institutions. 
+        </p>
+        <p class="content">
+            We have also prepared several analyses of snapshots over time; these are available in the CaRCC Community publications on zenodo:
+            <ul>
+                <li>2020 RCD CM Community Data report. <a target="_blank" rel="noopener noreferrer" 
+                    href="https://doi.org/10.5281/zenodo.4344057">https://doi.org/10.5281/zenodo.4344057</a></li>
+                <li>2021 RCD CM Community Data report. <a target="_blank" rel="noopener noreferrer" 
+                    href="https://doi.org/10.5281/zenodo.6502962">https://doi.org/10.5281/zenodo.6502962</a></li>
+            </ul>
+            We are working to prepare a more recent analysis of the data up through the end of 2024.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>

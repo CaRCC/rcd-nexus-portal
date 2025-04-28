@@ -5,11 +5,13 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.query import QuerySet
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.safestring import mark_safe
+from nexus.models.capmodel import CapabilitiesAssessment
 
 from nexus.utils.time import next_week
 
@@ -20,7 +22,7 @@ class RCDProfile(models.Model):
     class ArchiveManager(models.Manager):
         def create(self, *args, **kwargs):
             """
-            Create a new RCDProfile, and associated assessments, for an institution.
+            Create a new RCDProfile for an institution.
             """
             profile = super().create(*args, **kwargs)
             profile.memberships.create(
@@ -30,11 +32,12 @@ class RCDProfile(models.Model):
 
         def copy(self, existing, created_by):
             """
-            Prepopulate a profile, and associated assessments, with data from a previous profile.
+            Prepopulate a profile (but not an assessment), with data from a previous profile.
             """
             profile = self.create(
                 institution=existing.institution,
                 institution_subunit=existing.institution_subunit,
+                mission=existing.mission,
                 structure=existing.structure,
                 org_chart=existing.org_chart,
                 profile_reason=existing.profile_reason,
@@ -42,11 +45,11 @@ class RCDProfile(models.Model):
                 created_by=created_by,
             )
 
-            # TODO is this best flow? Or should assessment import be decoupled
-            if hasattr(existing, "capabilities_assessment"):
-                profile.capabilities_assessment = apps.get_model(
-                    "nexus", "CapabilitiesAssessment"
-                ).objects.copy(existing.capabilities_assessment, profile=profile)
+            # This is the old flow but not assessment import is decoupled
+            #if hasattr(existing, "capabilities_assessment"):
+            #    profile.capabilities_assessment = apps.get_model(
+            #        "nexus", "CapabilitiesAssessment"
+            #    ).objects.copy(existing.capabilities_assessment, profile=profile)
 
             profile.save()
             return profile
@@ -228,13 +231,90 @@ class RCDProfile(models.Model):
         help_text="Archived profiles are hidden from view, but can be restored.",
     )
 
+    survey = models.OneToOneField(
+        "PostCompletionSurvey",
+        on_delete=models.CASCADE,
+        related_name="profile",
+        null=True, 
+        blank=True,
+    )
+
+
     def __str__(self):
         archived = "[ARCHIVED] " if self.archived else ""
+
+        if not hasattr(self, "capabilities_assessment"):
+            atype = ""
+        elif self.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
+            atype = " Essential"
+        elif self.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+            atype = " Custom"
+        else: 
+            atype = " Full"
         subunit = (
             f"({self.institution_subunit}) at " if self.institution_subunit else ""
         )
-        return f"{archived}{subunit}{self.institution} ({self.year})"
+        return f"{archived}{subunit}{self.institution} ({self.year}{atype})"
 
+class SurveyReasonChoices(models.TextChoices):
+    BENCHMARKING = "benchmarking", "Benchmarking of current service offerings."
+    STRATPLAN = "stratplan", "As part of (or an input to) Strategic Planning."
+    UNDERSTANDING = "understanding", "To better understand common practices."
+    OTHER = "other", "Other"
+
+class SurveyReason(models.Model):
+    reason = models.CharField(
+                max_length=16,
+                choices = SurveyReasonChoices.choices,
+    )
+    def __str__(self):
+        return SurveyReasonChoices(self.reason).label
+
+class PostCompletionSurvey(models.Model):
+    labor_hours = models.PositiveIntegerField(
+        "About how many labor hours went into completing the assessment at your institution?",
+        help_text="Please include meetings (hours X the # of attendees) as well as individuals' effort to complete the assessment.",
+        null=True,
+        blank=False,
+        validators=[MaxValueValidator(400), MinValueValidator(1)],
+    )
+
+    reasons = models.ManyToManyField(SurveyReason)
+
+    class SurveyRepeatChoices(models.TextChoices):
+        NEXTYR = "nextyr", "Next year."
+        TWO_THREE = "two_three", "In two or three years."
+        FOUR_FIVE = "four_five", "In 4 or 5 years."
+        UNLIKELY = "unlikely", "Unlikely to complete another one in future"
+
+    repeat = models.CharField(
+        "How soon would your institution likely complete a future Capabilities Model Assessment?",
+        help_text="E.g., to assess progress on areas for improvement.",
+        max_length=32,
+        default=None,
+        blank=False,
+        choices=SurveyRepeatChoices.choices,
+    )
+
+    class SurveyNPSChoices(models.IntegerChoices):
+        NPS_0 = 0, "0 Not at all Likely"
+        NPS_1 = 1, "1"
+        NPS_2 = 2, "2"
+        NPS_3 = 3, "3"
+        NPS_4 = 4, "4"
+        NPS_5 = 5, "5"
+        NPS_6 = 6, "6"
+        NPS_7 = 7, "7"
+        NPS_8 = 8, "8"
+        NPS_9 = 9, "9"
+        NPS_10 = 10, "10 Extremely Likely"
+
+    nps = models.PositiveIntegerField(
+        "Based upon your experience, how likely are you to recommend the Capabilities Model Assessment tool to other institutions?",
+        default=None,
+        blank=False,
+        choices=SurveyNPSChoices.choices,
+    )
 
 class RCDProfileMember(models.Model):
     profile = models.ForeignKey(

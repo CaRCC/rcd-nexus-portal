@@ -135,7 +135,7 @@
             <a href="https://carnegieclassifications.acenet.edu/">https://carnegieclassifications.acenet.edu/</a>
         </p>
         <p class="content">Metadata on <b>Institutional Mission</b>s, <b>Organizational Model</b>s, and <b>Reporting Structure</b>s 
-            is self-reported by institutions when they create an institutional profile to complete an assessment. 
+            is self-reported by institutions when they create an institution profile to complete an assessment. 
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
@@ -144,7 +144,7 @@
         <p class="content">
             <em>Contributors</em> are those institutions that have completed an assessment using the CaRCC Capabilities Model, 
             and agreed to contribute their data to the community dataset.
-            <br><em>Users</em> are those all institutions that have created a profile on the RCD Nexus portal, 
+            <br><em>Users</em> are those all institutions that have created an institution profile on the RCD Nexus portal, 
             and/or that requested and downloaded an earlier version of the CaRCC Capabilities Model.
         </p>
         <p class="content">
@@ -153,8 +153,11 @@
              of our <a href="{% url 'dataviz:vizmain' %}">Data Viewer</a>.
         </p>
         <p class="content">
-            A total of {{ nInsts }} institutions have completed {{ nAssessments }} assessments (many have repeated their assessment in successive
+            A total of {{ nInsts }} <em>Contributor</em> institutions have completed {{ nAssessments }} assessments (many have repeated their assessment in successive
             years). See also the <a href="{% url 'dataviz:demographics_contriblist' %}">list of contributors</a>.
+        </p>
+        <p class="content">
+            There are {{nUsers}} <em>User</em> institutions that have created an assessment instance (or requested a copy in v1) of the Capabilities Model assessment tool.
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
@@ -186,8 +189,7 @@
     </div>
 {% endcomment %}
 <p class="copyright noprint"><b>Copyright ©2023-{% now "Y" %} Internet2 and CaRCC</b>, and licensed for use under 
-    <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
-     usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
+    <a target="_blank" rel="noopener noreferrer" href="{{cc_license_url}}">{{cc_license_string}}</a> {{cc_license_desc}}.</p>
 </section>
 
 {% endblock %}

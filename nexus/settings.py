@@ -184,5 +184,8 @@ OIDC_AUTH_REQUEST_EXTRA_PARAMS = {
     "initialidp": "urn:mace:incommon:internet2.edu",  # So that invalid ORCID is not the default
 }
 
+CC_LICENSE_URL = "https://creativecommons.org/licenses/by-nd/4.0/"
+CC_LICENSE_STRING = "Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)"
+CC_LICENSE_DESC = "which grants usage to the general public and rights to share and redistribute for any purpose, even commercially; you must give appropriate credit with a link to the license, and if you remix, transform, or build upon the materials in any way, you may not distribute the modified material"
 
 RCD_DEFAULT_YEAR = datetime.date.today().year

@@ -1,5 +1,5 @@
 # from django.shortcuts import render
-from django.db.models import Q, Case, Value, When, F
+from django.db.models import Q, Case, Value, When, F, Count
 from functools import reduce
 from operator import or_
 from math import ceil
@@ -387,7 +387,7 @@ def applyStandardVBarFormatting(fig, width=None, textscale=1):
         )
     fig.update_traces(error_y_color=colorPalette['errBars'], 
                       marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{y:.1f}%',
-                      showlegend=False)
+                      showlegend=True)
     fig.update_yaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
 
 def applyStandardHBarFormatting(fig, width=None, textscale=1):
@@ -453,7 +453,8 @@ def summaryDataGraph(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAU
                     #width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
                     width=width, height=height,color='Facings', color_discrete_sequence=colorSeqForFacings)
     applyStandardVBarFormatting(fig, width=0.6, textscale=textscale)
-    fig.update_layout(showlegend=False)
+    fig.update_traces(showlegend=False) # For the summary data graph, the facings are labeled on the X axis, so redundant in the legend. 
+    #fig.update_layout(showlegend=False)
 
     # If benchmark data passed in, layer that over
     #scale = (height/DEFAULT_HEIGHT)
@@ -572,12 +573,21 @@ def capsDataGraphByCC(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFA
         When(assessment__profile__institution__carnegie_classification=15, then=Value(15)),
         When(assessment__profile__institution__carnegie_classification=16, then=Value(16)),
         default=Value(CC_OTHERACAD) ))
+    
+    # instCount = answers.values('assessment__id').distinct().count()
+    # Need to count distinct institutions in answers grouped by simpleCC
+    # simpleCCValueCounts = annotatedAnswers.values('simpleCC').annotate(count=Count('simpleCC'))
+    # print('simpleCCValueCounts: ', simpleCCValueCounts)
+
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
     data = annotatedAnswers.aggregate_score('question__topic__facing','simpleCC').values('question__topic__facing','simpleCC','average','stddev')
     df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
     # Map the facings values to names
     df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping)
     df['simpleCC'] = df['simpleCC'].map(cc_mapping)
+
+    # print('Filtered data has ', df['simpleCC'].nunique(),' of 3 expected CC values')
+    missing_cats = True if df['simpleCC'].nunique() < 3 else False
 
     # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
     df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
@@ -612,7 +622,7 @@ def capsDataGraphByCC(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFA
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def facingCapsDataGraphByCC(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
@@ -642,6 +652,7 @@ def facingCapsDataGraphByCC(answers, facing, benchmarks=None, width=DEFAULT_WIDT
 
     df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
     df['simpleCC'] = df['simpleCC'].map(cc_mapping)
+    missing_cats = True if df['simpleCC'].nunique() < 3 else False
 
     # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
     df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
@@ -683,7 +694,7 @@ def facingCapsDataGraphByCC(answers, facing, benchmarks=None, width=DEFAULT_WIDT
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def capsDataGraphByMission(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByMission with: ", answers.count()," answers")
@@ -698,6 +709,7 @@ def capsDataGraphByMission(answers, benchmarks=None, width=DEFAULT_WIDTH, height
     # Map the facings values to names
     df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping)
     df['mission2'] = df['mission2'].map(mission_mapping)
+    missing_cats = True if df['mission2'].nunique() < len(mission_mapping) else False
 
     # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
     df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
@@ -736,7 +748,7 @@ def capsDataGraphByMission(answers, benchmarks=None, width=DEFAULT_WIDTH, height
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def facingCapsDataGraphByMission(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByMission with: ", answers.count()," answers")
@@ -759,6 +771,7 @@ def facingCapsDataGraphByMission(answers, facing, benchmarks=None, width=DEFAULT
 
     df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
     df['mission2'] = df['mission2'].map(mission_mapping)
+    missing_cats = True if df['mission2'].nunique() < len(mission_mapping) else False
 
     # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
     df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
@@ -802,7 +815,7 @@ def facingCapsDataGraphByMission(answers, facing, benchmarks=None, width=DEFAULT
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def capsDataGraphByPubPriv(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByCC with: ", answers.count()," answers")
@@ -824,6 +837,7 @@ def capsDataGraphByPubPriv(answers, benchmarks=None, width=DEFAULT_WIDTH, height
     # Multiply by 100 to display percentages
     df['average'] *= 100
     df['stddev'] *= 100
+    missing_cats = True if df['assessment__profile__institution__ipeds_control'].nunique() < 2 else False
 
     # Rename the columns for clarity
     df =  df.rename(columns={
@@ -855,7 +869,7 @@ def capsDataGraphByPubPriv(answers, benchmarks=None, width=DEFAULT_WIDTH, height
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def facingCapsDataGraphByPubPriv(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByPubPriv with: ", answers.count()," answers")
@@ -883,6 +897,7 @@ def facingCapsDataGraphByPubPriv(answers, facing, benchmarks=None, width=DEFAULT
     # Multiply by 100 to display percentages
     df['average'] *= 100
     df['stddev'] *= 100
+    missing_cats = True if df['assessment__profile__institution__ipeds_control'].nunique() < 2 else False
 
     # Rename the columns for clarity
     df= df.rename(columns={
@@ -918,7 +933,7 @@ def facingCapsDataGraphByPubPriv(answers, facing, benchmarks=None, width=DEFAULT
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def capsDataGraphByEPSCoR(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByEPSCoR with: ", answers.count()," answers")
@@ -940,6 +955,7 @@ def capsDataGraphByEPSCoR(answers, benchmarks=None, width=DEFAULT_WIDTH, height=
     # Multiply by 100 to display percentages
     df['average'] *= 100
     df['stddev'] *= 100
+    missing_cats = True if df['assessment__profile__institution__ipeds_epscor'].nunique() < 2 else False
 
     # Rename the columns for clarity
     df =  df.rename(columns={
@@ -971,7 +987,7 @@ def capsDataGraphByEPSCoR(answers, benchmarks=None, width=DEFAULT_WIDTH, height=
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def facingCapsDataGraphByEPSCoR(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByEPSCoR with: ", answers.count()," answers")
@@ -999,6 +1015,7 @@ def facingCapsDataGraphByEPSCoR(answers, facing, benchmarks=None, width=DEFAULT_
     # Multiply by 100 to display percentages
     df['average'] *= 100
     df['stddev'] *= 100
+    missing_cats = True if df['assessment__profile__institution__ipeds_epscor'].nunique() < 2 else False
 
     # Rename the columns for clarity
     df= df.rename(columns={
@@ -1035,7 +1052,7 @@ def facingCapsDataGraphByEPSCoR(answers, facing, benchmarks=None, width=DEFAULT_
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def capsDataGraphByMSI(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("capsDataGraphByMSI with: ", answers.count()," answers")
@@ -1057,6 +1074,7 @@ def capsDataGraphByMSI(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEF
     # Multiply by 100 to display percentages
     df['average'] *= 100
     df['stddev'] *= 100
+    missing_cats = True if df['assessment__profile__institution__ipeds_msi'].nunique() < 2 else False
 
     # Rename the columns for clarity
     df =  df.rename(columns={
@@ -1088,7 +1106,7 @@ def capsDataGraphByMSI(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEF
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def facingCapsDataGraphByMSI(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByMSI with: ", answers.count()," answers")
@@ -1116,6 +1134,7 @@ def facingCapsDataGraphByMSI(answers, facing, benchmarks=None, width=DEFAULT_WID
     # Multiply by 100 to display percentages
     df['average'] *= 100
     df['stddev'] *= 100
+    missing_cats = True if df['assessment__profile__institution__ipeds_msi'].nunique() < 2 else False
 
     # Rename the columns for clarity
     df= df.rename(columns={
@@ -1152,7 +1171,7 @@ def facingCapsDataGraphByMSI(answers, facing, benchmarks=None, width=DEFAULT_WID
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def capsDataGraphByOrgModel(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     # Org Model is call "structure" in the model - not very useful until we have more metadata. Sigh. 
@@ -1169,6 +1188,8 @@ def capsDataGraphByOrgModel(answers, benchmarks=None, width=DEFAULT_WIDTH, heigh
     df= pd.DataFrame(data)
     df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping) # Map the classification values to names
     df['structure2'] =  df['structure2'].map(structure_mapping)
+    missing_cats = True if df['structure2'].nunique() < len(structure_mapping) else False
+
     # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
     df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
     # Multiply by 100 to display percentages
@@ -1205,7 +1226,7 @@ def capsDataGraphByOrgModel(answers, benchmarks=None, width=DEFAULT_WIDTH, heigh
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def facingCapsDataGraphByOrgModel(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByOrgModel with: ", answers.count()," answers")
@@ -1228,6 +1249,7 @@ def facingCapsDataGraphByOrgModel(answers, facing, benchmarks=None, width=DEFAUL
 
     df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
     df['structure2'] = df['structure2'].map(structure_mapping)
+    missing_cats = True if df['structure2'].nunique() < len(structure_mapping) else False
 
     # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
     df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
@@ -1268,7 +1290,7 @@ def facingCapsDataGraphByOrgModel(answers, facing, benchmarks=None, width=DEFAUL
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def capsDataGraphByReporting(answers, benchmarks=None,
                            width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
@@ -1286,6 +1308,8 @@ def capsDataGraphByReporting(answers, benchmarks=None,
     df= pd.DataFrame(data)
     df['question__topic__facing'] = df['question__topic__facing'].map(Facing_mapping) # Map the classification values to names
     df['reporting2'] =  df['reporting2'].map(reporting_mapping)
+    missing_cats = True if df['reporting2'].nunique() < len(reporting_mapping) else False
+
     # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
     df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
     # Multiply by 100 to display percentages
@@ -1321,7 +1345,7 @@ def capsDataGraphByReporting(answers, benchmarks=None,
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
 def facingCapsDataGraphByReporting(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByReporting with: ", answers.count()," answers")
@@ -1344,6 +1368,7 @@ def facingCapsDataGraphByReporting(answers, facing, benchmarks=None, width=DEFAU
 
     df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
     df['reporting2'] = df['reporting2'].map(reporting_mapping)
+    missing_cats = True if df['reporting2'].nunique() < len(reporting_mapping) else False
 
     # clip values to [0,1] since the collaboration boost/discount can push coverage over 1.0 and under 0
     df['average'] =  df['average'].clip(lower=0.0, upper=1.0)
@@ -1384,5 +1409,5 @@ def facingCapsDataGraphByReporting(answers, facing, benchmarks=None, width=DEFAU
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
-    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 

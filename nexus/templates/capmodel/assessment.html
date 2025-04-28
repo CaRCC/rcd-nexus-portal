@@ -27,11 +27,22 @@
         max-width: 600px;
     }
 
-    section.topicblock {
+    section.topicblock, section.survey {
         text-align: left;
         align-self: center;
         padding: 4px;
         margin: 10px;
+    }
+
+    section.survey {
+        width: 80%;
+        max-width: 580px;
+    }
+    section.survey p {
+        max-width: 580px;
+        font-size: .9em;
+        padding:0 20px;
+        font-style: italic;
     }
 
     section.topicblock div.facinghdr {
@@ -39,6 +50,16 @@
         margin: 0px;
         padding: 5px 20px;
         box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+
+    section.survey h3 {
+        background-color: var(--logo-lt-blue);
+        margin: 0px;
+        padding: 5px 20px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    section.survey a.button {
+        min-height: 2em;
     }
 
     section.topicblock div.facinghdr span.facingcov {
@@ -162,6 +183,16 @@
     div.topics p.topicheader {
         font-weight: bold;
     }
+    div.topics p.topicheader.extra {
+        font-weight: bold;
+        color: var(--primary);
+    }
+    div.topics p.topicheader.ifhidden {
+        font-weight: bold;
+        color: var(--primary);
+        font-style: italic;
+        display: none;
+    }
 
     div.topics p {
         align-self: stretch;
@@ -178,7 +209,13 @@
         align-self: center;
         padding-left: 4px;
     }
-
+    div.topics p.extra {
+        font-style: italic;
+        display: block;
+    }
+    div.topics p.extra a:link, div.topics p.extra a:visited {
+        color:    #87728c;
+    }
     div.topics p.tcov {
         text-align: right;
         padding-right: 2px;
@@ -210,6 +247,27 @@
         box-shadow: none;
     }
 
+    section.submission div.field-head {
+        text-align: right;
+        font-size: 13px;
+    }
+    section.submission div.field-head label{
+        position: relative;
+        top: .2em;
+        font-weight: bold;
+    }
+    section.submission div.field-body {
+        text-align: left;
+        margin-left: 26px;
+        text-indent: -26px;
+    }
+    section.submission div.field-head.odd-field, section.submission div.field-body.odd-field {
+        background-color: inherit;
+    }
+    section.submission div.field-body input{
+        position: relative;
+        top: .2em;
+    }
     section.submission,
     section.submission section.actions {
         background-color: lavender;
@@ -249,6 +307,7 @@
     var SHOWN ="1";
     var HIDDEN = "0";
     var SHOW_HIDE_SUFFIX = "SH";
+    var SHOW_HIDE_EXTRAS = "showEX";
     var COOKIE_LIFE = 7*24*60*60*1000;  // Save state for a week
 
     var toggleDesc = false; // Control whether to collapse the descriptions when showing the topics
@@ -289,8 +348,42 @@
         }
     }
 
-    function getToggleStateCookie(section) {
-        let name = section+SHOW_HIDE_SUFFIX;
+    function onShowExtrasChange(cbEl) {
+        //alert("onShowExtrasChange checked: "+cbEl.checked?"Yes":"No");
+        show = !cbEl.checked;
+        showExtras(show);
+        setExtraTopicsStateCookie(show?SHOWN:HIDDEN);
+    }
+
+    function resizeFacingSection(facing) {
+        var facingEl = document.getElementById(facing+SHOW_HIDE_SUFFIX);
+        var facingTopics = facingEl.parentNode.nextElementSibling.nextElementSibling;
+        if (facingTopics.style.maxHeight) { // If showing Topics, resize 
+            facingTopics.style.maxHeight = facingTopics.scrollHeight + "px";
+        }
+    }
+
+    function showExtras(show) {
+        const nodeList = document.querySelectorAll("p.extra");
+        //alert("showExtras found: "+nodeList.length+" p.extra nodes");
+        for (let i = 0; i < nodeList.length; i++) {
+          nodeList[i].style.display = show?"block":"none";
+        }
+        if(show) {
+            resizeFacingSection("researcher");
+            resizeFacingSection("data");
+            resizeFacingSection("software");
+            resizeFacingSection("systems");
+            resizeFacingSection("strategy");
+            resizeFacingSection("domaincov");
+        }
+        ifHiddenList = document.querySelectorAll("p.ifhidden");
+        for (let i = 0; i < ifHiddenList.length; i++) {
+            ifHiddenList[i].style.display = show?"none":"block";
+        }
+    }
+
+    function getStateCookie(name) {
         let decodedCookie = decodeURIComponent(document.cookie);
         let ca = decodedCookie.split(';');
         for(let i = 0; i <ca.length; i++) {
@@ -305,14 +398,37 @@
         //console.log("No cookie found for showing section: "+section);
         return false;   // If can't find the cookie, don't show the section
     }
+    function getToggleStateCookie(section) {
+        return getStateCookie(section+SHOW_HIDE_SUFFIX);
+    }
   
-    function setToggleStateCookie(section, shown) {
+    function setCookie(cname, shown) {
         const d = new Date();
         d.setTime(d.getTime() + COOKIE_LIFE);
         let expires = "expires="+ d.toUTCString();
-        let cname = section+SHOW_HIDE_SUFFIX;
         document.cookie = cname + "=" + shown + ";" + expires + ";path=/";
+    }
+
+    function setToggleStateCookie(section, shown) {
+        setCookie(section+SHOW_HIDE_SUFFIX, shown);
         //console.log("Set cookie for section: "+section+" to: "+shown);
+    }
+
+    function setExtraTopicsStateCookie(shown) {
+        setCookie(SHOW_HIDE_EXTRAS, shown);
+        //console.log("Set Show/Hide Extras cookie: "+show);
+    }
+
+    function initExtraTopicsFromCookie() {
+        // Get the cookie and then call the method
+        var shown = getStateCookie(SHOW_HIDE_EXTRAS)
+        //console.log("Show Extras cookie val: "+shown);
+        showExtras(shown==SHOWN);
+        cb = document.getElementById("showHideExtrasCB");
+        if( cb ) {
+            cb.checked = shown!=SHOWN;
+            //console.log("Init Hide Extras CB from cookie: "+shown!=SHOWN);
+        }
     }
 
     function initSectionFromCookie(section) {
@@ -320,7 +436,8 @@
             showSectionInit(section+SHOW_HIDE_SUFFIX)
         }
     }
-    function initSectionsFromCookies() {
+
+    function initFromCookies() {
         initSectionFromCookie("researcher");
         initSectionFromCookie("data");
         initSectionFromCookie("software");
@@ -328,6 +445,7 @@
         initSectionFromCookie("strategy");
         initSectionFromCookie("domaincov");
         initSectionFromCookie("prios");
+        initExtraTopicsFromCookie();
 }
 
 </script>
@@ -335,7 +453,7 @@
 
 {% block title %}CaRCC Capabilities Model Assessment{% endblock %}
 {% block main %}
-<h2>RCD Capabilities Assessment for {{ profile }}</h2>
+<h2>Capabilities Assessment for {{ profile }}</h2>
 {% if profile.capabilities_assessment.review_status == "not_submitted" %}
 <section class="status">
     <p>In progress, {{completed_questions}} of {{total_questions}} questions ({% widthratio pct_complete 1 100 %}%)
@@ -375,6 +493,21 @@
     </p>
 </section>
 {% endif %}
+{%if atype != "full" %}
+<section class="status showHideExtras">
+    <p><input type="checkbox" id="showHideExtrasCB" onchange="onShowExtrasChange(this)">
+        Hide Extra Topics (i.e., {%if atype == "essential" %}Non-Essential Topics and {% endif %}those not included in this Assessment).</p>
+</section>
+{% endif %}
+{% if profile.capabilities_assessment.review_status != "not_submitted" and can_submit %}
+    <section class="survey">
+    <h3>Experience Survey</h3>
+    <p>Please complete this short survey about your experience with the Capabilities Assessment tool.</p>
+        <a class="button center" href="{% url 'rcdprofile:survey' profile.pk %}">Go to Survey</a>
+    </section>
+{% endif %}
+
+
 
 <div class="topicgrid">
     {% for facing, topics in categories.items %}
@@ -386,22 +519,96 @@
             <p id="{{facing.slug}}SH" class="toggle" onclick="toggleSection(this, '{{facing.slug}}')"><span>Show Topics</span></p>
         </div>
         <div class="facingdesc" style="display:block;">
-            <p>{{facing.content.description}}</p>
+            <p>{%if facing.questionCount %}<span class="facingqcount"></span>{{facing.questionCount}} questions:</span>{%endif%}
+                {{facing.content.description}}                  
+            </p>
         </div>
         <div class="topics">
-            <p class="tname topicheader">Topic</p>
-            <p class="tcov topicheader">Computed Coverage</p>
-            {% for topic, answers in topics.items %}
-            <p class="tname {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}"
-             {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}"{%endif%}>
-                <a
-                    href="{% url 'capmodel:topic' profile.pk facing.slug topic.slug %}">{{topic.content.display_name}}</a>
-            </p>
-            <p class="tcov  {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}" 
-                {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}" {%endif%}>
-                {{answers.coverage_pct}}</p>
-            {% endfor %}
-        </div>
+            {%if atype == "full" %}
+                <p class="tname topicheader">Topic</p>
+                <p class="tcov topicheader">Computed Coverage</p>
+                {% for topic, answers in topics.items %}
+                    <p class="tname {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}"
+                    {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}"{%endif%}>
+                        <a
+                            href="{% url 'capmodel:topic' profile.pk facing.slug topic.slug %}">{{topic.content.display_name}}</a>
+                    </p>
+                    <p class="tcov  {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}" 
+                        {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}" {%endif%}>
+                        {{answers.coverage_pct}}</p>
+                {% endfor %}
+            {%elif atype == "essential" %}
+                <p class="tname topicheader essential">Topics with Essential {%if facing.has_included %}(or Included) {%endif%}Questions</p>
+                <p class="tcov topicheader essential">Computed Coverage</p>
+                {% for topic, answers in topics.items %}
+                    {%if topic.is_essential or topic.is_included %}
+                        <p class="tname essential {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}"
+                        {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}"{%endif%}>
+                            <a
+                                href="{% url 'capmodel:topic' profile.pk facing.slug topic.slug %}">{{topic.content.display_name}}</a>
+                        </p>
+                        <p class="tcov essential {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}" 
+                            {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}" {%endif%}>
+                            {{answers.coverage_pct}}</p>
+                    {%endif%}
+                {% endfor %}
+                {%if facing.has_nonessential and facing.has_nonincluded %}
+                    <p class="tname topicheader extra">Additional Topics</p>
+                    <p class="tcov topicheader extra">Computed Coverage</p>
+                    {% for topic, answers in topics.items %}
+                        {%if not topic.is_essential and not topic.is_included %}
+                            <p class="tname extra {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}"
+                            {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}"{%endif%}>
+                                <a
+                                    href="{% url 'capmodel:topic' profile.pk facing.slug topic.slug %}">{{topic.content.display_name}}</a>
+                            </p>
+                            <p class="tcov extra {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}" 
+                                {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}" {%endif%}>
+                                {{answers.coverage_pct}}</p>
+                        {%endif%}
+                    {% endfor %}
+                {%endif%}
+            {%else%} {%comment%} This is a CYOJ assessment {%endcomment%}
+                {%if facing.has_included %}
+                    <p class="tname topicheader included">Topics Included in this Assessment</p>
+                    <p class="tcov topicheader included">Computed Coverage</p>
+                    {% for topic, answers in topics.items %}
+                        {%if topic.is_included %}
+                            <p class="tname included {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}"
+                            {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}"{%endif%}>
+                                <a
+                                    href="{% url 'capmodel:topic' profile.pk facing.slug topic.slug %}">{{topic.content.display_name}}</a>
+                            </p>
+                            <p class="tcov included {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}" 
+                                {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}" {%endif%}>
+                                {{answers.coverage_pct}}</p>
+                        {%endif%}
+                    {% endfor %}
+                {%endif%}
+                {%if facing.has_nonincluded %}
+                    {%if not facing.has_included %}
+                        <p class="tname topicheader ifhidden">No Topics included in this Assessment</p>
+                        <p class="tname topicheader ifhidden"></p>
+                    {%endif%}
+                    <p class="tname topicheader extra">
+                        {%if not facing.has_included %}No Topics included in this Assessment<br>{%endif%}
+                        {%if cyoj_copied %}Topics copied from prior Assessment{%else%}Additional Topics{%endif%}</p>
+                    <p class="tcov topicheader extra">Computed Coverage</p>
+                    {% for topic, answers in topics.items %}
+                        {%if not topic.is_included %}
+                            <p class="tname extra {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}"
+                            {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}"{%endif%}>
+                                <a
+                                    href="{% url 'capmodel:topic' profile.pk facing.slug topic.slug %}">{{topic.content.display_name}}</a>
+                            </p>
+                            <p class="tcov extra {% cycle 'odd-field' 'even-field' as fieldcycle %} {%if topic.content.display_name == "Domain support" %}domaincov{%endif%}" 
+                                {%if answers.coverage_color%} style="background-color: {{answers.coverage_color}}" {%endif%}>
+                                {{answers.coverage_pct}}</p>
+                        {%endif%}
+                    {% endfor %}
+                {%endif%}
+            {%endif%}
+            </div>
     </section>
     {% empty %}
     <h3>No questions were found.</h3>
@@ -464,6 +671,9 @@
         </form>
         {% else %}
         <p>Once you have answered all the questions, you can submit your assessment.</p>
+            {% if atype == "cyoj" and pct_complete == 1 %}
+                <p>Note that you must include (and answer) at least one question in this assessment.</p>
+            {% endif %}
         <section class="actions">
             <button type="button" disabled>Submit</button>
         </section>
@@ -480,7 +690,7 @@
 </div>
 
 <script>
-    initSectionsFromCookies();
+    initFromCookies();
     // Kind of an ugly hack, but since we're bouncing the layout we need to wait a bit and then ensure
     // any hash element is actually in view. 
     if(window.location.hash) {

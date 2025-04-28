@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib import admin
 from django.core.mail import send_mail
 from django.utils import timezone
+from django import forms
+from django.contrib.admin.helpers import ActionForm
 
 from nexus.models import (
     CapabilitiesAnswer,
@@ -32,13 +34,28 @@ class TopicAdmin(admin.ModelAdmin):
 
 @admin.register(CapabilitiesQuestion)
 class QuestionAdmin(admin.ModelAdmin):
+    list_display = ["legacy_qid", "fully_qualified_slug", "get_shorttext", "is_essential"]
+    list_filter = ["is_essential"]
     inlines = [QuestionContentInline]
+    ordering = ["topic__facing__index", "topic__index", "index"]
+    
+    def get_shorttext(self, obj):
+        return obj.contents.get(language="en").shorttext
+
+
+class ExtendedAssessmentAdminForm(ActionForm):
+    approval_year = forms.IntegerField(label="Approval Year", 
+                        min_value = settings.RCD_DEFAULT_YEAR-2,
+                        max_value = settings.RCD_DEFAULT_YEAR,
+                        initial = settings.RCD_DEFAULT_YEAR,
+                        )
 
 
 @admin.register(CapabilitiesAssessment)
 class AssessmentAdmin(admin.ModelAdmin):
-    list_display = ["profile", "completed_percent", "review_status", "review_note", "review_time"]
-    list_filter = ["review_status", "profile__year"]
+    action_form = ExtendedAssessmentAdminForm
+    list_display = ["profile", "assessment_type", "completed_percent", "review_status", "review_note", "review_time"]
+    list_filter = ["review_status", "assessment_type", "profile__year"]
     search_fields = ["review_note", "profile__institution__name"]
     readonly_fields = ["profile"]
 #    inlines = [AnswerInline]
@@ -50,9 +67,16 @@ class AssessmentAdmin(admin.ModelAdmin):
 #            review_user=request.user,
 #            review_time=timezone.now(),
 #        )
+        approval_year = request.POST['approval_year']
+
         for assmnt in queryset:
             submitter = assmnt.update_user
             profile = assmnt.profile
+            if profile.year != approval_year:
+                # Submitting a profile created in a previous year (or possibly in early Jan for previous year).
+                # Update to reflect the actual submission year.
+                profile.year = approval_year
+                profile.save()
             assmnt.review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED
             assmnt.review_user=request.user
             assmnt.review_time=timezone.now()

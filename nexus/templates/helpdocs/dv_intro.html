@@ -219,8 +219,7 @@
          and <a target="_blank" rel="noopener noreferrer" href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2100003">OAC-2100003</a>. 
     </p>
     <p class="copyright"><b>Copyright ©2023-{% now "Y" %} Internet2 and CaRCC</b>, and licensed for use under 
-        <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a> which grants
-         usage to the general public, with appropriate credit to the author, and sharing any derivatives under the same terms.</p>
+        <a target="_blank" rel="noopener noreferrer" href="{{cc_license_url}}">{{cc_license_string}}</a> {{cc_license_desc}}.</p>
 
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
 
@@ -240,7 +239,7 @@
     <p class="content">We have metadata about the institutions that are using the Model that we draw from the
         Department of Education’s IPEDS data<sup><a href="#ftnt2" id="ftnt_ref2">[2]</a></sup>,
         from the Carnegie Classification<sup><a href="#ftnt3" id="ftnt_ref3">[3]</a></sup>,
-        and from data that users provide when they create a profile to use the Model. 
+        and from data that users provide when they create an institution profile to use the Model. 
         The metadata values are used to provide different comparative views of the 
         data and to filter the data to understand or benchmark a particular subset of institutions.
     </p>
@@ -291,7 +290,7 @@
         <em>Caveat Lector: these reported values may be out of date and/or 
             may differ from what institutions currently report (e.g., on their website).</em>
     </p>
-    <p class="content"><b>Organizational Model</b>: data provided by users when they create a Profile. 
+    <p class="content"><b>Organizational Model</b>: data provided by users when they create an institution profile. 
         Users choose the option that best describes how their institution's RCD 
         services and staff are organized. Values include:
     </p>
@@ -304,7 +303,7 @@
     <p class="content indent"><b>No organized support</b>: No organized RCD support program currently exists.
     </p>
 
-    <p class="content"><b>Reporting Structure</b>: data provided by users when they create a Profile.
+    <p class="content"><b>Reporting Structure</b>: data provided by users when they create an institution profile.
         Users choose the option that best describes where within the institution their RCD program 
         ultimately reports. Values include:
     </p>
@@ -319,7 +318,7 @@
     <h3 id="InstPops">Institutional Populations</h3>
     <p class="content">There are two populations represented in the data view graphs:</p>
     <ol class="content">
-        <li><b>All Users</b>: This includes all institutions that have created a profile on 
+        <li><b>All Users</b>: This includes all institutions that have created an institution profile on 
             the RCD Nexus portal, and/or that requested and downloaded an earlier version of
             the CaRCC Capabilities Model.
         </li>
@@ -424,12 +423,15 @@
             <img class="screenshot" src="{% static 'images/DVUI_Benchmark.png' %}" 
             alt="Screen-shot excerpt showing a checkbox to enable benchmarking."/><br><br>
             Note: This option will only be shown if you are logged in and your institution has at least one completed assessment.
+            Also, the 2.5 version of the portal does not fully support benchmarking of Essential and Chart-Your-Own-Journey 
+            assessments; the next release will add this support. 
         </p>
     </p>
     
     <p class="content"><b>Share a visualization</b>: If you want to share a visualization with 
         your colleagues, just copy the address bar contents and share the full URL via email, etc. 
-        <em><b>Note</b>: for benchmarking visualizations, users will have to authenticate to ensure they have access rights to the data</em>.</p>
+        <em><b>Note</b>: for benchmarking visualizations, users with whom you share a link will have
+             to login to the portal to ensure they have rights to view the benchmarking data</em>.</p>
     <p class="content"><b>Download your visualization as an image</b>: If you want to use a particular 
         visualization in a report or presentation, you can download an 
         image of the view using the tools just above the upper-right hand corner of the graph, as in the 
@@ -508,7 +510,11 @@
     <p class="content">A simple checkbox allows the user to overlay an indicator of their institution's coverage levels
         on any of the Capabilities Data graphs to compare their results to the community (or a subset thereof). 
         To use this feature, users must be logged in and affiliated to an institution that has completed an assessment
-        using the Capabilities Model, submitted it, and had it approved by the CaRCC data stewards. See the
+        using the Capabilities Model, submitted it, and had it approved by the CaRCC data stewards. 
+        <br><em>Note: The 2.5 version of the portal does not fully support benchmarking of Essential and Chart-Your-Own-Journey 
+        assessments (the community data is not correctly filtered to only compare data for the included questions in
+        an Essential or Chart-Your-Own-Journey assessment); the next release will add this support.</em>
+        <br>See the
         <a href="{% url 'helpdocs:dv_quickstart' %}">Quick Start Guide</a> for a 
         <a href="{% url 'helpdocs:dv_quickstart' %}#StepByStep">Step-by-Step example of benchmarking for your Institution</a>.
     </p>
@@ -560,7 +566,7 @@
                 this is constrained to <em>HBCU</em>, <em>HSI</em>, <em>Other MSI</em> and <em>Not Minority Serving</em>. 
                 Users can select one or more values.
             </li>
-            <li><b>Year</b>: Reflects the year in which an institutional profile was created (for “All Users”) 
+            <li><b>Year</b>: Reflects the year in which an institution profile was created (for “All Users”) 
                 or the year in which an assessment was submitted (for “Contributors”). Users can select one or more years.
             </li>
             <li><b>Research Expenditures</b> Users can specify one or both of a minimum and maximum amount for 
@@ -602,15 +608,19 @@
     </p>
     <p class="content"><b>Sharing a visualization</b>: Once you have defined a view of interest that you would like to share, 
         you can just copy/paste the browser URL to bookmark a view and/or to share with colleagues. 
-        <em>Note: if the view includes benchmarking data, users will have to login to the portal to see the benchmarking data</em>.</p>
+        <em>Note: if the view includes benchmarking data, users with whom you share a view will have to
+             login to the portal to ensure they have rights to view the benchmarking data</em>.</p>
 
     <h3>Benchmarking institutional coverage:</h3>
     <p class="content">In addition to the display of community data, a user can choose to overlay values from an approved 
         assessment for their institution to benchmark their capabilities coverage relative to a filtered set of peers. 
         A user can benchmark at the summary (Facings) level, or drill down to benchmark on the topics in each Facing. 
         (Support for benchmarking at the individual question level will be in a future release.) 
-        Note that in order to use the benchmarking functionality, a user must be logged in and must be 
+        In order to use the benchmarking functionality, a user must be logged in and must be 
         affiliated to an institution that has a completed and approved assessment using the Capabilities Model.
+        <br><em>Note: The 2.5 version of the portal does not fully support benchmarking of Essential and Chart-Your-Own-Journey 
+            assessments (the community data is not correctly filtered to only compare data for the included questions in
+            an Essential or Chart-Your-Own-Journey assessment); the next release will add this support.</em>
     </p>
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
           

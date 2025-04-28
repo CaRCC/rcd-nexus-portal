@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block head %}
+<style>
+form section.fields {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+form section.fields div.field-head {
+    padding: .5em;
+}
+form section.fields div.field-body {
+    padding: 0 1em;
+}
+form section.fields div.field-body p.field {
+    padding: 0;
+    margin: 0;
+}
+form section.fields div.field-body p.field input {
+    margin-bottom: 1em;
+    width: 6em;
+}
+
+p.question {
+    margin: .5em .1em;
+}
+p.help {
+    margin: .5em;
+}
+.radiogrp{
+  display: inline-block;
+  text-align: center;
+  vertical-align:top;
+  padding-bottom:10px;
+  width: 7%;
+}
+.radiogrp input {
+    position: relative;
+    left:.3em;
+}
+.radiogrp label {
+  display: block;
+  width: 4.4em;
+  font-family:arial;
+  font-size:12px;
+  font-weight:bold;
+}
+
+</style>
+{% endblock %}
+
+{% block main %}
+<h1>Capabilities Model Experience Survey</h1>
+<p>Please complete the following short survey to help us understand your experience and improve the tools.</p>
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form }}
+    <section class="actions">
+        <button type="submit">Submit Answers</button>
+    </section>
+</form>
+{% endblock %}
