@@ -56,13 +56,18 @@ def data_viz_demographics_contriblist(request):
         colmax = col0Max+1
     else:
         col0Max = nPerCol+1
-        col1Max = col0Max+nPerCol+1
-        colmax = col0Max+1
+        col1Max = col0Max*2
+        colmax = nPerCol+1
+
+    # print(f'col0Max {col0Max} col1Max: {col1Max} colMax: {colmax}', )
+
 
     for inst in institutions:
         instlist.append(inst[0])
 
     instlist.sort()
+    # print(instlist)
+
     rows = []
     for i in range(colmax):    # Col1 (middle) is always the max
         cols = [""]*3
