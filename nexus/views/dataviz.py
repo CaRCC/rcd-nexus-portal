@@ -98,7 +98,7 @@ def data_viz_demographics_maps(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            dict = removeNullDictEntries(posted.cleaned_data)
+            dict = removeDefaultDictEntries(removeNullDictEntries(posted.cleaned_data))
             qs = urlencode(dict)
             return redirect(reverse('dataviz:demographics_mapviews') + '?'+qs)
         else:
@@ -185,7 +185,7 @@ def data_viz_demographics_charts(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            dict = removeNullDictEntries(posted.cleaned_data)
+            dict = removeDefaultDictEntries(removeNullDictEntries(posted.cleaned_data))
             qs = urlencode(dict)
             return redirect(reverse('dataviz:demographics_chartviews') + '?'+qs)
         else:
@@ -294,7 +294,7 @@ def data_viz_demographics_scatter(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            dict = removeNullDictEntries(posted.cleaned_data)
+            dict = removeDefaultDictEntries(removeNullDictEntries(posted.cleaned_data))
             qs = urlencode(dict)
             return redirect(reverse('dataviz:demographics_scatterplots') + '?'+qs)
         else:
@@ -364,13 +364,57 @@ def removeNullDictEntries(dict):
         del dict['resexp_max']
     return dict
 
+def removeDefaultDictEntries(dict):
+    if dict.get('population') == 'all':
+        del dict['population']
+    if dict.get('chart_views') == 'sum':
+        del dict['chart_views']
+    if dict.get('facings') == 'all':
+        del dict['facings']
+    if cc := dict.get('cc'):
+        if len(cc) == len(DataFilterForm.CC_CHOICES):
+            del dict['cc']
+    if eps := dict.get('epscor'):
+        if len(eps) == len(DataFilterForm.EPSCOR_CHOICES):
+            del dict['epscor']
+    if missions := dict.get('mission'):
+        if len(missions) == len(DataFilterForm.MISSION_CHOICES):
+            del dict['mission']
+    if pp := dict.get('pub_priv'):
+        if len(pp) == len(DataFilterForm.PUB_PRIV_CHOICES):
+            del dict['pub_priv']
+    if msis := dict.get('msi'):
+        if len(msis) == len(DataFilterForm.MSI_CHOICES):
+            del dict['msi']
+    if sizes := dict.get('size'):
+        if len(sizes) == len(DataFilterForm.SIZE_CHOICES):
+            del dict['size']
+    if regions := dict.get('region'):
+        if len(regions) == len(DataFilterForm.REGION_CHOICES):
+            del dict['region']
+    if years := dict.get('year'):
+        if len(years) == len(DataFilterForm.YEAR_CHOICES):
+            del dict['year']
+    if dict.get('benchmark') == False:
+        del dict['benchmark']
+    if dict.get('graph_size') == 'lg':
+        del dict['graph_size']
+    if dict.get('opt_show_errbars') == True:
+        del dict['opt_show_errbars']
+    if dict.get('caps_feature') == 'cov':
+        del dict['caps_feature']
+
+    return dict
+
 def fixMissingDictEntries(dict):
     if dict.get('population') == None:
         dict['population'] = 'all'
     if dict.get('chart_views') == None:
-        dict['chart_views'] = 'cc'
+        dict['chart_views'] = 'sum'
     if dict.get('facings') == None:
-        dict['sum'] = 'sum'
+        dict['facings'] = 'all'
+    if dict.get('caps_feature') == None:
+        dict['caps_feature'] = 'cov'
     if dict.get('benchmark') == None:
         dict['benchmark'] = False
     if dict.get('graph_size') == None:
@@ -501,7 +545,7 @@ def data_viz_capsmodeldata(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            dict = removeNullDictEntries(posted.cleaned_data)
+            dict = removeDefaultDictEntries(removeNullDictEntries(posted.cleaned_data))
             qs = urlencode(dict)
             return redirect(reverse('dataviz:capsmodeldata') + '?'+qs)
         else:
@@ -518,7 +562,6 @@ def data_viz_capsmodeldata(request):
             chart = cleaned_dict.get('chart_views')
             facing = cleaned_dict.get('facings')
             #print( "Cleaned dict: ",cleaned_dict)
-            answers, instCount = cmgraphs.filterAssessmentData(cleaned_dict)
             benchmarkAssessment = None
             benchmarkReq = cleaned_dict.get('benchmark')
             if benchmarkReq == 'True':                            # Note that benchmark option not shows if not authenticated.
@@ -543,6 +586,7 @@ def data_viz_capsmodeldata(request):
                             benchmarkInfo.append({ 'data':getInstAverages(benchmarkAssessment, facing), 'name':bmName })
                             # print('Adding Benchmark info for: ',bmName)
 
+            answers, instCount = cmgraphs.filterAssessmentData(cleaned_dict)
 
             if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
@@ -694,7 +738,7 @@ def data_viz_prioritiessdata(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            dict = removeNullDictEntries(posted.cleaned_data)
+            dict = removeDefaultDictEntries(removeNullDictEntries(posted.cleaned_data))
             qs = urlencode(dict)
             return redirect(reverse('dataviz:prioritiesdata') + '?'+qs)
         else:
