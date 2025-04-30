@@ -94,6 +94,28 @@ class CapabilitiesQuestion(models.Model):
         "med-school": "Medical School", 
     }
 
+    questionCount = dict()
+
+    def getQuestionCount(forYear, forFacing='all'):
+        if forYear < 2019 or forYear > datetime.now().year:
+            raise ValueError(f"CapabilitiesQuestion.getQuestionCount year is out of range: {forYear}")
+        if yearCounts := CapabilitiesQuestion.questionCount.get(forYear):
+            return yearCounts[forFacing]
+        # yearCounts have not yet bee set up, so do that
+        filterdate = datetime(int(forYear), 6, 1, tzinfo=timezone.utc)  # pick the middle of the year
+        # get the set of questions used in that year
+        allQuestionsForYear = CapabilitiesQuestion.objects.filter_valid(at=filterdate).exclude(topic__slug=CapabilitiesTopic.domain_coverage_slug)
+        newYearData = dict()
+        newYearData['all'] = allQuestionsForYear.count()
+        for facing in Facing.objects.all():
+            qsForFacing = allQuestionsForYear.filter(topic__facing=facing)
+            if qsForFacing:
+                newYearData[facing.slug] = qsForFacing.count()
+        CapabilitiesQuestion.questionCount[forYear] = newYearData
+        print(f'added question counts: {newYearData} for year: {forYear}')
+        return newYearData[forFacing]
+
+
     class QuerySet(models.QuerySet):
         def get_by_natural_key(self, facing: str, topic: str, question: str):
             return self.get(slug=question, topic__slug=topic, topic__facing__slug=facing)

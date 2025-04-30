@@ -685,7 +685,7 @@ nav span.FilterTitle {
     /* border:1px solid var(--logo-dark-purple); */
 }
 #canvas.viz>div {
-    margin:20px auto;
+    margin:0px auto;
 }
 h3.graphNYI {
     margin:3em auto;
@@ -701,11 +701,20 @@ h3.graphNYI {
     margin-bottom: 0.2em;
 }
 
-p.viz_footnote {
+div.viz_footnote {
+    width: 70%;
+    margin:0px auto;
+}
+p.viz_footnote, p.viz_footnote_intro {
     font-size: 0.9em;
     color: var(--nexus-light-text);
     z-index: 5;
+}
+p.viz_footnote_intro {
     margin: 5px 0 0 0;
+}
+p.viz_footnote {
+    margin: 0 0 0 20px;
 }
 
 .menu {

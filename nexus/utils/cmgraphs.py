@@ -273,7 +273,7 @@ def getAllAnswers(years=None) :
 # Translate URL query parameters into a filter for CapabilitiesAnswer objects
 # Note that we skip filtering when all values are chosen. This is both more efficient, and moreover
 # ensures that we do not filter out all the Null values (e.g., for mission) on older profiles. 
-def filterAssessmentData(dict):
+def filterAssessmentData(dict, bmQuestions=None):
 
     # We normally start with the latest profiles for each institution, but if we are filtering on years, we
     # have to handle that specially by passing in the years we are interested in.
@@ -369,6 +369,11 @@ def filterAssessmentData(dict):
         if maxMills > 0:
             answers = answers.filter(assessment__profile__institution__research_expenditure__lte=(maxMills*1000000))
  
+    if bmQuestions != None:
+        #print('filterAssessmentData has bmQuestions; before filtering with that # Qs is:'+str(answers.values('question__id').distinct().count()))
+        answers = answers.filter(question__id__in=bmQuestions)
+        #print('after  filtering with that # Qs is:'+str(answers.values('question__id').distinct().count()))
+
     instCount = answers.values('assessment__id').distinct().count()
     #print("After filtering have: ",answers.count(), " answers for: ",instCount," Institutions")
 

@@ -10,10 +10,11 @@ from django.http import HttpRequest
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.http import urlencode
+from django.utils.safestring import mark_safe
 from nexus.utils import cmgraphs, demogcharts
 from nexus.forms.dataviz import *
 from nexus.models.rcd_profiles import RCDProfile
-from nexus.models import CapabilitiesAssessment, CapabilitiesAnswer, CapabilitiesTopic
+from nexus.models import CapabilitiesAssessment, CapabilitiesAnswer, CapabilitiesTopic, CapabilitiesQuestion
 from nexus.models.ipeds_classification import IPEDSMixin
 from nexus.models.facings import Facing
 from nexus.views.rcd_profiles import view_roles
@@ -512,25 +513,27 @@ def getInstAverages(benchmarkAssessment, selFacing):
                 values.append(coverage*100)   # Convert to percent, since that's what we graph
             else: # No data for this facing
                 values.append(None)
-    else:  
-        facing_slug = facing_sel_mapping.get(selFacing)
-        facing = Facing.objects.get(slug=facing_slug) 
+        return values, allAnswers
+    
+    #else:  Specific facing
+    facing_slug = facing_sel_mapping.get(selFacing)
+    facing = Facing.objects.get(slug=facing_slug) 
 
-        answersByFacingTopic = allAnswers.group_by_facing_topic()
-        answersForFacingTopic = answersByFacingTopic[facing]
-        # Get the average of all questions in each topic in the specified facing.
-        # for topic in answersForFacingTopic:
-        for topic in facing.capmodel_topics.all(): # review all topics in the facing, not just those with answers
-            if topic in answersForFacingTopic:
-                answers = answersForFacingTopic[topic]
-                agg = answers.aggregate_score()
-                coverage = agg["average"]
-                coverage = min(1.0, max(0.0, coverage))
-                # print(f'getInstAvgs(facing:{facing_slug}) Topic {topic} avg coverage: {coverage}')
-                values.append(coverage*100)   # Convert to percent, since that's what we graph
-            else: # No data for this topic
-                values.append(None)
-    return values
+    answersByFacingTopic = allAnswers.group_by_facing_topic()
+    answersForFacingTopic = answersByFacingTopic[facing]
+    # Get the average of all questions in each topic in the specified facing.
+    # for topic in answersForFacingTopic:
+    for topic in facing.capmodel_topics.all(): # review all topics in the facing, not just those with answers
+        if topic in answersForFacingTopic:
+            answers = answersForFacingTopic[topic]
+            agg = answers.aggregate_score()
+            coverage = agg["average"]
+            coverage = min(1.0, max(0.0, coverage))
+            # print(f'getInstAvgs(facing:{facing_slug}) Topic {topic} avg coverage: {coverage}')
+            values.append(coverage*100)   # Convert to percent, since that's what we graph
+        else: # No data for this topic
+            values.append(None)
+    return values, allAnswers.filter(question__topic__facing=facing)
 
 @never_cache
 def data_viz_capsmodeldata(request): 
@@ -539,6 +542,8 @@ def data_viz_capsmodeldata(request):
     chart = None
     benchmarkInfo = None
     showErrBars = False
+    multiBenchMarkNote = None
+    partialBenchMarkNote = None
     missing_cats = False    # when filters results in partial data for compare-by graphs
     nonDefs = ""
     facinglink = None
@@ -562,7 +567,8 @@ def data_viz_capsmodeldata(request):
             chart = cleaned_dict.get('chart_views')
             facing = cleaned_dict.get('facings')
             #print( "Cleaned dict: ",cleaned_dict)
-            benchmarkAssessment = None
+            basisBenchmarkQuestionIDs = None
+            basisBenchmarkYear = None
             benchmarkReq = cleaned_dict.get('benchmark')
             if benchmarkReq == 'True':                            # Note that benchmark option not shows if not authenticated.
                 if not request.user.is_authenticated:           # Just for safety
@@ -578,22 +584,46 @@ def data_viz_capsmodeldata(request):
                         benchmarkInfo = []
                         for bmprof in bmProfiles:
                             benchmarkAssessment = bmprof.capabilities_assessment
+                            data, answers = getInstAverages(benchmarkAssessment, facing)
+                            firstBMSuffix = ''
+                            if basisBenchmarkQuestionIDs == None:    # First in list is the newest
+                                basisBenchmarkQuestionIDs = answers.values('question__id')
+                                basisBenchmarkYear = bmprof.year
+                                if bmProfiles.count()>1:
+                                    firstBMSuffix = '*'
+                                    multiBenchMarkNote = mark_safe("<b>*</b> indicates the basis benchmarking assessment.")
                             # The last 6 chars are always the year. Strip that, then cut the name short a bit, and rejoin
                             yrstr = str(bmprof)[-6:]
                             instName = textwrap.shorten(str(bmprof)[:-6], width=40, placeholder="...")
                             shortprofname = instName+yrstr
-                            bmName = '<b>'+'<br>'.join(textwrap.wrap(shortprofname, 20))+'</b>'
-                            benchmarkInfo.append({ 'data':getInstAverages(benchmarkAssessment, facing), 'name':bmName })
-                            # print('Adding Benchmark info for: ',bmName)
+                            bmName = '<b>'+'<br>'.join(textwrap.wrap(shortprofname, 20))+firstBMSuffix+'</b>'
+                                #print('First Benchmark questions: ',str(basisBenchmarkQuestions))
+                            #print('Adding Benchmark info for: ',bmName)
+                            benchmarkInfo.append({ 'data':data, 'name':bmName })
+                            
 
-            answers, instCount = cmgraphs.filterAssessmentData(cleaned_dict)
+            answers, instCount = cmgraphs.filterAssessmentData(cleaned_dict, bmQuestions=basisBenchmarkQuestionIDs)
+            if facing == 'all':
+                facingslug = facing
+            else:
+                facingslug = facing_sel_mapping.get(facing)
 
-            if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
+            if facing != 'all' and not answers.filter(question__topic__facing__slug=facingslug).exists():
+                graph = None
+                graphtitle = f'Benchmark basis assessment included no questions in this Facing.'
+            elif(instCount < MIN_INSTITUTIONS_TO_GRAPH):
                 graph = None
                 graphtitle = f'Too Few Institutions ({instCount}) to Graph!'
             else:
                 facingname = [item for item in DataFilterForm.FACINGS_CHOICES if item[0] == facing]
-                facingslug = facing_sel_mapping.get(facing)
+
+                if basisBenchmarkYear != None:  # we're doing benchmarking - check the counts for that year
+                    fullQuestionCountForBasisYear = CapabilitiesQuestion.getQuestionCount(basisBenchmarkYear, forFacing=facingslug)
+                    if basisBenchmarkQuestionIDs.count() < fullQuestionCountForBasisYear:
+                        topicQualifier = '' if facing == 'all' else 'in this topic '
+                        partialBenchMarkNote = mark_safe(f'The basis benchmark assessment includes {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} {topicQualifier}for {basisBenchmarkYear}, and community data has been filtered accoundingly.')
+                    #else:
+                        #print(f'Basis benchmark assessment has all {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} for {basisBenchmarkYear}.')
 
                 grSize = cleaned_dict.get('graph_size')
                 match grSize:
@@ -721,6 +751,8 @@ def data_viz_capsmodeldata(request):
         "graphtitle":graphtitle,
         "chart":chart,
         "showErrBars":showErrBars,
+        "multiBenchMarkNote":multiBenchMarkNote,
+        "partialBenchMarkNote":partialBenchMarkNote,
         "missingCats":missing_cats,
         "facinglink":facinglink,
         "nonDefs":nonDefs,
