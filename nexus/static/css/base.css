@@ -562,10 +562,20 @@ body>nav details summary, nav #filtertree details summary {
 }
 
 #filtertree summary, #filtertree div.viewselect select{
-    margin-left: 5px;
+    margin-left: .4em;
     padding:1px;
     font-weight: bold;
     width: 18em;
+}
+#filtertree div.viewselect.skip,
+ #filtertree div.viewselect:has(select.skip),
+ #filtertree div.viewselect select option[disabled] {
+    display: none;
+}
+#filtertree div.viewselect:has(label[for='id_topics']) select, 
+#filtertree div.viewselect:has(label[for='id_topics']) label {
+    margin-left: .9em;
+    width: 17.5em;
 }
 
 #filtertree label, #resexp_to {

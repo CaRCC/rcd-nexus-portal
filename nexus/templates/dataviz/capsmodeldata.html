@@ -35,6 +35,9 @@
 <script>
     const nonDefs = JSON.parse(document.getElementById('nonDefs').textContent);
     initDetailsFromStorage( nonDefs );
+    const facingsSel = document.getElementById("id_facings")
+    handleFacingSelection(null)
+    facingsSel.addEventListener("change", handleFacingSelection );
     document.getElementById("id_chart_views").addEventListener("change", handleChartViewSelection );
     {%if chart %}
         hideFiltersForChartView("{{chart}}");

@@ -103,7 +103,10 @@ def data_viz_demographics_maps(request):
             qs = urlencode(dict)
             return redirect(reverse('dataviz:demographics_mapviews') + '?'+qs)
         else:
-            print("FilterForm not valid!")
+            print("data_viz_demographics_maps: FilterForm not valid!")
+            print(posted.errors)
+            print(posted.cleaned_data)
+            print(request.POST)
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
     else: 
         if(request.GET) :
@@ -190,7 +193,10 @@ def data_viz_demographics_charts(request):
             qs = urlencode(dict)
             return redirect(reverse('dataviz:demographics_chartviews') + '?'+qs)
         else:
-            print("FilterForm not valid!")
+            print("data_viz_demographics_charts: FilterForm not valid!")
+            print(posted.errors)
+            print(posted.cleaned_data)
+            print(request.POST)
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
             chart = posted.cleaned_data.get('chart_views')      # Ensure we handle the chart filtering
     else: 
@@ -299,8 +305,11 @@ def data_viz_demographics_scatter(request):
             qs = urlencode(dict)
             return redirect(reverse('dataviz:demographics_scatterplots') + '?'+qs)
         else:
-            print("FilterForm not valid!")
-        filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
+            print("data_viz_demographics_scatter: FilterForm not valid!")
+            print(posted.errors)
+            print(posted.cleaned_data)
+            print(request.POST)
+            filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
     else: 
         if(request.GET) :
             dict = request.GET.dict()
@@ -554,7 +563,10 @@ def data_viz_capsmodeldata(request):
             qs = urlencode(dict)
             return redirect(reverse('dataviz:capsmodeldata') + '?'+qs)
         else:
-            print("FilterForm not valid!")
+            print("data_viz_capsmodeldata: FilterForm not valid!")
+            print(posted.errors)
+            print(posted.cleaned_data)
+            print(request.POST)
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
             chart = posted.cleaned_data.get('chart_views')      # Ensure we handle the chart filtering
     else: 
@@ -774,8 +786,11 @@ def data_viz_prioritiessdata(request):
             qs = urlencode(dict)
             return redirect(reverse('dataviz:prioritiesdata') + '?'+qs)
         else:
-            print("FilterForm not valid!")
-        filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
+            print("data_viz_prioritiessdata: FilterForm not valid!")
+            print(posted.errors)
+            print(posted.cleaned_data)
+            print(request.POST)
+            filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
     else: 
         if(request.GET) :
             dict = request.GET.dict()
