@@ -314,6 +314,7 @@
         <h2>{{facing.content.display_name}}-Facing Topics and Associated Capabilities</h2>
         {% for topic, questions in topics.items %}
             {% if not topic.isdomain %}
+                <a id="{{topic.anchorid}}"></a>
                 <p class="topics {%if topic.is_essential %}essential{%else%}extra{%endif%}">{{topic.content.display_name}}</p>
                 <ul>
                     {% for question in questions %}

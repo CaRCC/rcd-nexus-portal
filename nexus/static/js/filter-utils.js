@@ -100,6 +100,10 @@
                 topic.disabled = true;
             }
           }
+        // When the facing changes and the topic was selected from another facing, revert topic to all
+        if(!topicsSel.value.startsWith(prefix)) {
+            topicsSel.selectedIndex = 0;  // Force selection back to "all"
+        }
      
 
     }

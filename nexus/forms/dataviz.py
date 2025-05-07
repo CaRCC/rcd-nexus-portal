@@ -332,7 +332,7 @@ class DataFilterForm(forms.Form):
         if DataFilterForm.topicOptions.get('all') != None:
             return
 
-        print('Initializing DataFilterForm.topicOptions...')
+        # print('Initializing DataFilterForm.topicOptions...')
         DataFilterForm.topicOptions['all'] = 'Topic Average Coverages'
         rex_spaces = re.compile(r'\s+')
         rex_tags = re.compile(r'<[^<]+?>')

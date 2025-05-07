@@ -78,19 +78,22 @@ def printable_questions(request):
     nFacings = len(categories.keys())
     for facing, topics in categories.items():
         facing.content = facing.contents.get(language=session_language)
+        facingAnchorPrefix = None
         match facing.slug:
             case "researcher":
-                facing.anchorid = "rftopics"
+                facingAnchorPrefix = "rf"
             case "data":
-                facing.anchorid = "dftopics"
+                facingAnchorPrefix = "df"
             case "software":
-                facing.anchorid = "swftopics"
+                facingAnchorPrefix = "swf"
             case "systems":
-                facing.anchorid = "syftopics"
+                facingAnchorPrefix = "syf"
             case "strategy":
-                facing.anchorid = "spftopics"
+                facingAnchorPrefix = "spf"
+        facing.anchorid = facingAnchorPrefix+"topics"
         for topic, questions in topics.items():
             topic.content = topic.contents.get(language=session_language)
+            topic.anchorid = facingAnchorPrefix+topic.slug+"_qs"
             topic.is_essential = False
             if(topic.slug==CapabilitiesTopic.domain_coverage_slug):
                 topic.isdomain = True

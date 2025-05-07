@@ -381,6 +381,8 @@ def removeDefaultDictEntries(dict):
         del dict['chart_views']
     if dict.get('facings') == 'all':
         del dict['facings']
+    if dict.get('topics') == 'all':
+        del dict['topics']
     if cc := dict.get('cc'):
         if len(cc) == len(DataFilterForm.CC_CHOICES):
             del dict['cc']
@@ -423,6 +425,8 @@ def fixMissingDictEntries(dict):
         dict['chart_views'] = 'sum'
     if dict.get('facings') == None:
         dict['facings'] = 'all'
+    if dict.get('topics') == None:
+        dict['topics'] = 'all'
     if dict.get('caps_feature') == None:
         dict['caps_feature'] = 'cov'
     if dict.get('benchmark') == None:
@@ -503,12 +507,12 @@ def fixMultiSelectDictEntries(dict):
 facing_sel_mapping = { "rf":"researcher", "df":"data", "swf":"software", "syf":"systems", "spf":"strategy",}
 
 
-def getInstAverages(benchmarkAssessment, selFacing):
+def getInstAverages(benchmarkAssessment, facingslug, topicslug='all'):
     # Get the answers of interest (no domain, no not-Applicable)
-    allAnswers = benchmarkAssessment.filtered_answers()
+    allAnswers = benchmarkAssessment.filtered_answers().annotate_coverage()
     values = []
 
-    if selFacing=='all':
+    if facingslug=='all':
         answersByFacing = allAnswers.group_by_facing()
         # Get the average of all questions in each facing.
         for facing in Facing.objects.all():
@@ -524,25 +528,51 @@ def getInstAverages(benchmarkAssessment, selFacing):
                 values.append(None)
         return values, allAnswers
     
-    #else:  Specific facing
-    facing_slug = facing_sel_mapping.get(selFacing)
-    facing = Facing.objects.get(slug=facing_slug) 
+    facing = Facing.objects.get(slug=facingslug) 
 
-    answersByFacingTopic = allAnswers.group_by_facing_topic()
-    answersForFacingTopic = answersByFacingTopic[facing]
-    # Get the average of all questions in each topic in the specified facing.
-    # for topic in answersForFacingTopic:
-    for topic in facing.capmodel_topics.all(): # review all topics in the facing, not just those with answers
-        if topic in answersForFacingTopic:
-            answers = answersForFacingTopic[topic]
-            agg = answers.aggregate_score()
-            coverage = agg["average"]
-            coverage = min(1.0, max(0.0, coverage))
-            # print(f'getInstAvgs(facing:{facing_slug}) Topic {topic} avg coverage: {coverage}')
+    if topicslug=='all': # Specified facing, all topics
+        answersForFacingTopic = dict()
+        allAnswers = allAnswers.filter(question__topic__facing=facing)
+        for topic in facing.capmodel_topics.all():
+            answers = allAnswers.filter(question__topic=topic)
+            if answers:
+                answersForFacingTopic[topic] = answers.order_by("question__index")
+
+        # Get the average of all questions in each topic in the specified facing.
+        for topic in facing.capmodel_topics.all(): # review all topics in the facing, not just those with answers
+            if topic in answersForFacingTopic:
+                answers = answersForFacingTopic[topic]
+                agg = answers.aggregate_score()
+                coverage = agg["average"]
+                coverage = min(1.0, max(0.0, coverage))
+                # print(f'getInstAvgs(facing:{facing_slug}) Topic {topic} avg coverage: {coverage}')
+                values.append(coverage*100)   # Convert to percent, since that's what we graph
+            else: # No data for this topic
+                values.append(None)
+        return values, allAnswers
+    
+    # else: Specified facing, Specified topic
+    #print(f'getInstAvgs(facing:{facingslug}) Topic {topicslug}')
+
+    topic = CapabilitiesTopic.objects.filter(facing=facing).get(slug=topicslug) 
+
+    facingTopicAnswers = allAnswers.filter(question__topic__facing=facing).filter(question__topic=topic).order_by("question__index")
+    answersForFacingTopicQuestions = dict((a.question.slug, a) for a in facingTopicAnswers)
+    #print(f'Have bm answers for: {answersForFacingTopicQuestions.keys()}')
+
+    # Get the coverage of each question in the specified topic in the specified facing.
+    allFacingTopicQuestions = CapabilitiesQuestion.objects.all().filter(topic__facing=facing).filter(topic=topic).order_by("index")
+    #print(f'Have questions for: {allFacingTopicQuestions.values("slug")}')
+    for q in allFacingTopicQuestions: # review all questions in the facing and topic, not just those with answers
+        if q.slug in answersForFacingTopicQuestions:
+            answer = answersForFacingTopicQuestions[q.slug]
+            coverage = min(1.0, max(0.0, answer.coverage))
+            # print(f'getInstAvgs(facing:{facingslug}) Topic {topic} Question {q.slug} coverage: {coverage}')
             values.append(coverage*100)   # Convert to percent, since that's what we graph
-        else: # No data for this topic
+        else: # No data for this question
             values.append(None)
-    return values, allAnswers.filter(question__topic__facing=facing)
+    return values, facingTopicAnswers
+
 
 @never_cache
 def data_viz_capsmodeldata(request): 
@@ -555,7 +585,7 @@ def data_viz_capsmodeldata(request):
     partialBenchMarkNote = None
     missing_cats = False    # when filters results in partial data for compare-by graphs
     nonDefs = ""
-    facinglink = None
+    printQsAnchor = None
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
@@ -578,6 +608,15 @@ def data_viz_capsmodeldata(request):
             filter_form = DataFilterForm(cleaned_dict)
             chart = cleaned_dict.get('chart_views')
             facing = cleaned_dict.get('facings')
+            if facing == 'all':
+                facingslug = facing
+            else:
+                facingslug = facing_sel_mapping.get(facing)
+            topic = cleaned_dict.get('topics')
+            if topic == 'all':
+                topicslug = topic
+            else:
+                topicslug = topic[topic.find("_")+1:]
             #print( "Cleaned dict: ",cleaned_dict)
             basisBenchmarkQuestionIDs = None
             basisBenchmarkYear = None
@@ -596,7 +635,8 @@ def data_viz_capsmodeldata(request):
                         benchmarkInfo = []
                         for bmprof in bmProfiles:
                             benchmarkAssessment = bmprof.capabilities_assessment
-                            data, answers = getInstAverages(benchmarkAssessment, facing)
+
+                            data, answers = getInstAverages(benchmarkAssessment, facingslug, topicslug)
                             firstBMSuffix = ''
                             if basisBenchmarkQuestionIDs == None:    # First in list is the newest
                                 basisBenchmarkQuestionIDs = answers.values('question__id')
@@ -614,28 +654,39 @@ def data_viz_capsmodeldata(request):
                             benchmarkInfo.append({ 'data':data, 'name':bmName })
                             
 
+            # Filter for the institutional filters, but not on facing or topic
             answers, instCount = cmgraphs.filterAssessmentData(cleaned_dict, bmQuestions=basisBenchmarkQuestionIDs)
-            if facing == 'all':
-                facingslug = facing
-            else:
-                facingslug = facing_sel_mapping.get(facing)
-
-            if facing != 'all' and not answers.filter(question__topic__facing__slug=facingslug).exists():
-                graph = None
-                graphtitle = f'Benchmark basis assessment included no questions in this Facing.'
-            elif(instCount < MIN_INSTITUTIONS_TO_GRAPH):
-                graph = None
+            # Now filter for the view choices
+            graphtitle = None
+            if instCount < MIN_INSTITUTIONS_TO_GRAPH:
                 graphtitle = f'Too Few Institutions ({instCount}) to Graph!'
+            if facing != 'all':
+                if topic == 'all':
+                    answers = answers.filter(question__topic__facing__slug=facingslug)
+                    if not answers.exists():
+                        graphtitle = f'Benchmark basis assessment included no questions in this Facing.'
+                else: 
+                    answers = answers.filter(question__topic__facing__slug=facingslug).filter(question__topic__slug=topicslug)
+                    if not answers.exists():
+                        graphtitle = f'Benchmark basis assessment included no questions in this Topic.'
+
+            if graphtitle != None:
+                graph = None
             else:
                 facingname = [item for item in DataFilterForm.FACINGS_CHOICES if item[0] == facing]
 
                 if basisBenchmarkYear != None:  # we're doing benchmarking - check the counts for that year
-                    fullQuestionCountForBasisYear = CapabilitiesQuestion.getQuestionCount(basisBenchmarkYear, forFacing=facingslug)
+                    fullQuestionCountForBasisYear = CapabilitiesQuestion.getQuestionCount(basisBenchmarkYear, forFacing=facingslug, forTopic=topicslug)
                     if basisBenchmarkQuestionIDs.count() < fullQuestionCountForBasisYear:
-                        topicQualifier = '' if facing == 'all' else 'in this topic '
+                        if facing == 'all':
+                            topicQualifier = '' 
+                        elif topic == 'all':
+                            topicQualifier = 'in this facing '
+                        else:
+                            topicQualifier = 'in this topic '
                         partialBenchMarkNote = mark_safe(f'The basis benchmark assessment includes {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} {topicQualifier}for {basisBenchmarkYear}, and community data has been filtered accoundingly.')
                     #else:
-                        #print(f'Basis benchmark assessment has all {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} for {basisBenchmarkYear}.')
+                        #print(f'Basis benchmark assessment has all {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} for {basisBenchmarkYear} (topicQualifier}.')
 
                 grSize = cleaned_dict.get('graph_size')
                 match grSize:
@@ -662,10 +713,19 @@ def data_viz_capsmodeldata(request):
 
                 if facing != 'all':
                     grheight *= cmgraphs.CALCULATE_SCALED_HEIGHT
-                    facinglink = facing+'topics'
+                    printQsAnchor = facing+'topics'
+                    if topic == 'all':
+                        printQsAnchor = facing+'topics'
+                    else:
+                        printQsAnchor = facing+topicslug+'_qs'
 
                 showErrBars = cleaned_dict.get('opt_show_errbars') != 'False'
                 # print("ShowErrBars: ",showErrBars)
+
+                if facing == 'all' or topic == 'all':
+                    graphPrefix = f'{facingname[0][1]}'
+                else: # Chosen facing and topic
+                    graphPrefix = f'{facingname[0][1][:-7]}: {cmgraphs.labelForFacingTopic(facingslug, topicslug)} Questions<br>'
 
                 match chart:
                     case "sum":
@@ -673,68 +733,71 @@ def data_viz_capsmodeldata(request):
                             # Scale the size slightly since the summary graph has no legend
                             graph = cmgraphs.summaryDataGraph(answers, benchmarks=benchmarkInfo,
                                                               height=grheight*.9, width=grwidth*.9, showErrBars=showErrBars)
-                        else:
+                        elif topic == 'all':
                             graph = cmgraphs.facingSummaryDataGraph(answers, facingslug, benchmarks=benchmarkInfo, 
                                                                     height=grheight, width=grwidth, showErrBars=showErrBars)
+                        else: # topic specified
+                            graph = cmgraphs.topicSummaryDataGraph(answers, facingslug, topicslug, benchmarks=benchmarkInfo, 
+                                                                    height=grheight, width=grwidth, showErrBars=showErrBars)
                         if graph : 
-                            graphtitle = f'{facingname[0][1]} ({instCount} Institutions)'
+                            graphtitle = f'{graphPrefix} ({instCount} Institutions)'
 
                     case "cc" :
                         if facing == 'all':
                             graph, missing_cats = cmgraphs.capsDataGraphByCC(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph, missing_cats = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByCC(answers, facingslug, topicslug, benchmarks=benchmarkInfo, 
                                                                      height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
-                            graphtitle = f'{facingname[0][1]} by Institutional Classification ({instCount} Institutions)'
+                            graphtitle = f'{graphPrefix} by Institutional Classification ({instCount} Institutions)'
                     case "mission" :
                         if facing == 'all':
                             graph, missing_cats = cmgraphs.capsDataGraphByMission(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph, missing_cats = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByMission(answers, facingslug, topicslug, benchmarks=benchmarkInfo, 
                                                                           height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
-                            graphtitle = f'{facingname[0][1]} by Mission ({instCount} Institutions)'
+                            graphtitle = f'{graphPrefix} by Mission ({instCount} Institutions)'
                     case "pub_priv" :
                         if facing == 'all':
                             graph, missing_cats = cmgraphs.capsDataGraphByPubPriv(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph, missing_cats = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByPubPriv(answers, facingslug, topicslug, benchmarks=benchmarkInfo, 
                                                                           height=grheight, width=grwidth, showErrBars=showErrBars)
                         if graph : 
-                            graphtitle = f'{facingname[0][1]} by Control (Public/Private) ({instCount} Institutions)'
+                            graphtitle = f'{graphPrefix} by Control (Public/Private) ({instCount} Institutions)'
                     case "epscor" :
                         if facing == 'all':
                             graph, missing_cats = cmgraphs.capsDataGraphByEPSCoR(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph, missing_cats = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByEPSCoR(answers, facingslug, topicslug, benchmarks=benchmarkInfo, 
                                                                          height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
-                            graphtitle = f'{facingname[0][1]} by EPSCoR status ({instCount} Institutions)'
+                            graphtitle = f'{graphPrefix} by EPSCoR status ({instCount} Institutions)'
                     case "msi" :
                         if facing == 'all':
                             graph, missing_cats = cmgraphs.capsDataGraphByMSI(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth, showErrBars=showErrBars)
                         else:
-                            graph, missing_cats = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByMSI(answers, facingslug, topicslug, benchmarks=benchmarkInfo, 
                                                                       height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
-                            graphtitle = f'{facingname[0][1]} by Minority-serving status ({instCount} Institutions)'
+                            graphtitle = f'{graphPrefix} by Minority-serving status ({instCount} Institutions)'
                     case "orgmodel" :
                         if facing == 'all':
                             graph, missing_cats = cmgraphs.capsDataGraphByOrgModel(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
                         else:
-                            graph, missing_cats = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByOrgModel(answers, facingslug, topicslug, benchmarks=benchmarkInfo, 
                                                                            height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
-                            graphtitle = f'{facingname[0][1]} by Organizational Model ({instCount} Institutions)'
+                            graphtitle = f'{graphPrefix} by Organizational Model ({instCount} Institutions)'
                     case "reporting" :
                         if facing == 'all':
                             graph, missing_cats = cmgraphs.capsDataGraphByReporting(answers, benchmarks=benchmarkInfo, height=grheight, width=grwidth2, showErrBars=showErrBars)
                         else:
-                            graph, missing_cats = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, benchmarks=benchmarkInfo, 
+                            graph, missing_cats = cmgraphs.facingCapsDataGraphByReporting(answers, facingslug, topicslug, benchmarks=benchmarkInfo, 
                                                                             height=grheight, width=grwidth2, showErrBars=showErrBars)
                         if graph : 
-                            graphtitle = f'{facingname[0][1]} by Reporting Structure ({instCount} Institutions)'
+                            graphtitle = f'{graphPrefix} by Reporting Structure ({instCount} Institutions)'
                     case _ :
                         send_mail(
                                 subject="Unrecognized Chart Option: "+chart,
@@ -766,7 +829,7 @@ def data_viz_capsmodeldata(request):
         "multiBenchMarkNote":multiBenchMarkNote,
         "partialBenchMarkNote":partialBenchMarkNote,
         "missingCats":missing_cats,
-        "facinglink":facinglink,
+        "printQsAnchor":printQsAnchor,
         "nonDefs":nonDefs,
         "breadcrumbs":{
             "Data Viewer":"dataviz:vizmain",

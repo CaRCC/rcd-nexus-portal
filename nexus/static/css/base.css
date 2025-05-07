@@ -709,6 +709,7 @@ h3.graphNYI {
 #CMGraphTitle {
     margin-top: 0;
     margin-bottom: 0.2em;
+    text-align: center;
 }
 
 div.viz_footnote {

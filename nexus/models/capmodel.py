@@ -96,24 +96,40 @@ class CapabilitiesQuestion(models.Model):
 
     questionCount = dict()
 
-    def getQuestionCount(forYear, forFacing='all'):
+    def getQuestionCount(forYear, forFacing='all', forTopic='all'):
         if forYear < 2019 or forYear > datetime.now().year:
             raise ValueError(f"CapabilitiesQuestion.getQuestionCount year is out of range: {forYear}")
         if yearCounts := CapabilitiesQuestion.questionCount.get(forYear):
-            return yearCounts[forFacing]
-        # yearCounts have not yet bee set up, so do that
+            if(forFacing =='all'):
+                return yearCounts[forFacing]
+            else:
+                return yearCounts[forFacing][forTopic]
+        # yearCounts have not yet been set up, calculate down to the topic level
         filterdate = datetime(int(forYear), 6, 1, tzinfo=timezone.utc)  # pick the middle of the year
         # get the set of questions used in that year
         allQuestionsForYear = CapabilitiesQuestion.objects.filter_valid(at=filterdate).exclude(topic__slug=CapabilitiesTopic.domain_coverage_slug)
         newYearData = dict()
+        # Special case for all summary, which has no topics
         newYearData['all'] = allQuestionsForYear.count()
         for facing in Facing.objects.all():
             qsForFacing = allQuestionsForYear.filter(topic__facing=facing)
+            topicsDict = dict()
             if qsForFacing:
-                newYearData[facing.slug] = qsForFacing.count()
+                # One special entry for all topics
+                topicsDict['all'] = qsForFacing.count()
+                # Now get counts for each topic
+                for topic in facing.capmodel_topics.all():
+                    qsForTopic = qsForFacing.filter(topic=topic)
+                    if qsForTopic:
+                        topicsDict[topic.slug] = qsForTopic.count()
+                newYearData[facing.slug] = topicsDict
+
         CapabilitiesQuestion.questionCount[forYear] = newYearData
-        print(f'added question counts: {newYearData} for year: {forYear}')
-        return newYearData[forFacing]
+        print(f'Added question counts for year {forYear}: {newYearData}')
+        if(forFacing =='all'):
+            return newYearData[forFacing]
+        else:
+            return newYearData[forFacing][forTopic]
 
 
     class QuerySet(models.QuerySet):

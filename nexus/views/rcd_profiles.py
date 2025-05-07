@@ -527,7 +527,7 @@ def rcd_profile_survey(request, pk):
     if request.method == "POST":
         if form.is_valid():
             model_instance = form.save()
-            print(f"Survey results: {vars(model_instance)}")
+            #print(f"Survey results: {vars(model_instance)}")
             profile.survey = model_instance
             profile.save()
             messages.success(request, f"Survey completed for {profile}")

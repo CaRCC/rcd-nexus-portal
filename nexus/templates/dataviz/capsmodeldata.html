@@ -25,9 +25,14 @@
         {%endif%}
     {%endif%}
 
-    {%if facinglink %}
-        <p class="viz_footnote">See also the <a href="{% url 'helpdocs:printable_questions' %}#{{facinglink}}">set of questions associated with each topic
-            in this Facing</a></p>
+    {%if printQsAnchor %}
+        <p class="viz_footnote">See also the <a href="{% url 'helpdocs:printable_questions' %}#{{printQsAnchor}}" target="_blank">
+            {%if "_qs" in printQsAnchor %}
+                full questions for this topic
+            {%else%}
+                questions associated with each topic in this Facing
+            {%endif%}
+        </a></p>
     {%endif%}
 </div>
 
