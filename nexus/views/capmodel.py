@@ -96,7 +96,7 @@ def assessment(request, profile_id):
                 send_mail(
                     subject=f"RCD Nexus Assessment Submitted for {profile}",
                     message=f"An assessment for RCD Profile: {profile} was just submitted from Institution: {profile.institution}, by: {request.user}.",
-                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                     recipient_list=[settings.CURATOR_EMAIL],
                 )
                 return redirect("capmodel:assessment", profile_id)
@@ -278,7 +278,7 @@ def assessment_unsubmit(request, profile_id):
     send_mail(
         subject=f"RCD Nexus Assessment Un-Submitted for {profile}",
         message=f"An assessment for RCD Profile: {profile} was just unsubmitted (withdrawn) from Institution: {profile.institution}, by: {request.user}.",
-        from_email=settings.DEFAULT_FROM_EMAIL,
+        from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
         recipient_list=[settings.CURATOR_EMAIL],
     )
 

@@ -90,6 +90,6 @@ Your assessment data will be added to the community dataset, benefitting the ent
 
 On behalf of the CaRCC Capabilities Model working group - Thanks!
 """,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                     recipient_list=[submitter.email],
                 )

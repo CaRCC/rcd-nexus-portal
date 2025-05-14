@@ -262,7 +262,7 @@ def data_viz_demographics_charts(request):
                         send_mail(
                                 subject="Unrecognized Chart Option: "+chart,
                                 message=f"{request.user} tried to view Demographic chart option: {chart}, which is not recognized.",
-                                from_email=settings.DEFAULT_FROM_EMAIL,
+                                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                                 recipient_list=[settings.SUPPORT_EMAIL],
                                 fail_silently=False,)
                         messages.error(request, f"Unrecognized Chart Option: {chart}. RCD Nexus Admins have been notified.")
@@ -802,7 +802,7 @@ def data_viz_capsmodeldata(request):
                         send_mail(
                                 subject="Unrecognized Chart Option: "+chart,
                                 message=f"{request.user} tried to view chart option: {chart}, which is not recognized.",
-                                from_email=settings.DEFAULT_FROM_EMAIL,
+                                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                                 recipient_list=[settings.SUPPORT_EMAIL],
                                 fail_silently=False,)
                         messages.error(request, f"Unrecognized Chart Option: {chart}. RCD Nexus Admins have been notified.")

@@ -130,7 +130,7 @@ class NewInstitutionRequest(models.Model):
         auto_now_add=True,
     )
 
-    def approve(self):
+    def approve(self, request):
         user = self.requester.name()
         with transaction.atomic():
             institution = Institution.objects.create(
@@ -162,7 +162,7 @@ Please add as much institutional information as possible to improve the communit
 You may now begin using the RCD Nexus assessment tools for your institution!
 """,
             html_message=email_in_html,
-            from_email=settings.DEFAULT_FROM_EMAIL,
+            from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
             recipient_list=[self.requester.email],
         )
         return institution
