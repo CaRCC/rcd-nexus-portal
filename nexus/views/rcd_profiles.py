@@ -157,6 +157,7 @@ def rcd_profile_list(request):
 
     # profiles = request.user.rcd_profiles.filter(archived=False)
     profiles = RCDProfile.objects.filter_can_view(request.user)
+    archived_profiles = RCDProfile.objects_archive.filter_can_view(request.user).filter(archived=True)
 
     navtree = NavNode(
         "Profiles",
@@ -175,6 +176,7 @@ def rcd_profile_list(request):
         "navtree": navtree,
         "current_profiles": profiles.filter(year=settings.RCD_DEFAULT_YEAR),
         "past_profiles": profiles.filter(year__lt=settings.RCD_DEFAULT_YEAR),
+        "archived_profiles": archived_profiles,
     }
 
     return render(request, "rcdprofile/list.html", context)
