@@ -68,6 +68,8 @@ def assessment(request, profile_id):
                 assessment, _ = CapabilitiesAssessment.objects.get_or_create(profile_id=profile_id)
                 atype=CapabilitiesAssessment.AssessmentTypeChoices.FULL
             assessment.assessment_type = atype
+            assessment.update_time = timezone.now()
+            assessment.update_user = request.user
             assessment.save()
         else: # No assessment and no context to create one - redirect to the profile. 
             return redirect("rcdprofile:detail", profile.pk)
@@ -427,6 +429,8 @@ def answer(request, profile_id, question_pk):
             answer: CapabilitiesAnswer = form.save(commit=False)
             answer.is_modified = True
             answer.save()
+            answer.assessment.update_user = request.user
+            answer.assessment.save()
             match answer.state:
                 case CapabilitiesAnswer.State.ANSWERED:
                     messages.success(request, f"Answer updated for {answer.question}.")

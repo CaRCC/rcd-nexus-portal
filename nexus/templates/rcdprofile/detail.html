@@ -23,6 +23,12 @@
   span.copied_from {
     font-style: italic;
   }
+  span.update {
+    display: inline-block;
+    font-style: italic;
+    font-size: 0.9em;
+    padding-top: 2px;
+  }
 
   section.fields div select {
     padding: 2px 4px;
@@ -120,11 +126,13 @@
       <h2>Capabilities Model Assessment</h2>
       {% if profile.capabilities_assessment %}
         {% if profile.capabilities_assessment.review_status == "not_submitted" %}
-          <p>Your {{adesc}} has not been submitted yet.</p>
+          <p>Your {{adesc}} has not been submitted yet.<br>
+          <span class="update">Last modified {{profile.capabilities_assessment.update_time|date:"DATE_FORMAT"}} by {{profile.capabilities_assessment.update_user}}</span></p>
           <p>Click the button below to continue working on the assessment.</p>
           <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Continue Working</a>
         {% elif profile.capabilities_assessment.review_status == "pending" %}
-          <p>Your {{adesc}} has been submitted, and is pending review by Program Staff.</p>
+          <p>Your {{adesc}} has been submitted, and is pending review by Program Staff.<br>
+          <span class="update">Last modified {{profile.capabilities_assessment.update_time|date:"DATE_FORMAT"}} by {{profile.capabilities_assessment.update_user}}</span></p>
           <p>Click the button below to review your work, and optionally unsubmit to update any answers.</p>
           <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
         {% elif profile.capabilities_assessment.review_status == "denied" %}
@@ -132,7 +140,7 @@
           <p>Click the button below for details on the reasons for rejection.</p>
           <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
         {% else %}
-          <p>Your {{adesc}} has been submitted and accepted.</p>
+          <p>Your {{adesc}} has been submitted and was accepted on {{profile.capabilities_assessment.review_time|date:"DATE_FORMAT"}}.</p>
           <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
         {% endif %}
       {% else %}
