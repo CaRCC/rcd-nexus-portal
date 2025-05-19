@@ -56,7 +56,7 @@
   function showHideCYOJExtra(show) {
       var cyojExtra = document.getElementById("cyojExtra");
       if(cyojExtra) {
-        cyojExtra.style.display = show?"block":"none";
+        cyojExtra.style.display = show==SHOWN?"block":"none";
       }
   }
 
@@ -64,20 +64,23 @@
     var submitBtnEl = document.getElementById("submitBtn");
     var cyojEl = document.getElementById("cyoj");
     if (cyojEl && cyojEl.checked) {
-      showHideCYOJExtra(true);
+      showHideCYOJExtra(SHOWN);
+      setExtraTopicsStateCookie(SHOWN);  // Default CYOJ view to show extras
       if (submitBtnEl) {
         submitBtnEl.innerHTML = "Begin with a blank Assessment";
       }
     } else if (submitBtnEl) {
-      showHideCYOJExtra(false);
+      showHideCYOJExtra(HIDDEN);
       var fullEl = document.getElementById("full");
       if (fullEl && fullEl.checked) {
+        setExtraTopicsStateCookie(SHOWN);  // Default Full view to show extras (e.g., on Printable List)
         submitBtnEl.innerHTML = "Begin a Full Assessment";
       } else {
         var essentialEl = document.getElementById("essential");
         if (essentialEl) {
           submitBtnEl.innerHTML = "Begin an Essentials Assessment";
         }
+        setExtraTopicsStateCookie(HIDDEN);  // Default Essentials view to hide extras
       }
     }
   }
@@ -103,7 +106,6 @@
     } else if(cyojEl && cyojEl.checked) {
       atype = "cyoj";
     }
-
     // window.location.href="{% url 'capmodel:assessment' profile.pk %}?type="+atype;
     alert("Navigate to "+"{% url 'capmodel:assessment' profile.pk %}?type="+atype);
   }
