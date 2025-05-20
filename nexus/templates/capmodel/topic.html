@@ -229,7 +229,22 @@
                             <td></td>
                         </tr>
                     {%endif%}
-                    {% comment %} Note we do not support adding the whole topic for an Essential assessment - they can add question by question {% endcomment %}
+                    {% comment %} Note we do not support adding the whole topic for an Essential assessment, 
+                    EXCEPT for the domain topic. For all others, they can add question by question. {% endcomment %}
+                    {%if topic_is_domain and not is_included %}
+                        <tr class="question includeQ">
+                            <td>
+                                <form action="{{ request.path }}/includetopic" method="post">
+                                    <p>
+                                    <b>Click here to include the entire topic in your assessment:</b><br>
+                                        {% csrf_token %}
+                                        <input class="inc_rem_q" type="submit" value="Include Entire Topic">
+                                    </p>
+                                </form>
+                            </td>
+                            <td></td>
+                        </tr>
+                    {%endif%}
                 {%endif%}
             {%elif atype == "cyoj" %}
                 {%if not is_included %}

@@ -396,6 +396,7 @@ def topic(request, profile_id, facing, topic):
             "cyoj_copied": not assessment.copied_from is None,
             "facing": facing.contents.get(language=session_language),
             "topic": topic.contents.get(language=session_language),
+            "topic_is_domain": topic.slug==CapabilitiesTopic.domain_coverage_slug,
             "is_included": is_included,
             "has_nonincluded": has_nonincluded,
             "is_essential": is_essential,

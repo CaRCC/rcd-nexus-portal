@@ -22,6 +22,10 @@
         box-shadow: none;
     }
 
+    section.status.showHideExtras {
+        max-width: 600px;
+    }
+
     section.status p {
         margin: 0.1em 1em;
         text-align: center;
@@ -248,9 +252,8 @@
         text-align: center;
         align-self: center;
         padding: 4px;
-        margin: 30px 10px 10px 10px;
+        margin: 20px 10px 10px 10px;
         max-width: 600px;
-        box-shadow: none;
     }
 
     section.submission div.field-head {
@@ -280,6 +283,9 @@
     }
 
     section.submission:hover {
+        box-shadow: 0 3px 5px rgba(var(--linksrgb), 0.5);
+    }
+    section.submission {
         box-shadow: 0 3px 5px rgba(var(--linksrgb), 0.3);
     }
 
@@ -287,6 +293,7 @@
         margin-bottom: 2px;
     }
 
+    section.status section.actions,
     section.submission section.actions,
     section.reporting section.actions {
         margin: 5px;
@@ -470,7 +477,7 @@
 {%if atype != "full" %}
 <section class="status showHideExtras">
     <p><input type="checkbox" id="showHideExtrasCB" onchange="onShowExtrasChange(this)">
-        Hide Extra Topics (i.e., {%if atype == "essential" %}Non-Essential Topics and {% endif %}those not included in this Assessment).</p>
+        Hide Extra Topics (i.e., {%if atype == "essential" %}Non-Essential Topics and Domain support Topics{% else %}topics you have not included in this Assessment{% endif %}).</p>
 </section>
 {% endif %}
 {% if profile.capabilities_assessment.review_status != "not_submitted" and can_submit %}
@@ -632,28 +639,28 @@
     </div>
 </section>
 
+{% if profile.capabilities_assessment.review_status == "not_submitted" %}
     <section class="submission">
-        {% if profile.capabilities_assessment.review_status == "not_submitted" %}
         {% if submit_form %}
-        <p>When you are satisfied with your answers, submit your assessment for final review.</p>
-        <form method="post">
-            {% csrf_token %}
-            {{ submit_form }}
-            <section class="actions">
-                <button type="submit">Submit</button>
-            </section>
-        </form>
+            <p>When you are satisfied with your answers, submit your assessment for final review.</p>
+            <form method="post">
+                {% csrf_token %}
+                {{ submit_form }}
+                <section class="actions">
+                    <button type="submit">Submit</button>
+                </section>
+            </form>
         {% else %}
-        <p>Once you have answered all the questions, you can submit your assessment.</p>
-            {% if atype == "cyoj" and pct_complete == 1 %}
-                <p>Note that you must include (and answer) at least one question in this assessment.</p>
-            {% endif %}
-        <section class="actions">
-            <button type="button" disabled>Submit</button>
-        </section>
-        {% endif %}
+            <p>Once you have answered all the questions, you can submit your assessment.</p>
+                {% if atype == "cyoj" and pct_complete == 1 %}
+                    <p>Note that you must include (and answer) at least one question in this assessment.</p>
+                {% endif %}
+            <section class="actions">
+                <button type="button" disabled>Submit</button>
+            </section>
         {% endif %}
     </section>
+{% endif %}
 
     <section class="reporting">
         <section class="actions">
