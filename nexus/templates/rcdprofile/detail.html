@@ -56,6 +56,10 @@
   main a.button.center {
     max-width: 40%;
   }
+  main a.button.center.disabled {
+    background-color: var(--nexus-disabled);
+    pointer-events: none;
+  }
 </style>
 
 <script>
@@ -127,21 +131,43 @@
       {% if profile.capabilities_assessment %}
         {% if profile.capabilities_assessment.review_status == "not_submitted" %}
           <p>Your {{adesc}} has not been submitted yet.<br>
-          <span class="update">Last modified {{profile.capabilities_assessment.update_time|date:"DATE_FORMAT"}} by {{profile.capabilities_assessment.update_user}}</span></p>
-          <p>Click the button below to continue working on the assessment.</p>
-          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Continue Working</a>
+          <span class="update">Last modified {{profile.capabilities_assessment.update_time|date:"DATE_FORMAT"}} 
+            {% if profile.capabilities_assessment.update_user %}by {{profile.capabilities_assessment.update_user}}{%endif%}</span></p>
+          {% if not profile.archived %}
+            <p>Click the button below to continue working on the assessment.</p>
+            <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Continue Working</a>
+          {%else%}
+            <p>You must restore this Institution Profile before you can work on the assessment.</p>
+            <a class="button center disabled" href="">Continue Working</a>
+          {%endif%}
         {% elif profile.capabilities_assessment.review_status == "pending" %}
           <p>Your {{adesc}} has been submitted, and is pending review by Program Staff.<br>
-          <span class="update">Last modified {{profile.capabilities_assessment.update_time|date:"DATE_FORMAT"}} by {{profile.capabilities_assessment.update_user}}</span></p>
-          <p>Click the button below to review your work, and optionally unsubmit to update any answers.</p>
-          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          <span class="update">Last modified {{profile.capabilities_assessment.update_time|date:"DATE_FORMAT"}}
+            {% if profile.capabilities_assessment.update_user %}by {{profile.capabilities_assessment.update_user}}{%endif%}</p>
+          {% if not profile.archived %}
+            <p>Click the button below to review your work, and optionally unsubmit to update any answers.</p>
+            <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          {%else%}
+            <p>You must restore this Institution Profile before you can review the assessment.</p>
+            <a class="button center disabled" href="">Review</a>
+          {%endif%}
         {% elif profile.capabilities_assessment.review_status == "denied" %}
           <p>Your {{adesc}} was submitted and rejected.</p>
-          <p>Click the button below for details on the reasons for rejection.</p>
-          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          {% if not profile.archived %}
+            <p>Click the button below for details on the reasons for rejection.</p>
+            <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          {%else%}
+            <p>You must restore this Institution Profile before you can review the assessment.</p>
+            <a class="button center disabled" href="">Review</a>
+          {%endif%}
         {% else %}
           <p>Your {{adesc}} has been submitted and was accepted on {{profile.capabilities_assessment.review_time|date:"DATE_FORMAT"}}.</p>
-          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          {% if not profile.archived %}
+            <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          {%else%}
+            <p>You must restore this Institution Profile before you can review the assessment.</p>
+            <a class="button center disabled" href="">Review</a>
+          {%endif%}
         {% endif %}
       {% else %}
         <p>You have not started a Capabilities Model Assessment. Choose one of the following:</p>
@@ -202,14 +228,23 @@
   {% if can_manage %}
     <section>
       <h2>Review/Edit Institution Profile</h2>
-      <p>Click the button below to review and/or edit your institution profile.</p>
-      <a class="button center" href="{% url 'rcdprofile:edit' profile.pk %}">Review/Edit Institution Profile</a>
+        {% if not profile.archived %}
+          <p>Click the button below to review and/or edit your institution profile.</p>
+          <a class="button center" href="{% url 'rcdprofile:edit' profile.pk %}">Review/Edit Institution Profile</a>
+        {%else%}
+          <p>You must restore this Institution Profile before you can review the assessment.</p>
+          <a class="button center disabled" href="">Review/Edit Institution Profile</a>
+        {%endif%}
     </section>
   {% else %}
     <section>
       <h2>View Institution Profile</h2>
-      <p>Click the button below to review your institution profile.</p>
-      <a class="button center" href="{% url 'rcdprofile:view' profile.pk %}">View Institution Profile</a>
+      {% if not profile.archived %}
+        <p>Click the button below to review your institution profile.</p>
+        <a class="button center" href="{% url 'rcdprofile:view' profile.pk %}">View Institution Profile</a>
+        {%else%}
+          <p>This Institution Profile has been archived. It cannot be viewed unless and until a profile manager restores the Institution Profile.</p>
+        {%endif%}
     </section>
   {% endif %}
 

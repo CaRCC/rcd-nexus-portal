@@ -6,6 +6,13 @@
         margin-bottom: 0;
     }
 
+    main form {
+        margin:auto;
+    }
+    main form section{
+        background-color: transparent;
+    }
+
     section.status {
         margin: 0px 10px;
         padding-top: 0px;
@@ -429,12 +436,12 @@
 {% elif profile.capabilities_assessment.review_status == "pending" %}
 <h3>Review pending</h3>
 <section class="status">
-    <p>This assessment has been submitted and is pending final review by <br />RCD Nexus Program Staff.<br />
+    <p>This assessment has been submitted and is pending final review by RCD Nexus Program Staff.<br />
         You may <strong><em>unsubmit</em></strong> to make changes to your answers. <br/> Once approved the assessment will be frozen.</p>
     <form method="post" action="unsubmit">
         {% csrf_token %}
         <section class="actions">
-            <button type="submit">Unsubmit</button>
+            <button type="submit">Unsubmit Assessment</button>
         </section>
     </form>
 </section>
