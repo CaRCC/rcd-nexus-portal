@@ -13,9 +13,10 @@
 <div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
 
 <div class="viz_footnote">
-    {%if multiBenchMarkNote or partialBenchMarkNote or showErrBars or missingCats %}
+    {%if multiBenchMarkNote or partialBenchMarkNote or showErrBars or missingCats or missingBenchmarkDataNote %}
         <p class="viz_footnote_intro">Notes: </p>
         {%if multiBenchMarkNote %}<p class="viz_footnote">{{multiBenchMarkNote}}</p>{%endif%}
+        {%if missingBenchmarkDataNote %}<p class="viz_footnote">{{missingBenchmarkDataNote}}</p>{%endif%}
         {%if partialBenchMarkNote %}<p class="viz_footnote">{{partialBenchMarkNote}}</p>{%endif%}
         {%if showErrBars %}
             <p class="viz_footnote">Error bars represent one standard deviation in the data, and illustrate the variation among institutions.</p>

@@ -727,7 +727,11 @@ p.viz_footnote_intro {
 p.viz_footnote {
     margin: 0 0 0 20px;
 }
-
+p.viz_footnote span.missing {
+    font-style: italic;
+    font-weight: bold;
+    color:#9F9F9F;
+}
 .menu {
     display: flex;
     flex-direction: row;

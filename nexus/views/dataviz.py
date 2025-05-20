@@ -526,7 +526,7 @@ def getInstAverages(benchmarkAssessment, facingslug, topicslug='all'):
                 values.append(coverage*100)   # Convert to percent, since that's what we graph
             else: # No data for this facing
                 values.append(None)
-        return values, allAnswers
+        return values, allAnswers, True # For all facings, there must be at least one data point
     
     facing = Facing.objects.get(slug=facingslug) 
 
@@ -539,6 +539,7 @@ def getInstAverages(benchmarkAssessment, facingslug, topicslug='all'):
                 answersForFacingTopic[topic] = answers.order_by("question__index")
 
         # Get the average of all questions in each topic in the specified facing.
+        hasData = False # Assume no data until we see some
         for topic in facing.capmodel_topics.all(): # review all topics in the facing, not just those with answers
             if topic in answersForFacingTopic:
                 answers = answersForFacingTopic[topic]
@@ -547,9 +548,10 @@ def getInstAverages(benchmarkAssessment, facingslug, topicslug='all'):
                 coverage = min(1.0, max(0.0, coverage))
                 # print(f'getInstAvgs(facing:{facing_slug}) Topic {topic} avg coverage: {coverage}')
                 values.append(coverage*100)   # Convert to percent, since that's what we graph
+                hasData = True
             else: # No data for this topic
                 values.append(None)
-        return values, allAnswers
+        return values, allAnswers, hasData
     
     # else: Specified facing, Specified topic
     #print(f'getInstAvgs(facing:{facingslug}) Topic {topicslug}')
@@ -563,15 +565,17 @@ def getInstAverages(benchmarkAssessment, facingslug, topicslug='all'):
     # Get the coverage of each question in the specified topic in the specified facing.
     allFacingTopicQuestions = CapabilitiesQuestion.objects.all().filter(topic__facing=facing).filter(topic=topic).order_by("index")
     #print(f'Have questions for: {allFacingTopicQuestions.values("slug")}')
+    hasData = False # Assume no data until we see some
     for q in allFacingTopicQuestions: # review all questions in the facing and topic, not just those with answers
         if q.slug in answersForFacingTopicQuestions:
             answer = answersForFacingTopicQuestions[q.slug]
             coverage = min(1.0, max(0.0, answer.coverage))
             # print(f'getInstAvgs(facing:{facingslug}) Topic {topic} Question {q.slug} coverage: {coverage}')
             values.append(coverage*100)   # Convert to percent, since that's what we graph
+            hasData = True
         else: # No data for this question
             values.append(None)
-    return values, facingTopicAnswers
+    return values, facingTopicAnswers, hasData
 
 
 @never_cache
@@ -583,6 +587,7 @@ def data_viz_capsmodeldata(request):
     showErrBars = False
     multiBenchMarkNote = None
     partialBenchMarkNote = None
+    missingBenchmarkDataNote = None
     missing_cats = False    # when filters results in partial data for compare-by graphs
     nonDefs = ""
     printQsAnchor = None
@@ -636,7 +641,7 @@ def data_viz_capsmodeldata(request):
                         for bmprof in bmProfiles:
                             benchmarkAssessment = bmprof.capabilities_assessment
 
-                            data, answers = getInstAverages(benchmarkAssessment, facingslug, topicslug)
+                            data, answers, hasData = getInstAverages(benchmarkAssessment, facingslug, topicslug)
                             firstBMSuffix = ''
                             if basisBenchmarkQuestionIDs == None:    # First in list is the newest
                                 basisBenchmarkQuestionIDs = answers.values('question__id')
@@ -651,7 +656,10 @@ def data_viz_capsmodeldata(request):
                             bmName = '<b>'+'<br>'.join(textwrap.wrap(shortprofname, 20))+firstBMSuffix+'</b>'
                                 #print('First Benchmark questions: ',str(basisBenchmarkQuestions))
                             #print('Adding Benchmark info for: ',bmName)
-                            benchmarkInfo.append({ 'data':data, 'name':bmName })
+                            benchmarkInfo.append({ 'data':data, 'hasData':hasData, 'name':bmName })
+                            if not hasData: 
+                                missingBenchmarkDataNote = \
+                                    mark_safe('<span class="missing">Shaded italics</span> in the legend indicates a benchmarking assessment that has no data for this view.')
                             
 
             # Filter for the institutional filters, but not on facing or topic
@@ -827,6 +835,7 @@ def data_viz_capsmodeldata(request):
         "chart":chart,
         "showErrBars":showErrBars,
         "multiBenchMarkNote":multiBenchMarkNote,
+        "missingBenchmarkDataNote":missingBenchmarkDataNote,
         "partialBenchMarkNote":partialBenchMarkNote,
         "missingCats":missing_cats,
         "printQsAnchor":printQsAnchor,

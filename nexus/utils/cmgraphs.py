@@ -42,7 +42,8 @@ colorPalette = {'allData':'#9F9F9F', 'EPSCoR':'#5ab4ac', 'nonEPSCoR':'#d8b365',
                 'Public':'#ffd966','Private':'#ec7728',
                 'MSI':'#0084d1', 'NotMSI':'#8FB8DE','HSI':'#586F6B','HBCU':'#CFE795','AA':'#F7EF81','TCU':'#D4C685','otherMSI':'#D0CFEC',
                 VALUE_UNKNOWN_LABEL:'#8d99ae',
-                '2022':'#ffba5a', '2021':'#6aaa96', '2020':'#ada3d3'}
+                '2022':'#ffba5a', '2021':'#6aaa96', '2020':'#ada3d3',
+                'defaultLegendFontColor':'#000', 'noDataLegendFontColor':'#9F9F9F',}
 
 def hex_to_rgb(h):
     h = h.lstrip('#')
@@ -474,6 +475,7 @@ def summaryDataGraph(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAU
     fig.update_traces(showlegend=False) # For the summary data graph, the facings are labeled on the X axis, so redundant in the legend. 
 
     # If benchmark data passed in, layer that over
+    # Note that at the top level, there will be no benchmarks with no data
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         # Legendrank is SUPPOSED to let us order with the most recent year on top, but seems not to work.
@@ -583,9 +585,14 @@ def facingSummaryDataGraph(answers, facing, benchmarks=None,
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
    
@@ -645,10 +652,16 @@ def topicSummaryDataGraph(answers, facing, topic, benchmarks=None,
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             # print(f'topicSummaryDataGraph adding bm: {bm} for yvalues: {yvalues}')
+            print(f'topicSummaryDataGraph bmName: "{bmName}"')
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
    
@@ -709,6 +722,7 @@ def capsDataGraphByCC(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFA
     applyStandardVBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -801,9 +815,14 @@ def facingCapsDataGraphByCC(answers, facing, topic, benchmarks=None, width=DEFAU
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -851,6 +870,7 @@ def capsDataGraphByMission(answers, benchmarks=None, width=DEFAULT_WIDTH, height
     applyStandardVBarFormatting(fig, textscale=textscale, nCats=4)
 
     # If benchmark data passed in, layer that over
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -937,9 +957,14 @@ def facingCapsDataGraphByMission(answers, facing, topic, benchmarks=None, width=
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -986,6 +1011,7 @@ def capsDataGraphByPubPriv(answers, benchmarks=None, width=DEFAULT_WIDTH, height
     applyStandardVBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -1070,9 +1096,14 @@ def facingCapsDataGraphByPubPriv(answers, facing, topic, benchmarks=None, width=
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -1119,6 +1150,7 @@ def capsDataGraphByEPSCoR(answers, benchmarks=None, width=DEFAULT_WIDTH, height=
     applyStandardVBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -1199,14 +1231,19 @@ def facingCapsDataGraphByEPSCoR(answers, facing, topic, benchmarks=None, width=D
     applyStandardHBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    if(benchmarks!=None) :
+    if benchmarks!=None:
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -1253,6 +1290,7 @@ def capsDataGraphByMSI(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEF
     applyStandardVBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -1339,9 +1377,14 @@ def facingCapsDataGraphByMSI(answers, facing, topic, benchmarks=None, width=DEFA
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -1389,6 +1432,7 @@ def capsDataGraphByOrgModel(answers, benchmarks=None, width=DEFAULT_WIDTH, heigh
     applyStandardVBarFormatting(fig, textscale=textscale, nCats=4)
 
     # If benchmark data passed in, layer that over
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -1469,9 +1513,14 @@ def facingCapsDataGraphByOrgModel(answers, facing, topic, benchmarks=None, width
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -1519,6 +1568,7 @@ def capsDataGraphByReporting(answers, benchmarks=None,
     applyStandardVBarFormatting(fig, textscale=textscale, nCats=5)
 
     # If benchmark data passed in, layer that over
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -1600,9 +1650,14 @@ def facingCapsDataGraphByReporting(answers, facing, topic, benchmarks=None, widt
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
