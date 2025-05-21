@@ -1,5 +1,6 @@
 # from django.shortcuts import render
 import re
+import textwrap
 from django.db.models import Q, Case, Value, When, F, Count
 from functools import reduce
 from operator import or_
@@ -408,7 +409,9 @@ def applyStandardHBarFormatting(fig, width=None, textscale=1, nCats=0):
         yaxis=dict(title=dict(text='')), #, font=dict(size=16, family='Arial'))),
         xaxis=dict(title=dict(text='', font=dict(size=16, family='Arial')), ticksuffix="%", range=[0, 100], dtick=20),
         plot_bgcolor=colorPalette['bgColor'], 
-        margin_t=25, margin_l=20,autosize=True,
+        # margin_t=25, margin_l=20,
+        margin=dict(l=20, r=0, t=25, b=0),
+        autosize=True,
         legend_title_text='',        
         bargap=0.250,
         legend = dict(font=dict(size=14*textscale, )),
@@ -514,21 +517,51 @@ def labelMapForFacing(facing):
         case _ :
             raise ValueError(f"labelMapForFacing: unrecognized facing: {facing}")
 
+def midsplit(stringToSplit, linemax, splitReplace='<br>'):
+    inputLen = len(stringToSplit)
+    if inputLen <= linemax:
+        return stringToSplit
+    # Split as close to the midpoint as possible, preferring a longer first line than second
+    midpoint = int(inputLen/2)
+    splitPoint = 0
+    if stringToSplit[midpoint] == ' ': # can skip the rest if evenly splits at midpoint
+        splitPoint = midpoint
+    else:
+        for i in range(1, midpoint-1):
+            if stringToSplit[midpoint+i] == ' ':
+                splitPoint = midpoint+i
+                break
+            if stringToSplit[midpoint-i] == ' ':
+                splitPoint = midpoint-i
+                break
+
+    if splitPoint == 0:
+        print(f'midsplit could not find a place to split string: [{stringToSplit}]')
+        return stringToSplit
+    
+    return stringToSplit[0:splitPoint] + splitReplace + stringToSplit[splitPoint+1:]
+
 def labelMapForTopic(facingSlug, topicSlug):
-    # We build a quick dictionary from the Question data and then RFLabels_yvals = list(RFLabels.values())
+    # We build a quick dictionary from the Question data and return that along with the values (for axis labels)
+    # If the string length is under 24, leave as is. Else, find the word break closest to the center of the string and replace with a <br> tag
     questions = CapabilitiesQuestion.objects.filter_valid().filter(topic__facing__slug=facingSlug).filter(topic__slug=topicSlug).order_by('index')
-    qdict = dict((q.slug, f'<b>{q.contents.get(language="en").shorttext}</b>') for q in questions)
+    qdict = dict((q.slug, f'<b>{midsplit(q.contents.get(language="en").shorttext, 22)}</b>') for q in questions)
     return qdict, list(qdict.values())
 
 
-def calculateScaledHeight(nCats, height, lowCountAdj=.5):
-    scale = nCats/MAX_TOPICS
+# Scale the height, accounting for the number of categories on the y axis, as well as the number of items in the legend
+def calculateScaledHeight(nCats, nLegendItems, height, lowCountAdj=.5):
+    if nCats >= nLegendItems:
+        yCount = nCats
+    else:
+        yCount = nCats + min((nLegendItems-nCats)/2, 2)
+    scale = yCount/MAX_TOPICS
     adjustedscale = 1 - ((1-scale)*.5)     # scale by a fraction of the difference in # of Topics
     scaledHeight = adjustedscale*height
-    if nCats < 4:
+    if yCount < 6:
         # We have 2 sub-cats, so scale the height for topics with few questions, unless we are rendering smaller graphs
-        scaledHeight = scaledHeight*(lowCountAdj+(1-lowCountAdj)*(nCats/4))
-    print(f'calculateScaledHeight({nCats},{height}, {lowCountAdj}): {scaledHeight}')
+        scaledHeight = scaledHeight*(lowCountAdj+(1-lowCountAdj)*(yCount/6))
+    print(f'calculateScaledHeight({nCats},{nLegendItems},{height},{lowCountAdj}): {scaledHeight}')
     return scaledHeight
 
 
@@ -569,7 +602,7 @@ def facingSummaryDataGraph(answers, facing, benchmarks=None,
     textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        height = calculateScaledHeight(len(yvalues), 0, abs(height))
 
     # Create a Topics Summary Data bar chart for this facing
     fig = px.bar(data, y='Topics', x= 'Average Values', error_x='Std Dev' if showErrBars else None,
@@ -636,7 +669,10 @@ def topicSummaryDataGraph(answers, facing, topic, benchmarks=None,
     textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = 0
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
 
     # Create a Topics Summary Data bar chart for this facing
     fig = px.bar(data, y='Questions', x= 'Average Values', error_x='Std Dev' if showErrBars else None,
@@ -791,10 +827,15 @@ def facingCapsDataGraphByCC(answers, facing, topic, benchmarks=None, width=DEFAU
 
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    # textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
+
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = 3
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
 
     #print(f'topicCapsDataGraphByCC WxH:{width}x{height} markerscale: {markerscale} textscale: {textscale}')
 
@@ -935,11 +976,14 @@ def facingCapsDataGraphByMission(answers, facing, topic, benchmarks=None, width=
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     # We have 4 sub-cats, so scale the height very slightly for topics with few questions
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height), lowCountAdj=.7)
+        legendCount = len(mission_mapping)
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height), lowCountAdj=.7)
 
     # Create a grouped bar chart
     fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
@@ -1075,10 +1119,13 @@ def facingCapsDataGraphByPubPriv(answers, facing, topic, benchmarks=None, width=
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = 2
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
     
     # Create a grouped bar chart
     fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
@@ -1214,10 +1261,13 @@ def facingCapsDataGraphByEPSCoR(answers, facing, topic, benchmarks=None, width=D
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = 2
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
     
     # Create a grouped bar chart
     fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
@@ -1355,10 +1405,13 @@ def facingCapsDataGraphByMSI(answers, facing, topic, benchmarks=None, width=DEFA
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = 2
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
 
     # Create a grouped bar chart
     fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
@@ -1492,10 +1545,14 @@ def facingCapsDataGraphByOrgModel(answers, facing, topic, benchmarks=None, width
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = len(structure_mapping)
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
+        print(f'facingCapsDataGraphByOrgModel scaling height to: {height}')
     
     # Create a grouped bar chart
     fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
@@ -1629,10 +1686,13 @@ def facingCapsDataGraphByReporting(answers, facing, topic, benchmarks=None, widt
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = len(reporting_mapping)
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
     
     # Create a grouped bar chart
     fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
