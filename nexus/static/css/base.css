@@ -121,7 +121,7 @@ header {
 
 ul.errorlist {
     color: var(--error);
-    font-size: 14px;
+    font-size: 13px;
     list-style: none;
     padding-left: 1em;
 }
@@ -623,6 +623,9 @@ body>nav details summary, nav #filtertree details summary {
 #filtertree div#res_exp_wrapper p {
     margin-top: .2em;
     margin-bottom: .2em;
+}
+body>nav #filtertree ul {
+    max-width: initial;
 }
 
 

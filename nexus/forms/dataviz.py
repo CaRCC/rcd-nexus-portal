@@ -192,6 +192,7 @@ class DataFilterForm(forms.Form):
         widget=forms.CheckboxSelectMultiple(),
         #validators=[require_min_one],
         help_text="Filter by Institution Classification (Carnegie+)",
+        error_messages={"required": "Choose at least one value."},
     )
 
     mission = AllNoneMultipleChoiceField(
@@ -200,6 +201,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in MISSION_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by Institutional Mission",
+        error_messages={"required": "Choose at least one value."},
     )
 
     pub_priv = forms.MultipleChoiceField(
@@ -208,6 +210,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in PUB_PRIV_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by Institutional Control (Public or Private)",
+        error_messages={"required": "Choose at least one value."},
     )
 
     region = AllNoneMultipleChoiceField(
@@ -216,6 +219,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in REGION_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(attrs={"class":"toggle"}),
         help_text="Filter by US Region, Canada, or International",
+        error_messages={"required": "Choose at least one region."},
     )
 
     size = AllNoneMultipleChoiceField(
@@ -224,6 +228,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in SIZE_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by Size (total number of students)",
+        error_messages={"required": "Choose at least one value."},
     )
 
     epscor = forms.MultipleChoiceField(
@@ -232,6 +237,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in EPSCOR_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by EPSCoR eligibility",
+        error_messages={"required": "Choose at least one value."},
     )
 
     msi = AllNoneMultipleChoiceField(
@@ -240,6 +246,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in MSI_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by Minority-Serving status",
+        error_messages={"required": "Choose at least one value."},
     )
 
     year = AllNoneMultipleChoiceField(
@@ -248,6 +255,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in YEAR_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by the Year a Profile was created or an Assessment was Contributed",
+        error_messages={"required": "Choose at least one year."},
     )
 
     resexp_min = forms.IntegerField(

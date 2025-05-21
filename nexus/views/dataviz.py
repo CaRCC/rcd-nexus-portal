@@ -603,7 +603,7 @@ def data_viz_capsmodeldata(request):
             print("data_viz_capsmodeldata: FilterForm not valid!")
             print(posted.errors)
             print(posted.cleaned_data)
-            print(request.POST)
+            # print(request.POST)
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
             chart = posted.cleaned_data.get('chart_views')      # Ensure we handle the chart filtering
     else: 
