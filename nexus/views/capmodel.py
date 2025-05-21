@@ -54,6 +54,7 @@ def assessment(request, profile_id):
                         profile.capabilities_assessment = apps.get_model(
                             "nexus", "CapabilitiesAssessment"
                         ).objects.copy(sourceprofile.capabilities_assessment, profile=profile)
+                        profile.comments = f"{profile.comments}\nAssessment data copied from {sourceprofile}."
                         profile.save()
                         profile.refresh_from_db()
                         assessment = profile.capabilities_assessment

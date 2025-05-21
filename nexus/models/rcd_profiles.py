@@ -41,7 +41,7 @@ class RCDProfile(models.Model):
                 structure=existing.structure,
                 org_chart=existing.org_chart,
                 profile_reason=existing.profile_reason,
-                comments=f"Initialized using data from {existing}\n\n{existing.comments}",
+                comments=f"Initialized using institutional metadata from {existing}.",
                 created_by=created_by,
             )
 

@@ -507,9 +507,11 @@ def fixMultiSelectDictEntries(dict):
 facing_sel_mapping = { "rf":"researcher", "df":"data", "swf":"software", "syf":"systems", "spf":"strategy",}
 
 
-def getInstAverages(benchmarkAssessment, facingslug, topicslug='all'):
+def getInstAverages(benchmarkAssessment, facingslug, topicslug='all', bmQuestions=None):
     # Get the answers of interest (no domain, no not-Applicable)
     allAnswers = benchmarkAssessment.filtered_answers().annotate_coverage()
+    if bmQuestions != None:
+        allAnswers = allAnswers.filter(question__id__in=bmQuestions)
     values = []
 
     if facingslug=='all':
@@ -633,7 +635,8 @@ def data_viz_capsmodeldata(request):
                     # print('Looking for approved assessment...')
                     # Allow them to benchmark up to 3 assessments. If this is really a problem, they can go archive some to see the ones they want. 
                     bmProfiles = RCDProfile.objects.filter_can_view(request.user).exclude(archived=True)\
-                        .filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED).order_by('-year')[:3]
+                        .filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED)\
+                        .order_by('-year', '-capabilities_assessment__update_time')[:3]
                     if not bmProfiles:
                         messages.info(request, f"You must have view rights on an approved assessment to use benchmarking.")
                     else:
@@ -641,14 +644,16 @@ def data_viz_capsmodeldata(request):
                         for bmprof in bmProfiles:
                             benchmarkAssessment = bmprof.capabilities_assessment
 
-                            data, answers, hasData = getInstAverages(benchmarkAssessment, facingslug, topicslug)
                             firstBMSuffix = ''
                             if basisBenchmarkQuestionIDs == None:    # First in list is the newest
-                                basisBenchmarkQuestionIDs = answers.values('question__id')
+                                data, bmAnswers, hasData = getInstAverages(benchmarkAssessment, facingslug, topicslug)
+                                basisBenchmarkQuestionIDs = bmAnswers.values('question__id')
                                 basisBenchmarkYear = bmprof.year
                                 if bmProfiles.count()>1:
                                     firstBMSuffix = '*'
                                     multiBenchMarkNote = mark_safe("<b>*</b> indicates the basis benchmarking assessment.")
+                            else:
+                                data, bmAnswers, hasData = getInstAverages(benchmarkAssessment, facingslug, topicslug, bmQuestions=basisBenchmarkQuestionIDs)
                             # Name shortener 
                             # 1) Split off the suffix in parens (the type and year)
                             # 2) Shorten the root to 20
