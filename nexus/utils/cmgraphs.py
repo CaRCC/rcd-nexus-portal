@@ -282,12 +282,10 @@ def filterAssessmentData(dict, bmQuestions=None):
     answers=None
     if years := dict.get('year'):
         if len(years) < len(dataviz.DataFilterForm.YEAR_CHOICES):   # Skip the filter if all are set (nothing to filter)
-            # TODO - get instCount in return
             answers = getAllAnswers(years)[0]                       # filters on years, and then gets answers for latest assessment for each institution
 
     # if we did not handle the special case, get all the answers normally
     if(answers is None):
-        # TODO - get instCount in return
         answers = getAllAnswers()[0]                                # gets answers for latest assessment for each institution
 
     if cc := dict.get('cc'):

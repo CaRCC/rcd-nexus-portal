@@ -19,6 +19,7 @@
         }
     }
     // TODO: On initial GET (nav from UI, not refresh on view update), clear all the Open Status values. 
+    // This may be trickier now that we filter extraneous parameters. 
     function initDetailsFromStorage(nonDefaults) {
         for (var i = 0; i < localStorage.length; i++) {
             setDetailOpenStatus(localStorage.key(i), nonDefaults);

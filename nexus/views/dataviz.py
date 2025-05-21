@@ -649,12 +649,16 @@ def data_viz_capsmodeldata(request):
                                 if bmProfiles.count()>1:
                                     firstBMSuffix = '*'
                                     multiBenchMarkNote = mark_safe("<b>*</b> indicates the basis benchmarking assessment.")
-                            # The last 6 chars are always the year. Strip that, then cut the name short a bit, and rejoin
-                            yrstr = str(bmprof)[-6:]
-                            instName = textwrap.shorten(str(bmprof)[:-6], width=40, placeholder="...")
-                            shortprofname = instName+yrstr
-                            bmName = '<b>'+'<br>'.join(textwrap.wrap(shortprofname, 20))+firstBMSuffix+'</b>'
-                                #print('First Benchmark questions: ',str(basisBenchmarkQuestions))
+                            # Name shortener 
+                            # 1) Split off the suffix in parens (the type and year)
+                            # 2) Shorten the root to 20
+                            # 3) Join the results of the two with a break tag, and indent the suffix with &nbsp; chars
+                            profName = str(bmprof)
+                            sliceIndex = profName.rindex('(')
+                            baseName = textwrap.shorten(profName[:sliceIndex], width=20, placeholder="...")
+                            suffix = '&nbsp;&nbsp;'+profName[sliceIndex:]
+                            bmName = '<b>'+baseName+'<br>'+suffix+firstBMSuffix+'</b>'
+                            #print('First Benchmark questions: ',str(basisBenchmarkQuestions))
                             #print('Adding Benchmark info for: ',bmName)
                             benchmarkInfo.append({ 'data':data, 'hasData':hasData, 'name':bmName })
                             if not hasData: 
