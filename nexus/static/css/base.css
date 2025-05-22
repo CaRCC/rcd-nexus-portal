@@ -586,6 +586,10 @@ body>nav details summary, nav #filtertree details summary {
 #filtertree div>label {
     font-size: 13px;
 }
+#filtertree div>span.skiplabel {
+    font-size: 13px;
+    margin-left: .9em;
+}
 #filtertree .viewoption label, #filtertree .viewoption label option {
     /* font-weight: normal; */
     font-size: 1em;
@@ -638,7 +642,7 @@ body>nav #filtertree ul {
     border-width: 2px;
     padding: 0 2px;
     font-weight: bold;
-    font-size: 0.85em;
+    font-size: 12px;
 }
 
 /* Tooltip text */
@@ -652,12 +656,13 @@ body>nav #filtertree ul {
     font-size: 1em;
     font-weight: bold;
     padding: 1px;
+    text-indent: initial;
 
     /* Position the filtertip text - see examples below! */
     position: absolute;
     z-index: 1;
     top: -1px;
-    left: 2.5em;
+    left: 2em;
 }
 
 /* Show the filtertip text when you mouse over the filtertip container */

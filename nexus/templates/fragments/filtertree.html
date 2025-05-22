@@ -23,7 +23,7 @@
                                       We add that field by hand after the facings element. {% endcomment %}
                         <div class="viewselect {% if "all" == field.value %}skip{% endif %}">
                         {% if "skip_notopics" in filterform.topics.label %}
-                            <label for="{{ filterform.topics.auto_id }}" style="font-style: italic; color:gray">Question-level detail not available</label>
+                            <span class="skiplabel" style="font-style: italic; color:gray">Question-level detail not available</label>
                             <span class="filtertip">?
                                 <span class="help filtertiptext" id="{{ filterform.topics.auto_id }}_helptext">
                                     You must be logged in and have an approved assessment to view question-level data.

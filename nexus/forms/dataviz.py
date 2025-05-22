@@ -295,6 +295,7 @@ class DataFilterForm(forms.Form):
         label=FACINGS,
         choices=FACINGS_CHOICES,
         initial = [0],   # Default to Summary
+        required=False,     # Skipped in the chart views, map views, etc. 
         help_text="Choose the Facing detail you want to explore",
     )
 
@@ -302,6 +303,7 @@ class DataFilterForm(forms.Form):
         label=CHART_VIEWS,
         choices=CHART_VIEW_CHOICES,
         initial = [0],   # Default to Summary
+        required=False,     # Skipped in the map views, etc. 
         help_text="Select the data you want to compare in the chart",
     )
 
@@ -363,7 +365,8 @@ class DataFilterForm(forms.Form):
         self.fields['topics'] = forms.ChoiceField(
             label=DataFilterForm.TOPICS,
             help_text="Choose Topic summary or Question-level data for a Topic",
-            choices=[ (slug, label) for slug, label in DataFilterForm.topicOptions.items()])
+            choices=[ (slug, label) for slug, label in DataFilterForm.topicOptions.items()],
+            required=False,)
         self.initial['topics'] = 'all'
         self.initial['facings'] = 'all'
 

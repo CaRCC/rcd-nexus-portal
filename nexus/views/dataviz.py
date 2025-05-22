@@ -158,7 +158,7 @@ def data_viz_demographics_maps(request):
             else:
                 graphtitle = 'No Data to Chart!'
 
-    filter_form.filtertree(includes=DataFilterForm.INCLUDE_ALL, excludes={DataFilterForm.REGION, DataFilterForm.EPSCOR, DataFilterForm.RESEARCH_EXP})
+    filter_form.filtertree(includes=DataFilterForm.INCLUDE_ALL, excludes={DataFilterForm.REGION, DataFilterForm.RESEARCH_EXP})
     #print("FilterForm.hasViewChoices: "+str(filter_form.hasViewChoices))
     context = {
         "filterform":filter_form,
@@ -368,6 +368,8 @@ def data_viz_demographics_scatter(request):
     return render(request, "dataviz/scatterplots.html", context)
 
 def removeNullDictEntries(dict):
+    if not dict['topics']:
+        del dict['topics']
     if dict['resexp_min'] is None:
         del dict['resexp_min']
     if dict['resexp_max'] is None:
@@ -682,10 +684,12 @@ def data_viz_capsmodeldata(request):
                     answers = answers.filter(question__topic__facing__slug=facingslug)
                     if not answers.exists():
                         graphtitle = f'Benchmark basis assessment included no questions in this Facing.'
+                        print(f'DVCapsModelData: BM has no questions for facing [{facing}] (all topics).')
                 else: 
                     answers = answers.filter(question__topic__facing__slug=facingslug).filter(question__topic__slug=topicslug)
                     if not answers.exists():
                         graphtitle = f'Benchmark basis assessment included no questions in this Topic.'
+                        print(f'DVCapsModelData: BM has no questions for facing and topic [{facing}:{topic}].')
 
             if graphtitle != None:
                 graph = None
