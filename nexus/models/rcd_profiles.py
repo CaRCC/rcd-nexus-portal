@@ -194,7 +194,7 @@ class RCDProfile(models.Model):
     )
 
     class ProfileReasonChoices(models.TextChoices):
-        RCDCMASSESS = "rcdcmassess", "To create an RCD Capabilities Model assessment"
+        RCDCMASSESS = "rcdcmassess", "To create a Capabilities Model assessment"
         SIMPLE = "simple", "Just creating a simple profile for now (I'm exploring)"
         OTHER = "other", "Other"
 
@@ -203,7 +203,7 @@ class RCDProfile(models.Model):
         max_length=32,
         choices=ProfileReasonChoices.choices,
         default=ProfileReasonChoices.RCDCMASSESS,
-        help_text=mark_safe("If you are creating this profile other than to complete an RCD Capabilities Model assessment (the default), \
+        help_text=mark_safe("If you are creating this profile other than to complete a Capabilities Model assessment (the default), \
             what is your reason for creating this profile (i.e., how do you intend to use it)? \
                 <br/>If \"Other\", please explain in the comment section below."),
     )

@@ -173,7 +173,7 @@
 
 {% block title %}CaRCC Capabilities Model Assessment{% endblock %}
 {% block main %}
-<h2>RCD Capabilities Assessment for {{ profile }}
+<h2>CaRCC Capabilities Assessment for {{ profile }}
     {% if profile.capabilities_assessment.review_status == "not_submitted" %}
     <span class="status">(In Progress)</span>
     {% elif profile.capabilities_assessment.review_status == "pending" %}
@@ -286,7 +286,7 @@
     </section>
 {% endfor %}
 </div>
-<div class="footer">RCD Capabilities Assessment for {{ profile }}</div>
+<div class="footer">CaRCC Capabilities Assessment for {{ profile }}</div>
 
 <script>
     initExtraTopicsFromCookie();

@@ -94,11 +94,11 @@ def assessment(request, profile_id):
                 assessment.save()
                 messages.success(
                     request,
-                    f"Your RCD Capabilities Assessment for {profile} has been submitted for final review.",
+                    f"Your CaRCC Capabilities Assessment for {profile} has been submitted for final review.",
                 )
                 send_mail(
-                    subject=f"RCD Nexus Assessment Submitted for {profile}",
-                    message=f"An assessment for RCD Profile: {profile} was just submitted from Institution: {profile.institution}, by: {request.user}.",
+                    subject=f"CaRCC Capabilities Assessment Submitted for {profile}",
+                    message=f"An assessment for Institution Profile: {profile} was just submitted from Institution: {profile.institution}, by: {request.user}.",
                     from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                     recipient_list=[settings.CURATOR_EMAIL],
                 )
@@ -266,7 +266,7 @@ def assessment_unsubmit(request, profile_id):
     if assessment.review_status != CapabilitiesAssessment.ReviewStatusChoices.PENDING:
         messages.error(
             request,
-            f"Your RCD Capabilities Assessment for {profile} is not pending review and cannot be unsubmitted.",
+            f"Your CaRCC Capabilities Assessment for {profile} is not pending review and cannot be unsubmitted.",
         )
         return redirect("capmodel:assessment", profile_id)
 
@@ -276,7 +276,7 @@ def assessment_unsubmit(request, profile_id):
     assessment.save()
     messages.success(
         request,
-        f"Your RCD Capabilities Assessment for {profile} has been unsubmitted.",
+        f"Your CaRCC Capabilities Assessment for {profile} has been unsubmitted.",
     )
     send_mail(
         subject=f"RCD Nexus Assessment Un-Submitted for {profile}",
