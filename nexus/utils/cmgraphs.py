@@ -256,9 +256,11 @@ def computeMaxRange(averages, stddevs):
         maxRange = min(100, max(7, int((maxRange+.05)*10))*10)
     return maxRange
 
-def getAllAnswers(years=None) :
+def getAllAnswers(years=None, excludeDemos=True) :
     # Restrict to approved assessments
     profiles = RCDProfile.objects.filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED)
+    if excludeDemos:
+        profiles = profiles.exclude(institution__id__in=Institution.getDemoIDList())
     if not years is None:
         # print('getAllAnswers filtering to years: ',years)
         profiles = profiles.filter(year__in=years)

@@ -20,11 +20,13 @@ DEFAULT_PIE_WIDTH=cmgraphs.DEFAULT_WIDTH*PIE_SIZE_SCALE
 DEFAULT_PIE_HEIGHT=cmgraphs.DEFAULT_HEIGHT*PIE_SIZE_SCALE
 DEFAULT_SCATTER_HEIGHT=cmgraphs.DEFAULT_HEIGHT*SCATTER_SIZE_SCALE
 
-def getAllProfiles(pop='all', years=None) :         # default to full set of profiles and not just contributors
+def getAllProfiles(pop='all', years=None, excludeDemos=True) :         # default to full set of profiles and not just contributors
     # TODO: We need some kind of marker for test institutions
     # Find all the profiles since some of the filters and graphs are profile (vs. Institutional) info.
     # Since we only get the latest profile for each institution, we need to filter for years FIRST
     profiles = RCDProfile.objects.all()
+    if excludeDemos:
+        profiles = profiles.exclude(institution__id__in=Institution.getDemoIDList())
     if not years is None:
         # print('getAllProfiles filtering to years: ',years)
         profiles = profiles.filter(year__in=years)
