@@ -574,7 +574,7 @@ def getInstAverages(benchmarkAssessment, facingslug, topicslug='all', bmQuestion
         if q.slug in answersForFacingTopicQuestions:
             answer = answersForFacingTopicQuestions[q.slug]
             coverage = min(1.0, max(0.0, answer.coverage))
-            # print(f'getInstAvgs(facing:{facingslug}) Topic {topic} Question {q.slug} coverage: {coverage}')
+            # print(f'getInstAvgs(facing:{facingslug}) Topic {topic} Capability {q.slug} coverage: {coverage}')
             values.append(coverage*100)   # Convert to percent, since that's what we graph
             hasData = True
         else: # No data for this question

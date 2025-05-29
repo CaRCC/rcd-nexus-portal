@@ -444,12 +444,12 @@ def answer(request, profile_id, question_pk):
                 case CapabilitiesAnswer.State.UNANSWERED:
                     messages.info(
                         request,
-                        f"Question {answer.question} left unanswered."
+                        f"Capability {answer.question} left unanswered."
                     )
                 case CapabilitiesAnswer.State.NOT_APPLICABLE:
                     messages.info(
                         request,
-                        f"Question {answer.question} marked as not applicable."
+                        f"Capability {answer.question} marked as not applicable."
                     )
             return redirect("capmodel:topic", profile_id, answer.question.topic.facing.slug, answer.question.topic.slug)
         else:
@@ -866,7 +866,7 @@ def csv_report(request, profile_id):
         headers={"Content-Disposition": 'attachment; filename='+filename},
     )
     writer = csv.writer(response)
-    writer.writerow(["Facing", "Topic", "Question", "Avail", "SOL", "Comm", "Cov", "Prio"])
+    writer.writerow(["Facing", "Topic", "Capability", "Avail", "SOL", "Comm", "Cov", "Prio"])
 
     session_language = "en"  # TODO get session language
 

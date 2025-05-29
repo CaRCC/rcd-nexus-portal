@@ -437,7 +437,7 @@
 <h2>Capabilities Assessment for {{ profile }}</h2>
 {% if profile.capabilities_assessment.review_status == "not_submitted" %}
 <section class="status">
-    <p>In progress, {{completed_questions}} of {{total_questions}} questions ({% widthratio pct_complete 1 100 %}%)
+    <p>In progress, {{completed_questions}} of {{total_questions}} capabilities ({% widthratio pct_complete 1 100 %}%)
         completed</p>
 </section>
 {% elif profile.capabilities_assessment.review_status == "pending" %}
@@ -500,7 +500,7 @@
             <p id="{{facing.slug}}SH" class="toggle" onclick="toggleSection(this, '{{facing.slug}}')"><span>Show Topics</span></p>
         </div>
         <div class="facingdesc" style="display:block;">
-            <p>{%if facing.questionCount %}<span class="facingqcount"></span>{{facing.questionCount}} questions:</span>{%endif%}
+            <p>{%if facing.questionCount %}<span class="facingqcount"></span>{{facing.questionCount}} capabilities:</span>{%endif%}
                 {{facing.content.description}}                  
             </p>
         </div>
@@ -519,7 +519,7 @@
                         {{answers.coverage_pct}}</p>
                 {% endfor %}
             {%elif atype == "essential" %}
-                <p class="tname topicheader essential">Topics with Essential {%if facing.has_included %}(or Included) {%endif%}Questions</p>
+                <p class="tname topicheader essential">Topics with Essential {%if facing.has_included %}(or Included) {%endif%}Capabilities</p>
                 <p class="tcov topicheader essential">Computed Coverage</p>
                 {% for topic, answers in topics.items %}
                     {%if topic.is_essential or topic.is_included %}
@@ -592,7 +592,7 @@
             </div>
     </section>
     {% empty %}
-    <h3>No questions were found.</h3>
+    <h3>No capabilities were found.</h3>
     {% endfor %}
 
     <section class="topicblock">
@@ -621,7 +621,7 @@
         <p id="priosSH" class="toggle" onclick="toggleSection(this, 'prios')"><span>Show Priorities</span></p>
     </div>
     <div class="facingdesc" style="display:block;">
-        <p>The top questions marked as a priority, in order as marked.</p>
+        <p>The top capabilities marked as a priority, in order as marked.</p>
     </div>
     <div class="topics priorities">
         {% if top_priorities %}
@@ -634,7 +634,7 @@
         </ol>
         <a href="{% url 'capmodel:priorities' profile.pk %}">View all priorities</a>
         {% else %}
-        <p class="prioQ">No questions marked as priorities (yet)</p>
+        <p class="prioQ">No capabilities marked as priorities (yet)</p>
         {% endif %}
     </div>
 </section>
@@ -651,9 +651,9 @@
                 </section>
             </form>
         {% else %}
-            <p>Once you have answered all the questions, you can submit your assessment.</p>
-                {% if atype == "cyoj" and pct_complete == 1 %}
-                    <p>Note that you must include (and answer) at least one question in this assessment.</p>
+            <p>Once you have assessed all the capabilities, you can submit your assessment.</p>
+                {% if atype == "cyoj" and pct_complete == 0 %}
+                    <p>Note that you must include (and assess) at least one capability in this assessment.</p>
                 {% endif %}
             <section class="actions">
                 <button type="button" disabled>Submit</button>

@@ -323,20 +323,8 @@
             the Capabilities Model.
         </li>
         <li><b>Contributors</b>: This includes only those institutions that have completed 
-            an assessment using the CaRCC Capabilities Model, and agreed to contribute their 
+            an assessment using the CaRCC Capabilities Model and submitted their 
             data to the Community Dataset.
-            <ul>
-                <li>Users affiliated with an institution that is a current Contributor
-                    have access to benchmarking functionality as well as some additional, 
-                    more detailed data views. 
-                </li>
-                <li>Through the end of 2024, all institutions that contributed an assessment 
-                    to the Community Dataset are considered <em>current</em>. 
-                </li>
-                <li>Beginning in 2025, only institutions that contributed an assessment 
-                    within the previous three (3) years will be considered <em>current</em>. 
-                </li>
-            </ul>
         </li>
     </ol>
     <p class="content">For the Community Demographics visualizations, 
@@ -345,14 +333,15 @@
         Priorities Data</em> visualizations are (of course) drawn only from <em>Contributors</em>.</p>
     <p class="content">Note that for institutions that have completed and contributed more than one assessment 
         (i.e., who have repeated the process in more than one year), the Community Dataset 
-        only uses the most recent assessment data for that institution.</p> 
+        only uses the most recent assessment data for that institution. Users at these institutions can
+        see benchmarking results for the three most recent assessments.</p> 
     
     <h3 id="Facings">The Five Facings</h3>
     <p class="content">The Model is organized into sections that reflect different roles that staff fill in supporting
         Research Computing and Data, and are named to reflect who or what each role is "facing" 
         (i.e., focused on).<sup><a href="#ftnt7" id="ftnt_ref7">[7]</a></sup>
-       Within each facing, the model poses questions about aspects of research computing and data for the associated role;
-        the questions are grouped into Topics.
+       Within each facing, the model includes capabilities covering aspects of research computing and data for the associated role;
+        the capabilities are grouped into Topics.
     </p>
     <p class="content">Larger organizations may have a team associated with each facing role, while smaller organizations may have
             just a few people who cover these different roles. In filling out the assessment tool, you will likely want
@@ -417,14 +406,28 @@
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
 
     <h2 id="UsefulTools">Useful Tools and Features in the Data Viewer</h3>
+        <p class="content"><b>Choose the granularity of the view</b>:
+            Select <em>Summary for All Facings</em> for a high-level overview of capabilities. Select an individual Facing
+            to see summary data for each Topic in that Facing: 
+            <p class="content indent"><img class="screenshot" src="{% static 'images/DVUI_FacingsChoice.png' %}" 
+            alt="Screen-shot excerpt showing a checkbox to enable benchmarking."/></p>
+            If you are logged in and affiliated to a current Contributor
+            (i.e., an institution that completed an assessment within the last three calendar years: 
+            {% now "Y" as year %}{{year|add:"-3"}} through {% now "Y" %}), you 
+            can also select a Topic and see data for the associated capabilities as shown below:
+            <p class="content indent"><img class="screenshot" src="{% static 'images/DVUI_TopicSelect.png' %}" 
+            alt="Screen-shot excerpt showing a checkbox to enable benchmarking."/></p>
+        </p>
     <p class="content"><b>Benchmarking support</b>: Check the <b>Benchmark my Data</b> option as shown in the image below to
-        enable an overlay of your institution's coverage on any fo the Capabilities Data graphs. 
+        enable an overlay of your institution's coverage on any of the Capabilities Data graphs. 
         <p class="content indent">
             <img class="screenshot" src="{% static 'images/DVUI_Benchmark.png' %}" 
             alt="Screen-shot excerpt showing a checkbox to enable benchmarking."/><br><br>
-            Note: This option will only be shown if you are logged in and your institution has at least one completed assessment.
-            Also, the 2.5 version of the portal does not fully support benchmarking of Essential and Chart-Your-Own-Journey 
-            assessments; the next release will add this support. 
+            Note: This option will only be shown if you are logged in and your institution is a <em>current</em> Contributor 
+            (i.e., an institution that completed an assessment within the last three calendar
+            years: {% now "Y" as year %}{{year|add:"-3"}} through {% now "Y" %}).
+            See also the See the <a href="{% url 'helpdocs:dv_quickstart' %}#StepByStep">Step-by-Step example of benchmarking 
+            for your Institution</a> in the <a href="{% url 'helpdocs:dv_quickstart' %}">Quick Start Guide</a>.
         </p>
     </p>
     
@@ -509,20 +512,25 @@
         with current Contributors) the ability to benchmark assessment results relative to others in the Community Dataset.</p>
     <p class="content">A simple checkbox allows the user to overlay an indicator of their institution's coverage levels
         on any of the Capabilities Data graphs to compare their results to the community (or a subset thereof). 
-        To use this feature, users must be logged in and affiliated to an institution that has completed an assessment
-        using the Capabilities Model, submitted it, and had it approved by the CaRCC data stewards. 
-        <br><em>Note: The 2.5 version of the portal does not fully support benchmarking of Essential and Chart-Your-Own-Journey 
-        assessments (the community data is not correctly filtered to only compare data for the included questions in
-        an Essential or Chart-Your-Own-Journey assessment); the next release will add this support.</em>
+        To use this feature, users must be logged in and affiliated to an institution
+            that is a <em>current</em> Contributor 
+            (i.e., an institution that completed an assessment within the last three calendar
+            years: {% now "Y" as year %}{{year|add:"-3"}} through {% now "Y" %}). 
+        The benchmarking views can include multiple assessments from an institution; the <b>three most recent</b> assessments will be shown.
         <br>See the
         <a href="{% url 'helpdocs:dv_quickstart' %}">Quick Start Guide</a> for a 
         <a href="{% url 'helpdocs:dv_quickstart' %}#StepByStep">Step-by-Step example of benchmarking for your Institution</a>.
     </p>
-    <p class="content">Two levels of detail are provided:
+    <p class="content">Three levels of detail are provided:
     </p>
     <ul>
         <li><b>Summary Facing averages</b>: overall averages for the community (all Contributors or as filtered by the user) for each Facing.</li>
-        <li><b>Topic-level data for each Facing</b>: users can select a Facing and see the averages for those included topics.</li>
+        <li><b>Topic-level data for each Facing</b>: users can select a Facing and see the averages for those included Topics.</li>
+        <li><b>Capability-level data for each Topic</b>: users can select a Topic within a Facing and see the averages for each associated capability.
+        <br><em>Note: Only users affiliated with an institution
+            that is a current Contributor (i.e., an institution that completed an assessment within the last three calendar
+            years: {% now "Y" as year %}{{year|add:"-3"}} through {% now "Y" %})
+            have access to capability-level data.</em></li>
     </ul>
     <p class="content">A series of visualization types are provided:
     </p>
@@ -614,13 +622,21 @@
     <h3>Benchmarking institutional coverage:</h3>
     <p class="content">In addition to the display of community data, a user can choose to overlay values from an approved 
         assessment for their institution to benchmark their capabilities coverage relative to a filtered set of peers. 
-        A user can benchmark at the summary (Facings) level, or drill down to benchmark on the topics in each Facing. 
-        (Support for benchmarking at the individual question level will be in a future release.) 
+        A user can benchmark at the summary (Facings) level, or drill down to benchmark on the Topics in each Facing, or
+        even individual capabilities in a given Topic. </p>
+    <p class="content">If an institution has completed more than one assessment, the most recent three assessments are shown as overlays. 
+        Users can click on the legend labels for each year to hide any of these as desired.</p>
+    <p class="content">
+        If an institution chooses to complete either an Essentials or Chart-YourOwn-Journey assessment, the benchmarking
+        views will filter the community dataset to reflect only those capabilities included in the institution's assessment. If an 
+        institution has completed more than one assessment, the most recent assessment will be used as the basis for filtering the 
+        community data (as well as any prior assessments for the institution).
+    </p>
+    <p class="content">
         In order to use the benchmarking functionality, a user must be logged in and must be 
-        affiliated to an institution that has a completed and approved assessment using the Capabilities Model.
-        <br><em>Note: The 2.5 version of the portal does not fully support benchmarking of Essential and Chart-Your-Own-Journey 
-            assessments (the community data is not correctly filtered to only compare data for the included questions in
-            an Essential or Chart-Your-Own-Journey assessment); the next release will add this support.</em>
+        affiliated to an institution that is a <em>current</em> Contributor 
+            (i.e., an institution that completed an assessment within the last three calendar
+            years: {% now "Y" as year %}{{year|add:"-3"}} through {% now "Y" %}).
     </p>
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
           

@@ -628,7 +628,7 @@ class CapabilitiesAnswer(models.Model):
     work_notes = models.TextField(
         blank=True,
         null=True,
-        help_text="Private work notes for this question. Contents will not be included in the community datasets.",
+        help_text="Private work notes for this capability. Contents will not be included in the community datasets.",
     )
 
     is_modified = models.BooleanField(
@@ -637,9 +637,9 @@ class CapabilitiesAnswer(models.Model):
         help_text="Whether this answer has ever been modified from its original state (i.e. inherited value).",
     )
     not_applicable = models.BooleanField(
-        "Question not applicable",
+        "Capability not applicable",
         default=False,
-        help_text="Check ONLY this if this question is not at all applicable to your institution.",
+        help_text="Check ONLY this if this capability is not at all applicable to your institution.",
     )
 
     class State(Enum):

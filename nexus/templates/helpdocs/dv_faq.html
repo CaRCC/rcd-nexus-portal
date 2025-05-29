@@ -74,7 +74,7 @@
     <p><b>Table of Contents</b>:
         <span class="tocentry"><a href="#Start">Where do I start?</a></span>
         <span class="tocentry"><a href="#Benchmark">How can I benchmark my institution relative to others?</a></span>
-        <span class="tocentry"><a href="#IndivQs">Can I explore data (or see benchmarking) on individual questions within the assessment?</a></span>
+        <span class="tocentry"><a href="#IndivQs">Can I explore data (or see benchmarking) on individual capabilities within the assessment?</a></span>
         <span class="tocentry"><a href="#PriosViz">When will priorities visualization be available?</a></span>
         <span class="tocentry"><a href="#InfoSources">Where does the information about institutions come from?</a></span>
         <span class="tocentry"><a href="#Contributor">What is a “Contributor” (vs. a “User”)?</a></span>
@@ -105,10 +105,11 @@
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
     <div class="helptopic">
-        <h2 id="IndivQs">Can I explore data (or see benchmarking) on individual questions within the assessment?</h2>
+        <h2 id="IndivQs">Can I explore data (or see benchmarking) on individual capabilities within the assessment?</h2>
         <p class="content">
-            This is a feature we will add soon. Note, however, that this level of data exploration will only be available to contributors
-            (i.e., those institutions that complete an assessment and submit it to the Community Dataset).
+            This feature is available as of the 2.6 release, however, this level of data exploration is only be available to current contributors
+            (i.e., authenticated users affiliated with an institution that completed an assessment within the last three calendar years:
+            {% now "Y" as year %}{{year|add:"-3"}} through {% now "Y" %}).
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
     </div>
@@ -165,16 +166,16 @@
         <h2 id="Coverage">What is “Coverage”?</h2>
         <p class="content">The Capabilities Model presents roughly 150 capabilities (in the form of questions) structured 
             around <a href="{% url 'helpdocs:intro_and_guide' %}#FiveFacings">the five Facings</a>. Within each Facing,
-            questions are grouped into <em>topics</em>.
-            Each question is considered through several lenses: <b>Availability across institution</b>, 
+            capabilities are grouped into <em>topics</em>.
+            Each capability is considered through several lenses: <b>Availability across institution</b>, 
             <b>Service Operating Level</b>, and <b>Community engagement and collaboration</b> 
              (these are described in the 
             <a href="{% url 'helpdocs:intro_and_guide' %}#KeyAspects">Understanding Key Aspects of the Model</a> 
             section of the <a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a>).
         </p>
-        <p class="content">For each question, users choose answers for the three lenses, 
+        <p class="content">For each capability, users choose answers for the three lenses, 
             and these are combined to produce a numerical <b>coverage</b> value for that capability.
-            Coverage values for the questions are averaged to produce a coverage value for the associated <em>topic</em>, 
+            Coverage values for the capabilities are averaged to produce a coverage value for the associated <em>topic</em>, 
             and for each Facing overall. 
         </p>
         <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>

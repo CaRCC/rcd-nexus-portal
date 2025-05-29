@@ -142,7 +142,7 @@ class DataFilterForm(forms.Form):
         ("syf","Systems-Facing Topics"),
         ("spf","Strategy & Policy-Facing Topics"),
     )
-    TOPICS="Data Detail within a Facing"
+    TOPICS="Coverage Detail (by Topic)"
 
     CAPS_FEATURE="Capability Feature"
     CAPS_FEATURE_CHOICES = (
@@ -343,7 +343,7 @@ class DataFilterForm(forms.Form):
             return
 
         # print('Initializing DataFilterForm.topicOptions...')
-        DataFilterForm.topicOptions['all'] = 'Topic Average Coverages'
+        DataFilterForm.topicOptions['all'] = 'Summary for All Topics'
         rex_spaces = re.compile(r'\s+')
         rex_tags = re.compile(r'<[^<]+?>')
         # for each of the facings:
@@ -364,7 +364,7 @@ class DataFilterForm(forms.Form):
         DataFilterForm.initTopicOptionsList()
         self.fields['topics'] = forms.ChoiceField(
             label=DataFilterForm.TOPICS,
-            help_text="Choose Topic summary or Question-level data for a Topic",
+            help_text="Choose Topic summary or Capability-level data for a Topic",
             choices=[ (slug, label) for slug, label in DataFilterForm.topicOptions.items()],
             required=False,)
         self.initial['topics'] = 'all'
