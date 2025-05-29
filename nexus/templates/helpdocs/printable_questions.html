@@ -138,6 +138,10 @@
         padding: 6px 10px;
         box-shadow: 1px 1px 2px var(--logo-dk-blue-shadow);
     }
+    a.empty {
+        display:block;
+        height: 0.01px;
+    }
 
 </style>
 
@@ -146,13 +150,17 @@
         //alert("onShowExtrasChange checked: "+cbEl.checked?"Yes":"No");
         show = !cbEl.checked;
         showExtras(show);
-        setExtraTopicsStateCookie(show?SHOWN:HIDDEN);
+        //setExtraTopicsStateCookie(show?SHOWN:HIDDEN);
     }
 
     function showExtras(show) {
-        const extrasPList = document.querySelectorAll("p.extra");
-        for (let i = 0; i < extrasPList.length; i++) {
-            extrasPList[i].style.display = show?"display":"none";
+        //const extrasPList = document.querySelectorAll("p.extra");
+        //for (let i = 0; i < extrasPList.length; i++) {
+        //    extrasPList[i].style.display = show?"block":"none";
+        //}
+        const extrasULList = document.querySelectorAll("ul.extra, p.extra");
+        for (let i = 0; i < extrasULList.length; i++) {
+            extrasULList[i].style.display = show?"block":"none";
         }
         const extrasLIList = document.querySelectorAll("li.extra");
         for (let i = 0; i < extrasLIList.length; i++) {
@@ -166,7 +174,7 @@
 
     function initExtraTopicsFromCookie() {
         // Get the cookie and then call the method
-        var shown = getStateCookie(SHOW_HIDE_EXTRAS)
+        var shown = SHOWN; //getStateCookie(SHOW_HIDE_EXTRAS) Ignore the cookie, always start shown
         //console.log("Show Extras cookie val: "+shown);
         showExtras(shown==SHOWN);
         cb = document.getElementById("showHideExtrasCB");
@@ -279,9 +287,9 @@
         <h2>{{facing.content.display_name}}-Facing Topics and Associated Capabilities</h2>
         {% for topic, questions in topics.items %}
             {% if not topic.isdomain %}
-                <a id="{{topic.anchorid}}"></a>
+                <a id="{{topic.anchorid}}" class="empty"></a>
                 <p class="topics {%if topic.is_essential %}essential{%else%}extra{%endif%}">{{topic.content.display_name}}</p>
-                <ul>
+                <ul class="{%if topic.is_essential %}essential{%else%}extra{%endif%}">
                     {% for question in questions %}
                     <li class="{%if question.is_essential %}essential{%else%}extra{%endif%}">{{question.html_display }}</li>
                     {% endfor %}
