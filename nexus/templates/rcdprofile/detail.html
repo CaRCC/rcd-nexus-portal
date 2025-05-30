@@ -251,9 +251,9 @@
   {% if can_manage %}
       <section>
         {% if not profile.archived %}
-        <h2>Delete Institution Profile</h2>
-        <p>Click the button below to delete this institution profile. It can be restored if necessary.</p>
-        <a class="button center" href="{% url 'rcdprofile:archive' profile.pk %}">Delete Institution Profile</a>
+        <h2>Archive Institution Profile</h2>
+        <p>Click the button below to archive this institution profile.</p>
+        <a class="button center" href="{% url 'rcdprofile:archive' profile.pk %}">Archive Institution Profile</a>
         {% else %}
         <h2>Restore Institution Profile</h2>
         <p>This institution profile is currently archived. Click below to restore it.</p>
