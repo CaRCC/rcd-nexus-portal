@@ -252,7 +252,9 @@
       <section>
         {% if not profile.archived %}
         <h2>Archive Institution Profile</h2>
-        <p>Click the button below to archive this institution profile.</p>
+        <p>Click the button below to archive this institution profile. This will hide the profile (and the associated assessment)
+          from appearing in the list on your home page.<br>
+        You can restore this profile later if you need to. </p>
         <a class="button center" href="{% url 'rcdprofile:archive' profile.pk %}">Archive Institution Profile</a>
         {% else %}
         <h2>Restore Institution Profile</h2>
