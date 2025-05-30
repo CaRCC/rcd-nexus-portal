@@ -157,20 +157,20 @@
 
 {% endblock %}
 
-{% block title %}CaRCC Capabilities Model Question{% endblock %}
+{% block title %}CaRCC Capabilities Model Capability{% endblock %}
 {% block main %}
 <div class="assessment-nav">
     <span><a href="{% url 'capmodel:answer' answer.assessment.profile_id prev_question_pk %}">&larr; Previous
-            Question</a></span>
+            Capability</a></span>
     <span><a href="{% url 'capmodel:topic' answer.assessment.profile_id facing.facing.slug topic.topic.slug %}">Up to
             Topic</a></span>
-    <span><a href="{% url 'capmodel:answer' answer.assessment.profile_id next_question_pk %}">Next Question
+    <span><a href="{% url 'capmodel:answer' answer.assessment.profile_id next_question_pk %}">Next Capability
             &rarr;</a></span>
 </div>
 <section class="question" data-qid="{{question.shorttext|safe}}">
     <h3><span style="font-weight: normal;">Topic:</span> {{ topic.display_name }} &nbsp;<span
         class="facing">({{facing.display_name}}-Facing)</span></h3>
-    <p class="question"><span class="qprompt">Question{% if essentialAssmnt and question.is_essential %} (<em>Essential</em>){% endif %}:</span><br>{{ question.text|safe }}</p>
+    <p class="question"><span class="qprompt">Capability{% if essentialAssmnt and question.is_essential %} (<em>Essential</em>){% endif %}:</span><br>{{ question.text|safe }}</p>
     <div class="question-help">
         <p>{{ question.help_text|safe }}</p>
     </div>
@@ -201,47 +201,47 @@
         {% elif essentialAssmnt and not question.is_essential and not answer.is_included %} 
             </fieldset>
             <p class="includeQ">
-                <b>This is not an Essential question.</br>
+                <b>This is not an Essential capability.</br>
                 Click here to add and include in your computed coverage:&nbsp;&nbsp;</b><br>
-                <input class="inc_rem_q" type="submit" value="Include Question">
+                <input class="inc_rem_q" type="submit" value="Include Capability">
             </p>
         {% elif cyojAssmnt and not answer.is_included %} 
             </fieldset>
                 {% if cyojAssmntCopied and coverage|length > 0 %}
                     <p class="modify_note">Recorded coverage: {{ coverage }}</p>
                     <p class="includeQ">
-                        <b>The answer to this question was copied.</br> 
-                        Click here to clear the answer and include in your assessment:&nbsp;&nbsp;</b><br>
-                        <input class="inc_rem_q" type="submit" value="Clear and Include Question">
+                        <b>Answers for this capability were copied.</br> 
+                        Click here to clear the answers and include in your assessment:&nbsp;&nbsp;</b><br>
+                        <input class="inc_rem_q" type="submit" value="Clear and Include Capability">
                     </p>
                 {% else %}
                     <p class="includeQ">
-                        <b>Click here to include this question in your assessment:&nbsp;&nbsp;</b><br>
-                        <input class="inc_rem_q" type="submit" value="Include Question">
+                        <b>Click here to include this capability in your assessment:&nbsp;&nbsp;</b><br>
+                        <input class="inc_rem_q" type="submit" value="Include Capability">
                     </p>
                 {% endif %}
         {% else %}
             <input type="submit" value="Save Answers" {% if answer.assessment.is_frozen %}disabled{%endif%}>
             {% if not answer.is_modified %}
-            <p class="modify_note">This answer has not been modified from the original.</p>
+            <p class="modify_note">The answers for this capability have not been modified from the original.</p>
             {% else %}
             <p class="modify_note">Recorded coverage: {{ coverage }}</p>
             {% endif %}
                 {% if essentialAssmnt and not question.is_essential and answer.is_included %} 
                 <p class="includeQ">
-                    <b>This is not an Essential question, but has been included.</br>
-                    Click here to clear your answer and skip this question in this assessment:&nbsp;&nbsp;</b><br>
-                    <input class="inc_rem_q" type="submit" formaction="{{ request.path }}/removequestion" value="Clear and Remove Question">
+                    <b>This is not an Essential capability, but has been included.</br>
+                    Click here to clear your answers and skip this capability in this assessment:&nbsp;&nbsp;</b><br>
+                    <input class="inc_rem_q" type="submit" formaction="{{ request.path }}/removequestion" value="Clear and Remove Capability">
                 </p>
             {% elif cyojAssmnt and answer.is_included %} 
                 <p class="includeQ">
                     {% if cyojAssmntCopied %}
-                        <b>Click here to restore the answer from the copied assessment <br>
-                            (i.e., you will not answer it this time):&nbsp;&nbsp;</b><br>
+                        <b>Click here to restore the answers from the copied assessment <br>
+                            (i.e., you will not assess it this time):&nbsp;&nbsp;</b><br>
                         <input class="inc_rem_q" type="submit" formaction="{{ request.path }}/removequestion" value="Restore Copied Answer">
                     {% else %}
-                        <b>Click here to clear your answer and skip this question in this assessment:&nbsp;&nbsp;</b><br>
-                        <input class="inc_rem_q_1" type="submit" formaction="{{ request.path }}/removequestion" value="Clear and Skip Question">
+                        <b>Click here to clear your answers and skip this capability in this assessment:&nbsp;&nbsp;</b><br>
+                        <input class="inc_rem_q_1" type="submit" formaction="{{ request.path }}/removequestion" value="Clear and Skip Capability">
                     {% endif %}
                 </p>
             {% endif %}
@@ -256,8 +256,8 @@
 </section>
 
 <dialog id="notApplicableWarning">
-    <p>This is intended for use (only) when support for a given aspect/factor makes no sense at your institution.
-         The associated question/row will not contribute to the computed coverage value.
+    <p>This is intended for use (only) when support for a given capability makes no sense at your institution.
+         The associated capability will not contribute to the computed coverage value.
          <br/>Note: <strong>This value should only be used in exceptional cases</strong>,
           and not simply when there is little or no support simply because it has not been
            deemed important or strategic (e.g., due to resource constraints).

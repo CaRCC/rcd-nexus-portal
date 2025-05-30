@@ -110,36 +110,6 @@
     }
 </style>
 <script>
-    var SHOWN ="1";
-    var HIDDEN = "0";
-    var SHOW_HIDE_EXTRAS = "showEX";
-    var SECT_SUFFIX = "_sect";
-    var COOKIE_LIFE = 7*24*60*60*1000;  // Save state for a week
-
-    function getStateCookie(name) {
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for(let i = 0; i <ca.length; i++) {
-            let c = ca[i];
-            let cpair = c.split('=');
-            if (cpair[0].trim() == name) {
-                var shown = cpair[1].trim();
-                //console.log("Cookie found for section:"+section+" value: "+shown)
-                return shown != HIDDEN;
-            }
-        }
-        //console.log("No cookie found for showing section: "+section);
-        return false;   // If can't find the cookie, don't show the section
-    }
-
-    function setCookie(cname, shown) {
-        const d = new Date();
-        d.setTime(d.getTime() + COOKIE_LIFE);
-        let expires = "expires="+ d.toUTCString();
-        document.cookie = cname + "=" + shown + ";" + expires + ";path=/";
-        //console.log("Set cookie for section: "+section+" to: "+shown);
-    }
-
     function onShowExtrasChange(cbEl) {
         //alert("onShowExtrasChange checked: "+cbEl.checked?"Yes":"No");
         show = !cbEl.checked;
@@ -184,10 +154,6 @@
             ifHiddenList[i].style.display = show?"none":"block";
         }
     }
-    function setExtraTopicsStateCookie(shown) {
-        setCookie(SHOW_HIDE_EXTRAS, shown);
-        //console.log("Set Show/Hide Extras cookie: "+show);
-    }
 
     function initExtraTopicsFromCookie() {
         // Get the cookie and then call the method
@@ -207,7 +173,7 @@
 
 {% block title %}CaRCC Capabilities Model Assessment{% endblock %}
 {% block main %}
-<h2>RCD Capabilities Assessment for {{ profile }}
+<h2>CaRCC Capabilities Assessment for {{ profile }}
     {% if profile.capabilities_assessment.review_status == "not_submitted" %}
     <span class="status">(In Progress)</span>
     {% elif profile.capabilities_assessment.review_status == "pending" %}
@@ -256,16 +222,16 @@
                 <table>
                     <tbody>
                         {%if atype == "full" or topic.is_essential or topic.is_included %}
-                            {%comment%}Produce a normal header since there is at least one essential or included question{%endcomment%}
+                            {%comment%}Produce a normal header since there is at least one essential or included capability{%endcomment%}
                             <tr class="headline">
-                                <td>{%if atype == "essential" %}Essential/{%endif%}{%if atype != "full" %}Included{%endif%} Questions/Capabilities</td>                            
+                                <td>{%if atype == "essential" %}Essential/{%endif%}{%if atype != "full" %}Included{%endif%} Capabilities</td>                            
                                 <td class="lens avail">Avail.</td>
                                 <td class="lens sol">SOL</td>
                                 <td class="lens">Comm.</td>
                                 <td class="cov">Cov.</td>
                                 <td class="prio">Prio</td>
                             </tr>
-                            {%comment%}Add all the included/essential questions (or all of them if this is a full assessment{%endcomment%}
+                            {%comment%}Add all the included/essential capabilities (or all of them if this is a full assessment{%endcomment%}
                             {% for answer in answers %}
                                 {%if atype == "full" or answer.question.is_essential or answer.is_included %}
                                     <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}"
@@ -286,13 +252,13 @@
                                 {%endif%}
                             {% endfor %}
                         {%endif%}
-                        {%comment%}If there are also non-essential or non-included questions, include those as well{%endcomment%}
+                        {%comment%}If there are also non-essential or non-included capabilities, include those as well{%endcomment%}
                         {%if atype != "full" and topic.has_nonincluded or topic.has_nonessential%}
                             <tr class="headline extras">
-                                <td>{%if atype == "essential" %}Non-Essential Questions/Capabilities{%else%}Questions/Capabilities not included{%endif%}</td>
+                                <td>{%if atype == "essential" %}Non-Essential Capabilities{%else%}Capabilities not included{%endif%}</td>
                                 <td></td><td></td><td></td><td></td><td></td>
                             </tr>
-                            {%comment%}Add all the non-included/non-essential questions. Note that for CYOJ copies some may be answered.{%endcomment%}
+                            {%comment%}Add all the non-included/non-essential capabilities. Note that for CYOJ copies some may be answered.{%endcomment%}
                             {% for answer in answers %}
                                 {%if not answer.question.is_essential and not answer.is_included %}
                                     <tr class="question extras {% cycle 'odd-field' 'even-field' as fieldcycle %}"
@@ -320,7 +286,7 @@
     </section>
 {% endfor %}
 </div>
-<div class="footer">RCD Capabilities Assessment for {{ profile }}</div>
+<div class="footer">CaRCC Capabilities Assessment for {{ profile }}</div>
 
 <script>
     initExtraTopicsFromCookie();

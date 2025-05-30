@@ -19,6 +19,7 @@
         }
     }
     // TODO: On initial GET (nav from UI, not refresh on view update), clear all the Open Status values. 
+    // This may be trickier now that we filter extraneous parameters. 
     function initDetailsFromStorage(nonDefaults) {
         for (var i = 0; i < localStorage.length; i++) {
             setDetailOpenStatus(localStorage.key(i), nonDefaults);
@@ -77,4 +78,60 @@
                 toHide = "";    // Just clear any skipFilter classes
         }
         hideFilter(toHide);
+    }
+    function handleFacingSelection(evt) {
+        var value;
+        if(evt != null) {
+            value = evt.target.value;
+            console.log("Facing selected: "+value);
+        } else {
+            value = document.getElementById("id_facings").value;
+            console.log("Initial facing selected: "+value);
+        }
+        showHideTopicsForFacing(value)
+    }
+    function hideAllOptionsNot(topicsSel, prefix) {
+        var topic, i;
+
+        for(i = 0; i < topicsSel.length; i++) {
+            topic = topicsSel[i];
+            if (topic.value.startsWith(prefix) || topic.value == "all") {
+                topic.disabled = false;
+            } else {
+                topic.disabled = true;
+            }
+          }
+        // When the facing changes and the topic was selected from another facing, revert topic to all
+        if(!topicsSel.value.startsWith(prefix)) {
+            topicsSel.selectedIndex = 0;  // Force selection back to "all"
+        }
+     
+
+    }
+    function showHideTopicsForFacing(facing) {
+        const topicsSel = document.getElementById("id_topics")
+        var topicsContainerDiv = document.querySelector("div.viewselect:has(select#id_topics)")
+        if(facing == "all") {
+            if(topicsSel != null) {
+                // if not logged in, may elide the select element
+                topicsSel.classList.add("skip")
+                topicsSel.value = 'all';
+            } else {
+                topicsContainerDiv = document.querySelector("div.viewselect:has(label[for='id_topics'])")
+                topicsContainerDiv.classList.add("skip")
+            }
+        } else {
+            if(topicsContainerDiv == null) {
+                // if not logged in, may elide the select element
+                topicsContainerDiv = document.querySelector("div.viewselect:has(label[for='id_topics'])")
+            }
+            if(topicsContainerDiv == null) {
+                console.log("Couldn't find: id_topics container div!");
+            } else {
+                topicsContainerDiv.classList.remove("skip");
+            }
+            topicsSel.classList.remove("skip");
+            hideAllOptionsNot(topicsSel, facing+"_")
+        }
+
     }

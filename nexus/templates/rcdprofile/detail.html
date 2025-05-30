@@ -23,6 +23,12 @@
   span.copied_from {
     font-style: italic;
   }
+  span.update {
+    display: inline-block;
+    font-style: italic;
+    font-size: 0.9em;
+    padding-top: 2px;
+  }
 
   section.fields div select {
     padding: 2px 4px;
@@ -50,13 +56,17 @@
   main a.button.center {
     max-width: 40%;
   }
+  main a.button.center.disabled {
+    background-color: var(--nexus-disabled);
+    pointer-events: none;
+  }
 </style>
 
 <script>
   function showHideCYOJExtra(show) {
       var cyojExtra = document.getElementById("cyojExtra");
       if(cyojExtra) {
-        cyojExtra.style.display = show?"block":"none";
+        cyojExtra.style.display = show==SHOWN?"block":"none";
       }
   }
 
@@ -64,20 +74,23 @@
     var submitBtnEl = document.getElementById("submitBtn");
     var cyojEl = document.getElementById("cyoj");
     if (cyojEl && cyojEl.checked) {
-      showHideCYOJExtra(true);
+      showHideCYOJExtra(SHOWN);
+      setExtraTopicsStateCookie(SHOWN);  // Default CYOJ view to show extras
       if (submitBtnEl) {
         submitBtnEl.innerHTML = "Begin with a blank Assessment";
       }
     } else if (submitBtnEl) {
-      showHideCYOJExtra(false);
+      showHideCYOJExtra(HIDDEN);
       var fullEl = document.getElementById("full");
       if (fullEl && fullEl.checked) {
+        setExtraTopicsStateCookie(SHOWN);  // Default Full view to show extras (e.g., on Printable List)
         submitBtnEl.innerHTML = "Begin a Full Assessment";
       } else {
         var essentialEl = document.getElementById("essential");
         if (essentialEl) {
           submitBtnEl.innerHTML = "Begin an Essentials Assessment";
         }
+        setExtraTopicsStateCookie(HIDDEN);  // Default Essentials view to hide extras
       }
     }
   }
@@ -103,7 +116,6 @@
     } else if(cyojEl && cyojEl.checked) {
       atype = "cyoj";
     }
-
     // window.location.href="{% url 'capmodel:assessment' profile.pk %}?type="+atype;
     alert("Navigate to "+"{% url 'capmodel:assessment' profile.pk %}?type="+atype);
   }
@@ -118,20 +130,44 @@
       <h2>Capabilities Model Assessment</h2>
       {% if profile.capabilities_assessment %}
         {% if profile.capabilities_assessment.review_status == "not_submitted" %}
-          <p>Your {{adesc}} has not been submitted yet.</p>
-          <p>Click the button below to continue working on the assessment.</p>
-          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Continue Working</a>
+          <p>Your {{adesc}} has not been submitted yet.<br>
+          <span class="update">Last modified {{profile.capabilities_assessment.update_time|date:"DATE_FORMAT"}} 
+            {% if profile.capabilities_assessment.update_user %}by {{profile.capabilities_assessment.update_user}}{%endif%}</span></p>
+          {% if not profile.archived %}
+            <p>Click the button below to continue working on the assessment.</p>
+            <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Continue Working</a>
+          {%else%}
+            <p>You must restore this Institution Profile before you can work on the assessment.</p>
+            <a class="button center disabled" href="">Continue Working</a>
+          {%endif%}
         {% elif profile.capabilities_assessment.review_status == "pending" %}
-          <p>Your {{adesc}} has been submitted, and is pending review by Program Staff.</p>
-          <p>Click the button below to review your work, and optionally unsubmit to update any answers.</p>
-          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          <p>Your {{adesc}} has been submitted, and is pending review by Program Staff.<br>
+          <span class="update">Last modified {{profile.capabilities_assessment.update_time|date:"DATE_FORMAT"}}
+            {% if profile.capabilities_assessment.update_user %}by {{profile.capabilities_assessment.update_user}}{%endif%}</p>
+          {% if not profile.archived %}
+            <p>Click the button below to review your work, and optionally unsubmit to update any answers.</p>
+            <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          {%else%}
+            <p>You must restore this Institution Profile before you can review the assessment.</p>
+            <a class="button center disabled" href="">Review</a>
+          {%endif%}
         {% elif profile.capabilities_assessment.review_status == "denied" %}
           <p>Your {{adesc}} was submitted and rejected.</p>
-          <p>Click the button below for details on the reasons for rejection.</p>
-          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          {% if not profile.archived %}
+            <p>Click the button below for details on the reasons for rejection.</p>
+            <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          {%else%}
+            <p>You must restore this Institution Profile before you can review the assessment.</p>
+            <a class="button center disabled" href="">Review</a>
+          {%endif%}
         {% else %}
-          <p>Your {{adesc}} has been submitted and accepted.</p>
-          <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          <p>Your {{adesc}} has been submitted and was accepted on {{profile.capabilities_assessment.review_time|date:"DATE_FORMAT"}}.</p>
+          {% if not profile.archived %}
+            <a class="button center" href="{% url 'capmodel:assessment' profile.pk %}">Review</a>
+          {%else%}
+            <p>You must restore this Institution Profile before you can review the assessment.</p>
+            <a class="button center disabled" href="">Review</a>
+          {%endif%}
         {% endif %}
       {% else %}
         <p>You have not started a Capabilities Model Assessment. Choose one of the following:</p>
@@ -141,7 +177,7 @@
               <div>
                 <label for="full">
                   <input type="radio" id="full" name="atype" value="full" checked onchange="atypeChanged()">
-                  Begin a <b>Full Assessment</b>, answering all the questions.
+                  Begin a <b>Full Assessment</b>, assessing all the capabilities.
                   This is the usual route for established RCD programs who want a full
                   assessment of their capabilities.
                 </label>
@@ -149,8 +185,8 @@
               <div>
                 <label for="essential">
                   <input type="radio" id="essential" name="atype" value="essential" onchange="atypeChanged()">
-                  Begin an <b><em>Essentials</em> Assessment</b> answering
-                  a subset of questions that has been identified for new and
+                  Begin an <b><em>Essentials</em> Assessment</b> assessing
+                  a subset of capabilities that has been identified for new and
                   emerging RCD programs who want to focus on the essential capabilities.
                 </label>
                 </div>
@@ -158,7 +194,7 @@
                 <label for="cyoj">
                   <input type="radio" id="cyoj" name="atype" value="cyoj" onchange="atypeChanged()">
                   Begin a <b><em>Chart Your Own Journey</em> Assessment</b>, selecting only
-                  those topics and questions that you want to focus on. This option is intended
+                  those topics and capabilities that you want to focus on. This option is intended
                   for RCD programs conducting a follow-up assessment who want to focus on just
                   those areas that are likely to have changed since you last completed an assessment,
                   or those that want to conduct a partial assessment of capabilities.
@@ -192,23 +228,34 @@
   {% if can_manage %}
     <section>
       <h2>Review/Edit Institution Profile</h2>
-      <p>Click the button below to review and/or edit your institution profile.</p>
-      <a class="button center" href="{% url 'rcdprofile:edit' profile.pk %}">Review/Edit Institution Profile</a>
+        {% if not profile.archived %}
+          <p>Click the button below to review and/or edit your institution profile.</p>
+          <a class="button center" href="{% url 'rcdprofile:edit' profile.pk %}">Review/Edit Institution Profile</a>
+        {%else%}
+          <p>You must restore this Institution Profile before you can review the assessment.</p>
+          <a class="button center disabled" href="">Review/Edit Institution Profile</a>
+        {%endif%}
     </section>
   {% else %}
     <section>
       <h2>View Institution Profile</h2>
-      <p>Click the button below to review your institution profile.</p>
-      <a class="button center" href="{% url 'rcdprofile:view' profile.pk %}">View Institution Profile</a>
+      {% if not profile.archived %}
+        <p>Click the button below to review your institution profile.</p>
+        <a class="button center" href="{% url 'rcdprofile:view' profile.pk %}">View Institution Profile</a>
+        {%else%}
+          <p>This Institution Profile has been archived. It cannot be viewed unless and until a profile manager restores the Institution Profile.</p>
+        {%endif%}
     </section>
   {% endif %}
 
   {% if can_manage %}
       <section>
         {% if not profile.archived %}
-        <h2>Delete Institution Profile</h2>
-        <p>Click the button below to delete this institution profile. It can be restored if necessary.</p>
-        <a class="button center" href="{% url 'rcdprofile:archive' profile.pk %}">Delete Institution Profile</a>
+        <h2>Archive Institution Profile</h2>
+        <p>Click the button below to archive this institution profile. This will hide the profile (and the associated assessment)
+          from appearing in the list on your home page.<br>
+        You can restore this profile later if you need to. </p>
+        <a class="button center" href="{% url 'rcdprofile:archive' profile.pk %}">Archive Institution Profile</a>
         {% else %}
         <h2>Restore Institution Profile</h2>
         <p>This institution profile is currently archived. Click below to restore it.</p>

@@ -54,6 +54,7 @@ def assessment(request, profile_id):
                         profile.capabilities_assessment = apps.get_model(
                             "nexus", "CapabilitiesAssessment"
                         ).objects.copy(sourceprofile.capabilities_assessment, profile=profile)
+                        profile.comments = f"{profile.comments}\nAssessment data copied from {sourceprofile}."
                         profile.save()
                         profile.refresh_from_db()
                         assessment = profile.capabilities_assessment
@@ -68,6 +69,8 @@ def assessment(request, profile_id):
                 assessment, _ = CapabilitiesAssessment.objects.get_or_create(profile_id=profile_id)
                 atype=CapabilitiesAssessment.AssessmentTypeChoices.FULL
             assessment.assessment_type = atype
+            assessment.update_time = timezone.now()
+            assessment.update_user = request.user
             assessment.save()
         else: # No assessment and no context to create one - redirect to the profile. 
             return redirect("rcdprofile:detail", profile.pk)
@@ -91,12 +94,12 @@ def assessment(request, profile_id):
                 assessment.save()
                 messages.success(
                     request,
-                    f"Your RCD Capabilities Assessment for {profile} has been submitted for final review.",
+                    f"Your CaRCC Capabilities Assessment for {profile} has been submitted for final review.",
                 )
                 send_mail(
-                    subject=f"RCD Nexus Assessment Submitted for {profile}",
-                    message=f"An assessment for RCD Profile: {profile} was just submitted from Institution: {profile.institution}, by: {request.user}.",
-                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    subject=f"CaRCC Capabilities Assessment Submitted for {profile}",
+                    message=f"An assessment for Institution Profile: {profile} was just submitted from Institution: {profile.institution}, by: {request.user}.",
+                    from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                     recipient_list=[settings.CURATOR_EMAIL],
                 )
                 return redirect("capmodel:assessment", profile_id)
@@ -263,7 +266,7 @@ def assessment_unsubmit(request, profile_id):
     if assessment.review_status != CapabilitiesAssessment.ReviewStatusChoices.PENDING:
         messages.error(
             request,
-            f"Your RCD Capabilities Assessment for {profile} is not pending review and cannot be unsubmitted.",
+            f"Your CaRCC Capabilities Assessment for {profile} is not pending review and cannot be unsubmitted.",
         )
         return redirect("capmodel:assessment", profile_id)
 
@@ -273,12 +276,12 @@ def assessment_unsubmit(request, profile_id):
     assessment.save()
     messages.success(
         request,
-        f"Your RCD Capabilities Assessment for {profile} has been unsubmitted.",
+        f"Your CaRCC Capabilities Assessment for {profile} has been unsubmitted.",
     )
     send_mail(
         subject=f"RCD Nexus Assessment Un-Submitted for {profile}",
         message=f"An assessment for RCD Profile: {profile} was just unsubmitted (withdrawn) from Institution: {profile.institution}, by: {request.user}.",
-        from_email=settings.DEFAULT_FROM_EMAIL,
+        from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
         recipient_list=[settings.CURATOR_EMAIL],
     )
 
@@ -394,6 +397,7 @@ def topic(request, profile_id, facing, topic):
             "cyoj_copied": not assessment.copied_from is None,
             "facing": facing.contents.get(language=session_language),
             "topic": topic.contents.get(language=session_language),
+            "topic_is_domain": topic.slug==CapabilitiesTopic.domain_coverage_slug,
             "is_included": is_included,
             "has_nonincluded": has_nonincluded,
             "is_essential": is_essential,
@@ -427,6 +431,8 @@ def answer(request, profile_id, question_pk):
             answer: CapabilitiesAnswer = form.save(commit=False)
             answer.is_modified = True
             answer.save()
+            answer.assessment.update_user = request.user
+            answer.assessment.save()
             match answer.state:
                 case CapabilitiesAnswer.State.ANSWERED:
                     messages.success(request, f"Answer updated for {answer.question}.")
@@ -438,12 +444,12 @@ def answer(request, profile_id, question_pk):
                 case CapabilitiesAnswer.State.UNANSWERED:
                     messages.info(
                         request,
-                        f"Question {answer.question} left unanswered."
+                        f"Capability {answer.question} left unanswered."
                     )
                 case CapabilitiesAnswer.State.NOT_APPLICABLE:
                     messages.info(
                         request,
-                        f"Question {answer.question} marked as not applicable."
+                        f"Capability {answer.question} marked as not applicable."
                     )
             return redirect("capmodel:topic", profile_id, answer.question.topic.facing.slug, answer.question.topic.slug)
         else:
@@ -860,7 +866,7 @@ def csv_report(request, profile_id):
         headers={"Content-Disposition": 'attachment; filename='+filename},
     )
     writer = csv.writer(response)
-    writer.writerow(["Facing", "Topic", "Question", "Avail", "SOL", "Comm", "Cov", "Prio"])
+    writer.writerow(["Facing", "Topic", "Capability", "Avail", "SOL", "Comm", "Cov", "Prio"])
 
     session_language = "en"  # TODO get session language
 

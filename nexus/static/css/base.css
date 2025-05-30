@@ -121,7 +121,7 @@ header {
 
 ul.errorlist {
     color: var(--error);
-    font-size: 14px;
+    font-size: 13px;
     list-style: none;
     padding-left: 1em;
 }
@@ -562,10 +562,20 @@ body>nav details summary, nav #filtertree details summary {
 }
 
 #filtertree summary, #filtertree div.viewselect select{
-    margin-left: 5px;
+    margin-left: .4em;
     padding:1px;
     font-weight: bold;
     width: 18em;
+}
+#filtertree div.viewselect.skip,
+ #filtertree div.viewselect:has(select.skip),
+ #filtertree div.viewselect select option[disabled] {
+    display: none;
+}
+#filtertree div.viewselect:has(label[for='id_topics']) select, 
+#filtertree div.viewselect:has(label[for='id_topics']) label {
+    margin-left: .9em;
+    width: 17.5em;
 }
 
 #filtertree label, #resexp_to {
@@ -575,6 +585,10 @@ body>nav details summary, nav #filtertree details summary {
 }
 #filtertree div>label {
     font-size: 13px;
+}
+#filtertree div>span.skiplabel {
+    font-size: 13px;
+    margin-left: .9em;
 }
 #filtertree .viewoption label, #filtertree .viewoption label option {
     /* font-weight: normal; */
@@ -614,6 +628,9 @@ body>nav details summary, nav #filtertree details summary {
     margin-top: .2em;
     margin-bottom: .2em;
 }
+body>nav #filtertree ul {
+    max-width: initial;
+}
 
 
 /* FilterTooltip container */
@@ -625,7 +642,7 @@ body>nav details summary, nav #filtertree details summary {
     border-width: 2px;
     padding: 0 2px;
     font-weight: bold;
-    font-size: 0.85em;
+    font-size: 12px;
 }
 
 /* Tooltip text */
@@ -639,12 +656,13 @@ body>nav details summary, nav #filtertree details summary {
     font-size: 1em;
     font-weight: bold;
     padding: 1px;
+    text-indent: initial;
 
     /* Position the filtertip text - see examples below! */
     position: absolute;
     z-index: 1;
     top: -1px;
-    left: 2.5em;
+    left: 2em;
 }
 
 /* Show the filtertip text when you mouse over the filtertip container */
@@ -680,12 +698,12 @@ nav span.FilterTitle {
 
 #canvas.viz {
     width: 80%;
-    height: 600px;
+    max-height: 600px;
     display:flex;
     /* border:1px solid var(--logo-dark-purple); */
 }
 #canvas.viz>div {
-    margin:20px auto;
+    margin:0px auto;
 }
 h3.graphNYI {
     margin:3em auto;
@@ -699,15 +717,29 @@ h3.graphNYI {
 #CMGraphTitle {
     margin-top: 0;
     margin-bottom: 0.2em;
+    text-align: center;
 }
 
-p.viz_footnote {
+div.viz_footnote {
+    width: 70%;
+    margin:0px auto;
+}
+p.viz_footnote, p.viz_footnote_intro {
     font-size: 0.9em;
     color: var(--nexus-light-text);
     z-index: 5;
+}
+p.viz_footnote_intro {
     margin: 5px 0 0 0;
 }
-
+p.viz_footnote {
+    margin: 0 0 0 20px;
+}
+p.viz_footnote span.missing {
+    font-style: italic;
+    font-weight: bold;
+    color:#9F9F9F;
+}
 .menu {
     display: flex;
     flex-direction: row;

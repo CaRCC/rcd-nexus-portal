@@ -11,25 +11,39 @@
 {% block main %}
 <h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}CapsModel Data{%endif%}</h2>
 <div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
-{%if showErrBars or missingCats %}
-    <p class="viz_footnote">
-    {%if showErrBars %}
-        Note: "error bars" represent one standard deviation in the data, and illustrate the variation among institutions.<br>
-    {%endif%}
-    {%if missingCats %}
-        Note: The dataset (as filtered) has no values for certain categories; these are omitted in the graph.<br>
-    {%endif%}
-    </p>
-{%endif%}
 
-{%if facinglink %}
-    <p class="viz_footnote">See also the <a href="{% url 'helpdocs:printable_questions' %}#{{facinglink}}">set of questions associated with each topic
-         in this Facing</a></p>
-{%endif%}
+<div class="viz_footnote">
+    {%if multiBenchMarkNote or partialBenchMarkNote or showErrBars or missingCats or missingBenchmarkDataNote %}
+        <p class="viz_footnote_intro">Notes: </p>
+        {%if multiBenchMarkNote %}<p class="viz_footnote">{{multiBenchMarkNote}}</p>{%endif%}
+        {%if missingBenchmarkDataNote %}<p class="viz_footnote">{{missingBenchmarkDataNote}}</p>{%endif%}
+        {%if partialBenchMarkNote %}<p class="viz_footnote">{{partialBenchMarkNote}}</p>{%endif%}
+        {%if showErrBars %}
+            <p class="viz_footnote">Error bars represent one standard deviation in the data, and illustrate the variation among institutions.</p>
+        {%endif%}
+        {%if missingCats %}
+            <p class="viz_footnote">The dataset (as filtered) has no values for certain chart categories; these are omitted in the graph.</p>
+        {%endif%}
+    {%endif%}
+
+    {%if printQsAnchor %}
+        <p class="viz_footnote">See also the <a href="{% url 'helpdocs:printable_questions' %}#{{printQsAnchor}}" target="_blank">
+            {%if "_qs" in printQsAnchor %}
+                capabilities for this topic
+            {%else%}
+                capabilities associated with each topic in this Facing
+            {%endif%}
+        </a></p>
+    {%endif%}
+</div>
+
 {{ nonDefs|json_script:"nonDefs" }}
 <script>
     const nonDefs = JSON.parse(document.getElementById('nonDefs').textContent);
     initDetailsFromStorage( nonDefs );
+    const facingsSel = document.getElementById("id_facings")
+    handleFacingSelection(null)
+    facingsSel.addEventListener("change", handleFacingSelection );
     document.getElementById("id_chart_views").addEventListener("change", handleChartViewSelection );
     {%if chart %}
         hideFiltersForChartView("{{chart}}");

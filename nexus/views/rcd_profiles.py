@@ -157,6 +157,7 @@ def rcd_profile_list(request):
 
     # profiles = request.user.rcd_profiles.filter(archived=False)
     profiles = RCDProfile.objects.filter_can_view(request.user)
+    archived_profiles = RCDProfile.objects_archive.filter_can_view(request.user).filter(archived=True)
 
     navtree = NavNode(
         "Profiles",
@@ -175,6 +176,7 @@ def rcd_profile_list(request):
         "navtree": navtree,
         "current_profiles": profiles.filter(year=settings.RCD_DEFAULT_YEAR),
         "past_profiles": profiles.filter(year__lt=settings.RCD_DEFAULT_YEAR),
+        "archived_profiles": archived_profiles,
     }
 
     return render(request, "rcdprofile/list.html", context)
@@ -197,7 +199,7 @@ def rcd_profile_create(request, institution_pk):
             send_mail(
                 subject=f"RCD Nexus Profile Created for {profile}",
                 message=f"A new RCD Profile: {profile} was just created for Institution: {institution}, by creator: {request.user}.",
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                 recipient_list=[settings.SUPPORT_EMAIL],
             )
             return redirect("rcdprofile:detail", profile.pk)
@@ -216,7 +218,11 @@ def rcd_profile_create(request, institution_pk):
 def rcd_profile_view(request, pk):
     return rcd_profile_edit(request, pk, action="view")
 
-def rcd_profile_edit(request, pk, action="edit" ):
+def rcd_profile_edit_new(request, pk):
+    print(f'rcd_profile_edit_new')
+    return rcd_profile_edit(request, pk, action="edit", isnew=True)
+
+def rcd_profile_edit(request, pk, action="edit", isnew=False ):
     profile = access_profile(request, pk, action)
 
     form = RCDProfileForm(request.POST or None, instance=profile)
@@ -225,7 +231,16 @@ def rcd_profile_edit(request, pk, action="edit" ):
     if request.method == "POST":
         if form.is_valid():
             form.save()
-            messages.success(request, f"Updated RCD profile for {profile}")
+            if isnew:
+                messages.success(request, f"Created RCD profile for {profile}")
+                send_mail(
+                    subject=f"RCD Nexus Profile Created for {profile}",
+                    message=f"A new RCD Profile: {profile} was just created (from a copy) for Institution: {profile.institution}, by creator: {request.user}. Note comments: {profile.comments}.",
+                    from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
+                    recipient_list=[settings.SUPPORT_EMAIL],
+                )
+            else:            
+                messages.success(request, f"Updated RCD profile for {profile}")
             return redirect("rcdprofile:detail", profile.pk)
 
     context = {
@@ -248,7 +263,7 @@ def rcd_profile_import(request):
             request, request.POST.get("imported-profile"), "view"
         )
         new_profile = RCDProfile.objects.copy(profile, request.user)
-        return redirect("rcdprofile:edit", new_profile.pk)
+        return redirect("rcdprofile:editnew", new_profile.pk)
 
     return redirect("rcdprofile:create")
 
@@ -381,7 +396,7 @@ def rcd_profile_invite(request, pk):
                     subject="RCD Nexus collaboration invite",
                     message=f"{invitation.invited_by} is inviting you to collaborate on RCD Nexus assessments for {profile}.\n\nClick here to accept this invitation: {invite_link}",
                     html_message=email_in_html,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                     recipient_list=email_recipients,
                 )
             messages.success(
@@ -410,7 +425,7 @@ def rcd_profile_request_membership(http_request, pk):
         send_mail(
                 subject="RCD Nexus Membership request to Profile with no Manager!!!",
                 message=f"{http_request.user} has requested membership to collaborate on profile: {profile}, but no manager was found.",
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+http_request.get_host(),
                 recipient_list=[settings.SUPPORT_EMAIL],
                 fail_silently=False,
             )
@@ -423,7 +438,7 @@ def rcd_profile_request_membership(http_request, pk):
             subject="RCD Nexus Profile Membership request",
             message=f"Hello {mgr.user.name()} - \n\n{http_request.user} has requested membership to collaborate on RCD Nexus assessments for {profile}.\n\nYou can review (and approve or deny) these requests at: {profile_link}",
             html_message=email_in_html,
-            from_email=settings.DEFAULT_FROM_EMAIL,
+            from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+http_request.get_host(),
             recipient_list=[mgr.user.email],
         )
         messages.success(http_request, "Membership request sent. When a profile manager reviews your request, you will be notified by email.")
@@ -456,7 +471,7 @@ def rcd_profile_handle_membership_request(http_request, pk):
                 subject="RCD Nexus membership request approved",
                 message=f"Your request to join {profile} has been approved. Click here to get started: {profile_link}",
                 html_message=email_in_html,
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+http_request.get_host(),
                 recipient_list=[profile_request.requested_by.email],
             )
         elif action == "deny":
@@ -467,7 +482,7 @@ def rcd_profile_handle_membership_request(http_request, pk):
                 subject="RCD Nexus membership request denied",
                 message=f"Your request to join {profile} has been denied.",
                 html_message=email_in_html,
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+http_request.get_host(),
                 recipient_list=[profile_request.requested_by.email],
             )
         else:
@@ -527,7 +542,7 @@ def rcd_profile_survey(request, pk):
     if request.method == "POST":
         if form.is_valid():
             model_instance = form.save()
-            print(f"Survey results: {vars(model_instance)}")
+            #print(f"Survey results: {vars(model_instance)}")
             profile.survey = model_instance
             profile.save()
             messages.success(request, f"Survey completed for {profile}")

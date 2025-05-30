@@ -10,6 +10,7 @@ urlpatterns = [
     path("import", rcd_profile_import, name="import"),
     path("<int:pk>/", rcd_profile_detail, name="detail"),
     path("<int:pk>/edit", rcd_profile_edit, name="edit"),
+    path("<int:pk>/editnew", rcd_profile_edit_new, name="editnew"),
     path("<int:pk>/view", rcd_profile_view, name="view"),
     path("<int:pk>/survey", rcd_profile_survey, name="survey"),
     path("<int:pk>/members/", rcd_profile_members, name="members"),

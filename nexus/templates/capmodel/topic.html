@@ -143,7 +143,7 @@
         <tbody>
             {%if atype == "full" %}
                 <tr class="headline">
-                    <td>Questions in topic</td>
+                    <td>Capabilities in topic</td>
                     <td class="cov">Computed Coverage</td>
                 </tr>
                 {% for answer in answers %}
@@ -158,9 +158,9 @@
                 </tr>
                 {% endfor %}
             {%elif atype == "essential" %}
-                {%if is_essential %} {% comment %} Topic has essential questions {% endcomment %}
+                {%if is_essential %} {% comment %} Topic has essential capabilities {% endcomment %}
                     <tr class="headline">
-                        <td>Essential Questions in topic</td>
+                        <td>Essential Capabilities in topic</td>
                         <td class="cov">Computed Coverage</td>
                     </tr>
                     {% for answer in answers %}
@@ -177,10 +177,10 @@
                         {%endif%}
                     {% endfor %}
                 {%endif%}
-                {%if has_nonessential%} {% comment %} Topic has additional non-essential questions {% endcomment %}
-                    {%if is_included %} {% comment %} Topic has non-essential questions that have been included by user {% endcomment %}
+                {%if has_nonessential%} {% comment %} Topic has additional non-essential capabilities {% endcomment %}
+                    {%if is_included %} {% comment %} Topic has non-essential capabilities that have been included by user {% endcomment %}
                         <tr class="headline {%if is_essential %}included{%endif%}">
-                            <td>Non-Essential Questions included in Coverage</td>
+                            <td>Non-Essential Capabilities included in Coverage</td>
                             <td></td>
                         </tr>
                         {% for answer in answers %}
@@ -199,7 +199,7 @@
                     {%endif%}
                     {%if has_nonincluded %}
                         <tr class="headline extras">
-                            <td>Non-Essential Questions in topic</td>
+                            <td>Non-Essential Capabilities in topic</td>
                             <td></td>
                         </tr>
                         {% for answer in answers %}
@@ -216,7 +216,7 @@
                             {%endif%}
                         {% endfor %}
                     {%endif%}
-                    {%if is_included and not is_essential %} {% comment %} Topic has non-essential questions included - let them revert all these. {% endcomment %}
+                    {%if is_included and not is_essential %} {% comment %} Topic has non-essential capabilities included - let them revert all these. {% endcomment %}
                         <tr class="question includeQ">
                             <td>
                                 <form action="{{ request.path }}/removetopic" method="post">
@@ -229,12 +229,27 @@
                             <td></td>
                         </tr>
                     {%endif%}
-                    {% comment %} Note we do not support adding the whole topic for an Essential assessment - they can add question by question {% endcomment %}
+                    {% comment %} Note we do not support adding the whole topic for an Essential assessment, 
+                    EXCEPT for the domain topic. For all others, they can add capability by capability. {% endcomment %}
+                    {%if topic_is_domain and not is_included %}
+                        <tr class="question includeQ">
+                            <td>
+                                <form action="{{ request.path }}/includetopic" method="post">
+                                    <p>
+                                    <b>Click here to include the entire topic in your assessment:</b><br>
+                                        {% csrf_token %}
+                                        <input class="inc_rem_q" type="submit" value="Include Entire Topic">
+                                    </p>
+                                </form>
+                            </td>
+                            <td></td>
+                        </tr>
+                    {%endif%}
                 {%endif%}
             {%elif atype == "cyoj" %}
                 {%if not is_included %}
                     <tr class="headline extras">
-                        <td>Questions in topic{%if cyoj_copied %} with copied answers{%else%} (none included){%endif%}</td>
+                        <td>Capabilities in topic{%if cyoj_copied %} with copied answers{%else%} (none included){%endif%}</td>
                         <td class="cov">Computed Coverage</td>
                     </tr>
                     {% for answer in answers %}
@@ -262,7 +277,7 @@
                     </tr>
                 {%else%}
                     <tr class="headline included">
-                        <td>Questions in topic included in this Assessment</td>
+                        <td>Capabilities in topic included in this Assessment</td>
                         <td class="cov">Computed Coverage</td>
                     </tr>
                     {% for answer in answers %}
@@ -280,7 +295,7 @@
                     {% endfor %}
                     {%if has_nonincluded %}
                         <tr class="headline extras">
-                            <td>Questions {%if cyoj_copied %} with copied answers{%else%} not included in this Assessment{%endif%}</td>
+                            <td>Capabilities {%if cyoj_copied %} with copied answers{%else%} not included in this Assessment{%endif%}</td>
                             <td></td>
                         </tr>
                         {% for answer in answers %}

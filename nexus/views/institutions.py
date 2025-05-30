@@ -36,7 +36,7 @@ def institution_request(request: HttpRequest):
             send_mail(
                 subject=f"RCD Nexus Institution Request Submitted for {req.name}",
                 message=f"A request to create a new Institution: {req.name} was just submitted by: {request.user}.",
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                 recipient_list=[settings.CURATOR_EMAIL],
             )
             return redirect("index")
@@ -101,7 +101,7 @@ def affiliation_request(request: HttpRequest, token=None):
 
 They can now create an assessment, so should probably be added to the capsModel-discuss list. 
 """,
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                 recipient_list=[settings.SUPPORT_EMAIL],
                 fail_silently=False,
             )
@@ -143,7 +143,7 @@ To approve this request, please visit the following link:
 {req_link}
 """,
                 html_message=email_in_html,
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                 recipient_list=[email],
                 fail_silently=False,
             )

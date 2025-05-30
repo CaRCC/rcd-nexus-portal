@@ -6,14 +6,24 @@
         margin-bottom: 0;
     }
 
+    main form {
+        margin:auto;
+    }
+    main form section{
+        background-color: transparent;
+    }
+
     section.status {
         margin: 0px 10px;
         padding-top: 0px;
         width: 80%;
-        max-width: 600px;
         align-self: center;
         background-color: transparent;
         box-shadow: none;
+    }
+
+    section.status.showHideExtras {
+        max-width: 600px;
     }
 
     section.status p {
@@ -242,9 +252,8 @@
         text-align: center;
         align-self: center;
         padding: 4px;
-        margin: 30px 10px 10px 10px;
+        margin: 20px 10px 10px 10px;
         max-width: 600px;
-        box-shadow: none;
     }
 
     section.submission div.field-head {
@@ -274,6 +283,9 @@
     }
 
     section.submission:hover {
+        box-shadow: 0 3px 5px rgba(var(--linksrgb), 0.5);
+    }
+    section.submission {
         box-shadow: 0 3px 5px rgba(var(--linksrgb), 0.3);
     }
 
@@ -281,6 +293,7 @@
         margin-bottom: 2px;
     }
 
+    section.status section.actions,
     section.submission section.actions,
     section.reporting section.actions {
         margin: 5px;
@@ -304,11 +317,6 @@
     }
 </style>
 <script>
-    var SHOWN ="1";
-    var HIDDEN = "0";
-    var SHOW_HIDE_SUFFIX = "SH";
-    var SHOW_HIDE_EXTRAS = "showEX";
-    var COOKIE_LIFE = 7*24*60*60*1000;  // Save state for a week
 
     var toggleDesc = false; // Control whether to collapse the descriptions when showing the topics
 
@@ -383,40 +391,13 @@
         }
     }
 
-    function getStateCookie(name) {
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for(let i = 0; i <ca.length; i++) {
-            let c = ca[i];
-            let cpair = c.split('=');
-            if (cpair[0].trim() == name) {
-                var shown = cpair[1].trim();
-                //console.log("Cookie found for section:"+section+" value: "+shown)
-                return shown != HIDDEN;
-            }
-        }
-        //console.log("No cookie found for showing section: "+section);
-        return false;   // If can't find the cookie, don't show the section
-    }
     function getToggleStateCookie(section) {
         return getStateCookie(section+SHOW_HIDE_SUFFIX);
     }
   
-    function setCookie(cname, shown) {
-        const d = new Date();
-        d.setTime(d.getTime() + COOKIE_LIFE);
-        let expires = "expires="+ d.toUTCString();
-        document.cookie = cname + "=" + shown + ";" + expires + ";path=/";
-    }
-
     function setToggleStateCookie(section, shown) {
         setCookie(section+SHOW_HIDE_SUFFIX, shown);
         //console.log("Set cookie for section: "+section+" to: "+shown);
-    }
-
-    function setExtraTopicsStateCookie(shown) {
-        setCookie(SHOW_HIDE_EXTRAS, shown);
-        //console.log("Set Show/Hide Extras cookie: "+show);
     }
 
     function initExtraTopicsFromCookie() {
@@ -456,18 +437,18 @@
 <h2>Capabilities Assessment for {{ profile }}</h2>
 {% if profile.capabilities_assessment.review_status == "not_submitted" %}
 <section class="status">
-    <p>In progress, {{completed_questions}} of {{total_questions}} questions ({% widthratio pct_complete 1 100 %}%)
+    <p>In progress, {{completed_questions}} of {{total_questions}} capabilities ({% widthratio pct_complete 1 100 %}%)
         completed</p>
 </section>
 {% elif profile.capabilities_assessment.review_status == "pending" %}
 <h3>Review pending</h3>
 <section class="status">
-    <p>This assessment has been submitted and is pending final review by <br />RCD Nexus Program Staff.<br />
+    <p>This assessment has been submitted and is pending final review by RCD Nexus Program Staff.<br />
         You may <strong><em>unsubmit</em></strong> to make changes to your answers. <br/> Once approved the assessment will be frozen.</p>
     <form method="post" action="unsubmit">
         {% csrf_token %}
         <section class="actions">
-            <button type="submit">Unsubmit</button>
+            <button type="submit">Unsubmit Assessment</button>
         </section>
     </form>
 </section>
@@ -496,7 +477,7 @@
 {%if atype != "full" %}
 <section class="status showHideExtras">
     <p><input type="checkbox" id="showHideExtrasCB" onchange="onShowExtrasChange(this)">
-        Hide Extra Topics (i.e., {%if atype == "essential" %}Non-Essential Topics and {% endif %}those not included in this Assessment).</p>
+        Hide Extra Topics (i.e., {%if atype == "essential" %}Non-Essential Topics and Domain support Topics{% else %}topics you have not included in this Assessment{% endif %}).</p>
 </section>
 {% endif %}
 {% if profile.capabilities_assessment.review_status != "not_submitted" and can_submit %}
@@ -519,7 +500,7 @@
             <p id="{{facing.slug}}SH" class="toggle" onclick="toggleSection(this, '{{facing.slug}}')"><span>Show Topics</span></p>
         </div>
         <div class="facingdesc" style="display:block;">
-            <p>{%if facing.questionCount %}<span class="facingqcount"></span>{{facing.questionCount}} questions:</span>{%endif%}
+            <p>{%if facing.questionCount %}<span class="facingqcount"></span>{{facing.questionCount}} capabilities:</span>{%endif%}
                 {{facing.content.description}}                  
             </p>
         </div>
@@ -538,7 +519,7 @@
                         {{answers.coverage_pct}}</p>
                 {% endfor %}
             {%elif atype == "essential" %}
-                <p class="tname topicheader essential">Topics with Essential {%if facing.has_included %}(or Included) {%endif%}Questions</p>
+                <p class="tname topicheader essential">Topics with Essential {%if facing.has_included %}(or Included) {%endif%}Capabilities</p>
                 <p class="tcov topicheader essential">Computed Coverage</p>
                 {% for topic, answers in topics.items %}
                     {%if topic.is_essential or topic.is_included %}
@@ -611,7 +592,7 @@
             </div>
     </section>
     {% empty %}
-    <h3>No questions were found.</h3>
+    <h3>No capabilities were found.</h3>
     {% endfor %}
 
     <section class="topicblock">
@@ -640,7 +621,7 @@
         <p id="priosSH" class="toggle" onclick="toggleSection(this, 'prios')"><span>Show Priorities</span></p>
     </div>
     <div class="facingdesc" style="display:block;">
-        <p>The top questions marked as a priority, in order as marked.</p>
+        <p>The top capabilities marked as a priority, in order as marked.</p>
     </div>
     <div class="topics priorities">
         {% if top_priorities %}
@@ -653,33 +634,33 @@
         </ol>
         <a href="{% url 'capmodel:priorities' profile.pk %}">View all priorities</a>
         {% else %}
-        <p class="prioQ">No questions marked as priorities (yet)</p>
+        <p class="prioQ">No capabilities marked as priorities (yet)</p>
         {% endif %}
     </div>
 </section>
 
+{% if profile.capabilities_assessment.review_status == "not_submitted" %}
     <section class="submission">
-        {% if profile.capabilities_assessment.review_status == "not_submitted" %}
         {% if submit_form %}
-        <p>When you are satisfied with your answers, submit your assessment for final review.</p>
-        <form method="post">
-            {% csrf_token %}
-            {{ submit_form }}
-            <section class="actions">
-                <button type="submit">Submit</button>
-            </section>
-        </form>
+            <p>When you are satisfied with your answers, submit your assessment for final review.</p>
+            <form method="post">
+                {% csrf_token %}
+                {{ submit_form }}
+                <section class="actions">
+                    <button type="submit">Submit</button>
+                </section>
+            </form>
         {% else %}
-        <p>Once you have answered all the questions, you can submit your assessment.</p>
-            {% if atype == "cyoj" and pct_complete == 1 %}
-                <p>Note that you must include (and answer) at least one question in this assessment.</p>
-            {% endif %}
-        <section class="actions">
-            <button type="button" disabled>Submit</button>
-        </section>
-        {% endif %}
+            <p>Once you have assessed all the capabilities, you can submit your assessment.</p>
+                {% if atype == "cyoj" and pct_complete == 0 %}
+                    <p>Note that you must include (and assess) at least one capability in this assessment.</p>
+                {% endif %}
+            <section class="actions">
+                <button type="button" disabled>Submit</button>
+            </section>
         {% endif %}
     </section>
+{% endif %}
 
     <section class="reporting">
         <section class="actions">

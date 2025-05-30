@@ -1,9 +1,11 @@
 # from django.shortcuts import render
+import re
+import textwrap
 from django.db.models import Q, Case, Value, When, F, Count
 from functools import reduce
 from operator import or_
 from math import ceil
-from nexus.models import CapabilitiesAnswer, CapabilitiesAssessment, CapabilitiesTopic, Institution, RCDProfile
+from nexus.models import CapabilitiesQuestion, CapabilitiesAnswer, CapabilitiesAssessment, CapabilitiesTopic, Institution, RCDProfile
 from nexus.forms import dataviz
 #from django.http import JsonResponse
 import colorsys
@@ -41,7 +43,8 @@ colorPalette = {'allData':'#9F9F9F', 'EPSCoR':'#5ab4ac', 'nonEPSCoR':'#d8b365',
                 'Public':'#ffd966','Private':'#ec7728',
                 'MSI':'#0084d1', 'NotMSI':'#8FB8DE','HSI':'#586F6B','HBCU':'#CFE795','AA':'#F7EF81','TCU':'#D4C685','otherMSI':'#D0CFEC',
                 VALUE_UNKNOWN_LABEL:'#8d99ae',
-                '2022':'#ffba5a', '2021':'#6aaa96', '2020':'#ada3d3'}
+                '2022':'#ffba5a', '2021':'#6aaa96', '2020':'#ada3d3',
+                'defaultLegendFontColor':'#000', 'noDataLegendFontColor':'#9F9F9F',}
 
 def hex_to_rgb(h):
     h = h.lstrip('#')
@@ -253,9 +256,11 @@ def computeMaxRange(averages, stddevs):
         maxRange = min(100, max(7, int((maxRange+.05)*10))*10)
     return maxRange
 
-def getAllAnswers(years=None) :
+def getAllAnswers(years=None, excludeDemos=True) :
     # Restrict to approved assessments
     profiles = RCDProfile.objects.filter(capabilities_assessment__review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED)
+    if excludeDemos:
+        profiles = profiles.exclude(institution__id__in=Institution.getDemoIDList())
     if not years is None:
         # print('getAllAnswers filtering to years: ',years)
         profiles = profiles.filter(year__in=years)
@@ -273,19 +278,17 @@ def getAllAnswers(years=None) :
 # Translate URL query parameters into a filter for CapabilitiesAnswer objects
 # Note that we skip filtering when all values are chosen. This is both more efficient, and moreover
 # ensures that we do not filter out all the Null values (e.g., for mission) on older profiles. 
-def filterAssessmentData(dict):
+def filterAssessmentData(dict, bmQuestions=None):
 
     # We normally start with the latest profiles for each institution, but if we are filtering on years, we
     # have to handle that specially by passing in the years we are interested in.
     answers=None
     if years := dict.get('year'):
         if len(years) < len(dataviz.DataFilterForm.YEAR_CHOICES):   # Skip the filter if all are set (nothing to filter)
-            # TODO - get instCount in return
             answers = getAllAnswers(years)[0]                       # filters on years, and then gets answers for latest assessment for each institution
 
     # if we did not handle the special case, get all the answers normally
     if(answers is None):
-        # TODO - get instCount in return
         answers = getAllAnswers()[0]                                # gets answers for latest assessment for each institution
 
     if cc := dict.get('cc'):
@@ -369,12 +372,17 @@ def filterAssessmentData(dict):
         if maxMills > 0:
             answers = answers.filter(assessment__profile__institution__research_expenditure__lte=(maxMills*1000000))
  
+    if bmQuestions != None:
+        #print('filterAssessmentData has bmQuestions; before filtering with that # Qs is:'+str(answers.values('question__id').distinct().count()))
+        answers = answers.filter(question__id__in=bmQuestions)
+        #print('after  filtering with that # Qs is:'+str(answers.values('question__id').distinct().count()))
+
     instCount = answers.values('assessment__id').distinct().count()
     #print("After filtering have: ",answers.count(), " answers for: ",instCount," Institutions")
 
     return answers, instCount
 
-def applyStandardVBarFormatting(fig, width=None, textscale=1):
+def applyStandardVBarFormatting(fig, width=None, textscale=1, nCats=0):
     # Apply standard font size and font type
     fig.update_layout(
         xaxis=dict(title=dict(text='', font=dict(size=16, family='Arial'))),
@@ -385,24 +393,39 @@ def applyStandardVBarFormatting(fig, width=None, textscale=1):
         #legend_traceorder="normal",
         legend = dict(font=dict(size=14*textscale, )),
         )
-    fig.update_traces(error_y_color=colorPalette['errBars'], 
+    if(nCats<4):
+        error_w = 3*textscale 
+        error_t = 2*textscale
+    else: # For busy graphs that are small, further reduce the error bar cap width
+        error_w = 3*textscale*textscale 
+        error_t = 2*textscale*textscale
+    
+    fig.update_traces(error_y=dict(color=colorPalette['errBars'],width=error_w, thickness=error_t),
                       marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{y:.1f}%',
                       showlegend=True)
     fig.update_yaxes(gridcolor=colorPalette['errBars'], gridwidth=0.5, griddash='dot',zeroline=False)
 
-def applyStandardHBarFormatting(fig, width=None, textscale=1):
+def applyStandardHBarFormatting(fig, width=None, textscale=1, nCats=0):
     # Apply standard font size and font type
     fig.update_layout(
         yaxis=dict(title=dict(text='')), #, font=dict(size=16, family='Arial'))),
         xaxis=dict(title=dict(text='', font=dict(size=16, family='Arial')), ticksuffix="%", range=[0, 100], dtick=20),
         plot_bgcolor=colorPalette['bgColor'], 
-        margin_t=25, margin_l=20,autosize=True,
+        # margin_t=25, margin_l=20,
+        margin=dict(l=20, r=0, t=25, b=0),
+        autosize=True,
         legend_title_text='',        
         bargap=0.250,
         legend = dict(font=dict(size=14*textscale, )),
         )
-    fig.update_traces(error_x_color=colorPalette['errBars'], 
-                      marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{x:.1f}%')
+    if(nCats<4):
+        error_w = 3*textscale 
+        error_t = 2*textscale
+    else: # For busy graphs that are small, further reduce the error bar cap width
+        error_w = 3*textscale*textscale 
+        error_t = 2*textscale*textscale
+    fig.update_traces(error_x=dict(color=colorPalette['errBars'],width=error_w, thickness=error_t),
+                  marker_line_color='black', marker_line_width=1.5,width=width, hovertemplate = 'Coverage: %{x:.1f}%')
     fig.update_yaxes(showgrid=False,zeroline=False, autorange="reversed",
                      showline=True, linewidth=1, linecolor='black',
                      tickfont=dict(size=14*textscale, family='Arial'),)
@@ -447,18 +470,15 @@ def summaryDataGraph(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAU
 
     markerscale = 1.3-((1-(abs(height)/DEFAULT_HEIGHT))*1.4)
     textscale = 1-((1.3-markerscale)*.4)
-
     # Create a All Summary Data bar chart
     fig = px.bar(data, x='Facings', y= 'Average Values', error_y='Std Dev' if showErrBars else None,
                     #width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
                     width=width, height=height,color='Facings', color_discrete_sequence=colorSeqForFacings)
     applyStandardVBarFormatting(fig, width=0.6, textscale=textscale)
     fig.update_traces(showlegend=False) # For the summary data graph, the facings are labeled on the X axis, so redundant in the legend. 
-    #fig.update_layout(showlegend=False)
 
     # If benchmark data passed in, layer that over
-    #scale = (height/DEFAULT_HEIGHT)
-
+    # Note that at the top level, there will be no benchmarks with no data
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         # Legendrank is SUPPOSED to let us order with the most recent year on top, but seems not to work.
@@ -476,6 +496,14 @@ def summaryDataGraph(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAU
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
 
+def labelForFacingTopic(facing, topic):
+    # print(f'labelForFacingTopic({facing},{topic})')
+    map = labelMapForFacing(facing)[0]
+    rex_spaces = re.compile(r'\s+')
+    rex_tags = re.compile(r'<[^<]+?>')
+    return rex_spaces.sub(' ', rex_tags.sub('', map[topic])).strip()
+
+
 def labelMapForFacing(facing):
     match facing:
         case "researcher":
@@ -491,11 +519,52 @@ def labelMapForFacing(facing):
         case _ :
             raise ValueError(f"labelMapForFacing: unrecognized facing: {facing}")
 
-def calculateScaledHeight(nTopics, height):
-    scale = nTopics/MAX_TOPICS
+def midsplit(stringToSplit, linemax, splitReplace='<br>'):
+    inputLen = len(stringToSplit)
+    if inputLen <= linemax:
+        return stringToSplit
+    # Split as close to the midpoint as possible, preferring a longer first line than second
+    midpoint = int(inputLen/2)
+    splitPoint = 0
+    if stringToSplit[midpoint] == ' ': # can skip the rest if evenly splits at midpoint
+        splitPoint = midpoint
+    else:
+        for i in range(1, midpoint-1):
+            if stringToSplit[midpoint+i] == ' ':
+                splitPoint = midpoint+i
+                break
+            if stringToSplit[midpoint-i] == ' ':
+                splitPoint = midpoint-i
+                break
+
+    if splitPoint == 0:
+        print(f'midsplit could not find a place to split string: [{stringToSplit}]')
+        return stringToSplit
+    
+    return stringToSplit[0:splitPoint] + splitReplace + stringToSplit[splitPoint+1:]
+
+def labelMapForTopic(facingSlug, topicSlug):
+    # We build a quick dictionary from the Question data and return that along with the values (for axis labels)
+    # If the string length is under 24, leave as is. Else, find the word break closest to the center of the string and replace with a <br> tag
+    questions = CapabilitiesQuestion.objects.filter_valid().filter(topic__facing__slug=facingSlug).filter(topic__slug=topicSlug).order_by('index')
+    qdict = dict((q.slug, f'<b>{midsplit(q.contents.get(language="en").shorttext, 22)}</b>') for q in questions)
+    return qdict, list(qdict.values())
+
+
+# Scale the height, accounting for the number of categories on the y axis, as well as the number of items in the legend
+def calculateScaledHeight(nCats, nLegendItems, height, lowCountAdj=.5):
+    if nCats >= nLegendItems:
+        yCount = nCats
+    else:
+        yCount = nCats + min((nLegendItems-nCats)/2, 2)
+    scale = yCount/MAX_TOPICS
     adjustedscale = 1 - ((1-scale)*.5)     # scale by a fraction of the difference in # of Topics
-    height = adjustedscale*height
-    return height
+    scaledHeight = adjustedscale*height
+    if yCount < 6:
+        # We have 2 sub-cats, so scale the height for topics with few questions, unless we are rendering smaller graphs
+        scaledHeight = scaledHeight*(lowCountAdj+(1-lowCountAdj)*(yCount/6))
+    print(f'calculateScaledHeight({nCats},{nLegendItems},{height},{lowCountAdj}): {scaledHeight}')
+    return scaledHeight
 
 
 def facingSummaryDataGraph(answers, facing, benchmarks=None,
@@ -535,7 +604,7 @@ def facingSummaryDataGraph(answers, facing, benchmarks=None,
     textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        height = calculateScaledHeight(len(yvalues), 0, abs(height))
 
     # Create a Topics Summary Data bar chart for this facing
     fig = px.bar(data, y='Topics', x= 'Average Values', error_x='Std Dev' if showErrBars else None,
@@ -549,9 +618,86 @@ def facingSummaryDataGraph(answers, facing, benchmarks=None,
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
+            imarker-=1
+        fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
+   
+    # Convert the figure to HTML including Plotly.js
+    return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True)
+
+def topicSummaryDataGraph(answers, facing, topic, benchmarks=None,
+                           width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+    #print(f"Facing/Topic: [{facing}/{topic}] SummaryDataGraph with: {answers.count()} answers")
+    #instCount = answers.values('assessment__id').distinct().count()
+    if (answers.count() == 0): 
+        return None
+    
+    #Note that answers has been pre-filtered of domain topic and not_applicable answers
+    # Note also that the topic sligs are unique so we skip filtering on the facing
+    data = answers.aggregate_score('question__slug')\
+        .values('question__slug','average','stddev')\
+        .filter(question__topic__facing__slug=facing)\
+        .filter(question__topic__slug=topic).order_by('question__index')
+
+    # Convert the queryset to a DataFrame
+    df = pd.DataFrame(data)
+    # print(f'topicSummaryDataGraph DF: {df}')
+
+    # Map the question slugs to their short names
+    labelMap, yvalues = labelMapForTopic(facing, topic)
+
+    df['question__slug'] = df['question__slug'].map(labelMap)
+    data = df
+
+    # Rename the columns for clarity
+    data = data.rename(columns={
+            'average':'Average Values',
+            'question__slug' : 'Questions',
+            'stddev' : 'Std Dev'
+        })
+    # print(data)
+
+    data['Average Values'] *= 100
+    data['Std Dev'] *= 100
+
+    markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
+    textscale = 0.9-((1-markerscale)*.3)
+
+    if height <= CALCULATE_SCALED_HEIGHT:
+        legendCount = 0
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
+
+    # Create a Topics Summary Data bar chart for this facing
+    fig = px.bar(data, y='Questions', x= 'Average Values', error_x='Std Dev' if showErrBars else None,
+                    width=width, height=height,color_discrete_sequence=[colorPalette['allData']]*5)
+    fig.update_traces(marker_color=colorMapByFacingSlug[facing])
+    applyStandardHBarFormatting(fig, width=0.6, textscale=textscale)
+
+    # If benchmark data passed in, layer that over
+    if(benchmarks!=None) :
+        # We add them in reverse order so the most recent is on top
+        imarker = min(len(benchmarks), NMARKERSMAX)-1
+        while imarker >= 0:
+            bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
+            # print(f'topicSummaryDataGraph adding bm: {bm} for yvalues: {yvalues}')
+            print(f'topicSummaryDataGraph bmName: "{bmName}"')
+            fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
+                                        marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
    
@@ -601,16 +747,18 @@ def capsDataGraphByCC(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFA
             'average':'Average Value',
         })
 
+    markerscale = 1.3-((1-(abs(height)/DEFAULT_HEIGHT))*1.4)
+    textscale = 1-((1.3-markerscale)*.4)
     # Create a grouped bar chart
     fig = px.bar(df, x='Facings', y='Average Value',error_y='stddev' if showErrBars else None,
                 color='simpleCC', 
                 color_discrete_map={'R1':colorPalette['R1'], 'R2':colorPalette['R2'],'Other Acad.':colorPalette['OtherAcad']},
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardVBarFormatting(fig)
+    applyStandardVBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    scale = (height/DEFAULT_HEIGHT)
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -618,14 +766,14 @@ def capsDataGraphByCC(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEFA
             bm = benchmarks[imarker]
             fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
-def facingCapsDataGraphByCC(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
-    #print("capsDataGraphByCC with: ", answers.count()," answers")
+def facingCapsDataGraphByCC(answers, facing, topic, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+    #print(f'facingCapsDataGraphByCC({facing},{topic}) with: {answers.count()} answers')
     if (answers.count() == 0): 
         return None
     # For this graph, we will ignore the "Other" institutions (labs, etc.), the Unknowns which have Null values for CC, and 
@@ -636,21 +784,32 @@ def facingCapsDataGraphByCC(answers, facing, benchmarks=None, width=DEFAULT_WIDT
                            | Q(assessment__profile__institution__carnegie_classification__gte=Institution.CarnegieClassificationChoices.MISC)
                             )
     answers = answers.filter(question__topic__facing__slug=facing)
+    if topic != 'all':
+        answers = answers.filter(question__topic__slug=topic)
     
     annotatedAnswers = answers.annotate(simpleCC=Case(
         When(assessment__profile__institution__carnegie_classification=15, then=Value(15)),
         When(assessment__profile__institution__carnegie_classification=16, then=Value(16)),
         default=Value(CC_OTHERACAD) ))
-    annotatedAnswers = annotatedAnswers.order_by('question__topic__index', 'simpleCC')
+
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
-    data = annotatedAnswers.aggregate_score('question__topic__slug','simpleCC')\
-        .values('question__topic__slug','simpleCC','average','stddev')
+    if topic == 'all':
+        annotatedAnswers = annotatedAnswers.order_by('question__topic__index', 'simpleCC')
+        data = annotatedAnswers.aggregate_score('question__topic__slug','simpleCC')\
+            .values('question__topic__slug','simpleCC','average','stddev')
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForFacing(facing)
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    else:
+        annotatedAnswers = annotatedAnswers.order_by('question__index', 'simpleCC')
+        data = annotatedAnswers.aggregate_score('question__slug','simpleCC')\
+            .values('question__slug','simpleCC','average','stddev')
+        # Map the question slugs to names
+        labelMap, yvalues = labelMapForTopic(facing, topic)
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        df['question__slug'] = df['question__slug'].map(labelMap)
 
-    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
-    # Map the topic slugs to names
-    labelMap, yvalues = labelMapForFacing(facing)
-
-    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
     df['simpleCC'] = df['simpleCC'].map(cc_mapping)
     missing_cats = True if df['simpleCC'].nunique() < 3 else False
 
@@ -661,20 +820,29 @@ def facingCapsDataGraphByCC(answers, facing, benchmarks=None, width=DEFAULT_WIDT
     df['stddev'] *= 100
 
     # Rename the columns for clarity
-    df= df.rename(columns={
-            'question__topic__slug' : 'Topics',
-            'average':'Average Value',
-        })
-    
+    if topic == 'all':
+        df= df.rename(columns={'question__topic__slug' : 'Topics','average':'Average Value',})
+        yName = 'Topics'
+    else:
+        df= df.rename(columns={'question__slug' : 'Questions','average':'Average Value',})
+        yName = 'Questions'
+
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    # textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
+
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
-    
+        legendCount = 3
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
+
+    #print(f'topicCapsDataGraphByCC WxH:{width}x{height} markerscale: {markerscale} textscale: {textscale}')
+
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
+    fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
                 color='simpleCC', 
                 color_discrete_map={'R1':colorPalette['R1'], 'R2':colorPalette['R2'],'Other Acad.':colorPalette['OtherAcad']},
                 barmode='group', # Use 'group' for grouped bars
@@ -688,9 +856,14 @@ def facingCapsDataGraphByCC(answers, facing, benchmarks=None, width=DEFAULT_WIDT
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -727,16 +900,18 @@ def capsDataGraphByMission(answers, benchmarks=None, width=DEFAULT_WIDTH, height
     df = df.sort_values(['Facings', 'mission2'])
     #print(df)
 
+    markerscale = 1.3-((1-(abs(height)/DEFAULT_HEIGHT))*1.4)
+    textscale = 1-((1.3-markerscale)*.4)
     # Create a grouped bar chart
     fig = px.bar(df, x='Facings', y='Average Value',error_y='stddev' if showErrBars else None,
                 color='mission2', 
                 color_discrete_map=mission_palette,
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardVBarFormatting(fig)
+    applyStandardVBarFormatting(fig, textscale=textscale, nCats=4)
 
     # If benchmark data passed in, layer that over
-    scale = (height/DEFAULT_HEIGHT)
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -744,32 +919,43 @@ def capsDataGraphByMission(answers, benchmarks=None, width=DEFAULT_WIDTH, height
             bm = benchmarks[imarker]
             fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
-def facingCapsDataGraphByMission(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
-    #print("facingCapsDataGraphByMission with: ", answers.count()," answers")
+def facingCapsDataGraphByMission(answers, facing, topic, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+    #print(f'facingCapsDataGraphByMission({facing},{topic}) with: {answers.count()} answers')
     if (answers.count() == 0): 
         return None
     answers = answers.filter(question__topic__facing__slug=facing)
-    answers = answers.annotate(mission2=Case(
+    if topic != 'all':
+        answers = answers.filter(question__topic__slug=topic)
+    
+    annotatedAnswers = answers.annotate(mission2=Case(
         # Since most old profiles have Null for Mission, let's map it
         When(assessment__profile__mission__isnull=True, then=Value(VALUE_UNKNOWN)),  
-        default=F('assessment__profile__mission') ))\
-            .order_by('question__topic__index', 'mission2')
-
+        default=F('assessment__profile__mission') ))
+    
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
-    data = answers.aggregate_score('question__topic__slug','mission2')\
+    if topic == 'all':
+        annotatedAnswers = annotatedAnswers.order_by('question__topic__index', 'mission2')
+        data = annotatedAnswers.aggregate_score('question__topic__slug','mission2')\
                     .values('question__topic__slug','mission2','average','stddev')
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForFacing(facing)
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    else:
+        annotatedAnswers = annotatedAnswers.order_by('question__index', 'mission2')
+        data = annotatedAnswers.aggregate_score('question__slug','mission2')\
+                    .values('question__slug','mission2','average','stddev')
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForTopic(facing, topic)
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        df['question__slug'] = df['question__slug'].map(labelMap)
 
-    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
-    # Map the topic slugs to names
-    labelMap, yvalues = labelMapForFacing(facing)
-
-    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
     df['mission2'] = df['mission2'].map(mission_mapping)
     missing_cats = True if df['mission2'].nunique() < len(mission_mapping) else False
 
@@ -780,28 +966,34 @@ def facingCapsDataGraphByMission(answers, facing, benchmarks=None, width=DEFAULT
     df['stddev'] *= 100
 
     # Rename the columns for clarity
-    df= df.rename(columns={
-            'question__topic__slug' : 'Topics',
-            'average':'Average Value',
-        })
+    if topic == 'all':
+        df= df.rename(columns={'question__topic__slug' : 'Topics','average':'Average Value',})
+        yName = 'Topics'
+    else:
+        df= df.rename(columns={'question__slug' : 'Questions','average':'Average Value',})
+        yName = 'Questions'
     # Enforce the original sorting that we define in the enumeration for Mission
     df['mission2'] = pd.Categorical(df['mission2'], categories=mission_mapping.values(), ordered=True)
-    df = df.sort_values(['Topics', 'mission2'])
+    df = df.sort_values([yName, 'mission2'])
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
+    # We have 4 sub-cats, so scale the height very slightly for topics with few questions
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
-    
+        legendCount = len(mission_mapping)
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height), lowCountAdj=.7)
+
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
+    fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
                 color='mission2',
                 color_discrete_map=mission_palette,
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardHBarFormatting(fig, textscale=textscale)
+    applyStandardHBarFormatting(fig, textscale=textscale, nCats=4)
 
     # If benchmark data passed in, layer that over
     if(benchmarks!=None) :
@@ -809,9 +1001,14 @@ def facingCapsDataGraphByMission(answers, facing, benchmarks=None, width=DEFAULT
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -846,6 +1043,8 @@ def capsDataGraphByPubPriv(answers, benchmarks=None, width=DEFAULT_WIDTH, height
             'average':'Average Values',
         })
 
+    markerscale = 1.3-((1-(abs(height)/DEFAULT_HEIGHT))*1.4)
+    textscale = 1-((1.3-markerscale)*.4)
     # Create a grouped bar chart
     fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev' if showErrBars else None,
                     barmode='group',  # Use 'group' for grouped bars
@@ -853,10 +1052,10 @@ def capsDataGraphByPubPriv(answers, benchmarks=None, width=DEFAULT_WIDTH, height
                     color_discrete_map={'Public': colorPalette['Public'], 'Private': colorPalette['Private']},  # Set custom color
                     labels={'Facings': 'Facings', 'value': 'Average Values'},
                     width=width, height=height)
-    applyStandardVBarFormatting(fig)
+    applyStandardVBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    scale = (height/DEFAULT_HEIGHT)
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -864,31 +1063,42 @@ def capsDataGraphByPubPriv(answers, benchmarks=None, width=DEFAULT_WIDTH, height
             bm = benchmarks[imarker]
             fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
-def facingCapsDataGraphByPubPriv(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByPubPriv(answers, facing, topic, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByPubPriv with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
     answers = answers.filter(assessment__profile__institution__ipeds_control__isnull=False)\
-                            .filter(question__topic__facing__slug=facing)\
-                            .order_by('question__topic__index', 
-                                      'assessment__profile__institution__ipeds_control')
+                            .filter(question__topic__facing__slug=facing)
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
-    data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_control')\
+    if topic == 'all':
+        answers = answers.order_by('question__topic__index', 
+                                      'assessment__profile__institution__ipeds_control')
+        data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_control')\
                     .values('question__topic__slug',
                             'assessment__profile__institution__ipeds_control','average','stddev')
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForFacing(facing)
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    else:
+        answers = answers.filter(question__topic__slug=topic).order_by('question__index', 
+                                      'assessment__profile__institution__ipeds_control')
+        data = answers.aggregate_score('question__slug','assessment__profile__institution__ipeds_control')\
+                    .values('question__slug',
+                            'assessment__profile__institution__ipeds_control','average','stddev')
+        # Map the question slugs to names
+        labelMap, yvalues = labelMapForTopic(facing, topic)
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        df['question__slug'] = df['question__slug'].map(labelMap)
 
-    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
-    # Map the topic slugs to names
-    labelMap, yvalues = labelMapForFacing(facing)
-
-    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    # print(f'Unique yValues:{len(yvalues)}')
     df['assessment__profile__institution__ipeds_control'] = \
         df['assessment__profile__institution__ipeds_control'].map(pubpriv_mapping)
 
@@ -900,21 +1110,27 @@ def facingCapsDataGraphByPubPriv(answers, facing, benchmarks=None, width=DEFAULT
     missing_cats = True if df['assessment__profile__institution__ipeds_control'].nunique() < 2 else False
 
     # Rename the columns for clarity
-    df= df.rename(columns={
-            'question__topic__slug' : 'Topics',
-            'assessment__profile__institution__ipeds_control' :'Public/Private',
-            'average':'Average Value',
-        })
+    if topic == 'all':
+        df= df.rename(columns={'question__topic__slug' : 'Topics',
+                               'assessment__profile__institution__ipeds_control' :'Public/Private','average':'Average Value',})
+        yName = 'Topics'
+    else:
+        df= df.rename(columns={'question__slug' : 'Questions',
+                               'assessment__profile__institution__ipeds_control' :'Public/Private','average':'Average Value',})
+        yName = 'Questions'
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = 2
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
+    fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
                 color='Public/Private',
                 color_discrete_map={'Public': colorPalette['Public'], 'Private': colorPalette['Private']},  # Set custom color
                 barmode='group', # Use 'group' for grouped bars
@@ -927,9 +1143,14 @@ def facingCapsDataGraphByPubPriv(answers, facing, benchmarks=None, width=DEFAULT
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -964,6 +1185,8 @@ def capsDataGraphByEPSCoR(answers, benchmarks=None, width=DEFAULT_WIDTH, height=
             'average':'Average Values',
         })
 
+    markerscale = 1.3-((1-(abs(height)/DEFAULT_HEIGHT))*1.4)
+    textscale = 1-((1.3-markerscale)*.4)
     # Create a grouped bar chart
     fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev' if showErrBars else None,
                     barmode='group',  # Use 'group' for grouped bars
@@ -971,10 +1194,10 @@ def capsDataGraphByEPSCoR(answers, benchmarks=None, width=DEFAULT_WIDTH, height=
                     color_discrete_map={Institution.EPSCORChoices.EPSCOR.label: colorPalette['EPSCoR'], 
                                         Institution.EPSCORChoices.NOT_EPSCOR.label: colorPalette['nonEPSCoR']},  # Set custom color
                     width=width, height=height)
-    applyStandardVBarFormatting(fig)
+    applyStandardVBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    scale = (height/DEFAULT_HEIGHT)
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -982,31 +1205,42 @@ def capsDataGraphByEPSCoR(answers, benchmarks=None, width=DEFAULT_WIDTH, height=
             bm = benchmarks[imarker]
             fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
-def facingCapsDataGraphByEPSCoR(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByEPSCoR(answers, facing, topic, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByEPSCoR with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
     answers = answers.filter(assessment__profile__institution__ipeds_epscor__isnull=False)\
-                            .filter(question__topic__facing__slug=facing)\
-                            .order_by('question__topic__index', 
-                                      'assessment__profile__institution__ipeds_epscor')
+                            .filter(question__topic__facing__slug=facing)
+
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
-    data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_epscor')\
-                    .values('question__topic__slug',
-                            'assessment__profile__institution__ipeds_epscor','average','stddev')
+    if topic == 'all':
+        answers = answers.order_by('question__topic__index', 
+                                      'assessment__profile__institution__ipeds_epscor')
+        data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_epscor')\
+                        .values('question__topic__slug',
+                                'assessment__profile__institution__ipeds_epscor','average','stddev')
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForFacing(facing)
+        df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    else: 
+        answers = answers.filter(question__topic__slug=topic).order_by('question__index', 
+                                      'assessment__profile__institution__ipeds_epscor')
+        data = answers.aggregate_score('question__slug','assessment__profile__institution__ipeds_epscor')\
+                        .values('question__slug',
+                                'assessment__profile__institution__ipeds_epscor','average','stddev')
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForTopic(facing, topic)
+        df['question__slug'] = df['question__slug'].map(labelMap)
 
-    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
-    # Map the topic slugs to names
-    labelMap, yvalues = labelMapForFacing(facing)
-
-    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
     df['assessment__profile__institution__ipeds_epscor'] = \
         df['assessment__profile__institution__ipeds_epscor'].map(epscor_mapping)
 
@@ -1018,21 +1252,27 @@ def facingCapsDataGraphByEPSCoR(answers, facing, benchmarks=None, width=DEFAULT_
     missing_cats = True if df['assessment__profile__institution__ipeds_epscor'].nunique() < 2 else False
 
     # Rename the columns for clarity
-    df= df.rename(columns={
-            'question__topic__slug' : 'Topics',
-            'assessment__profile__institution__ipeds_epscor' :'EPSCoR',
-            'average':'Average Value',
-        })
+    if topic == 'all':
+        df= df.rename(columns={'question__topic__slug' : 'Topics',
+                'assessment__profile__institution__ipeds_epscor' :'EPSCoR','average':'Average Value',})
+        yName = 'Topics'
+    else:
+        df= df.rename(columns={'question__slug' : 'Questions',
+                'assessment__profile__institution__ipeds_epscor' :'EPSCoR','average':'Average Value',})
+        yName = 'Questions'
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = 2
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
+    fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
                 color='EPSCoR',
                 color_discrete_map={Institution.EPSCORChoices.EPSCOR.label: colorPalette['EPSCoR'], 
                                     Institution.EPSCORChoices.NOT_EPSCOR.label: colorPalette['nonEPSCoR']},  # Set custom color
@@ -1041,14 +1281,19 @@ def facingCapsDataGraphByEPSCoR(answers, facing, benchmarks=None, width=DEFAULT_
     applyStandardHBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    if(benchmarks!=None) :
+    if benchmarks!=None:
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -1083,6 +1328,8 @@ def capsDataGraphByMSI(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEF
             'average':'Average Values',
         })
 
+    markerscale = 1.3-((1-(abs(height)/DEFAULT_HEIGHT))*1.4)
+    textscale = 1-((1.3-markerscale)*.4)
     # Create a grouped bar chart
     fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev' if showErrBars else None,
                     barmode='group',  # Use 'group' for grouped bars
@@ -1090,10 +1337,10 @@ def capsDataGraphByMSI(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEF
                     color_discrete_map={Institution.MSIChoices.MSI.label: colorPalette['otherMSI'], 
                                         Institution.MSIChoices.NOT_AN_MSI.label: colorPalette['NotMSI']},  # Set custom color
                     width=width, height=height)
-    applyStandardVBarFormatting(fig)
+    applyStandardVBarFormatting(fig, textscale=textscale)
 
     # If benchmark data passed in, layer that over
-    scale = (height/DEFAULT_HEIGHT)
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -1101,31 +1348,43 @@ def capsDataGraphByMSI(answers, benchmarks=None, width=DEFAULT_WIDTH, height=DEF
             bm = benchmarks[imarker]
             fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
-def facingCapsDataGraphByMSI(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByMSI(answers, facing, topic, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByMSI with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
     answers = answers.filter(assessment__profile__institution__ipeds_msi__isnull=False)\
-                            .filter(question__topic__facing__slug=facing)\
-                            .order_by('question__topic__index', 
-                                      'assessment__profile__institution__ipeds_msi')
+                            .filter(question__topic__facing__slug=facing)
+    
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
-    data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_msi')\
-                    .values('question__topic__slug',
-                            'assessment__profile__institution__ipeds_msi','average','stddev')
+    if topic == 'all':
+        answers = answers.order_by('question__topic__index', 
+                                      'assessment__profile__institution__ipeds_msi')
+        data = answers.aggregate_score('question__topic__slug','assessment__profile__institution__ipeds_msi')\
+                        .values('question__topic__slug',
+                                'assessment__profile__institution__ipeds_msi','average','stddev')
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForFacing(facing)
+        df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    else:
+        answers = answers.filter(question__topic__slug=topic).order_by('question__index', 
+                                      'assessment__profile__institution__ipeds_msi')
+        data = answers.aggregate_score('question__slug','assessment__profile__institution__ipeds_msi')\
+                        .values('question__slug',
+                                'assessment__profile__institution__ipeds_msi','average','stddev')
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForTopic(facing, topic)
+        df['question__slug'] = df['question__slug'].map(labelMap)
 
-    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
-    # Map the topic slugs to names
-    labelMap, yvalues = labelMapForFacing(facing)
 
-    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
     df['assessment__profile__institution__ipeds_msi'] = \
         df['assessment__profile__institution__ipeds_msi'].map(msi_mapping)
 
@@ -1137,21 +1396,27 @@ def facingCapsDataGraphByMSI(answers, facing, benchmarks=None, width=DEFAULT_WID
     missing_cats = True if df['assessment__profile__institution__ipeds_msi'].nunique() < 2 else False
 
     # Rename the columns for clarity
-    df= df.rename(columns={
-            'question__topic__slug' : 'Topics',
-            'assessment__profile__institution__ipeds_msi' :'MSI',
-            'average':'Average Value',
-        })
+    if topic == 'all':
+        df= df.rename(columns={'question__topic__slug' : 'Topics',
+                'assessment__profile__institution__ipeds_msi' :'MSI','average':'Average Value',})
+        yName = 'Topics'
+    else:
+        df= df.rename(columns={'question__slug' : 'Questions',
+                'assessment__profile__institution__ipeds_msi' :'MSI','average':'Average Value',})
+        yName = 'Questions'
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
-    
+        legendCount = 2
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
+
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
+    fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
                 color='MSI',
                 color_discrete_map={Institution.MSIChoices.MSI.label: colorPalette['otherMSI'], 
                                     Institution.MSIChoices.NOT_AN_MSI.label: colorPalette['NotMSI']},  # Set custom color
@@ -1165,9 +1430,14 @@ def facingCapsDataGraphByMSI(answers, facing, benchmarks=None, width=DEFAULT_WID
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -1203,6 +1473,8 @@ def capsDataGraphByOrgModel(answers, benchmarks=None, width=DEFAULT_WIDTH, heigh
             'average':'Average Values',
         })
 
+    markerscale = 1.3-((1-(abs(height)/DEFAULT_HEIGHT))*1.4)
+    textscale = 1-((1.3-markerscale)*.4)
     # Create a grouped bar chart
     fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev' if showErrBars else None,
                     barmode='group',  # Use 'group' for grouped bars
@@ -1210,10 +1482,10 @@ def capsDataGraphByOrgModel(answers, benchmarks=None, width=DEFAULT_WIDTH, heigh
                     color_discrete_map=structure_palette,
                     labels={'Facings': 'Facings', 'value': 'Average Values'},
                     width=width, height=height)
-    applyStandardVBarFormatting(fig)
+    applyStandardVBarFormatting(fig, textscale=textscale, nCats=4)
 
     # If benchmark data passed in, layer that over
-    scale = (height/DEFAULT_HEIGHT)
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -1221,14 +1493,14 @@ def capsDataGraphByOrgModel(answers, benchmarks=None, width=DEFAULT_WIDTH, heigh
             bm = benchmarks[imarker]
             fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
-def facingCapsDataGraphByOrgModel(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByOrgModel(answers, facing, topic, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByOrgModel with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
@@ -1236,18 +1508,26 @@ def facingCapsDataGraphByOrgModel(answers, facing, benchmarks=None, width=DEFAUL
     answers = answers.annotate(structure2=Case(
         # Since most old profiles have Null for Mission, let's map it
         When(assessment__profile__structure__isnull=True, then=Value(VALUE_UNKNOWN)),  
-        default=F('assessment__profile__structure') ))\
-            .order_by('question__topic__index', 'structure2')
+        default=F('assessment__profile__structure') ))
 
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
-    data = answers.aggregate_score('question__topic__slug','structure2')\
+    if topic == 'all':
+        answers = answers.order_by('question__topic__index', 'structure2')
+        data = answers.aggregate_score('question__topic__slug','structure2')\
                     .values('question__topic__slug','structure2','average','stddev')
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForFacing(facing)
+        df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    else:
+        answers = answers.filter(question__topic__slug=topic).order_by('question__index', 'structure2')
+        data = answers.aggregate_score('question__slug','structure2')\
+                    .values('question__slug','structure2','average','stddev')
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForTopic(facing, topic)
+        df['question__slug'] = df['question__slug'].map(labelMap)
 
-    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
-    # Map the topic slugs to names
-    labelMap, yvalues = labelMapForFacing(facing)
-
-    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
     df['structure2'] = df['structure2'].map(structure_mapping)
     missing_cats = True if df['structure2'].nunique() < len(structure_mapping) else False
 
@@ -1258,25 +1538,31 @@ def facingCapsDataGraphByOrgModel(answers, facing, benchmarks=None, width=DEFAUL
     df['stddev'] *= 100
 
     # Rename the columns for clarity
-    df= df.rename(columns={
-            'question__topic__slug' : 'Topics',
-            'average':'Average Value',
-        })
+    if topic == 'all':
+        df= df.rename(columns={'question__topic__slug' : 'Topics','average':'Average Value',})
+        yName = 'Topics'
+    else:
+        df= df.rename(columns={'question__slug' : 'Questions','average':'Average Value',})
+        yName = 'Questions'
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = len(structure_mapping)
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
+        print(f'facingCapsDataGraphByOrgModel scaling height to: {height}')
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
+    fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
                 color='structure2',
                 color_discrete_map=structure_palette,
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardHBarFormatting(fig, textscale=textscale)
+    applyStandardHBarFormatting(fig, textscale=textscale, nCats=4)
 
     # If benchmark data passed in, layer that over
     if(benchmarks!=None) :
@@ -1284,9 +1570,14 @@ def facingCapsDataGraphByOrgModel(answers, facing, benchmarks=None, width=DEFAUL
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 
@@ -1322,6 +1613,8 @@ def capsDataGraphByReporting(answers, benchmarks=None,
             'average':'Average Values',
         })
 
+    markerscale = 1.3-((1-(abs(height)/DEFAULT_HEIGHT))*1.4)
+    textscale = 1-((1.3-markerscale)*.4)
     # Create a grouped bar chart
     fig = px.bar( df, x='Facings', y='Average Values',error_y='stddev' if showErrBars else None,
                     barmode='group',  # Use 'group' for grouped bars
@@ -1329,10 +1622,10 @@ def capsDataGraphByReporting(answers, benchmarks=None,
                     color_discrete_map=reporting_palette,
                     labels={'Facings': 'Facings', 'value': 'Average Values'},
                     width=width, height=height)
-    applyStandardVBarFormatting(fig)
+    applyStandardVBarFormatting(fig, textscale=textscale, nCats=5)
 
     # If benchmark data passed in, layer that over
-    scale = (height/DEFAULT_HEIGHT)
+    # At the top level, no benchmark will be empty, even if it has no data for some facing
     if(benchmarks!=None) :
         # We add them in reverse order so the most recent is on top
         imarker = min(len(benchmarks), NMARKERSMAX)-1
@@ -1340,33 +1633,42 @@ def capsDataGraphByReporting(answers, benchmarks=None,
             bm = benchmarks[imarker]
             fig.add_trace(go.Scatter(x=Facing_xvals, y=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*scale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=vbarmarkertypes[imarker], name=bm['name']))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{y:.1f}%<extra></extra>')
 
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=INCLUDE_PLOTLYJS, full_html=True), missing_cats
 
-def facingCapsDataGraphByReporting(answers, facing, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
+def facingCapsDataGraphByReporting(answers, facing, topic, benchmarks=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, showErrBars=True):
     #print("facingCapsDataGraphByReporting with: ", answers.count()," answers")
     if (answers.count() == 0): 
         return None
     answers = answers.filter(question__topic__facing__slug=facing)
     answers = answers.annotate(reporting2=Case(
-        # Since most old profiles have Null for Mission, let's map it
+        # Since most old profiles have Null for Reporting, let's map it
         When(assessment__profile__org_chart__isnull=True, then=Value(VALUE_UNKNOWN)),  
-        default=F('assessment__profile__org_chart') ))\
-            .order_by('question__topic__index') #, 'reporting2')
+        default=F('assessment__profile__org_chart') ))
 
     # Note that answers has been pre-filtered of domain topic and not_applicable answers
-    data = answers.aggregate_score('question__topic__slug','reporting2')\
+    if topic == 'all':
+        answers = answers.order_by('question__topic__index') #, 'reporting2')
+        data = answers.aggregate_score('question__topic__slug','reporting2')\
                     .values('question__topic__slug','reporting2','average','stddev')
 
-    df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
-    # Map the topic slugs to names
-    labelMap, yvalues = labelMapForFacing(facing)
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForFacing(facing)
+        df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
+    else:
+        answers = answers.filter(question__topic__slug=topic).order_by('question__index') #, 'reporting2')
+        data = answers.aggregate_score('question__slug','reporting2')\
+                    .values('question__slug','reporting2','average','stddev')
+        df = pd.DataFrame(data)     # Convert the queryset to a DataFrame
+        # Map the topic slugs to names
+        labelMap, yvalues = labelMapForTopic(facing, topic)
+        df['question__slug'] = df['question__slug'].map(labelMap)
 
-    df['question__topic__slug'] = df['question__topic__slug'].map(labelMap)
     df['reporting2'] = df['reporting2'].map(reporting_mapping)
     missing_cats = True if df['reporting2'].nunique() < len(reporting_mapping) else False
 
@@ -1377,25 +1679,30 @@ def facingCapsDataGraphByReporting(answers, facing, benchmarks=None, width=DEFAU
     df['stddev'] *= 100
 
     # Rename the columns for clarity
-    df= df.rename(columns={
-            'question__topic__slug' : 'Topics',
-            'average':'Average Value',
-        })
+    if topic == 'all':
+        df= df.rename(columns={'question__topic__slug' : 'Topics','average':'Average Value',})
+        yName = 'Topics'
+    else:
+        df= df.rename(columns={'question__slug' : 'Questions','average':'Average Value',})
+        yName = 'Questions'
     
     #markerscale = (abs(height)/DEFAULT_HEIGHT)
     markerscale = 1-((1-(abs(height)/DEFAULT_HEIGHT))*1.3)
-    textscale = 1-((1-markerscale)*.6)
+    textscale = 0.9-((1-markerscale)*.3)
 
     if height <= CALCULATE_SCALED_HEIGHT:
-        height = calculateScaledHeight(len(yvalues), abs(height))
+        legendCount = len(reporting_mapping)
+        if(benchmarks!=None):
+            legendCount = legendCount+len(benchmarks)
+        height = calculateScaledHeight(len(yvalues), legendCount, abs(height))
     
     # Create a grouped bar chart
-    fig = px.bar(df, y='Topics', x='Average Value',error_x='stddev' if showErrBars else None,
+    fig = px.bar(df, y=yName, x='Average Value',error_x='stddev' if showErrBars else None,
                 color='reporting2',
                 color_discrete_map=reporting_palette,
                 barmode='group', # Use 'group' for grouped bars
                 width=width, height=height )
-    applyStandardHBarFormatting(fig, textscale=textscale)
+    applyStandardHBarFormatting(fig, textscale=textscale, nCats=4)
 
     # If benchmark data passed in, layer that over
     if(benchmarks!=None) :
@@ -1403,9 +1710,14 @@ def facingCapsDataGraphByReporting(answers, facing, benchmarks=None, width=DEFAU
         imarker = min(len(benchmarks), NMARKERSMAX)-1
         while imarker >= 0:
             bm = benchmarks[imarker]
+            if bm['hasData']:
+                bmName = bm['name']
+            else:
+                bmName = '<span style="font-style:italic;fill:'+colorPalette['noDataLegendFontColor']+';">'+bm['name']+'</em>'
             fig.add_trace(go.Scatter(y=yvalues, x=bm['data'], mode='markers', 
                                         marker_color=barmarkercolors[imarker], marker_line_width=2, marker_line_color='white',
-                                        marker_size=MARKER_SZ*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], name=bm['name']))
+                                        marker_size=MARKER_SZ*markerscale*barmarkerscales[imarker], marker_symbol=hbarmarkertypes[imarker], 
+                                        name=bmName))
             imarker-=1
         fig.update_traces(hovertemplate = 'Coverage: %{x:.1f}%<extra></extra>')
 

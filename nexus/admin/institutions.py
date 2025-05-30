@@ -89,7 +89,7 @@ class NewInstitutionRequestAdmin(admin.ModelAdmin):
 
     def approve(self, request, queryset):
         for req in queryset:
-            institution = req.approve()
+            institution = req.approve(request)
             self.message_user(
                 request,
                 f"Approved new institution request for '{institution}'",

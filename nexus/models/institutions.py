@@ -1,4 +1,5 @@
 import secrets
+import logging
 
 from django.conf import settings
 from django.contrib import admin
@@ -12,6 +13,7 @@ import math
 
 from .ipeds_classification import IPEDSMixin
 
+logger = logging.getLogger(__name__)
 
 class Institution(IPEDSMixin, models.Model):
     name = models.CharField(
@@ -30,6 +32,26 @@ class Institution(IPEDSMixin, models.Model):
         max_length=255,
         #unique=True,
     )
+
+    demo_domains = ["internet2.edu", "sempercogito.com"]
+    demo_ids = []
+
+    def getDemoIDList() :
+        if len(Institution.demo_ids) > 0:
+            return Institution.demo_ids
+        for d in Institution.demo_domains:
+            try:
+                institution = Institution.objects.get(internet_domain__endswith=d)
+            except Institution.DoesNotExist:
+                logger.error(f"getDemoIDList(): No institution found for domain: [{d}].")
+            except Institution.MultipleObjectsReturned:
+                logger.error(f"getDemoIDList(): Multiple institutions found for domain: [{d}], only adding first.")
+                institution = Institution.objects.get(internet_domain__endswith=d).first()
+            Institution.demo_ids.append(institution.id)
+            print(f'getDemoIDList() init: Added institution (id=[{institution.id}] for domain:[{d}]')
+
+        return Institution.demo_ids
+
 
     undergrad_pop = models.PositiveIntegerField(
         "Undergraduate Population",
@@ -130,7 +152,7 @@ class NewInstitutionRequest(models.Model):
         auto_now_add=True,
     )
 
-    def approve(self):
+    def approve(self, request):
         user = self.requester.name()
         with transaction.atomic():
             institution = Institution.objects.create(
@@ -162,7 +184,7 @@ Please add as much institutional information as possible to improve the communit
 You may now begin using the RCD Nexus assessment tools for your institution!
 """,
             html_message=email_in_html,
-            from_email=settings.DEFAULT_FROM_EMAIL,
+            from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
             recipient_list=[self.requester.email],
         )
         return institution

@@ -1,8 +1,10 @@
 import datetime
+import re
 from django import forms
 from django.core.exceptions import ValidationError
 from nexus.models.rcd_profiles import RCDProfile
 from nexus.models.ipeds_classification import IPEDSMixin
+from nexus.utils import cmgraphs
 
 # Define an extended MultipleChoiceField that can have an All|None UI built in
 class AllNoneMultipleChoiceField(forms.MultipleChoiceField):
@@ -140,6 +142,7 @@ class DataFilterForm(forms.Form):
         ("syf","Systems-Facing Topics"),
         ("spf","Strategy & Policy-Facing Topics"),
     )
+    TOPICS="Coverage Detail (by Topic)"
 
     CAPS_FEATURE="Capability Feature"
     CAPS_FEATURE_CHOICES = (
@@ -160,7 +163,8 @@ class DataFilterForm(forms.Form):
         ("sm","Small"),
     )
 
-    NOT_FILTERS = CHART_VIEWS+", "+FACINGS+", "+CAPS_FEATURE+", "+BENCHMARK
+    NOT_FILTERS = CHART_VIEWS+", "+FACINGS+", "+TOPICS+", "+CAPS_FEATURE+", "+BENCHMARK
+    SKIP_NOT_FILTERS = "skip"+CHART_VIEWS+", skip"+FACINGS+", skip_notopics"+TOPICS+", "+CAPS_FEATURE+", skip_nobm"+BENCHMARK+", skip"+BENCHMARK
     OPTIONS = OPT_ERRBARS+", "+OPT_GRAPHSIZE
 
     # Note that we are omitting ORG_MODEL and REPORTING for now, unless and until someone asks for this info
@@ -171,8 +175,8 @@ class DataFilterForm(forms.Form):
     # Omit the "Population" choice when viewing contributor data, and add the detail views
     # Omit CAPS_FEATURE since NYI in current release
     # CAPS_DATA_INCLUDE_ALL={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP, CHART_VIEWS, FACINGS, CAPS_FEATURE, BENCHMARK}
-    CAPS_DATA_INCLUDE_ALL={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP, CHART_VIEWS, FACINGS, BENCHMARK, OPT_ERRBARS}
-    CAPS_DATA_EXCLUDE_NO_DATA_CONTRIB={CAPS_FEATURE, BENCHMARK}
+    CAPS_DATA_INCLUDE_ALL={CARN_CLASS, MISSION, PUB_PRIV, EPSCOR, MSI, SIZE, BY_YEAR, REGION, RESEARCH_EXP, CHART_VIEWS, FACINGS, TOPICS, BENCHMARK, OPT_ERRBARS}
+    CAPS_DATA_EXCLUDE_NO_DATA_CONTRIB={TOPICS, CAPS_FEATURE, BENCHMARK}
 
     population = forms.ChoiceField(
         label=POPULATION,
@@ -188,6 +192,7 @@ class DataFilterForm(forms.Form):
         widget=forms.CheckboxSelectMultiple(),
         #validators=[require_min_one],
         help_text="Filter by Institution Classification (Carnegie+)",
+        error_messages={"required": "Choose at least one value."},
     )
 
     mission = AllNoneMultipleChoiceField(
@@ -196,6 +201,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in MISSION_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by Institutional Mission",
+        error_messages={"required": "Choose at least one value."},
     )
 
     pub_priv = forms.MultipleChoiceField(
@@ -204,6 +210,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in PUB_PRIV_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by Institutional Control (Public or Private)",
+        error_messages={"required": "Choose at least one value."},
     )
 
     region = AllNoneMultipleChoiceField(
@@ -212,6 +219,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in REGION_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(attrs={"class":"toggle"}),
         help_text="Filter by US Region, Canada, or International",
+        error_messages={"required": "Choose at least one region."},
     )
 
     size = AllNoneMultipleChoiceField(
@@ -220,6 +228,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in SIZE_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by Size (total number of students)",
+        error_messages={"required": "Choose at least one value."},
     )
 
     epscor = forms.MultipleChoiceField(
@@ -228,6 +237,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in EPSCOR_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by EPSCoR eligibility",
+        error_messages={"required": "Choose at least one value."},
     )
 
     msi = AllNoneMultipleChoiceField(
@@ -236,6 +246,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in MSI_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by Minority-Serving status",
+        error_messages={"required": "Choose at least one value."},
     )
 
     year = AllNoneMultipleChoiceField(
@@ -244,6 +255,7 @@ class DataFilterForm(forms.Form):
         initial = [c[0] for c in YEAR_CHOICES],   # Default to all selected
         widget=forms.CheckboxSelectMultiple(),
         help_text="Filter by the Year a Profile was created or an Assessment was Contributed",
+        error_messages={"required": "Choose at least one year."},
     )
 
     resexp_min = forms.IntegerField(
@@ -283,6 +295,7 @@ class DataFilterForm(forms.Form):
         label=FACINGS,
         choices=FACINGS_CHOICES,
         initial = [0],   # Default to Summary
+        required=False,     # Skipped in the chart views, map views, etc. 
         help_text="Choose the Facing detail you want to explore",
     )
 
@@ -290,9 +303,11 @@ class DataFilterForm(forms.Form):
         label=CHART_VIEWS,
         choices=CHART_VIEW_CHOICES,
         initial = [0],   # Default to Summary
+        required=False,     # Skipped in the map views, etc. 
         help_text="Select the data you want to compare in the chart",
     )
 
+    # Not actually implemented - maybe remove. 
     caps_feature = forms.ChoiceField(
         label=CAPS_FEATURE,
         choices=CAPS_FEATURE_CHOICES,
@@ -320,6 +335,41 @@ class DataFilterForm(forms.Form):
         required=False,     # Don't need this always
         help_text="Un-Check to hide error bars in the graphs",
     )
+
+    topicOptions = dict()
+
+    def initTopicOptionsList():
+        if DataFilterForm.topicOptions.get('all') != None:
+            return
+
+        # print('Initializing DataFilterForm.topicOptions...')
+        DataFilterForm.topicOptions['all'] = 'Summary for All Topics'
+        rex_spaces = re.compile(r'\s+')
+        rex_tags = re.compile(r'<[^<]+?>')
+        # for each of the facings:
+        for slug, label in cmgraphs.RFLabels.items():
+            # strip outer white, then tags, then collapse inner whitespace
+            DataFilterForm.topicOptions['rf_'+slug] = rex_spaces.sub(' ', rex_tags.sub('', label.strip())) 
+        for slug, label in cmgraphs.DFLabels.items():
+            DataFilterForm.topicOptions['df_'+slug] = rex_spaces.sub(' ', rex_tags.sub('', label.strip())) 
+        for slug, label in cmgraphs.SWFLabels.items():
+            DataFilterForm.topicOptions['swf_'+slug] = rex_spaces.sub(' ', rex_tags.sub('', label.strip())) 
+        for slug, label in cmgraphs.SYFLabels.items():
+            DataFilterForm.topicOptions['syf_'+slug] = rex_spaces.sub(' ', rex_tags.sub('', label.strip())) 
+        for slug, label in cmgraphs.SPFLabels.items():
+            DataFilterForm.topicOptions['spf_'+slug] = rex_spaces.sub(' ', rex_tags.sub('', label.strip())) 
+    
+    def __init__(self, *args, **kwargs):
+        super(DataFilterForm, self).__init__(*args, **kwargs)
+        DataFilterForm.initTopicOptionsList()
+        self.fields['topics'] = forms.ChoiceField(
+            label=DataFilterForm.TOPICS,
+            help_text="Choose Topic summary or Capability-level data for a Topic",
+            choices=[ (slug, label) for slug, label in DataFilterForm.topicOptions.items()],
+            required=False,)
+        self.initial['topics'] = 'all'
+        self.initial['facings'] = 'all'
+
     
     def clean(self):
         cleaned_data = super().clean()
@@ -367,29 +417,35 @@ class DataFilterForm(forms.Form):
             self.fields['resexp_min'].label = "skip"+self.fields['resexp_min'].label
             self.fields['resexp_max'].label = "skip"+self.fields['resexp_max'].label
 
-        # Handle the view choices. Note that we will never "restore" Views on the fly so just replace vs. prefix labels, with "skip"
+        # Handle the view choices.
         self.hasViewChoices = False  # default, unless we have ANY of the view choices
         if (includes and self.CHART_VIEWS not in includes) or (excludes and self.CHART_VIEWS in excludes):
-            self.fields['chart_views'].label = "skip"
+            self.fields['chart_views'].label = "skip"+self.fields['chart_views'].label
         else: 
             self.hasViewChoices = True
         if (includes and self.FACINGS not in includes) or (excludes and self.FACINGS in excludes):
-            self.fields['facings'].label = "skip"
+            self.fields['facings'].label = "skip"+self.fields['facings'].label
+            # Can't have topics without facings
+            self.fields['topics'].label = "skip"+self.fields['topics'].label
         else: 
+            # Have facings, so check for topics
             self.hasViewChoices = True
+            if (includes and self.TOPICS not in includes) or (excludes and self.TOPICS in excludes):
+                self.fields['topics'].label = "skip_notopics"+self.fields['topics'].label
+
         if (includes and self.CAPS_FEATURE not in includes) or (excludes and self.CAPS_FEATURE in excludes):
-            self.fields['caps_feature'].label = "skip"
+            self.fields['caps_feature'].label = "skip"+self.fields['caps_feature'].label
         else: 
             self.hasViewChoices = True
         if (includes and self.BENCHMARK not in includes):
-            self.fields['benchmark'].label = "skip"
+            self.fields['benchmark'].label = "skip"+self.fields['benchmark'].label
         elif (excludes and self.BENCHMARK in excludes):
-            self.fields['benchmark'].label = "skip_nobm"
+            self.fields['benchmark'].label = "skip_nobm"+self.fields['benchmark'].label
         else: 
             self.hasViewChoices = True
 
         if (includes and self.OPT_ERRBARS not in includes) or (excludes and self.OPT_ERRBARS in excludes):
-            self.fields['opt_show_errbars'].label = "skip"+self.fields['opt_show_errbars'].label
+            self.fields['opt_show_errbars'].label = "skip"+self.fields['opt_show_errbars'].label+self.fields['facings'].label
 
         # Note that graph size option will always be shown
 

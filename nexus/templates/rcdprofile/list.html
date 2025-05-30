@@ -5,67 +5,173 @@
 main {
     width: 80%;
 }
-main section {
+
+main div.mainContainer {
     align-self: center;
-    width: 40em;
+    max-width: 80%;
 }
 p.hint {
     font-size: 0.9em;
     font-style: italic;
 }
-.tooltip .tooltiptext {
+div.buttons div.tooltip {
+    padding-left:12px;
+  }
+div.tooltip p.tooltiptext {
     width: 550px;
     top:1;
-    left:0;
+    left:10px;
   }
+span.tooltip p.tooltiptext {
+    bottom: 10%;
+    left: 100%;
+    text-align: left;
+    padding: 4px;    
+}
+img.tooltip {
+    top:2px;
+    left:0;
+    width:1.1em;
+}
+div.profilelist {
+    padding: 0 2em 15px 5px;
+}
+section#archivedSection h2 {
+    color:var(--primary)
+}
+section#archivedSection h2 span#archivedSH {
+    color:var(--secondary-emphasis);
+    text-align: right;
+    align-self: right;
+    margin: 0px;
+    padding: 3px 6px 3px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 
 </style>
+
+<script>
+    function toggleArchived() {
+        console.log("toggleArchived called.");
+        var showHideEl = document.getElementById("archivedSH");
+        var archivedSection = document.getElementById("archivedprofilelist");
+        if(archivedSection) {
+            console.log("toggleArchived: archivedSection display:"+archivedSection.style.display);
+            if(archivedSection.style.display == "none") {
+                archivedSection.style.display = "block";
+                showHideEl.innerHTML = showHideEl.innerHTML.replace("Show","Hide");
+            } else {
+                archivedSection.style.display = "none";
+                showHideEl.innerHTML = showHideEl.innerHTML.replace("Hide","Show");
+            }
+        }
+    }
+
+</script>
 {% endblock %}
 
 {% block title %}RCD-Nexus Current Institution Profiles{% endblock %}
 {% block main %}
-<section>
-    <h2>Current institution profiles</h2>
-    {% if current_profiles.exists %}
-    <ul>
-        {% for profile in current_profiles %}
-        <li><a href="{% url 'rcdprofile:detail' profile.pk %}">{{profile}}</a></li>
+<div class="mainContainer">
+    <section>
+        <h2>Current Institution Profiles</h2>
+        {% if current_profiles.exists %}
+        <div class="profilelist">
+            <ul>
+                {% for profile in current_profiles %}
+                <li>
+                    <a href="{% url 'rcdprofile:detail' profile.pk %}">{{profile}}</a>
+                    <span class="tooltip">
+                        <img class="tooltip" src="/static/images/help.png" alt="help icon" />
+                        <p class="tooltiptext hint">Created by: {{profile.created_by}}</p>
+                    </span>
+                    {% if not profile.capabilities_assessment %} (No assessment created)
+                    {% elif profile.capabilities_assessment.review_status == "not_submitted" %} (In progress)
+                    {% elif profile.capabilities_assessment.review_status == "pending" %} (Submitted, pending review)
+                    {% elif profile.capabilities_assessment.review_status == "approved" %} (Submitted and Approved)
+                    {% elif profile.capabilities_assessment.review_status == "denied" %} (Rejected)
+                    {%endif%}
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="buttons">
+            {% for institution in request.user.institutions.all %}
+                <div class="tooltip">
+                    <a class="button discrete" href="{% url 'rcdprofile:create' institution.pk %}">Start a new institution profile for {{institution}}</a>
+                    <p class="tooltiptext hint">
+                        <b>Note</b>: You should generally only start a new (current) institution profile for a new scope/context at your institution
+                    (e.g., a medical school vs. the main campus). 
+                    If there are multiple assessments for a given scope in the same year, 
+                    they will be subject to extra review upon submission,
+                    and only the latest to be submitted will be recognized in the community dataset.
+                    </p>
+                </div><br>
+            {% endfor %}
+            </div>        
+        </div>
+        {% else %}
+        <p>You are not a contributor to any institution profiles for the current year.</p>
+
+        {% if request.user.institutions.count == 0 %}
+        <p class="footnote">You are not affiliated with any RCD Nexus institutions. Please <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a> to begin using RCD Nexus tools.</p>
+        {% else %}
+        {% for institution in request.user.institutions.all %}
+        <a class="button" href="{% url 'rcdprofile:create' institution.pk %}">Start a new institution profile for {{institution}}</a>
         {% endfor %}
-    </ul>
-    {% for institution in request.user.institutions.all %}
-    <div class="tooltip">
-        <a class="button discrete" href="{% url 'rcdprofile:create' institution.pk %}">Start a new institution profile for {{institution}}</a>
-        <p class="tooltiptext hint">
-            <b>Note</b>: You should generally only start a new (current) institution profile for a new scope/context at your institution
-        (e.g., a medical school vs. the main campus). 
-        If there are multiple assessments for a given scope in the same year, 
-        they will be subject to extra review upon submission,
-        and only the latest to be submitted will be recognized in the community dataset.
-        </p>
+        {% endif %}
+
+
+        {% endif %}
+    </section>
+    {% if past_profiles.exists %}
+    <section>
+        <h2>Past Institution Profiles</h2>
+        <div class="profilelist">
+        <ul>
+            {% for profile in past_profiles %}
+            <li><a href="{% url 'rcdprofile:detail' profile.pk %}">{{profile}}</a>
+                <span class="tooltip">
+                    <img class="tooltip" src="/static/images/help.png" alt="help icon" />
+                    <p class="tooltiptext hint">Created by: {{profile.created_by}}</p>
+                </span>
+                {% if not profile.capabilities_assessment %} (No assessment created)
+                {% elif profile.capabilities_assessment.review_status == "not_submitted" %} (In progress)
+                {% elif profile.capabilities_assessment.review_status == "pending" %} (Submitted, pending review)
+                {% elif profile.capabilities_assessment.review_status == "approved" %} (Submitted and Approved)
+                {% elif profile.capabilities_assessment.review_status == "denied" %} (Rejected)
+                {%endif%}
+            </li>
+            {% endfor %}
+        </ul>
+        </div>
+    </section>
+    {% endif %}
+    {% if archived_profiles.exists %}
+    
+    <section id="archivedSection">
+        <h2>Archived Institution Profiles <span id="archivedSH" onclick="toggleArchived(this)">Show Archived Profiles</span></h2>
+        <div id="archivedprofilelist" class="profilelist" style="display:none">
+        <ul>
+            {% for profile in archived_profiles %}
+            <li><a href="{% url 'rcdprofile:detail' profile.pk %}">{{profile}}</a>
+                <span class="tooltip">
+                    <img class="tooltip" src="/static/images/help.png" alt="help icon" />
+                    <p class="tooltiptext hint">Created by: {{profile.created_by}}</p>
+                </span>
+                {% if not profile.capabilities_assessment %} (No assessment created)
+                {% elif profile.capabilities_assessment.review_status == "not_submitted" %} (In progress)
+                {% elif profile.capabilities_assessment.review_status == "pending" %} (Submitted, pending review)
+                {% elif profile.capabilities_assessment.review_status == "approved" %} (Submitted and Approved)
+                {% elif profile.capabilities_assessment.review_status == "denied" %} (Rejected)
+                {%endif%}
+            </li>
+            {% endfor %}
+        </ul>
+        </div>
+    </section>
+    {% endif %}
 </div>
-{% endfor %}
-    {% else %}
-    <p>You are not a contributor to any institution profiles for the current year.</p>
-
-    {% if request.user.institutions.count == 0 %}
-    <p class="footnote">You are not affiliated with any RCD Nexus institutions. Please <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a> to begin using RCD Nexus tools.</p>
-    {% else %}
-    {% for institution in request.user.institutions.all %}
-    <a class="button" href="{% url 'rcdprofile:create' institution.pk %}">Start a new institution profile for {{institution}}</a>
-    {% endfor %}
-    {% endif %}
-
-
-    {% endif %}
-</section>
-{% if past_profiles.exists %}
-<section>
-    <h2>Past institution profiles</h2>
-    <ul>
-        {% for profile in past_profiles %}
-        <li><a href="{% url 'rcdprofile:detail' profile.pk %}">{{profile}}</a></li>
-        {% endfor %}
-    </ul>
-</section>
-{% endif %}
 {% endblock %}

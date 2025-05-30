@@ -138,52 +138,29 @@
         padding: 6px 10px;
         box-shadow: 1px 1px 2px var(--logo-dk-blue-shadow);
     }
+    a.empty {
+        display:block;
+        height: 0.01px;
+    }
 
 </style>
 
 <script>
-    // TODO Much of this should be moved into a common script file
-    var SHOWN ="1";
-    var HIDDEN = "0";
-    var SHOW_HIDE_EXTRAS = "showEX";
-    var SECT_SUFFIX = "_sect";
-    var COOKIE_LIFE = 7*24*60*60*1000;  // Save state for a week
-
-    function getStateCookie(name) {
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for(let i = 0; i <ca.length; i++) {
-            let c = ca[i];
-            let cpair = c.split('=');
-            if (cpair[0].trim() == name) {
-                var shown = cpair[1].trim();
-                //console.log("Cookie found for section:"+section+" value: "+shown)
-                return shown != HIDDEN;
-            }
-        }
-        //console.log("No cookie found for showing section: "+section);
-        return false;   // If can't find the cookie, don't show the section
-    }
-
-    function setCookie(cname, shown) {
-        const d = new Date();
-        d.setTime(d.getTime() + COOKIE_LIFE);
-        let expires = "expires="+ d.toUTCString();
-        document.cookie = cname + "=" + shown + ";" + expires + ";path=/";
-        //console.log("Set cookie for section: "+section+" to: "+shown);
-    }
-
     function onShowExtrasChange(cbEl) {
         //alert("onShowExtrasChange checked: "+cbEl.checked?"Yes":"No");
         show = !cbEl.checked;
         showExtras(show);
-        setExtraTopicsStateCookie(show?SHOWN:HIDDEN);
+        //setExtraTopicsStateCookie(show?SHOWN:HIDDEN);
     }
 
     function showExtras(show) {
-        const extrasPList = document.querySelectorAll("p.extra");
-        for (let i = 0; i < extrasPList.length; i++) {
-            extrasPList[i].style.display = show?"display":"none";
+        //const extrasPList = document.querySelectorAll("p.extra");
+        //for (let i = 0; i < extrasPList.length; i++) {
+        //    extrasPList[i].style.display = show?"block":"none";
+        //}
+        const extrasULList = document.querySelectorAll("ul.extra, p.extra");
+        for (let i = 0; i < extrasULList.length; i++) {
+            extrasULList[i].style.display = show?"block":"none";
         }
         const extrasLIList = document.querySelectorAll("li.extra");
         for (let i = 0; i < extrasLIList.length; i++) {
@@ -194,14 +171,10 @@
             h2List[i].style.pageBreakBefore = show?"always":"auto";
         }
     }
-    function setExtraTopicsStateCookie(shown) {
-        setCookie(SHOW_HIDE_EXTRAS, shown);
-        //console.log("Set Show/Hide Extras cookie: "+show);
-    }
 
     function initExtraTopicsFromCookie() {
         // Get the cookie and then call the method
-        var shown = getStateCookie(SHOW_HIDE_EXTRAS)
+        var shown = SHOWN; //getStateCookie(SHOW_HIDE_EXTRAS) Ignore the cookie, always start shown
         //console.log("Show Extras cookie val: "+shown);
         showExtras(shown==SHOWN);
         cb = document.getElementById("showHideExtrasCB");
@@ -215,26 +188,26 @@
 </script>
 
 {% endblock %}
-{% block title %}CaRCC Capabilities Model Printable Questions{% endblock %}
+{% block title %}CaRCC Capabilities Model Printable Capabilities{% endblock %}
 
 {% block main %}
 <section class="helpdocs" >
-    <h1 class="title">RCD Capabilities Model v2.0 Questions by Facing</h1>
+    <h1 class="title">CaRCC Capabilities Model Capabilities by Facing</h1>
     <p class="content">
-        This document includes the main text for the questions in each Facing, grouped by topic.<sup><a href="#ftnt1" id="ftnt_ref1">[1]</a></sup>
+        This document includes the main text for the capabilities in each Facing, grouped by topic.<sup><a href="#ftnt1" id="ftnt_ref1">[1]</a></sup>
         This is intended for use by institutions that are discussing who may contribute to an assessment using 
-        the Research Computing and Data (RCD) Capabilities Model, and want to share the type of questions that will be asked.
+        the Research Computing and Data (RCD) Capabilities Model, and want to share the type of questions that will be asked for each capability.
     </p>
-    <p class="content">The RCD Capabilities Model is organized into sections that reflect different roles that staff fill in supporting 
+    <p class="content">The CaRCC Capabilities Model is organized into sections that reflect different roles that staff fill in supporting 
         Research Computing and Data, and are named to reflect <em>who</em> or <em>what</em>  role is &ldquo;facing&rdquo; 
-        (i.e., focused on). Within each facing, the model poses questions about aspects of research computing and data for
-        the associated role; the questions are grouped into Topics.
+        (i.e., focused on). Within each facing, the model includes capabilities covering aspects of research computing and data for
+        the associated role; the capabilities are grouped into Topics.
     </p>
     <p class="content">Larger organizations may have a team associated with each facing role, while smaller organizations may 
         have just a few people who cover these different roles. In filling out the assessment tool, you will likely want to involve people who work 
         in the different roles; they can work to fill out their respective section of the assessment.
     </p>
-    <p class="content">Table 1 presents an introduction to the Facings, and links to the associated questions below. </p>
+    <p class="content">Table 1 presents an introduction to the Facings, and links to the associated capabilities below. </p>
     <table class="content">
         <thead>
             <tr>
@@ -301,7 +274,7 @@
         <a target="_blank" rel="noopener noreferrer" href="{{cc_license_url}}">{{cc_license_string}}</a> {{cc_license_desc}}.</p>
     <div class="footnotes">
         <p class="footnote"><a href="#ftnt_ref1" id="ftnt1">[1]</a>This is a supplement to the 
-            RCD Capabilities Model v2.0 Introduction and Guide to Use.</p>
+            CaRCC Capabilities Model Introduction and Guide to Use.</p>
         <p class="footnote"><a href="#ftnt_ref2" id="ftnt2">[2]</a>&ldquo;CI Engineers&rdquo; have different roles
              at different institutions, and some might (also) be in the Systems Facing roles.</p>
     </div>
@@ -314,8 +287,9 @@
         <h2>{{facing.content.display_name}}-Facing Topics and Associated Capabilities</h2>
         {% for topic, questions in topics.items %}
             {% if not topic.isdomain %}
+                <a id="{{topic.anchorid}}" class="empty"></a>
                 <p class="topics {%if topic.is_essential %}essential{%else%}extra{%endif%}">{{topic.content.display_name}}</p>
-                <ul>
+                <ul class="{%if topic.is_essential %}essential{%else%}extra{%endif%}">
                     {% for question in questions %}
                     <li class="{%if question.is_essential %}essential{%else%}extra{%endif%}">{{question.html_display }}</li>
                     {% endfor %}

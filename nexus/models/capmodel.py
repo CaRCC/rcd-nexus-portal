@@ -94,6 +94,44 @@ class CapabilitiesQuestion(models.Model):
         "med-school": "Medical School", 
     }
 
+    questionCount = dict()
+
+    def getQuestionCount(forYear, forFacing='all', forTopic='all'):
+        if forYear < 2019 or forYear > datetime.now().year:
+            raise ValueError(f"CapabilitiesQuestion.getQuestionCount year is out of range: {forYear}")
+        if yearCounts := CapabilitiesQuestion.questionCount.get(forYear):
+            if(forFacing =='all'):
+                return yearCounts[forFacing]
+            else:
+                return yearCounts[forFacing][forTopic]
+        # yearCounts have not yet been set up, calculate down to the topic level
+        filterdate = datetime(int(forYear), 6, 1, tzinfo=timezone.utc)  # pick the middle of the year
+        # get the set of questions used in that year
+        allQuestionsForYear = CapabilitiesQuestion.objects.filter_valid(at=filterdate).exclude(topic__slug=CapabilitiesTopic.domain_coverage_slug)
+        newYearData = dict()
+        # Special case for all summary, which has no topics
+        newYearData['all'] = allQuestionsForYear.count()
+        for facing in Facing.objects.all():
+            qsForFacing = allQuestionsForYear.filter(topic__facing=facing)
+            topicsDict = dict()
+            if qsForFacing:
+                # One special entry for all topics
+                topicsDict['all'] = qsForFacing.count()
+                # Now get counts for each topic
+                for topic in facing.capmodel_topics.all():
+                    qsForTopic = qsForFacing.filter(topic=topic)
+                    if qsForTopic:
+                        topicsDict[topic.slug] = qsForTopic.count()
+                newYearData[facing.slug] = topicsDict
+
+        CapabilitiesQuestion.questionCount[forYear] = newYearData
+        print(f'Added question counts for year {forYear}: {newYearData}')
+        if(forFacing =='all'):
+            return newYearData[forFacing]
+        else:
+            return newYearData[forFacing][forTopic]
+
+
     class QuerySet(models.QuerySet):
         def get_by_natural_key(self, facing: str, topic: str, question: str):
             return self.get(slug=question, topic__slug=topic, topic__facing__slug=facing)
@@ -590,7 +628,7 @@ class CapabilitiesAnswer(models.Model):
     work_notes = models.TextField(
         blank=True,
         null=True,
-        help_text="Private work notes for this question. Contents will not be included in the community datasets.",
+        help_text="Private work notes for this capability. Contents will not be included in the community datasets.",
     )
 
     is_modified = models.BooleanField(
@@ -599,9 +637,9 @@ class CapabilitiesAnswer(models.Model):
         help_text="Whether this answer has ever been modified from its original state (i.e. inherited value).",
     )
     not_applicable = models.BooleanField(
-        "Question not applicable",
+        "Capability not applicable",
         default=False,
-        help_text="Check ONLY this if this question is not at all applicable to your institution.",
+        help_text="Check ONLY this if this capability is not at all applicable to your institution.",
     )
 
     class State(Enum):

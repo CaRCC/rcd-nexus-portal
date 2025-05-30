@@ -166,7 +166,7 @@
 <a id="top"></a>
 <section class="helpdocs" >
     <h1 class="title">Data Viewer Quick Start Guide</h1>
-	<p class="update">Initial version, Sept. 2024</p>
+	<p class="update">Updated for v2.6, June. 2025</p>
 	<p><b>Table of Contents</b>:
         <span class="tocentry"><a href="#Overview">Data Viewer Overview</a></span>
         <span class="tocentry"><a href="#MainUIEls">Working with the Graph UI</a></span>
@@ -215,7 +215,8 @@
         alt="Screen-shot excerpt showing filter controls."/>
         <ol class="UI-Right">
             <li class="circle">When viewing Capabilities Data, there is a dropdown to choose data at a <b>summary level across facings</b>,
-                or to focus on <b>topics within a chosen facing</b>.</li>
+                or to focus on <b>topics within a chosen facing</b>.<br>If you are a contributor*, you will also see a select to view individual 
+                capabilities data within Topics.</li>
             <li class="circle">Many graphs allow you to choose views that <b>compare subcommunities</b>, e.g., by the Institutional Classification, 
                 by the Public/Private status, etc.</li>
             <li class="circle">A series of other filters allow you to filter on other institutional demographic metadata.
@@ -224,6 +225,9 @@
             <li><em>(Not shown at left)</em> Demographic visualizations include a filter to view <b>all institutions using the caps model ("Users")</b>, 
                 or just those that have <b>completed assessments ("Contributors")</b>.</li>
         </ol>
+        <p class="content indent"><em><sup>*</sup> To be a <b>contributor</b> you must be logged in and affiliated to an institution 
+            that completed an assessment within the last three calendar years: {% now "Y" as year %}{{year|add:"-3"}} through {% now "Y" %}.</em>
+        </p>
     </div>
 <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
    <h2 id="StepByStep">Step-by-Step Example of Benchmarking for Your Institution</h3>
@@ -232,9 +236,6 @@
         it approved by the CaRCC data stewards. See also the 
         <a href="{% url 'helpdocs:quickstart' %}">Capabilities Model Quick Start Guide</a> and the 
         <a href="{% url 'helpdocs:intro_and_guide' %}">Introduction and Guide to Use</a>.
-        <br><em>Note: The 2.5 version of the portal does not fully support benchmarking of Essential and Chart-Your-Own-Journey 
-            assessments (the community data is not correctly filtered to only compare data for the included questions in
-            an Essential or Chart-Your-Own-Journey assessment); the next release will add this support.</em></p>
         
     <p class="content">Once you’re ready to explore benchmarking, follow these steps:</p>
 
@@ -250,20 +251,27 @@
             alt="Screen-shot excerpt showing a checkbox to enable benchmarking."/>
         </p>
     </p>
-    <p class="content"><b>Step 4) Select an area of interest</b>. For example:
-        <p class="content indent">Select the <b>Institutional Classification Chart</b> view as shown in the image below:
-            <br><br><img class="screenshot" src="{% static 'images/DVUI_ChartView.png' %}" 
-            alt="Screen-shot excerpt showing a dropdown choice of view options."/>
-        </p>
-        <p class="content indent">Click on <b>Update View</b> to see your institution’s assessment compared to the broader community, 
-            grouped by classification.
-        </p>
-        <p class="content indent">Now, to explore the topics within the Data Facing, click the 
-            <b>Facing Detail</b> select and choose <b>Data-Facing Topics</b> as shown in the image below:
+    <p class="content"><b>Step 4) Select an area of interest</b>. For example, suppose you want to see a benchmarking analysis
+        of your institution's coverage of the individual capabilities related to <em>Data Discovery and Collection</em>, relative
+        to institutions grouped by Institutional Classification:
+        <p class="content indent">Start by selecting the Data Facing: click the 
+            <b>Assessment Data (by Facing)</b> select and choose <b>Data-Facing Topics</b> as shown in the image below:
             <br><br><img class="screenshot" src="{% static 'images/DVUI_FacingsChoice.png' %}" 
             alt="Screen-shot excerpt showing a dropdown choice of the five facings."/>
         </p>
-        <p class="content indent">Click on <b>Update View</b> to see the results.
+        <p class="content indent">Click on <b>Update View</b> to see the results.</p>
+        <p class="content indent">Next, drill down to the specific Topic: click the 
+            <b>Coverage Detail (by Topic)</b> select and choose <b>Data Discovery and Collection</b> as shown in the image below:
+            <br><br><img class="screenshot" src="{% static 'images/DVUI_TopicSelect.png' %}" 
+            alt="Screen-shot excerpt showing a dropdown choice of the Topics within the Data Facing."/>
+        </p>
+        <p class="content indent">Click on <b>Update View</b> to see the results.</p>
+        <p class="content indent">Finally, in the <b>Compare By</b> select, choose <b>Institutional Classification</b> as shown in the image below:
+            <br><br><img class="screenshot" src="{% static 'images/DVUI_ChartView.png' %}" 
+            alt="Screen-shot excerpt showing a dropdown choice of view options."/>
+        </p>
+        <p class="content indent">Click on <b>Update View</b> to see your institution’s capabilities coverage for
+            <em>Data Discovery and Collection</em> compared to the broader community, grouped by classification.
         </p>
         <p class="content indent">To filter just those institutions that have between $150 million and $250 million
             in research expenditures, enter 150 and 250 in the lower and upper range values for 
@@ -278,6 +286,11 @@
         <p class="content indent">Note: If you have more than one assessment (e.g., if you did assessments in different years), 
             the benchmarking view will include the <b>three most recent</b> assessments. For a simpler view you can hide any given 
             assessment in the benchmarking view by clicking on the elements in the graph legend to the right of the graph.
+        </p>
+        <p class="content indent">Note also: the benchmarking views will filter the community data to only reflect those capabilities
+            included in your most recent assessment. Thus, if your last assessment was an Essentials assessment or a Chart-Your-Own-Journey assessment,
+            all capabilities data not included in that assessment will be filtered and so some Topics (or possibly whole Facings) may have
+            no data to graph. 
         </p>
     </p>
     <p class="totop"><a class="totop" href="#pagetop">Back to top</a>&nbsp;</p>
