@@ -202,7 +202,7 @@ def data_viz_demographics_charts(request):
     else: 
         if(request.GET) :
             dict = request.GET.dict()
-            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict))
+            cleaned_dict = fixMissingDictEntries(fixMultiSelectDictEntries(dict), default_chart_view='cc')
             #print( "Cleaned dict: ",cleaned_dict)
             nonDefs = listNonDefaultFilters(cleaned_dict)
             #print( "Non default choices: ",nonDefs)
@@ -420,11 +420,11 @@ def removeDefaultDictEntries(dict):
 
     return dict
 
-def fixMissingDictEntries(dict):
+def fixMissingDictEntries(dict, default_chart_view='sum'):
     if dict.get('population') == None:
         dict['population'] = 'all'
     if dict.get('chart_views') == None:
-        dict['chart_views'] = 'sum'
+        dict['chart_views'] = default_chart_view
     if dict.get('facings') == None:
         dict['facings'] = 'all'
     if dict.get('topics') == None:
