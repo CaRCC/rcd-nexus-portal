@@ -189,7 +189,7 @@ def data_viz_demographics_charts(request):
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
         if posted.is_valid():
-            dict = removeDefaultDictEntries(removeNullDictEntries(posted.cleaned_data))
+            dict = removeDefaultDictEntries(removeNullDictEntries(posted.cleaned_data), default_chart_view='cc')
             qs = urlencode(dict)
             return redirect(reverse('dataviz:demographics_chartviews') + '?'+qs)
         else:
@@ -376,12 +376,12 @@ def removeNullDictEntries(dict):
         del dict['resexp_max']
     return dict
 
-def removeDefaultDictEntries(dict):
+def removeDefaultDictEntries(dict, default_chart_view='sum'):
     if dict.get('population') == 'all':
         del dict['population']
-    if dict.get('chart_views') == 'sum':
+    if dict.get('chart_views') == default_chart_view:
         del dict['chart_views']
-    if dict.get('facings') == 'all':
+    if dict.get('facings') == 'all' or not dict.get('facings'):
         del dict['facings']
     if dict.get('topics') == 'all':
         del dict['topics']
