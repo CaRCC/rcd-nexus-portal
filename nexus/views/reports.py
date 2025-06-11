@@ -28,7 +28,7 @@ def report_new_assessments(request):
 
     for assessment in assessments:
         assessment.members = assessment.profile.memberships.all()
-        assessment.simpleCC = cmgraphs.cc_mapping[assessment.profile.institution.carnegie_classification]
+        assessment.simpleCC = cmgraphs.cc_mapping.get(assessment.profile.institution.carnegie_classification, default="Unknown")
 
     context = {
         "assessments":assessments,
