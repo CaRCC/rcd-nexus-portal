@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}CaRCC Capabilities Model Demographics Data Visualizations{% endblock %}
 
 {% block nav %}
@@ -11,7 +12,12 @@
 {% block main %}
 <h2 id="CMGraphTitle">{%if graphtitle %}{{ graphtitle|safe }}{%else%}CapsModel Data{%endif%}</h2>
 <div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
-<p class="viz_footnote">Note: Each vertical set/stripe is an institution (in no particular order), and each dot is the rolled up coverage for the associated Facing. </p>
+<div class="viz_footnote extraspace">
+    <p id="sharelabel">Share this visualization via email: <a href="mailto:?body={{ request.build_absolute_uri|urlencode }}&subject=Check out this visualization from the CaRCC Data Portal">
+        <img id="sharelinkimg" src="{% static 'images/MailLinkIcon.png' %}" alt="Email with link icon"/></a></p>
+    <p class="viz_footnote">Note: Each vertical set/stripe is an institution (in no particular order), and each dot is the rolled up coverage for the associated Facing. </p>
+</div>
+
 {{ nonDefs|json_script:"nonDefs" }}
 <script>
     const nonDefs = JSON.parse(document.getElementById('nonDefs').textContent);

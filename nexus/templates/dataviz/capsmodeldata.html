@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}CaRCC Capabilities Model Priorities Data Visualizations{% endblock %}
 
 {% block nav %}
@@ -13,6 +14,8 @@
 <div id="canvas" class="viz">{%if graph %}{{ graph|safe }}{%endif%}</div>
 
 <div class="viz_footnote">
+    <p id="sharelabel">Share this visualization via email: <a href="mailto:?body={{ request.build_absolute_uri|urlencode }}&subject=Check out this visualization from the CaRCC Data Portal">
+        <img id="sharelinkimg" src="{% static 'images/MailLinkIcon.png' %}" alt="Email with link icon"/></a></p>
     {%if multiBenchMarkNote or partialBenchMarkNote or showErrBars or missingCats or missingBenchmarkDataNote %}
         <p class="viz_footnote_intro">Notes: </p>
         {%if multiBenchMarkNote %}<p class="viz_footnote">{{multiBenchMarkNote}}</p>{%endif%}

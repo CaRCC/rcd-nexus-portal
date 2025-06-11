@@ -721,9 +721,14 @@ h3.graphNYI {
 }
 
 div.viz_footnote {
-    width: 70%;
-    margin:0px auto;
+    max-width: 70%;
+    margin:5px auto;
 }
+
+div.viz_footnote.extraspace {
+    margin-top:3em;
+}
+
 p.viz_footnote, p.viz_footnote_intro {
     font-size: 0.9em;
     color: var(--nexus-light-text);
@@ -740,6 +745,19 @@ p.viz_footnote span.missing {
     font-weight: bold;
     color:#9F9F9F;
 }
+img#sharelinkimg {
+    height:20px; 
+    position: relative;
+    top:6px;
+    left:5px;
+}
+p#sharelabel {
+    color: var(--nexus-light-text);
+    font-size: .9em;
+    text-align: center;
+    margin: 0 0 1em 0;
+}
+
 .menu {
     display: flex;
     flex-direction: row;
