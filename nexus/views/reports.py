@@ -1,3 +1,4 @@
+import datetime
 from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
@@ -22,7 +23,8 @@ def report_new_assessments(request):
     if not request.user.is_staff:
         raise PermissionDenied
 
-    assessments = CapabilitiesAssessment.objects.all().exclude(profile__archived=True).exclude(profile__institution__id__in=Institution.getDemoIDList()).order_by('-profile__year','-pk')[:30]
+    #.exclude(profile__institution__id__in=Institution.getDemoIDList())
+    assessments = CapabilitiesAssessment.objects.all().exclude(profile__archived=True).order_by('-profile__year','-pk')[:30]
 
     for assessment in assessments:
         assessment.members = assessment.profile.memberships.all()
@@ -46,9 +48,10 @@ def report_new_assessments_csv(request):
     )
 
     writer = csv.writer(response)
-    writer.writerow(["Profile", "Class", "State", "%Done", "Contributors"])
+    writer.writerow(["Profile", "URL", "Inst. Class", "State", "%Done", "Contributors"])
 
-    assessments = CapabilitiesAssessment.objects.all().exclude(profile__archived=True).exclude(profile__institution__id__in=Institution.getDemoIDList()).order_by('-profile__year','-pk')[:30]
+    # .exclude(profile__institution__id__in=Institution.getDemoIDList())
+    assessments = CapabilitiesAssessment.objects.all().exclude(profile__archived=True).order_by('-profile__year','-pk')[:30]
 
     for assessment in assessments:
         members = None
@@ -58,8 +61,9 @@ def report_new_assessments_csv(request):
             else:
                 members = members + f';{member.user} ({member.role})'
         simpleCC = cmgraphs.cc_mapping[assessment.profile.institution.carnegie_classification]
+        linkToAssmnt = request.build_absolute_uri(reverse("capmodel:assessment", args=[assessment.profile.pk]))
 
-        writer.writerow([assessment.profile, simpleCC, assessment.review_status, assessment.completed_percent, members])
+        writer.writerow([assessment.profile, linkToAssmnt, simpleCC, assessment.review_status, assessment.completed_percent, members])
 
     return response    
 
@@ -69,9 +73,11 @@ def report_prog_assessments(request):
     if not request.user.is_staff:
         raise PermissionDenied
 
+    in_prog_years = [settings.RCD_DEFAULT_YEAR, settings.RCD_DEFAULT_YEAR-1]
         # .exclude(profile__institution__id__in=Institution.getDemoIDList())\
     assessments = CapabilitiesAssessment.objects.all().exclude(profile__archived=True)\
-        .exclude(review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED)
+        .exclude(review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED)\
+        .filter(profile__year__in=in_prog_years)
 
     assmntList = list()
     for assessment in assessments:
@@ -84,15 +90,37 @@ def report_prog_assessments(request):
 
     context = {
         "assessments":assmntList,
+        "title":"In Progress Assessments",
+        "desc":"Assessments from this year and last that are in progress (not approved, not archived) with at least one assessed capability.",
     }
 
     return render(request, "reports/prog_assessments.html", context)
 
 
 def report_stale_assessments(request):
+    if not request.user.is_staff:
+        raise PermissionDenied
+
+    stale_cut_off = datetime.date.today() - datetime.timedelta(days=365)
+
+        # .exclude(profile__institution__id__in=Institution.getDemoIDList())\
+    assessments = CapabilitiesAssessment.objects.all().exclude(profile__archived=True)\
+        .exclude(review_status=CapabilitiesAssessment.ReviewStatusChoices.APPROVED)\
+        .filter(update_time__lt=stale_cut_off)
+
+    assmntList = list()
+    for assessment in assessments:
+        if assessment.completed_percent_val > 0:
+            assessment.members = assessment.profile.memberships.all()
+            assessment.simpleCC = cmgraphs.cc_mapping[assessment.profile.institution.carnegie_classification]
+            assmntList.append(assessment)
+
+    assmntList.sort(key=attrgetter('completed_percent_val'), reverse=True)
 
     context = {
+        "assessments":assmntList,
+        "title":"Stale Assessments",
+        "desc":"Assessments in progress (not approved, not archived), last updated more than a year ago with at least one assessed capability.",
     }
-
-    return render(request, "reports/stale_assessments.html", context)
+    return render(request, "reports/prog_assessments.html", context)
 

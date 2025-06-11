@@ -33,6 +33,7 @@
         font-weight: normal;
     }
     table.content th, table.content th p {
+        text-align: center;
         font-weight: bold;
         background-color: var(--info-off);
     }
@@ -55,7 +56,7 @@
         <thead>
             <tr>
                 <th><p>Profile</p></th>
-                <th><p>Class</p></th>
+                <th><p>Inst. Class</p></th>
                 <th><p>State</p></th>
                 <th><p>% Done</p></th>
                 <th><p>Contributors</p></th>
@@ -64,7 +65,7 @@
         <tbody>
             {% for asmnt in assessments %}
             <tr>
-                <td><p>{{ asmnt.profile }}</p></td>
+                <td><p><a href="{% url 'capmodel:assessment' asmnt.profile.pk %}">{{asmnt.profile}}</a></td>
                 <td><p>{{ asmnt.simpleCC }}</p></td>
                 <td><p>{{ asmnt.review_status }}</p></td>
                 <td><p>{{ asmnt.completed_percent }}</p></td>
