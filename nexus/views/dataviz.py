@@ -91,6 +91,11 @@ def data_viz_demographics_contriblist(request):
         }
     return render(request, "dataviz/contriblist.html", context)
 
+EPSCoRStates = ['Alabama', 'Alaska', 'Arkansas', 'Delaware', 'Guam', 'Hawaii', 'Idaho', 'Iowa',
+                 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Mississippi', 'Montana', 'Nebraska',
+                  'Nevada', 'New Hampshire', 'New Mexico', 'North Dakota', 'Oklahoma', 'Puerto Rico', 
+                  'Rhode Island', 'South Carolina', 'South Dakota', 'Vermont', 'US Virgin Islands', 'West Virginia', 'Wyoming']
+
 @never_cache
 def data_viz_demographics_maps(request): 
     graph = None
@@ -121,6 +126,14 @@ def data_viz_demographics_maps(request):
                 popName = 'Users'
             #print( "Cleaned dict: ",cleaned_dict)
             profiles = demogcharts.filterProfiles(cleaned_dict)
+            maplabelinclude = None
+            maplabelexclude = None
+            if eps := cleaned_dict.get('epscor'):
+                if len(eps) < len(IPEDSMixin.EPSCORChoices):   # Skip the filter if all are set (nothing to filter)
+                    if str(IPEDSMixin.EPSCORChoices.EPSCOR) in eps:
+                        maplabelinclude = EPSCoRStates
+                    else:
+                        maplabelexclude = EPSCoRStates
             instCount = profiles.count()
             # Since we list contributors already, no problem showing a small number in a Chart
             #if(instCount < MIN_INSTITUTIONS_TO_GRAPH):
@@ -145,7 +158,8 @@ def data_viz_demographics_maps(request):
                     grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_SMALL_SCALE
                     #grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
                     #fontscale = width_scale*1.1
-            if graph := demogcharts.demographicsMap(profiles,width=grwidth, height=grheight) :
+            if graph := demogcharts.demographicsMap(profiles,width=grwidth, height=grheight, 
+                                                    maplabelinclude=maplabelinclude, maplabelexclude=maplabelexclude) :
                 graphtitle = f'Geographic Distribution of {instCount} {popName}'
             else:
                 graphtitle = 'No Data to Graph!'
