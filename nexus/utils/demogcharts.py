@@ -9,6 +9,7 @@ from nexus.forms import dataviz
 import requests
 import json
 import pandas as pd
+import itertools
 import plotly.express as px
 import plotly.io as po
 from django.db.models import Q
@@ -361,7 +362,7 @@ def scatterChart(answers, instCount, width=cmgraphs.DEFAULT_WIDTH, height=DEFAUL
     # Convert the figure to HTML including Plotly.js
     return po.to_html(fig, include_plotlyjs=cmgraphs.INCLUDE_PLOTLYJS, full_html=True)
 
-def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_HEIGHT):
+def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_HEIGHT, maplabelinclude=None, maplabelexclude=None):
     # Fetch US states GeoJSON data
     # response_us = requests.get("https://raw.githubusercontent.com/python-visualization/folium/master/tests/us-states.json")
     # us_states_geojson = response_us.json()
@@ -385,35 +386,42 @@ def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_H
     }
 
     # Note that we have already deduped profiles so we do not double count.
-    # What we would *like* to do is the following, but Django cannot
-    # data = profiles.values('institution__state_or_province').annotate(count=Count('institution__pk'))
+    # Create a map that has values for all the named regions in the map, including 0 value ones. 
     data = profiles.values('institution__state_or_province').filter(institution__state_or_province__isnull=False)
-    #print(data)
     data2 = {}
-    for profile_state in data.all():
-        #print(profile_state)
-        state = profile_state['institution__state_or_province']
-        if state in data2:
-            data2[state]['Count'] += 1
-            #print(f'Incrementing count for {state}')
-        else:
-            #print(f'Adding initial entry for {state}')
-            entry = {}
-            entry['State'] = state
-            entry['Count'] = 1
-            data2[state] = entry
-    # print(data2)
+    for feature in combined_geojson['features']:
+        name = feature['properties']['name']
+        if maplabelinclude and not name in maplabelinclude:
+            continue
+        if maplabelexclude and name in maplabelexclude:
+            continue
+        count = data.filter(institution__state_or_province=name).count()
+        # print(f"GeoJSON name: {feature['properties']['name']} count:{count}")
+        entry = {}
+        entry['State'] = name
+        entry['Count'] = count
+        data2[name] = entry
+
     demographic_data = pd.DataFrame.from_dict(data2, orient='index', columns=['State', 'Count'])
     #print(demographic_data)
-
     # Plot the choropleth map
+    # print(f'Color scale values: {px.colors.sequential.Emrld}') # Could also use: "burgyl", "darkmint", or "brwnyl",
+    # Create a discontinuous color scale that has a nice range from 1-max, and a grey value for 0
+    dc_color_scale = []
+    dc_color_scale.append([0, 'rgb(230, 236, 246)'])
+    dc_color_scale.append([0.01, px.colors.sequential.Emrld[0]])
+    nColorsInRange = len(px.colors.sequential.Emrld)
+    valuestep = 1/nColorsInRange
+    for index, color in enumerate(px.colors.sequential.Emrld, start=1):
+        dc_color_scale.append([index*valuestep, color])
+    # print(f'DC Color scale values: {dc_color_scale}')
     fig = px.choropleth(
         demographic_data,
         geojson=combined_geojson,
 	    featureidkey="properties.name",
         locations="State",
         color="Count",
-        color_continuous_scale="emrld", # Could also use: "burgyl", "darkmint", or "brwnyl",
+        color_continuous_scale=dc_color_scale, 
         range_color=(0, demographic_data['Count'].max()),
         scope="north america",
         color_continuous_midpoint=-1,  # Set midpoint outside the data range
@@ -424,6 +432,9 @@ def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_H
 
     # Show the legend
     fig.update_coloraxes(showscale=True)
+    dtick = max(1, round(demographic_data['Count'].max()/6))
+    fig.update_layout(coloraxis={"colorbar":{"dtick":dtick}})
+
 
     fig.update_layout(
         autosize=False,
