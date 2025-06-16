@@ -415,7 +415,7 @@ def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_H
                     else:
                         missing_states = missing_states+ f', {state}: {count}'
 
-        intl_data = profiles.values('institution__country').filter(institution__country__isnull=False).exclude(institution__country='USA').exclude(institution__country='Canada')
+        intl_data = profiles.values('institution__country').exclude(institution__country__isnull=True).exclude(institution__country__exact='').exclude(institution__country='USA').exclude(institution__country='Canada')
         for profile_country in intl_data.order_by('institution__country').distinct('institution__country'):
             country = profile_country['institution__country']
             if count := intl_data.filter(institution__country=country).count():
