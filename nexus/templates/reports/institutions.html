@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    body>nav {
+        display:none;
+    }
+    section.report {
+        width: 80%;
+        max-width: 800px;
+        margin:10px 10px 10px 10px;
+        padding:1em .7in .7in .7in;
+    }
+    section.report h1.title {
+        font-size: 1.7em;
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 0px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    table.content {
+        font-size: 0.85em;
+        border: solid thick var(--primary-fg-off);
+    }
+    table.content td {
+        border: solid thin var(--nexus-white-text);
+        background-color: var(--primary-fg-off);
+        vertical-align: middle;
+        max-width: 40%;
+    }
+    table.content td p, table.content th p {
+        margin:4px;
+        font-weight: normal;
+    }
+    table.content th, table.content th p {
+        text-align: center;
+        font-weight: bold;
+        background-color: var(--info-off);
+    }
+    p.footnote {
+        font-size: 0.85em;
+        text-align: left;
+    }
+</style>
+{% endblock %}
+
+{% block title %}Institutions with Profiles{% endblock %}
+
+{% block main %}
+<section>
+    <h1 class="title">Institutions with Profiles</h1>
+    <p class="content" style="text-align: center;">
+        These are the {{count}} institutions with profiles in the system.)
+    </p>
+    <table class="content">
+        <thead>
+            <tr>
+                <th><p>Name</p></th>
+                <th><p>Domain</p></th>
+                <th><p>Country</p></th>
+                <th><p>State/Province</p></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inst in institutions %}
+            <tr>
+                <td><p>{{ inst.name }}</p></td>
+                <td><p>{{ inst.internet_domain }}</p></td>
+                <td><p>{{ inst.country }}</p></td>
+                <td><p>{{ inst.state_or_province }}</p></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

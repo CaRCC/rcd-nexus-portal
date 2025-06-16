@@ -133,3 +133,14 @@ def report_stale_assessments(request):
     }
     return render(request, "reports/prog_assessments.html", context)
 
+def report_institutions(request):
+    if not request.user.is_staff:
+        raise PermissionDenied
+    
+    institutions = Institution.objects.all().exclude(profiles__isnull=True).order_by('country', 'state_or_province', 'name')
+    context = {
+        "count": institutions.count(),
+        "institutions":institutions,
+    }
+
+    return render(request, "reports/institutions.html", context)
