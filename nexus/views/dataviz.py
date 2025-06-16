@@ -158,8 +158,9 @@ def data_viz_demographics_maps(request):
                     grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_SMALL_SCALE
                     #grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
                     #fontscale = width_scale*1.1
-            if graph := demogcharts.demographicsMap(profiles,width=grwidth, height=grheight, 
-                                                    maplabelinclude=maplabelinclude, maplabelexclude=maplabelexclude) :
+            graph, missing_states = demogcharts.demographicsMap(profiles,width=grwidth, height=grheight, 
+                                                    maplabelinclude=maplabelinclude, maplabelexclude=maplabelexclude)
+            if graph:
                 graphtitle = f'Geographic Distribution of {instCount} {popName}'
             else:
                 graphtitle = 'No Data to Graph!'
@@ -168,7 +169,8 @@ def data_viz_demographics_maps(request):
             #print( "GET with no params ")
             filter_form = DataFilterForm()
             profiles = demogcharts.getAllProfiles()
-            if graph := demogcharts.demographicsMap(profiles) :
+            graph, missing_states = demogcharts.demographicsMap(profiles)
+            if graph:
                 graphtitle = f'Geographic Distribution of {profiles.count()} Users'
             else:
                 graphtitle = 'No Data to Chart!'
@@ -178,6 +180,7 @@ def data_viz_demographics_maps(request):
     context = {
         "filterform":filter_form,
         "graph":graph,
+        "missing_states": missing_states,
         "graphtitle":graphtitle,
         "nonDefs":nonDefs,
         "breadcrumbs":{

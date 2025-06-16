@@ -401,6 +401,28 @@ def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_H
         entry['State'] = name
         entry['Count'] = count
         data2[name] = entry
+        #print(f'demogMap found [{count}] datapoint(s) for [{name}]')
+
+    missing_states = None
+    # If we are filtering on non-EPSCoR, ignore extra "states" and all international institutions
+    if not maplabelexclude:
+        for profile_state in data.order_by('institution__state_or_province').distinct('institution__state_or_province'):
+            state = profile_state['institution__state_or_province']
+            if count := data.filter(institution__state_or_province=name).count():
+                if not state in data2:
+                    if not missing_states:
+                        missing_states = f'{state}: {count}'
+                    else:
+                        missing_states = missing_states+ f', {state}: {count}'
+
+        intl_data = profiles.values('institution__country').filter(institution__country__isnull=False).exclude(institution__country='USA').exclude(institution__country='Canada')
+        for profile_country in intl_data.order_by('institution__country').distinct('institution__country'):
+            country = profile_country['institution__country']
+            if count := intl_data.filter(institution__country=country).count():
+                if not missing_states:
+                    missing_states = f'{country}: {count}'
+                else:
+                    missing_states = missing_states+ f', {country}: {count}'
 
     demographic_data = pd.DataFrame.from_dict(data2, orient='index', columns=['State', 'Count'])
     #print(demographic_data)
@@ -408,7 +430,8 @@ def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_H
     # print(f'Color scale values: {px.colors.sequential.Emrld}') # Could also use: "burgyl", "darkmint", or "brwnyl",
     # Create a discontinuous color scale that has a nice range from 1-max, and a grey value for 0
     dc_color_scale = []
-    dc_color_scale.append([0, 'rgb(230, 236, 246)'])
+    #dc_color_scale.append([0, '#f8fdf0'])
+    dc_color_scale.append([0, '#fbfef7'])
     dc_color_scale.append([0.01, px.colors.sequential.Emrld[0]])
     nColorsInRange = len(px.colors.sequential.Emrld)
     valuestep = 1/nColorsInRange
@@ -425,10 +448,16 @@ def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_H
         range_color=(0, demographic_data['Count'].max()),
         scope="north america",
         color_continuous_midpoint=-1,  # Set midpoint outside the data range
-        labels={"Count": "# of Institutions", "State":"State/Province"},
-        title="Number of Institutions in Each State ot Province"
+        labels={"Count": "#Insts", "State":"State/Province"},
+        title="Number of Institutions in Each State ot Province",
     )
-    fig.update_geos(projection_scale=1, lonaxis_range=[-170, -65], lataxis_range=[27, 75])
+    fig.update_geos(
+        projection_scale=1, 
+        showsubunits=True,
+        subunitcolor="blue",
+        landcolor = '#a7a7a7',
+        lonaxis_range=[-160, -58], 
+        lataxis_range=[17, 76])
 
     # Show the legend
     fig.update_coloraxes(showscale=True)
@@ -437,10 +466,11 @@ def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_H
 
 
     fig.update_layout(
+        font=dict(size=10,color="gray",),
         autosize=False,
         margin = dict(l=0, r=0, b=0, t=0, pad=4, autoexpand=True ),
         width=width,
         height=height,
     )
     # Convert the figure to HTML including Plotly.js
-    return po.to_html(fig, include_plotlyjs='cdn', full_html=True)
+    return po.to_html(fig, include_plotlyjs='cdn', full_html=True), missing_states
