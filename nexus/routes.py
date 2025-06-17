@@ -28,6 +28,7 @@ urlpatterns = [
     path("admin/staging", lambda request: render(request, "admin/staging.html")),
     path("admin/staging-command/", staging_command, name="staging-command"),
     path("admin/", admin.site.urls),
+    path("reports/", include("nexus.urls.reports")),
     path("oidc/", include("mozilla_django_oidc.urls")),
     path("profiles/", include("nexus.urls.rcd_profiles")),
     path("capmodel-assessment/", include("nexus.urls.capmodel")),

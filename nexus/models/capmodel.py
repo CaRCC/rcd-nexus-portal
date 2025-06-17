@@ -338,12 +338,16 @@ class CapabilitiesAssessment(AssessmentBase):
         return answers
 
     @property
-    @admin.display(description="%Done")
-    def completed_percent(self):
+    def completed_percent_val(self):
         filtered_answers = self.filtered_answers()
         total_questions = filtered_answers.count()
         completed_questions = total_questions - filtered_answers.filter_unanswered().count()
-        pct = completed_questions/total_questions if total_questions else 0
+        return completed_questions/total_questions if total_questions else 0
+
+    @property
+    @admin.display(description="%Done")
+    def completed_percent(self):
+        pct = self.completed_percent_val
         return f"{pct:.0%}"
 
     @property
