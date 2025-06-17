@@ -74,6 +74,13 @@ def help_dv_faq(request):
 def printable_questions(request):
     session_language = "en"  # TODO get session language
 
+    showHelp = False
+    if(request.GET) :
+        dict = request.GET.dict()
+        detail = dict.get('detail')
+        if detail=='help':
+            showHelp = True
+
     categories = CapabilitiesQuestion.objects.filter_valid().group_by_facing_topic()
     nFacings = len(categories.keys())
     for facing, topics in categories.items():
@@ -98,7 +105,11 @@ def printable_questions(request):
             if(topic.slug==CapabilitiesTopic.domain_coverage_slug):
                 topic.isdomain = True
             for question in questions:
-                question.html_display = mark_safe(f"{question.contents.get(language=session_language).text}")
+                qtext = question.contents.get(language=session_language)
+                if (not showHelp) or (not qtext.help_text):
+                    question.html_display = mark_safe(f"{qtext.text}")
+                else:
+                    question.html_display = mark_safe(f'{qtext.text}<br><span class="question-help">{qtext.help_text}</span>')
                 if question.is_essential:
                     topic.is_essential = True
 
