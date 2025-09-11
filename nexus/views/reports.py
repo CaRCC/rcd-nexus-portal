@@ -63,6 +63,9 @@ def report_new_assessments_csv(request):
             else:
                 members = members + f';{member.user} ({member.role})'
         simpleCC = cmgraphs.cc_mapping[assessment.profile.institution.carnegie_classification]
+        simpleCC = cmgraphs.cc_mapping.get(assessment.profile.institution.carnegie_classification)
+        if simpleCC == None:
+            simpleCC = "Unknown"
         linkToAssmnt = request.build_absolute_uri(reverse("capmodel:assessment", args=[assessment.profile.pk]))
 
         writer.writerow([assessment.profile, linkToAssmnt, simpleCC, assessment.review_status, assessment.completed_percent, members])
@@ -85,7 +88,9 @@ def report_prog_assessments(request):
     for assessment in assessments:
         if assessment.completed_percent_val > 0:
             assessment.members = assessment.profile.memberships.all()
-            assessment.simpleCC = cmgraphs.cc_mapping[assessment.profile.institution.carnegie_classification]
+            assessment.simpleCC = cmgraphs.cc_mapping.get(assessment.profile.institution.carnegie_classification)
+            if assessment.simpleCC == None:
+                assessment.simpleCC = "Unknown"
             assmntList.append(assessment)
 
     assmntList.sort(key=attrgetter('completed_percent_val'), reverse=True)
@@ -114,7 +119,9 @@ def report_stale_assessments(request):
     for assessment in assessments:
         if assessment.completed_percent_val > 0:
             assessment.members = assessment.profile.memberships.all()
-            assessment.simpleCC = cmgraphs.cc_mapping[assessment.profile.institution.carnegie_classification]
+            assessment.simpleCC = cmgraphs.cc_mapping.get(assessment.profile.institution.carnegie_classification)
+            if assessment.simpleCC == None:
+                assessment.simpleCC = "Unknown"
             assmntList.append(assessment)
 
     assmntList.sort(key=attrgetter('completed_percent_val'), reverse=True)
