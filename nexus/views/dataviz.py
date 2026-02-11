@@ -100,6 +100,7 @@ EPSCoRStates = ['Alabama', 'Alaska', 'Arkansas', 'Delaware', 'Guam', 'Hawaii', '
 def data_viz_demographics_maps(request): 
     graph = None
     graphtitle = None
+    missing_states = None
     nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
