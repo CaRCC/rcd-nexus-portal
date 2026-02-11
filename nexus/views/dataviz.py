@@ -113,6 +113,7 @@ def data_viz_demographics_maps(request):
             print(posted.errors)
             print(posted.cleaned_data)
             print(request.POST)
+            graphtitle = 'Problem with Filter specification for Map - see errors at left.'
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
     else: 
         if(request.GET) :
@@ -222,6 +223,7 @@ def data_viz_demographics_charts(request):
             print(posted.cleaned_data)
             print(request.POST)
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
+            graphtitle = 'Problem with Filter specification for Chart - see errors at left.'
             chart = posted.cleaned_data.get('chart_views')      # Ensure we handle the chart filtering
     else: 
         if(request.GET) :
@@ -339,6 +341,7 @@ def data_viz_demographics_scatter(request):
             print(posted.errors)
             print(posted.cleaned_data)
             print(request.POST)
+            graphtitle = 'Problem with Filter specification for Chart - see errors at left.'
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
     else: 
         if(request.GET) :
@@ -636,6 +639,7 @@ def data_viz_capsmodeldata(request):
             print(posted.errors)
             print(posted.cleaned_data)
             # print(request.POST)
+            graphtitle = 'Problem with Filter specification for Chart - see errors at left.'
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
             chart = posted.cleaned_data.get('chart_views')      # Ensure we handle the chart filtering
     else: 
@@ -905,6 +909,7 @@ def data_viz_prioritiessdata(request):
             print(posted.errors)
             print(posted.cleaned_data)
             print(request.POST)
+            graphtitle = 'Problem with Filter specification for Chart - see errors at left.'
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
     else: 
         if(request.GET) :
