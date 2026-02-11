@@ -93,4 +93,5 @@ On behalf of the CaRCC Capabilities Model working group - Thanks!
 """,
                     from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                     recipient_list=[submitter.email],
+                    cc_list=[settings.CURATOR_EMAIL],
                 )

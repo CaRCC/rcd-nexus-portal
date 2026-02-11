@@ -72,6 +72,12 @@ def assessment(request, profile_id):
             assessment.update_time = timezone.now()
             assessment.update_user = request.user
             assessment.save()
+            send_mail(
+                subject=f"Capabilities Model Assessment created for {profile}",
+                message=f"A new assessment of type {atype} was created for: {profile} by: {request.user}. {profile.comments}",
+                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
+                recipient_list=[settings.CURATOR_EMAIL],
+            )
         else: # No assessment and no context to create one - redirect to the profile. 
             return redirect("rcdprofile:detail", profile.pk)
 

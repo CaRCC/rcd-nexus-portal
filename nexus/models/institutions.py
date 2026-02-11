@@ -186,6 +186,7 @@ You may now begin using the RCD Nexus assessment tools for your institution!
             html_message=email_in_html,
             from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
             recipient_list=[self.requester.email],
+            cc_list=[settings.CURATOR_EMAIL],
         )
         return institution
 

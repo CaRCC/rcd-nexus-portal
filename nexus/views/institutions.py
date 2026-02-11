@@ -145,6 +145,7 @@ To approve this request, please visit the following link:
                 html_message=email_in_html,
                 from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                 recipient_list=[email],
+                cc_list=[settings.CURATOR_EMAIL],
                 fail_silently=False,
             )
 
