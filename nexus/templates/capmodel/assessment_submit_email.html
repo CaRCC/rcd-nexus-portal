@@ -1,0 +1,8 @@
+{% extends "base_email.html" %}
+{% block main %}
+    <p>
+        Hello Capabilities Model Curator:<br><br>An assessment for Institution Profile: {{profile}} was just
+        submitted from Institution: {{institution}}, by: {{submitter}}.<br><br>
+        <a href="{{assmnt_link}}">Click here to review the newly submitted assessment</a>.
+    </p>
+{% endblock %}

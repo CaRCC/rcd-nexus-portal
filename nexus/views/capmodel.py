@@ -4,6 +4,7 @@ import csv
 from django.apps import apps
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django.http import HttpResponseBadRequest, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -102,8 +103,12 @@ def assessment(request, profile_id):
                     request,
                     f"Your CaRCC Capabilities Assessment for {profile} has been submitted for final review.",
                 )
+                assessment_link = settings.BASE_URL+reverse("capmodel:assessment", args=[profile.pk])
+                message_as_html = render_to_string('capmodel/assessment_submit_email.html', 
+                                      {'profile': profile, 'institution':profile.institution, 'submitter':request.user, 'assmnt_link':assessment_link})
                 send_mail(
                     subject=f"CaRCC Capabilities Assessment Submitted for {profile}",
+                    html_message=message_as_html,
                     message=f"An assessment for Institution Profile: {profile} was just submitted from Institution: {profile.institution}, by: {request.user}.",
                     from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                     recipient_list=[settings.CURATOR_EMAIL],

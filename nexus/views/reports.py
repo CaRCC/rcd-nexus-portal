@@ -9,7 +9,8 @@ from django.utils.safestring import mark_safe
 from django.core.exceptions import PermissionDenied, ValidationError
 from nexus.utils import demogcharts, cmgraphs
 from nexus.models.rcd_profiles import RCDProfile
-from nexus.models import CapabilitiesAssessment, CapabilitiesTopic, CapabilitiesQuestion, Institution
+from nexus.views.rcd_profiles import view_roles, edit_roles, roles, manage_roles, submit_roles
+from nexus.models import CapabilitiesAssessment, CapabilitiesTopic, CapabilitiesQuestion, Institution, User
 import importlib.metadata
 from operator import attrgetter
 import csv
@@ -137,10 +138,51 @@ def report_institutions(request):
     if not request.user.is_staff:
         raise PermissionDenied
     
-    institutions = Institution.objects.all().exclude(profiles__isnull=True).order_by('country', 'state_or_province', 'name')
+    primary = None
+    if(request.GET) :
+        dict = request.GET.dict()
+        sortcol = dict.get('sort')
+        if sortcol in {'name','internet_domain'}:
+            primary = sortcol
+
+    if primary:
+        institutions = Institution.objects.all().exclude(profiles__isnull=True).order_by(primary)
+    else:
+        institutions = Institution.objects.all().exclude(profiles__isnull=True).order_by('country', 'state_or_province', 'name')
+
+
     context = {
         "count": institutions.count(),
         "institutions":institutions,
     }
 
     return render(request, "reports/institutions.html", context)
+
+def report_users(request):
+    if not request.user.is_staff:
+        raise PermissionDenied
+    
+    users = User.objects.all().exclude(is_staff=True).order_by('last_name')
+
+    userList = list()
+    for user in users:
+        user.profile_list = RCDProfile.objects.filter_can_view(user)
+        for profile in user.profile_list:
+            if profile.memberships.filter(user=user, role__in=submit_roles).exists():
+                profile.role = "Submitter"
+            elif profile.memberships.filter(user=user, role__in=manage_roles).exists():
+                profile.role = "Manager"
+            elif profile.memberships.filter(user=user, role__in=edit_roles).exists():
+                profile.role = "Editor"
+            else:
+                profile.role = "Viewer"
+        userList.append(user)
+
+    # userList.sort(key=attrgetter(key=attrgetter('last_name'))) 
+
+    context = {
+        "count": len(userList),
+        "users":userList,
+    }
+
+    return render(request, "reports/users.html", context)
