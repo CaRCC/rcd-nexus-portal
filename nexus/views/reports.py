@@ -166,7 +166,7 @@ def report_users(request):
 
     userList = list()
     for user in users:
-        user.profile_list = RCDProfile.objects.filter_can_view(user)
+        user.profile_list = RCDProfile.objects.filter_can_view(user).order_by('-year', '-capabilities_assessment__update_time')
         for profile in user.profile_list:
             if profile.memberships.filter(user=user, role__in=submit_roles).exists():
                 profile.role = "Submitter"

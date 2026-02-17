@@ -64,11 +64,11 @@
             <tr>
                 <td><p>{{ user }}</p></td>
                 <td>{% if not user.profile_list %}
-                    <p><i>no profiles...</i>></p>
+                    <p><i>no profiles...</i></p>
                     {% else %}
                     <p>
                     {% for profile in user.profile_list %}
-                        {{ profile }} (<i>role: {{profile.role}}</i>)<br/>
+                        {{ profile }} ({{profile.capabilities_assessment.review_status}}, <i>role: {{profile.role}}</i>)<br/>
                     {% endfor %}
                     </p>
                     {% endif %}
