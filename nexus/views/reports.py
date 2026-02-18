@@ -162,10 +162,22 @@ def report_users(request):
     if not request.user.is_staff:
         raise PermissionDenied
     
+    filterOnUpperCaseEmail = False
+
+    if(request.GET) :
+        dict = request.GET.dict()
+        filter = dict.get('filter')
+        if filter == 'emailcase':
+            filterOnUpperCaseEmail = True
+            print('Filtering users on case mismatch...')
+
     users = User.objects.all().exclude(is_staff=True).order_by('last_name')
 
     userList = list()
     for user in users:
+        if filterOnUpperCaseEmail and user.email == user.email.lower():
+            continue
+
         user.profile_list = RCDProfile.objects.filter_can_view(user).order_by('-year', '-capabilities_assessment__update_time')
         for profile in user.profile_list:
             if profile.memberships.filter(user=user, role__in=submit_roles).exists():
