@@ -75,7 +75,7 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
                 if not idp.institution:
                     send_mail(
                         subject=f"Nexus Portal creating new Institution",
-                        message=f"CILogon backend: No institution found for idp internet_domain: {internet_domain}; creating one.",
+                        message=f'CILogon backend: No institution found for idp internet_domain: {internet_domain} for login by: {claims.get("email")}; creating one.',
                         from_email=settings.DEFAULT_FROM_EMAIL,
                         recipient_list=[settings.SUPPORT_EMAIL],
                     )
@@ -97,10 +97,13 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         )
 
         if profile.user == None:
+            # we map email to their username on create, but historically did not convert to lowercase, so use the email 
+            # to find the user, but allow case-insensitive match
             profile.user, created = models.User.objects.get_or_create(
-                email=claims["email"],
+                username__iexact=claims["email"],
                 defaults={
-                    "username": claims["email"],
+                    "email": claims["email"],               # leave their email as they specified it
+                    "username": claims["email"].lower(),    # force to lower for the username
                     "first_name": claims.get("given_name"),
                     "last_name": claims.get("family_name"),
                 },
