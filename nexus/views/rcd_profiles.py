@@ -223,7 +223,10 @@ def rcd_profile_edit_new(request, pk):
     return rcd_profile_edit(request, pk, action="edit", isnew=True)
 
 def rcd_profile_edit(request, pk, action="edit", isnew=False ):
-    profile = access_profile(request, pk, action)
+    profile = access_profile(request, pk, action, allow_archive=True)
+    if profile.archived:
+        messages.error(request, "Requested profile is ARCHIVED and must be restored before you can view or edit it.")
+        return redirect("rcdprofile:detail", profile.pk)
 
     form = RCDProfileForm(request.POST or None, instance=profile)
     form.customize_choices(request, profile.institution)
