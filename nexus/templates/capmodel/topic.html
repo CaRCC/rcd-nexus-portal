@@ -19,6 +19,10 @@
     span.facing {
         font-weight: bold;
     }
+    span.nolink {
+        pointer-events: none;
+        color: var(--nexus-disabled);
+    }
 
     section.topicblock {
         text-align: left;
@@ -130,9 +134,21 @@
 {% block main %}
 
 <div class="assessment-nav">
-    {% if prev_topic %}<p><a href="{% url 'capmodel:topic' assessment.profile_id prev_topic.facing.slug prev_topic.slug %}">⬅ Previous topic</a></p>{% endif %}
+    <p>
+        {% if prev_topic %}
+            <a href="{% url 'capmodel:topic' assessment.profile_id prev_topic.facing.slug prev_topic.slug %}">⬅ Previous topic</a>
+        {% else %}
+            <span class="nolink">⬅ Previous topic</span>
+        {% endif %}
+    </p>
     <p><a href="{% url 'capmodel:assessment' assessment.profile_id %}#{{facing.facing}}">Up to <span class="facing">{{facing.display_name}}-Facing</span>/Assessment home</a></p>
-    {% if next_topic %}<p><a href="{% url 'capmodel:topic' assessment.profile_id next_topic.facing.slug next_topic.slug %}">Next topic ➡</a></p>{% endif %}
+    <p>
+        {% if next_topic %}
+            <a href="{% url 'capmodel:topic' assessment.profile_id next_topic.facing.slug next_topic.slug %}">Next topic ➡</a>
+        {% else %}
+            <span class="nolink">Next topic ➡</span>
+        {% endif %}
+    </p>
 </div>
 <section class="topicblock">
     <h3{%if coverage_color %} style="background-color: {{coverage_color}}"{%endif%}>

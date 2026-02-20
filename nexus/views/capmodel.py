@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_page
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 from nexus.forms.capmodel import *
 from nexus.models.capmodel import *
@@ -330,7 +331,10 @@ def topic(request, profile_id, facing, topic):
         else:
             has_nonessential = True
         if answer.is_included:
-            is_included = True
+            # This would just be True, except for weird cases in essentials assessments where an essential question
+            # is marked included. 
+            is_included = (assessment.assessment_type != CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL)\
+                        or not answer.question.is_essential
         else:
             has_nonincluded = True
         answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
@@ -372,8 +376,10 @@ def topic(request, profile_id, facing, topic):
             coverage_pct = mark_safe(f"{covstring}")
             coverage_color = compute_answer_color(coverage)
 
-    prev_topic_list = CapabilitiesTopic.objects.filter(facing__slug=facing.slug, index__lt=topic.index)
-    next_topic_list = CapabilitiesTopic.objects.filter(facing__slug=facing.slug, index__gt=topic.index)
+    prev_topic_list = CapabilitiesTopic.objects.filter(Q(facing__index__lt=topic.facing.index)
+                                            | Q(facing__index=topic.facing.index, index__lt=topic.index)).order_by('facing__index', 'index')
+    next_topic_list = CapabilitiesTopic.objects.filter(Q(facing__index__gt=topic.facing.index)
+                                            | Q(facing__index=topic.facing.index, index__gt=topic.index)).order_by('facing__index', 'index')
 
     showExtraTopics = request.COOKIES.get('showEX')=="1"
     # print(f"Topic view, showExtraTopics is: [{showExtraTopics}]")
@@ -386,14 +392,16 @@ def topic(request, profile_id, facing, topic):
         if prev_topic_list.count() > 0:
             for i in range(prev_topic_list.count()-1,-1,-1):
                 ptopic = prev_topic_list[i]
-                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and topic_is_essential(assessment, facing, ptopic) \
-                    or topic_is_included(assessment, facing, ptopic):
+                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL \
+                        and topic_is_essential(assessment, ptopic.facing, ptopic) \
+                    or topic_is_included(assessment, ptopic.facing, ptopic):
                     prev_topic = ptopic
                     break
         if next_topic_list.count() > 0:
             for ntopic in next_topic_list:
-                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and topic_is_essential(assessment, facing, ntopic) \
-                    or topic_is_included(assessment, facing, ntopic):
+                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL \
+                        and topic_is_essential(assessment, ntopic.facing, ntopic) \
+                    or topic_is_included(assessment, ntopic.facing, ntopic):
                     next_topic = ntopic
                     break
 
@@ -485,13 +493,51 @@ def answer(request, profile_id, question_pk):
     other_answers = CapabilitiesAnswer.objects.order_by("question_id").filter(
         assessment__profile_id=profile_id
     )
-    if answer.assessment.assessment_type==CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+    atype = answer.assessment.assessment_type
+    if atype==CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
         cyoj = True
         cyoj_copied = not answer.assessment.copied_from is None
     else :
         cyoj = False
         cyoj_copied = False
 
+    # Get previous and next answers ordering by the Facing, Topic, and Question indices (not the PKs)
+    prev_answer_list = other_answers.filter(Q(question__topic__facing__pk__lt=answer.question.topic.facing.pk)
+                                            | Q(question__topic__facing__pk=answer.question.topic.facing.pk,
+                                                question__topic__index__lt=answer.question.topic.index)
+                                            | Q(question__topic__pk=answer.question.topic.pk,
+                                                question__index__lt=answer.question.index))\
+                                                    .order_by('question__topic__facing_id', 'question__topic__index','question__index')
+    next_answer_list = other_answers.filter(Q(question__topic__facing__pk__gt=answer.question.topic.facing.pk)
+                                            | Q(question__topic__facing__pk=answer.question.topic.facing.pk,
+                                                question__topic__index__gt=answer.question.topic.index)
+                                            | Q(question__topic__pk=answer.question.topic.pk,
+                                                question__index__gt=answer.question.index))\
+                                                    .order_by('question__topic__facing_id', 'question__topic__index','question__index')
+
+    # We use the showExtraTopics cookie to decide whether to skip questions that are not included when 
+    # building the previous and next capability links
+    showExtraTopics = request.COOKIES.get('showEX')=="1"
+    if showExtraTopics or atype == CapabilitiesAssessment.AssessmentTypeChoices.FULL:
+        prev_answer = prev_answer_list.last()
+        next_answer = next_answer_list.first()
+    else:
+        prev_answer = None
+        next_answer = None
+        if prev_answer_list.count() > 0:
+            for i in range(prev_answer_list.count()-1,-1,-1):
+                panswer = prev_answer_list[i]
+                if atype == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and panswer.question.is_essential \
+                    or panswer.is_included:
+                    prev_answer = panswer
+                    break
+        if next_answer_list.count() > 0:
+            for nanswer in next_answer_list:
+                if atype == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and nanswer.question.is_essential \
+                    or nanswer.is_included:
+                    next_answer = nanswer
+                    break
+    
     context = {
         "profile": profile,
         "essentialAssmnt": answer.assessment.assessment_type==CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL ,
@@ -506,14 +552,8 @@ def answer(request, profile_id, question_pk):
         "topic": answer.question.topic.contents.get(language=session_language),
         "facing": answer.question.topic.facing.contents.get(language=session_language),
         "coverage": covstring,
-        "prev_question_pk": (
-            other_answers.filter(question_id__lt=question_pk).last()
-            or other_answers.last()
-        ).question_id,
-        "next_question_pk": (
-            other_answers.filter(question_id__gt=question_pk).first()
-            or other_answers.first()
-        ).question_id,
+        "prev_question_pk": prev_answer.question_id if prev_answer else None,
+        "next_question_pk": next_answer.question_id if next_answer else None,
         "navtree": rcdprofile_navtree(profile, rcdprofile_navtree.CAPABILITIES),
     }
 
