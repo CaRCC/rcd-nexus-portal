@@ -61,6 +61,13 @@ class AssessmentAdmin(admin.ModelAdmin):
     fields = [("review_status", "review_time"), "review_note", "assessment_type", "copied_from", ("update_time", "update_user"), "profile"]
 #    inlines = [AnswerInline]
     actions = ["approve"]
+    
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        if search_term:
+            # This applies unaccent to the search
+            queryset = self.model.objects.filter(profile__institution__name__unaccent__icontains=search_term)
+        return queryset, use_distinct
 
     def approve(self, request, queryset):
 #        queryset.update(

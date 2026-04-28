@@ -80,7 +80,12 @@ class InstitutionAdmin(admin.ModelAdmin):
             },
         ),
     )
-
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        if search_term:
+            # This applies unaccent to the search
+            queryset = self.model.objects.filter(name__unaccent__icontains=search_term)
+        return queryset, use_distinct
 
 @admin.register(NewInstitutionRequest)
 class NewInstitutionRequestAdmin(admin.ModelAdmin):
