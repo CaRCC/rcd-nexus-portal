@@ -15,6 +15,17 @@
         text-align: center;
     }
 
+    section.status button {
+        margin: 0.1em .5em;
+        padding: 0px .7em;
+        min-height: 1.8em;
+        height: 1.8em;
+        box-shadow: none;
+    }
+    main section.status button:focus {
+        box-shadow: none;
+    }
+
     div.report {
         align-self: center;
         width: 70%;
@@ -110,11 +121,13 @@
     }
 </style>
 <script>
-    function onShowExtrasChange(cbEl) {
+    function onShowExtrasChange(btnEl) {
         //alert("onShowExtrasChange checked: "+cbEl.checked?"Yes":"No");
-        show = !cbEl.checked;
+        show = btnEl.textContent.startsWith("Show");
         showExtras(show);
-        setExtraTopicsStateCookie(show?SHOWN:HIDDEN);
+        shown = show?SHOWN:HIDDEN;
+        setExtraTopicsStateCookie(shown);
+        setShowHideBtnText(btnEl, shown);
     }
 
     /*
@@ -154,17 +167,17 @@
             ifHiddenList[i].style.display = show?"none":"block";
         }
     }
+    function setShowHideBtnText(btnEl, shown) {
+        btnEl.textContent = shown==SHOWN?"Hide Extra Capabilities":"Show Extra Capabilities";
+    }
 
     function initExtraTopicsFromCookie() {
         // Get the cookie and then call the method
         var shown = getStateCookie(SHOW_HIDE_EXTRAS)
         //console.log("Show Extras cookie val: "+shown);
         showExtras(shown==SHOWN);
-        cb = document.getElementById("showHideExtrasCB");
-        if( cb ) {
-            cb.checked = shown!=SHOWN;
-            //console.log("Init Hide Extras CB from cookie: "+((shown!=SHOWN)?"Hide":"Show"));
-        }
+        btnEl = document.getElementById("showHideExtrasBtn");
+        setShowHideBtnText(btnEl, shown);
     }
 
 
@@ -188,8 +201,8 @@
 </h2>
 {%if atype != "full" %}
 <section class="status showHideExtras">
-    <p><input type="checkbox" id="showHideExtrasCB" onchange="onShowExtrasChange(this)">
-        Hide Extra Topics (i.e., {%if atype == "essential" %}Non-Essential Topics and {% endif %}those not included in this Assessment).</p>
+    <p><button id="showHideExtrasBtn" onclick="onShowExtrasChange(this)">Hide Extra Capabilities</button>
+        (i.e., {%if atype == "essential" %}Non-Essential {% endif %}Topics and Capabilities not included in this Assessment).</p>
 </section>
 {% endif %}
 
@@ -202,7 +215,7 @@
                 <span class="facingcovpcnt">{{facing.coverage_pct}}</span>{% endif %}
         </h3>
         {%if atype == "cyoj" and not facing.has_included %}
-            <p class="tname topicheader ifhidden">No Topics included in this Assessment</p>
+            <p class="tname topicheader ifhidden">No Topics included in this Assessment{%if cyoj_copied %} (all answers copied){%endif%}</p>
             <p class="tname topicheader ifhidden"></p>
         {%endif%}
 
@@ -233,7 +246,7 @@
                             </tr>
                             {%comment%}Add all the included/essential capabilities (or all of them if this is a full assessment{%endcomment%}
                             {% for answer in answers %}
-                                {%if atype == "full" or answer.question.is_essential or answer.is_included %}
+                                {%if atype == "full" or atype == "essential" and answer.question.is_essential or answer.is_included %}
                                     <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}"
                                         {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
                                         <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
@@ -255,12 +268,12 @@
                         {%comment%}If there are also non-essential or non-included capabilities, include those as well{%endcomment%}
                         {%if atype != "full" and topic.has_nonincluded or topic.has_nonessential%}
                             <tr class="headline extras">
-                                <td>{%if atype == "essential" %}Non-Essential Capabilities{%else%}Capabilities not included{%endif%}</td>
+                                <td>{%if atype == "essential" %}Non-Essential {%endif%}Capabilities not included{%if cyoj_copied %} (answers copied){%endif%}</td>
                                 <td></td><td></td><td></td><td></td><td></td>
                             </tr>
                             {%comment%}Add all the non-included/non-essential capabilities. Note that for CYOJ copies some may be answered.{%endcomment%}
                             {% for answer in answers %}
-                                {%if not answer.question.is_essential and not answer.is_included %}
+                                {%if atype == "essential" and not answer.question.is_essential or atype == "cyoj" and not answer.is_included %}
                                     <tr class="question extras {% cycle 'odd-field' 'even-field' as fieldcycle %}"
                                         {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
                                         <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
