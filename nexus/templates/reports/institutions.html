@@ -64,7 +64,7 @@
         <tbody>
             {% for inst in institutions %}
             <tr>
-                <td><p>{{ inst.name }}</p></td>
+                <td><p><a href="{% url 'institutions:edit' inst.pk %}">{{ inst.name }}</a>  (<a href="{% url 'rcdprofile:view' inst.profiles.last.pk %}">Last Profile</a>)</p></td>
                 <td><p>{{ inst.internet_domain }}</p></td>
                 <td><p>{{ inst.country }}</p></td>
                 <td><p>{{ inst.state_or_province }}</p></td>

@@ -54,7 +54,7 @@ def institution_request(request: HttpRequest):
 
 
 def institution_edit(request: HttpRequest, pk: int):
-    if not InstitutionAffiliation.objects.filter(
+    if not request.user.is_staff and not InstitutionAffiliation.objects.filter(
         user=request.user, institution_id=pk
     ).exists():
         messages.error(request, "You are not affiliated with that institution.")
