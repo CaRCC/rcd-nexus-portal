@@ -104,6 +104,20 @@ def report_prog_assessments(request):
 
     return render(request, "reports/prog_assessments.html", context)
 
+def report_rvw_pend_assessments(request):
+    if not request.user.is_staff:
+        raise PermissionDenied
+
+    assessments = CapabilitiesAssessment.objects.all().exclude(profile__archived=True)\
+        .filter(review_status=CapabilitiesAssessment.ReviewStatusChoices.PENDING)
+
+    context = {
+        "assessments":assessments,
+        "title":"Submitted Assessments Pending Review and Approval",
+    }
+
+    return render(request, "reports/rvw_pending_assessments.html", context)
+
 
 def report_stale_assessments(request):
     if not request.user.is_staff:

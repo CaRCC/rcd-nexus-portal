@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    body>nav {
+        display:none;
+    }
+    section.report {
+        width: 80%;
+        max-width: 800px;
+        margin:10px 10px 10px 10px;
+        padding:1em .7in .7in .7in;
+    }
+    section.report h1.title {
+        font-size: 1.7em;
+        background-color: #eee;
+        margin: 0px;
+        padding: 5px 0px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    }
+    table.content {
+        width: 100%;
+        font-size: 0.85em;
+        border: solid thick var(--primary-fg-off);
+    }
+    table.content td {
+        border: solid thin var(--nexus-white-text);
+        background-color: var(--primary-fg-off);
+        vertical-align: middle;
+        max-width: 40%;
+    }
+    table.content td p, table.content th p {
+        margin:4px;
+        font-weight: normal;
+    }
+    table.content th, table.content th p {
+        font-weight: bold;
+        background-color: var(--info-off);
+    }
+    p.desc {
+        font-size: 0.9em;
+    }
+    p.footnote {
+        font-size: 0.85em;
+        text-align: left;
+    }
+</style>
+{% endblock %}
+
+{% block title %}Submitted Assessments Pending Review{% endblock %}
+
+{% block main %}
+<section class="contriblist" >
+    <h1 class="title">{{title}}</h1>
+    <table class="content">
+        <thead>
+            <tr>
+                <th><p>Profile/Assessment</p></th>
+                <th><p>Submitted On</p></th>
+                <th><p>Submitter</p></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asmnt in assessments %}
+            <tr>
+                <td><p><a href="{% url 'capmodel:assessment' asmnt.profile.pk %}">{{asmnt.profile}}</a></p></td>
+                <td><p>{{ asmnt.update_time }}</p></td>
+                <td><p>{{ asmnt.update_user }}</p></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
