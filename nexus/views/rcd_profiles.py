@@ -156,8 +156,8 @@ def rcd_profile_list(request):
         raise PermissionDenied
 
     # profiles = request.user.rcd_profiles.filter(archived=False)
-    profiles = RCDProfile.objects.filter_can_view(request.user)
-    archived_profiles = RCDProfile.objects_archive.filter_can_view(request.user).filter(archived=True)
+    profiles = RCDProfile.objects.filter_can_view(request.user).order_by('-year', '-capabilities_assessment__update_time')
+    archived_profiles = RCDProfile.objects_archive.filter_can_view(request.user).filter(archived=True).order_by('-year', '-capabilities_assessment__update_time')
 
     navtree = NavNode(
         "Profiles",
