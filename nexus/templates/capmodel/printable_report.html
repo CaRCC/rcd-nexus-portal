@@ -12,7 +12,8 @@
 
     section.status p {
         margin: 0.1em 1em;
-        text-align: center;
+        text-align: left;
+        font-size: 0.95em;
     }
 
     section.status button {
@@ -95,6 +96,21 @@
         text-decoration: line-through;
         color:grey;
     }
+    td.question span.question-help {
+        font-size: .9em;
+        font-style: italic;
+        display: none;
+        padding: 2px 10px 0 10px;
+    }
+    td.question span.question-worknotes {
+        font-size: .95em;
+        font-style: normal;
+        display: none;
+        padding: 2px 10px 0 0px;
+    }
+    td.question span.question-worknotes span.title {
+        font-weight: bold;
+    }
     td.prio {
         width:24px;
     }
@@ -118,15 +134,39 @@
             position: fixed;
             bottom:0;
         }
+        section.status {
+            display:none;
+        }
     }
 </style>
 <script>
     function onShowExtrasChange(btnEl) {
-        //alert("onShowExtrasChange checked: "+cbEl.checked?"Yes":"No");
         show = btnEl.textContent.startsWith("Show");
+        //alert("onShowExtrasChange found action is:"+(show?"Show":"Hide"));
         showExtras(show);
         shown = show?SHOWN:HIDDEN;
         setExtraTopicsStateCookie(shown);
+        setShowHideBtnText(btnEl, shown);
+    }
+    function onShowLensesChange(btnEl) {
+        show = btnEl.textContent.startsWith("Show");
+        //alert("onShowLensesChange found action is:"+(show?"Show":"Hide"));
+        showLenses(show);
+        shown = show?SHOWN:HIDDEN;
+        setShowHideBtnText(btnEl, shown);
+    }
+    function onShowHelpChange(btnEl) {
+        show = btnEl.textContent.startsWith("Show");
+        //alert("onShowHelpChange found action is:"+(show?"Show":"Hide"));
+        showHelp(show);
+        shown = show?SHOWN:HIDDEN;
+        setShowHideBtnText(btnEl, shown);
+    }
+    function onShowNotesChange(btnEl) {
+        show = btnEl.textContent.startsWith("Show");
+        //alert("onShowNotesChange found action is:"+(show?"Show":"Hide"));
+        showWorkNotes(show);
+        shown = show?SHOWN:HIDDEN;
         setShowHideBtnText(btnEl, shown);
     }
 
@@ -168,7 +208,12 @@
         }
     }
     function setShowHideBtnText(btnEl, shown) {
-        btnEl.textContent = shown==SHOWN?"Hide Extra Capabilities":"Show Extra Capabilities";
+        text = btnEl.textContent;
+        if(shown==SHOWN) {
+            btnEl.textContent = text.replace("Show","Hide");
+        } else {
+            btnEl.textContent = text.replace("Hide","Show");
+        }
     }
 
     function initExtraTopicsFromCookie() {
@@ -180,6 +225,27 @@
         setShowHideBtnText(btnEl, shown);
     }
 
+    function showLenses(show) {
+        const trList = document.querySelectorAll("td.lens");
+        //alert("showExtras found: "+nodeList.length+" p.extra nodes");
+        for (let i = 0; i < trList.length; i++) {
+            trList[i].style.display = show?"table-cell":"none";
+        }
+    }
+
+    function showHelp(show) {
+        const helpSpans = document.querySelectorAll("span.question-help");
+        for (let i = 0; i < helpSpans.length; i++) {
+            helpSpans[i].style.display = show?"inline-block":"none";
+        }
+    }
+
+    function showWorkNotes(show) {
+        const notesSpans = document.querySelectorAll("span.question-worknotes");
+        for (let i = 0; i < notesSpans.length; i++) {
+            notesSpans[i].style.display = show?"inline-block":"none";
+        }
+    }
 
 </script>
 {% endblock %}
@@ -199,12 +265,16 @@
     <span class="status">(Unknown state)</span>
     {% endif %}
 </h2>
-{%if atype != "full" %}
 <section class="status showHideExtras">
+    {%if atype != "full" %}
     <p><button id="showHideExtrasBtn" onclick="onShowExtrasChange(this)">Hide Extra Capabilities</button>
         (i.e., {%if atype == "essential" %}Non-Essential {% endif %}Topics and Capabilities not included in this Assessment).</p>
+    {% endif %}
+    <p><button id="showHideLensesBtn" onclick="onShowLensesChange(this)">Hide Details of Lenses</button>
+        (i.e., Availability, Service Operating Level (SOL), and Community Engagement).</p>
+    <p><button id="showHideHelpBtn" onclick="onShowHelpChange(this)">Show Help Text for Capabilities</button></p>
+    <p><button id="showHideNotesBtn" onclick="onShowNotesChange(this)">Show Work Notes for Capabilities</button></p>
 </section>
-{% endif %}
 
 <div class="report">
 {% for facing, topics in categories.items %}
@@ -237,7 +307,7 @@
                         {%if atype == "full" or topic.is_essential or topic.is_included %}
                             {%comment%}Produce a normal header since there is at least one essential or included capability{%endcomment%}
                             <tr class="headline">
-                                <td>{%if atype == "essential" %}Essential/{%endif%}{%if atype != "full" %}Included{%endif%} Capabilities</td>                            
+                                <td>{%if atype == "essential" %}Essential/{%endif%}{%if atype != "full" %}Included{%endif%} Capabilities</td>
                                 <td class="lens avail">Avail.</td>
                                 <td class="lens sol">SOL</td>
                                 <td class="lens">Comm.</td>
@@ -269,7 +339,11 @@
                         {%if atype != "full" and topic.has_nonincluded or topic.has_nonessential%}
                             <tr class="headline extras">
                                 <td>{%if atype == "essential" %}Non-Essential {%endif%}Capabilities not included{%if cyoj_copied %} (answers copied){%endif%}</td>
-                                <td></td><td></td><td></td><td></td><td></td>
+                                <td class="lens avail">Avail.</td>
+                                <td class="lens sol">SOL</td>
+                                <td class="lens">Comm.</td>
+                                <td class="cov">Cov.</td>
+                                <td class="prio">Prio</td>
                             </tr>
                             {%comment%}Add all the non-included/non-essential capabilities. Note that for CYOJ copies some may be answered.{%endcomment%}
                             {% for answer in answers %}

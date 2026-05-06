@@ -827,7 +827,17 @@ def printable_report(request, profile_id):
                                 topic_sum_count += 1
             #answers = answers.order_by("question_id")
             for answer in answers:
-                answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
+                qtext = answer.question.contents.get(language=session_language)
+                if not qtext.help_text:
+                    helptext = ""
+                else:
+                    helptext = f'<span class="question-help">{qtext.help_text}</span>'
+                if not answer.work_notes:
+                    worknotes = ""
+                else:
+                    worknotes = f'<span class="question-worknotes"><span class="title">Work Notes: </span>{answer.work_notes}</span>'
+                    
+                answer.html_display = mark_safe(f"{qtext.text}{helptext}{worknotes}")
                 match answer.score_deployment:
                     case CapabilitiesAnswer.ScoreDeploymentChoices.NONE:
                         answer.avail = "None"
