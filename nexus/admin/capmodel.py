@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib import admin
+from django.db.models import Q
 from django.core.mail import send_mail
 from django.utils import timezone
 from django import forms
@@ -66,7 +67,9 @@ class AssessmentAdmin(admin.ModelAdmin):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         if search_term:
             # This applies unaccent to the search
-            queryset = self.model.objects.filter(profile__institution__name__unaccent__icontains=search_term)
+            queryset |= self.model.objects.filter(
+                            Q(profile__institution__name__unaccent__icontains=search_term) |
+                            Q(review_note__icontains=search_term) )
         return queryset, use_distinct
 
     def approve(self, request, queryset):

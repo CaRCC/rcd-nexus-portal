@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Q
 
 from nexus.models import Institution, InstitutionAffiliation, NewInstitutionRequest, AffiliationRequest
 
@@ -15,7 +16,7 @@ class InstitutionAdmin(admin.ModelAdmin):
     readonly_fields = [
         "has_cilogon_idp",
     ]
-    search_fields = ["name"]
+    search_fields = ['name', 'internet_domain', 'country']
     list_filter = [
         # allow filtering by the carnegie_classification values, and by null
         "carnegie_classification",
@@ -84,7 +85,10 @@ class InstitutionAdmin(admin.ModelAdmin):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         if search_term:
             # This applies unaccent to the search
-            queryset = self.model.objects.filter(name__unaccent__icontains=search_term)
+            queryset |= self.model.objects.filter(
+                            Q(name__unaccent__icontains=search_term) |
+                            Q(internet_domain__icontains=search_term) |
+                            Q(country__icontains=search_term) )
         return queryset, use_distinct
 
 @admin.register(NewInstitutionRequest)
