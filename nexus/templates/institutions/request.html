@@ -30,7 +30,7 @@ tbody td.domain {
 {% block main %}
 <h1>New Institution Request</h1>
 <p class="intro">Fill out the form below to request a new institution.<br>We will review your request and get back to you as soon as possible.</p>
-<p class="intro">Before submitting, <b>please verify</b> that your institution isn't already included in RCD Nexus,using the table at the bottom.
+<p class="intro">Before submitting, <b>please verify</b> that your institution isn't already included in the CaRCC RCD Nexus portal, using the table at the bottom.
     If it is, you should login to it via CILogon, or <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a>to it.</p>
 <form method="post" action="">
     {% csrf_token %}

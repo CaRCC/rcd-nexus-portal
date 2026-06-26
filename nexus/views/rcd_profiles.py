@@ -197,7 +197,7 @@ def rcd_profile_create(request, institution_pk):
             )
             messages.success(request, f"Created RCD profile for {profile}")
             send_mail(
-                subject=f"RCD Nexus Profile Created for {profile}",
+                subject=f"CaRCC RCD Nexus Profile Created for {profile}",
                 message=f"A new RCD Profile: {profile} was just created for Institution: {institution}, by creator: {request.user}.",
                 from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                 recipient_list=[settings.SUPPORT_EMAIL],
@@ -237,7 +237,7 @@ def rcd_profile_edit(request, pk, action="edit", isnew=False ):
             if isnew:
                 messages.success(request, f"Created RCD profile for {profile}")
                 send_mail(
-                    subject=f"RCD Nexus Profile Created for {profile}",
+                    subject=f"CaRCC RCD Nexus Profile Created for {profile}",
                     message=f"A new RCD Profile: {profile} was just created (from a copy) for Institution: {profile.institution}, by creator: {request.user}. Note comments: {profile.comments}.",
                     from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                     recipient_list=[settings.SUPPORT_EMAIL],
@@ -396,8 +396,8 @@ def rcd_profile_invite(request, pk):
                                 {'invby': invitation.invited_by, 'profile':profile, 'invite_link':invite_link})
             if email_recipients:
                 send_mail(
-                    subject="RCD Nexus collaboration invite",
-                    message=f"{invitation.invited_by} is inviting you to collaborate on RCD Nexus assessments for {profile}.\n\nClick here to accept this invitation: {invite_link}",
+                    subject="CaRCC RCD Nexus collaboration invite",
+                    message=f"{invitation.invited_by} is inviting you to collaborate on CaRCC Capabilities Model assessments for {profile}.\n\nClick here to accept this invitation: {invite_link}",
                     html_message=email_in_html,
                     from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                     recipient_list=email_recipients,
@@ -426,20 +426,20 @@ def rcd_profile_request_membership(http_request, pk):
                 }).first()
     if(mgr==None):
         send_mail(
-                subject="RCD Nexus Membership request to Profile with no Manager!!!",
-                message=f"{http_request.user} has requested membership to collaborate on profile: {profile}, but no manager was found.",
+                subject="CaRCC RCD Nexus Membership request to Profile with no Manager!!!",
+                message=f"{http_request.user} has requested membership to collaborate on profile: {profile}, but no manager was found. Support should follow up with them to straighten out their profile members. ",
                 from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+http_request.get_host(),
                 recipient_list=[settings.SUPPORT_EMAIL],
                 fail_silently=False,
             )
-        messages.error(http_request, "There appears to be no manager for the requested Profile. RCD Nexus Admins have been notified.")
+        messages.error(http_request, "There appears to be no manager for the requested Profile. CaRCC RCD Nexus Admins have been notified.")
     else:
         profile_link = http_request.build_absolute_uri(reverse("rcdprofile:members", kwargs={"pk": profile.pk}))
         email_in_html = render_to_string('rcdprofile/membership_request_email.html', 
                                       {'mgr': mgr.user.name(), 'user': http_request.user, 'profile':profile, 'profile_link':profile_link})
         send_mail(
-            subject="RCD Nexus Profile Membership request",
-            message=f"Hello {mgr.user.name()} - \n\n{http_request.user} has requested membership to collaborate on RCD Nexus assessments for {profile}.\n\nYou can review (and approve or deny) these requests at: {profile_link}",
+            subject="CaRCC RCD Nexus Profile Membership request",
+            message=f"Hello {mgr.user.name()} - \n\n{http_request.user} has requested membership to collaborate on CaRCC Capabilities Model assessments for {profile}.\n\nYou can review (and approve or deny) these requests at: {profile_link}",
             html_message=email_in_html,
             from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+http_request.get_host(),
             recipient_list=[mgr.user.email],
@@ -471,7 +471,7 @@ def rcd_profile_handle_membership_request(http_request, pk):
             email_in_html = render_to_string('rcdprofile/membership_req_approved_email.html', 
                                       {'profile':profile, 'profile_link':profile_link})
             send_mail(
-                subject="RCD Nexus membership request approved",
+                subject="CaRCC RCD Nexus membership request approved",
                 message=f"Your request to join {profile} has been approved. Click here to get started: {profile_link}",
                 html_message=email_in_html,
                 from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+http_request.get_host(),
@@ -482,7 +482,7 @@ def rcd_profile_handle_membership_request(http_request, pk):
             messages.warning(http_request, f"Denied membership request from {profile_request.requested_by}")
             email_in_html = render_to_string('rcdprofile/membership_req_denied_email.html', {'profile':profile} )
             send_mail(
-                subject="RCD Nexus membership request denied",
+                subject="CaRCC RCD Nexus membership request denied",
                 message=f"Your request to join {profile} has been denied.",
                 html_message=email_in_html,
                 from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+http_request.get_host(),
@@ -502,7 +502,7 @@ def rcd_profile_invite_accept(request):
         logger.info(dict(request.session.items()))
         raise PermissionDenied(
             mark_safe(
-                f"<p>You must first <a href='{reverse('oidc_authentication_init')}'>login to RCD Nexus</a> to accept invites.</p>"
+                f"<p>You must first <a href='{reverse('oidc_authentication_init')}'>login to CaRCC RCD Nexus</a> to accept invites.</p>"
             )
         )
 
@@ -522,6 +522,12 @@ def rcd_profile_invite_accept(request):
                 messages.success(
                     request, f"You may now contribute to {invitation.profile}!"
                 )
+                send_mail(
+                    subject=f"New Contributor added for {invitation.profile}",
+                    message=f"An invitation to contribute to Institution Profile: {invitation.profile} was just accepted by: {request.user}.\Support may want to add this user to the discuss list.",
+                    from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
+                    recipient_list=[settings.SUPPORT_EMAIL],
+                )                
             else:
                 messages.info(
                     request, f"You are already a member of this RCD Profile, as a {membership.get_role_display()}."

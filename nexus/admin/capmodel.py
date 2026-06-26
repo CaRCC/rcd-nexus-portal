@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import Q
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django import forms
 from django.contrib.admin.helpers import ActionForm
@@ -93,15 +94,22 @@ class AssessmentAdmin(admin.ModelAdmin):
             assmnt.review_time=timezone.now()
             assmnt.save()
             if(submitter):
-                send_mail(
-                    subject=f"RCD Nexus Capabilities Model Assessment Approved",
-                    message=f"""Your recently submitted assessment for Profile: {profile} has been approved.
+                email_in_html = render_to_string('capmodel/assessment_approved_email.html', 
+                                    {'user': submitter.name(), 'profile': profile, 'year': approval_year})
+                msg = EmailMultiAlternatives(
+                    subject=f"CaRCC Capabilities Model Assessment Approved",
+                    body=f"""Hello {submitter.name()} - 
 
-Your assessment data will be added to the community dataset, benefitting the entire community.
+Your recently submitted assessment for Profile: {profile} has been approved.
+
+Your assessment data will be added to the community dataset for {approval_year}, benefitting the entire community.
 
 On behalf of the CaRCC Capabilities Model working group - Thanks!
 """,
                     from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
-                    recipient_list=[submitter.email],
-                    cc_list=[settings.CURATOR_EMAIL],
+                    to=[submitter.email],
+                    cc=[settings.SUPPORT_EMAIL],
                 )
+                msg.attach_alternative(email_in_html, "text/html")
+                msg.send()
+

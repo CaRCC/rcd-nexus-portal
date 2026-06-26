@@ -563,7 +563,7 @@ def calculateScaledHeight(nCats, nLegendItems, height, lowCountAdj=.5):
     if yCount < 6:
         # We have 2 sub-cats, so scale the height for topics with few questions, unless we are rendering smaller graphs
         scaledHeight = scaledHeight*(lowCountAdj+(1-lowCountAdj)*(yCount/6))
-    print(f'calculateScaledHeight({nCats},{nLegendItems},{height},{lowCountAdj}): {scaledHeight}')
+    # print(f'calculateScaledHeight({nCats},{nLegendItems},{height},{lowCountAdj}): {scaledHeight}')
     return scaledHeight
 
 

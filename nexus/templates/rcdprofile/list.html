@@ -116,7 +116,7 @@ section#archivedSection h2 span#archivedSH {
         <p>You are not a contributor to any institution profiles/assessments for the current year.</p>
 
         {% if request.user.institutions.count == 0 %}
-        <p class="footnote">You are not affiliated with any RCD Nexus institutions. Please <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a> to begin using RCD Nexus tools.</p>
+        <p class="footnote">You are not affiliated with any CaRCC RCD Nexus portal institutions. Please <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a> to begin using CaRCC RCD Nexus tools.</p>
         {% else %}
         <p><b>Click the button below to start a new assessment for your institution.</b> <br><em>In the first step you will describe your institution
             (which may just be a copy from a previous year), <br>and then you will choose the type of assessment you want to conduct. </em>

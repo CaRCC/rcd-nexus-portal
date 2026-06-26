@@ -175,7 +175,7 @@ SUPPORT_EMAIL = "capsmodel-help@carcc.org"
 CURATOR_EMAIL = "capsmodel-owner@carcc.org"
 
 # These options should be set in production.py
-OIDC_OP_AUTHORIZATION_ENDPOINT = "https://cilogon.org/authorize"
+OIDC_OP_AUTHORIZATION_ENDPOINT = "https://cilogon.org/authorize"   # If we decide to constrain to the NSF-approved IdP list, add '&skin=nsf'
 OIDC_OP_TOKEN_ENDPOINT = "https://cilogon.org/oauth2/token"
 OIDC_OP_USER_ENDPOINT = "https://cilogon.org/oauth2/userinfo"
 OIDC_OP_JWKS_ENDPOINT = "https://cilogon.org/oauth2/certs"

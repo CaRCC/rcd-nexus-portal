@@ -37,7 +37,7 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             if badIDP:
                 messages.error(request, f'{badIDP} login is not currently supported. Please use your institutional login, or a supported social login such as Google.')
             else:
-                messages.error(request, "Invalid identity provider. If it is your institution, please contact RCD Nexus support.")
+                messages.error(request, "Invalid identity provider. If it is your institution, please contact CaRCC Capabilities Model support.")
 
     def verify_claims(self, claims):
         # print(f'Verify_claims: {claims}')

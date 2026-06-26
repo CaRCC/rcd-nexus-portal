@@ -61,5 +61,5 @@ class RCDProfileMemberInviteForm(forms.ModelForm):
     accept_terms = forms.BooleanField(
         label="Acknowledgement",
         required=True,
-        help_text="I acknowledge that invited users may be able to view and modify RCD Nexus assessments and other data attributed to the institution.",
+        help_text="I acknowledge that invited users may be able to view and modify CaRCC Capabilities Model assessments and other data attributed to the institution.",
     )

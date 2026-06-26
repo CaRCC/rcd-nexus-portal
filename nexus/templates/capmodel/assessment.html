@@ -443,7 +443,7 @@
 {% elif profile.capabilities_assessment.review_status == "pending" %}
 <h3>Review pending</h3>
 <section class="status">
-    <p>This assessment has been submitted and is pending final review by RCD Nexus Program Staff.<br />
+    <p>This assessment has been submitted and is pending final review by CaRCC Capabilities Model Support Staff.<br />
         You may <strong><em>unsubmit</em></strong> to make changes to your answers. <br/> Once approved the assessment will be frozen.</p>
     <form method="post" action="unsubmit">
         {% csrf_token %}
@@ -455,7 +455,7 @@
 {% elif profile.capabilities_assessment.review_status == "approved" %}
 <h3>Approved</h3>
 <section class="status">
-    <p>This assessment has been approved for inclusion in RCD Nexus community datasets and can no longer be altered.</p>
+    <p>This assessment has been approved for inclusion in CaRCC Capabilities Model community datasets and can no longer be altered.</p>
 </section>
 {% elif profile.capabilities_assessment.review_status == "denied" %}
 <h3><em><strong></em>Rejected</strong></em></h3>

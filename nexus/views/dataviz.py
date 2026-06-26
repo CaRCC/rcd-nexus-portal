@@ -296,7 +296,7 @@ def data_viz_demographics_charts(request):
                                 from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                                 recipient_list=[settings.SUPPORT_EMAIL],
                                 fail_silently=False,)
-                        messages.error(request, f"Unrecognized Chart Option: {chart}. RCD Nexus Admins have been notified.")
+                        messages.error(request, f"Unrecognized Chart Option: {chart}. CaRCC RCD Nexus Admins have been notified.")
 
             if graph is None:
                 if not graphtitle:
@@ -856,11 +856,11 @@ def data_viz_capsmodeldata(request):
                     case _ :
                         send_mail(
                                 subject="Unrecognized Chart Option: "+chart,
-                                message=f"{request.user} tried to view chart option: {chart}, which is not recognized.",
+                                message=f"{request.user} tried to view CapsModel data chart option: {chart}, which is not recognized.",
                                 from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                                 recipient_list=[settings.SUPPORT_EMAIL],
                                 fail_silently=False,)
-                        messages.error(request, f"Unrecognized Chart Option: {chart}. RCD Nexus Admins have been notified.")
+                        messages.error(request, f"Unrecognized Chart Option: {chart}. CaRCC RCD Nexus Admins have been notified.")
 
                 if graph is None:
                     graphtitle = 'No Data to Graph!'

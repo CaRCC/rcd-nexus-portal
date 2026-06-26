@@ -1,7 +1,10 @@
 {% extends "base_email.html" %}
 {% block main %}
     <p>
-        Hello {{mgr}} - <br><br>{{user}} has requested to be affiliated with {{institution}} via {{email}}.
+        Hello - <br><br>{{user}} has requested to be affiliated with {{institution}} via {{email}} in the CaRCC
+        Capabilities Model portal. If this is you, go ahead and approve the request. If this is not you,
+        please report this to the CaRCC Capabilities Model support team by replying to this email. 
+        <br><br>Thanks!
         <br><br><a href="{{req_link}}">Click here to approve this request</a>.
     </p>
 {% endblock %}

@@ -94,7 +94,7 @@ class InstitutionAdmin(admin.ModelAdmin):
 @admin.register(NewInstitutionRequest)
 class NewInstitutionRequestAdmin(admin.ModelAdmin):
     list_display = ["name", "internet_domain", "requester", "created", "comment"]
-    actions = ["approve"]
+    actions = ["approve", "reject_dupe"]
 
     def approve(self, request, queryset):
         for req in queryset:
@@ -102,6 +102,16 @@ class NewInstitutionRequestAdmin(admin.ModelAdmin):
             self.message_user(
                 request,
                 f"Approved new institution request for '{institution}'",
+                level="success",
+            )
+
+    @admin.action(description="Reject selected Institutions requests as duplicates")
+    def reject_dupe(self, request, queryset):
+        for req in queryset:
+            institution = req.reject_dupe(request)
+            self.message_user(
+                request,
+                f"Rejected new institution request for '{institution}' as a duplicate",
                 level="success",
             )
 

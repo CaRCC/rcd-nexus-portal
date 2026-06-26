@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.http import HttpResponseBadRequest, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -78,7 +79,7 @@ def assessment(request, profile_id):
                 subject=f"Capabilities Model Assessment created for {profile}",
                 message=f"A new assessment of type {atype} was created for: {profile} by: {request.user}. {profile.comments}",
                 from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
-                recipient_list=[settings.CURATOR_EMAIL],
+                recipient_list=[settings.SUPPORT_EMAIL],
             )
         else: # No assessment and no context to create one - redirect to the profile. 
             return redirect("rcdprofile:detail", profile.pk)
@@ -105,14 +106,16 @@ def assessment(request, profile_id):
                     f"Your CaRCC Capabilities Assessment for {profile} has been submitted for final review.",
                 )
                 assessment_link = settings.BASE_URL+reverse("capmodel:assessment", args=[profile.pk])
+                content_type  = ContentType.objects.get_for_model(assessment.__class__)
+                approval_link = f"{settings.BASE_URL+reverse('admin:%s_%s_changelist' % (content_type.app_label, content_type.model))}?review_status__exact=pending"
                 message_as_html = render_to_string('capmodel/assessment_submit_email.html', 
-                                      {'profile': profile, 'institution':profile.institution, 'submitter':request.user, 'assmnt_link':assessment_link})
+                                      {'profile': profile, 'institution':profile.institution, 'submitter':request.user, 'assmnt_link':assessment_link, 'approval_link':approval_link})
                 send_mail(
                     subject=f"CaRCC Capabilities Assessment Submitted for {profile}",
                     html_message=message_as_html,
                     message=f"An assessment for Institution Profile: {profile} was just submitted from Institution: {profile.institution}, by: {request.user}.",
                     from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
-                    recipient_list=[settings.CURATOR_EMAIL],
+                    recipient_list=[settings.SUPPORT_EMAIL],
                 )
                 return redirect("capmodel:assessment", profile_id)
     else:
@@ -291,10 +294,10 @@ def assessment_unsubmit(request, profile_id):
         f"Your CaRCC Capabilities Assessment for {profile} has been unsubmitted.",
     )
     send_mail(
-        subject=f"RCD Nexus Assessment Un-Submitted for {profile}",
+        subject=f"CaRCC Capabilities Model Assessment Un-Submitted for {profile}",
         message=f"An assessment for RCD Profile: {profile} was just unsubmitted (withdrawn) from Institution: {profile.institution}, by: {request.user}.",
         from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
-        recipient_list=[settings.CURATOR_EMAIL],
+        recipient_list=[settings.SUPPORT_EMAIL],
     )
 
     return redirect("capmodel:assessment", profile_id)
