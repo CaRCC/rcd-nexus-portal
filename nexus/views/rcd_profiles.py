@@ -524,7 +524,7 @@ def rcd_profile_invite_accept(request):
                 )
                 send_mail(
                     subject=f"New Contributor added for {invitation.profile}",
-                    message=f"An invitation to contribute to Institution Profile: {invitation.profile} was just accepted by: {request.user}.\Support may want to add this user to the discuss list.",
+                    message=f"An invitation to contribute to Institution Profile: {invitation.profile} was just accepted by: {request.user}.\n\nSupport may want to add this user to the discuss list.",
                     from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                     recipient_list=[settings.SUPPORT_EMAIL],
                 )                
