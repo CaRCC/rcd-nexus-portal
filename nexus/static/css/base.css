@@ -666,12 +666,12 @@ body>nav #filtertree ul {
 }
 
 /* Show the filtertip text when you mouse over the filtertip container */
-.filtertip:hover {
+.filtertip:hover, .filtertip:focus-within {
     color: #6453AF;
     border-color: #99def9;
 }
 
-.filtertip:hover .filtertiptext {
+.filtertip:hover .filtertiptext, .filtertip:focus-within .filtertiptext {
     visibility: visible;
 }
 

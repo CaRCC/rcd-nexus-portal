@@ -7,7 +7,7 @@
                     <div class="viewselect">
                         {{ field.label_tag | safe}}
                         {% if field.help_text %}
-                            <span class="filtertip">?
+                            <span class="filtertip" tabindex="0">?
                                 <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
                                     {{ field.help_text|safe }}
                                 </span>
@@ -24,14 +24,14 @@
                         <div class="viewselect {% if "all" == field.value %}skip{% endif %}">
                         {% if "skip_notopics" in filterform.topics.label %}
                             <span class="skiplabel" style="font-style: italic; color:gray">Capability-level detail not available</label>
-                            <span class="filtertip">?
+                            <span class="filtertip" tabindex="0">?
                                 <span class="help filtertiptext" id="{{ filterform.topics.auto_id }}_helptext">
                                     You must be logged in and have an approved assessment to view capability-level data.
                                 </span>
                             </span>
                         {%else%}
                             {{ filterform.topics.label_tag | safe}}
-                                <span class="filtertip">?
+                                <span class="filtertip" tabindex="0">?
                                     <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
                                         {{ filterform.topics.help_text|safe }}
                                     </span>
@@ -45,7 +45,7 @@
             {% elif "skip_nobm" in field.label_suffix %}
                 <div class="viewselect">
                     <label for="{{ field.auto_id }}" style="font-style: italic; color:gray">Benchmarking not available</label>
-                    <span class="filtertip">?
+                    <span class="filtertip" tabindex="0">?
                         <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
                             You must be logged in and have an approved assessment to use the benchmarking feature.
                         </span>
@@ -69,7 +69,7 @@
                                 <span class="showAllNone"><a href="#" onclick="setAll('{{ field.auto_id }}')">All</a>|<a href="#"  onclick="clearAll('{{ field.auto_id }}')">None</a></span>
                             {% endif %}
                             {% if field.help_text %}
-                                <span class="filtertip">?
+                                <span class="filtertip" tabindex="0">?
                                     <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
                                         {{ field.help_text|safe }}
                                     </span>
@@ -88,7 +88,7 @@
 <div id="res_exp_wrapper">
     <p>
         <label id="resExp_lbl">Research Expenditures ($M)</label>
-        <span class="filtertip">?
+        <span class="filtertip" tabindex="0">?
             <span class="help filtertiptext" id="{{ filterform.resexp_min.auto_id }}_helptext">
                 Filter for research expenditures (in $Millions)
             </span>
@@ -111,7 +111,7 @@
                 {% comment %} Can't get errors with a fixed set of choices 
                     <span class="fielderror">{{ field.errors }}</span>{% endcomment %}
                 {% if field.help_text %}
-                    &nbsp;<span class="filtertip">?
+                    &nbsp;<span class="filtertip" tabindex="0">?
                         <span class="help filtertiptext" id="{{ field.auto_id }}_helptext">
                             {{ field.help_text|safe }}
                         </span>
