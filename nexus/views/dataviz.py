@@ -739,7 +739,7 @@ def data_viz_capsmodeldata(request):
                             topicQualifier = 'in this facing '
                         else:
                             topicQualifier = 'in this topic '
-                        partialBenchMarkNote = mark_safe(f'The basis benchmark assessment includes {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} {topicQualifier}for {basisBenchmarkYear}, and community data has been filtered accoundingly.')
+                        partialBenchMarkNote = mark_safe(f'The basis benchmark assessment includes {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} {topicQualifier}for {basisBenchmarkYear}, and community data has been filtered accordingly.')
                     #else:
                         #print(f'Basis benchmark assessment has all {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} for {basisBenchmarkYear} (topicQualifier}.')
 
