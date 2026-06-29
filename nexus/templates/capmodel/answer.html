@@ -177,7 +177,7 @@
         <span class="nolink">Next Capability&rarr;</span>
     {%endif%}
 </div>
-<section class="question" data-qid="{{question.shorttext|safe}}">
+<section class="question" shorttext="{{question.shorttext|safe}}" qid="{{question.qid}}">
     <h3><span style="font-weight: normal;">Topic:</span> {{ topic.display_name }} &nbsp;<span
         class="facing">({{facing.display_name}}-Facing)</span></h3>
     <p class="question"><span class="qprompt">Capability{% if essentialAssmnt and question.is_essential %} (<em>Essential</em>){% endif %}:</span><br>{{ question.text|safe }}</p>

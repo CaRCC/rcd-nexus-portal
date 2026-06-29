@@ -328,7 +328,7 @@ def topic(request, profile_id, facing, topic):
     is_included = False
     has_nonincluded = False
     for answer in answers:
-        #answer.qid = {answer.question.legacy.qid if hasattr(answer.question, "legacy") else 'Q'}
+        answer.qid = answer.question.legacy_qid
         if answer.question.is_essential:
             is_essential = True
         else:
@@ -481,6 +481,7 @@ def answer(request, profile_id, question_pk):
     question = answer.question.contents.get(language=session_language)
     question.slug = answer.question.slug
     question.is_essential = answer.question.is_essential
+    question.qid = answer.question.legacy_qid
 
     match answer.state:
         case CapabilitiesAnswer.State.ANSWERED:

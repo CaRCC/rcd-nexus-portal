@@ -164,7 +164,7 @@
                 </tr>
                 {% for answer in answers %}
                 <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
-                    <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                    <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%} qid="{{answer.qid}}">
                         <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
                             title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
                     </td>
@@ -182,7 +182,7 @@
                     {% for answer in answers %}
                         {%if answer.question.is_essential %}
                         <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
-                            <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                            <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%} qid="{{answer.qid}}">
                                 <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
                                     title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
                             </td>
@@ -202,7 +202,7 @@
                         {% for answer in answers %}
                             {%if answer.is_included %}
                             <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
-                                <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                                <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%} qid="{{answer.qid}}">
                                     <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
                                         title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
                                 </td>
@@ -221,7 +221,7 @@
                         {% for answer in answers %}
                             {%if not answer.question.is_essential and not answer.is_included %}
                             <tr class="question extras {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
-                                <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                                <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%} qid="{{answer.qid}}">
                                     <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
                                         title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
                                 </td>
@@ -270,7 +270,7 @@
                     </tr>
                     {% for answer in answers %}
                         <tr class="question extras {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
-                            <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                            <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%} qid="{{answer.qid}}">
                                 <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
                                     title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
                             </td>
@@ -299,7 +299,7 @@
                     {% for answer in answers %}
                         {%if answer.is_included %}
                             <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
-                                <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                                <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%} qid="{{answer.qid}}">
                                     <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
                                         title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
                                 </td>
@@ -317,7 +317,7 @@
                         {% for answer in answers %}
                             {%if not answer.is_included %}
                                 <tr class="question extras {% cycle 'odd-field' 'even-field' as fieldcycle %}" {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
-                                    <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
+                                    <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%} qid="{{answer.qid}}">
                                         <a href="{% url 'capmodel:answer' assessment.profile_id answer.question_id %}"
                                             title="{{ answer.tooltip }}">{{answer.html_display }}</a></li>
                                     </td>
