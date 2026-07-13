@@ -166,6 +166,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Needed for admin assessment view
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
+LOGIN_URL = "/oidc/authenticate/"
 LOGOUT_REDIRECT_URL = "/"
 
 DEFAULT_FROM_EMAIL_USER = "admin"

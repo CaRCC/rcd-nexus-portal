@@ -17,7 +17,7 @@ This project uses Visual Studio Dev Containers to provide easy-to-setup, isolate
 
 4. A prompt may appear to open the current repository in a container. If this does not appear, you can click the green section in the bottom left of the VSCode interface and select "Reopen in container". This will create your isolated development environment.
 
-5. If successful, you can open a VSCode terminal and run `poetry shell` to activate your Python environment and execute `./manage.py` commands, etc.
+5. If successful, you can open a VSCode terminal and run `poetry shell` (or `eval $(poetry env activate)` with the latest build) to activate your Python environment and execute `./manage.py` commands, etc.
 
 6. To create a superuser that can access the Admin interface, run `./manage.py createsuperuser`.
 
