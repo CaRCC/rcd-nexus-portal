@@ -2,6 +2,7 @@ import csv
 import json
 from datetime import datetime
 
+from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.db import IntegrityError, transaction
@@ -9,13 +10,13 @@ from django.core.exceptions import ValidationError
 
 from nexus.models import (
     CapabilitiesAssessment,
+    CapabilitiesTopic,
     CapabilitiesQuestion,
     Institution,
 )
 from nexus.models.facings import Facing
 
 DEBUGMODE = False
-
 
 
 def initial_load_ipeds_data(path):
@@ -162,6 +163,152 @@ def load_capmodel_questions(path):
         questions_loaded += 1
     print("Loaded {} questions.".format(questions_loaded))
 
+topic_QID_to_slug_mapping = {
+    "R2" : "researcher.outreach",
+    "R1" : "researcher.staffing",
+    "R3" : "researcher.consulting",
+    "R4" : "researcher.lifecycle",
+    "D1" : "creation",
+    "D2" : "discovery",
+    "D3" : "analysis",
+    "D4" : "visualization",
+    "D5" : "curation",
+    "D6" : "policy",
+    "D7" : "security",
+    "SW1" : "management",
+    "SW2" : "development",
+    "SW3" : "optimization",
+    "SW4" : "workflow",
+    "SW5" : "portability",
+    "SW6" : "access",
+    "SW7" : "physical_specimens",
+    "SY1" : "infrastructure",
+    "SY2" : "compute",
+    "SY3" : "storage",
+    "SY4" : "network",
+    "SY5" : "specialized",
+    "SY6" : "software",
+    "SY7" : "monitoring",
+    "SY8" : "recordkeeping",
+    "SY9" : "documentation",
+    "SY10" : "planning",
+    "SY11" : "security",
+    "SP1" : "alignment",
+    "SP2" : "culture",
+    "SP3" : "funding",
+    "SP7" : "",
+    "SP4" : "partnerships",
+    "SP5" : "professionalization",
+    "SP6" : "diversity",    
+}
+
+def getSlugForTopicQID(qid):
+    return topic_QID_to_slug_mapping.get(qid)
+
+def addNewTopic(slug, facing, index, display_name, description=None):
+    t, created = CapabilitiesTopic.objects.get_or_create(
+            slug=slug,
+            facing=facing,
+            index=index,
+        )
+    if not created:
+        print(f"Warning: Attempt to create Topic with slug:{slug} and display name {display_name}; topic already exists!")
+    else:
+        t.contents.get_or_create(display_name=display_name, description=description)
+        t.save()
+
+# Note that this can only be used to update topic details and order within a facing
+# It CANNOT be used to move a topic to a ne facing. That requires creating a new topic and adding
+# new questions to it.
+def update_capmodel_topic(slug, facing, new_index, new_display_name, new_description=None, update_time=None):
+    # Pass in update_time so all the changes happen together. Will default to timezone.now()
+    # Each item has a topic indicator followed by the associated list of questions. The topic indicator is 
+    at = update_time or timezone.now()
+
+    try: 
+        t = CapabilitiesTopic.objects.get(slug=slug,facing=facing)
+    except CapabilitiesTopic.DoesNotExist:
+        raise ValidationError(f"No CapabilitiesTopic found with slug {slug} in facing {facing}.")
+
+    # 
+    # update the text, etc. for the new one. 
+    t.index = new_index
+    content = t.contents.get(language="en")
+    content.display_name=new_display_name
+    if new_description:
+        content.description=new_description
+    content.save()
+    t.save()
+    return
+
+# slug is a string, topic should be an object
+def addNewCapabilityQuestion(qid, slug, topic, index, is_essential, text, help_text, short_text, update_time=None):
+    # Pass in update_time so all the changes happen together and as of a particular date. Will default to timezone.now()
+    at = update_time or timezone.now()
+    # Note that this only checks for duplicate calls. This does not ensure that there is not a previous
+    # question with the given QID and slug. Callers MUST handle that before calling this. 
+    q, created = CapabilitiesQuestion.objects.get_or_create(
+        slug=slug,
+        topic=topic,
+        index=index,
+        is_essential=is_essential,
+        valid_after=at,
+    )
+    if not created:
+        print(f"Warning: Attempt to create Question with slug:{slug}, QID:{qid}, and Short name {short_text}; question already exists!")
+    else:
+        q.attrs["legacy_qid"] = qid
+        # TODO handle multiple languages
+        q.contents.get_or_create(text=text, help_text=help_text, short_text=short_text)
+        q.save()
+    
+# This does not delete the question, but does mark it as no longer valid so it disappears from new assessments
+def removeCapabilityQuestion(qid, update_time=None):
+    # Pass in update_time so all the changes happen together. Will default to timezone.now()
+    at = update_time or timezone.now()
+    try:
+        question = CapabilitiesQuestion.objects.filter_valid(at=at).get(attrs__legacy_qid=qid)
+        question.valid_before = at
+        question.save()
+    except CapabilitiesQuestion.DoesNotExist:
+        raise ValidationError(f"No CapabilitiesQuestion found with QID {qid} that is valid at {at}.")
+    except Institution.MultipleObjectsReturned:
+        raise ValidationError(f"Multiple CapabilitiesQuestions found with QID {qid} that are valid at {at}.")
+
+
+def update_capmodel_question(question, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, update_time=None):
+    # Pass in update_time so all the changes happen together. Will default to timezone.now()
+    # Each item has a topic indicator followed by the associated list of questions. The topic indicator is 
+    at = update_time or timezone.now()
+    # We have to clone the existing question to preserve the old one for previous versions, and then 
+    # update the text, etc. for the new one. 
+    newq = apps.get_model("nexus", "CapabilitiesQuestion").objects.copy(question, copy_contents=False, update_time=at)
+    newq.contents.get_or_create(text=new_text, help_text=new_help_text, short_text=new_short_text)
+    newq.topic = new_topic
+    newq.index = new_index
+    newq.is_essential = is_essential
+    newq.save()
+    return
+
+def add_or_update_capmodel_question(qid, slug, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, update_time=None):
+    # Pass in update_time so all the changes happen together. Will default to timezone.now()
+    # This will look for an existing question with the passed QID, and if found will update that one, 
+    # and otherwise will create a new one. 
+    at = update_time or timezone.now()
+    try:
+        question = CapabilitiesQuestion.objects.filter_valid(at=at).get(attrs__legacy_qid=qid)
+        # question exists and must be updated. This is naive and only handles the default language. 
+        # Note that we do not allow updating the QID or slug
+        if slug and question.slug != slug:
+            raise ValidationError(f"Attempt to update question with QID {qid} and slug {question.slug} to have new slug {slug}.")
+        # TODO Once we have translations, this will have to be extended to handle multiple languages. 
+        return update_capmodel_question(question, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, at)
+    except Institution.MultipleObjectsReturned:
+        raise ValidationError(f"Mujltiple CapabilitiesQuestions found with QID {qid} that are valid at {at}.")
+    except CapabilitiesQuestion.DoesNotExist:
+        # This just means we have to add a new one
+        return addNewCapabilityQuestion(qid, slug, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, at)
+    
 
 def load_capmodel_data(path, institution_path):
     """

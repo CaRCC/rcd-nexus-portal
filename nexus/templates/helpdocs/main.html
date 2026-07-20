@@ -10,6 +10,11 @@
         font-weight: bold;
         margin: 5px 0 0 0;
     }
+    p.doc.inset {
+        margin: 0 0 0 20px;
+        font-style: italic;
+        font-weight: normal;
+    }
     p.doc:first-of-type {
         margin-top: 14px;
     }
@@ -49,7 +54,9 @@
         <p class="doc"><a href="{% url 'helpdocs:intro_and_guide' %}">CaRCC Capabilities Model Introduction</a></p>
         <p class="doc"><a href="{% url 'helpdocs:quickstart' %}">Quick Start Guide</a></p>
         <p class="doc"><a href="{% url 'helpdocs:faq' %}">Frequently Asked Questions (FAQ)</a></p>
-        <p class="doc"><a href="{% url 'helpdocs:printable_questions' %}">Printable List of Capabilities by Facing</a></p>
+        <p class="doc"><a href="{% url 'helpdocs:printable_questions' %}">Printable List of Capabilities by Facing (Current)</a></p>
+        <p class="doc inset"><a href="{% url 'helpdocs:printable_questions' %}?version=2.1">(v2.1 to v2.7 Capabilities)</a></p>
+        <p class="doc inset"><a href="{% url 'helpdocs:printable_questions' %}?version=2.0">(v2 and earlier Capabilities)</a></p>
     </section>
     <section class="helpdocs" >
         <h2>Data Viewer Documentation</h2>

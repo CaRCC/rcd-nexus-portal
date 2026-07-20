@@ -1,8 +1,8 @@
+import copy
 from datetime import datetime
-
 from django.conf import settings
 from django.contrib import admin
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Avg, Count, F, StdDev, Window
 from django.db.models.functions import  Least, PercentRank
 from django.utils import timezone
@@ -82,6 +82,37 @@ class CapabilitiesTopicContent(models.Model):
         ]
 
 class CapabilitiesQuestion(models.Model):
+    class Manager(models.Manager):
+        
+        def copy(self, existing, copy_contents=True, update_time=None):
+            at = update_time or timezone.now()
+            """
+            Clone a question and mark the old as valid before update_time, and the new one valid after update_time
+            Caller may change many fields in the new question, but we'll clone everything. 
+            Make sure the full clone succeeds or fails so we don't get copies that overlap
+            """
+            with transaction.atomic():
+                question = self.create(
+                    slug=existing.slug,
+                    topic=existing.topic,
+                    index=existing.index,
+                    is_essential=existing.is_essential,
+                    attrs=copy.deepcopy(existing.attrs),
+                    valid_after=at,
+                    # Leave valid_before the default to be valid forever
+                )
+                # copy the question content. Note that there may be multiple for languages
+                # Caller may be updating this and want to skip
+                if copy_contents:
+                    for qc in existing.contents:
+                        CapabilitiesQuestionContent.objects.create(question=question, language=qc.language, text=qc.text, 
+                                                                help_text=qc.help_text, shorttext=qc.shorttext)
+                question.save()
+                existing.valid_before = at
+                existing.save()
+            return question
+
+        
     # TODO can lookup from CapabilitiesQuestion?
     domain_lookup = {
         "arts-and-humanities": "Arts and Humanities",
@@ -136,6 +167,10 @@ class CapabilitiesQuestion(models.Model):
         def get_by_natural_key(self, facing: str, topic: str, question: str):
             return self.get(slug=question, topic__slug=topic, topic__facing__slug=facing)
 
+        def get_by_QID(self, qid: str, update_time: datetime):
+            at = update_time or timezone.now()
+            return self.filter_valid(at=at).get(attrs__legacy_qid=qid)
+
         def filter_valid(self, at: datetime = None):
             at = at or timezone.now()
             return self.filter(valid_after__lte=at).exclude(valid_before__lt=at)
@@ -157,7 +192,7 @@ class CapabilitiesQuestion(models.Model):
             return results
 
 
-    objects = QuerySet.as_manager()
+    objects = Manager.from_queryset(QuerySet)()
 
     slug = models.SlugField(
         max_length=255,
@@ -196,6 +231,11 @@ class CapabilitiesQuestion(models.Model):
         db_index=True,
         help_text="This question will only be included in assessments created before this time.",
     )
+
+    def check_valid(self, at: datetime = None):
+        at = at or timezone.now()
+        return self.valid_after<=at and (self.valid_before or datetime.max)> at
+
 
     @property
     def legacy_qid(self):

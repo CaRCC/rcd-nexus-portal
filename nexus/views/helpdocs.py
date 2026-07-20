@@ -1,3 +1,5 @@
+from datetime import datetime
+from django.utils import timezone
 from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
@@ -74,7 +76,19 @@ def help_dv_faq(request):
 def printable_questions(request):
     session_language = "en"  # TODO get session language
 
-    categories = CapabilitiesQuestion.objects.filter_valid().group_by_facing_topic()
+    filterdate=None
+    if(request.GET) :
+        dict = request.GET.dict()
+        version = dict.get('version')
+        match version:
+            case "2.0":
+                filterdate = datetime(2023, 9, 1, tzinfo=timezone.utc)  # Just before 2.1 release
+            case "2.1":
+                filterdate = datetime(2023, 10, 10, tzinfo=timezone.utc)  # Just after 2.1 release
+            case "3.0":
+                filterdate = datetime(2026, 9, 1, tzinfo=timezone.utc)  # Somewhere after 2.0 release guess
+
+    categories = CapabilitiesQuestion.objects.filter_valid(filterdate).group_by_facing_topic()
     nFacings = len(categories.keys())
     for facing, topics in categories.items():
         facing.content = facing.contents.get(language=session_language)

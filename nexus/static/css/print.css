@@ -8,10 +8,11 @@
         display: none;
     }
 
-    /* Since the footer is always printed, we can omit some copyright blocks */
+    /* Since the footer is always printed, we can omit some copyright blocks
+    There is a general .noprint rule below
     footer span.noprint, span.avoidwrap.noprint, p.copyright.noprint {
         display: none;
-    }
+    } */
 
     footer {
         background-color: white;

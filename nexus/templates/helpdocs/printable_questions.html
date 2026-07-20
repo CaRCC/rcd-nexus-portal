@@ -26,7 +26,7 @@
         background-color: #eee;
         margin: 0px;
         padding: 5px 0px;
-        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+        box-shadow: 0 3px 5px var(--section-shadow);
     }
     main section h2 {
         font-size: 1.1em;
@@ -34,7 +34,7 @@
         background-color: #eee;
         margin: 0px;
         padding: 5px;
-        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+        box-shadow: 0 3px 5px var(--section-shadow);
         page-break-before: always;
     }
 
@@ -63,6 +63,7 @@
     p.footnote {
         font-size: 0.85em;
         text-align: left;
+        margin: 0;
     }
     table.content {
         font-size: 0.9em;
@@ -137,12 +138,27 @@
         text-align: left;
     }
     p.essentialCB>span {
-        color: var(--nexus-light-text);
         font-weight: bold;
+        /* 
         background-color: var(--info-off);
-        margin: 0px;
-        padding: 4px 6px;
         box-shadow: 1px 1px 2px var(--logo-dk-blue-shadow);
+        color: var(--nexus-light-text);
+         */
+        margin: 0px;
+        padding: 2px 2px;
+        font-size: 90%;
+    }
+    div#options {
+        color: var(--nexus-light-text);
+        background-color: var(--primary-fg-off);
+        padding: 6px 6px;
+        box-shadow: 1px 2px 4px var(--section-shadow);
+    }
+    div#options h4 {
+        margin: 5px 0 0 0;
+    }
+    div#options p {
+        margin: 4px 10px;
     }
     a.empty {
         display:block;
@@ -212,7 +228,7 @@
 <section class="helpdocs" >
     <h1 class="title">CaRCC Capabilities Model Capabilities by Facing</h1>
     <p class="content">
-        This document includes the main text for the capabilities in each Facing, grouped by topic.<sup><a href="#ftnt1" id="ftnt_ref1">[1]</a></sup>
+        This document includes the main text for the capabilities in each Facing, grouped by topic<sup><a href="#ftnt1" id="ftnt_ref1">[1]</a></sup>.
         This is intended for use by institutions that are discussing who may contribute to an assessment using 
         the Research Computing and Data (RCD) Capabilities Model, and want to share the type of questions that will be asked for each capability.
     </p>
@@ -288,22 +304,25 @@
         </tbody>
 	</table>
     <p class="caption">Table 1 - Description and examples for the Five Facings</p>
-    <p class="copyright"><b>Copyright &copy; 2023-{% now "Y" %} Internet2 and CaRCC</b>, and licensed for use under 
-        <a target="_blank" rel="noopener noreferrer" href="{{cc_license_url}}">{{cc_license_string}}</a> {{cc_license_desc}}.</p>
     <div class="footnotes">
         <p class="footnote"><a href="#ftnt_ref1" id="ftnt1">[1]</a>This is a supplement to the 
             CaRCC Capabilities Model Introduction and Guide to Use.</p>
         <p class="footnote"><a href="#ftnt_ref2" id="ftnt2">[2]</a>&ldquo;CI Engineers&rdquo; have different roles
              at different institutions, and some might (also) be in the Systems Facing roles.</p>
     </div>
-    <p class="essentialCB noprint">
-        <span><input type="checkbox" id="showHideExtrasCB" onchange="onShowExtrasChange(this)">
-        Show only Essential Topics and Capabilities.</span>
-    </p>
-    <p class="essentialCB noprint">
-        <span><input type="checkbox" id="showHideHelpCB" onchange="onShowHelpChange(this)">
-        Show Help text for Capabilities Questions.</span>
-    </p>
+    <p class="copyright"><b>Copyright &copy; 2023-{% now "Y" %} Internet2 and CaRCC</b>, and licensed for use under 
+        <a target="_blank" rel="noopener noreferrer" href="{{cc_license_url}}">{{cc_license_string}}</a> {{cc_license_desc}}.</p>
+    <div id="options" class="noprint">
+        <h4>Options:</h4>
+        <p class="essentialCB">
+            <span><input type="checkbox" id="showHideExtrasCB" onchange="onShowExtrasChange(this)">
+            Show only Essential Topics and Capabilities.</span>
+        </p>
+        <p class="essentialCB">
+            <span><input type="checkbox" id="showHideHelpCB" onchange="onShowHelpChange(this)">
+            Show Help text for Capabilities Questions.</span>
+        </p>
+    </div>
 
     {% for facing, topics in categories.items %}
     <div class="helptopic">

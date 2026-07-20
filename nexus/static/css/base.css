@@ -5,6 +5,7 @@
     --accent: #444444;
     --primary-fg: #fff;
     --primary-fg-off: #f0f0f0;
+    --section-shadow: rgba(0, 0, 0, 0.18);
 
     --error: red;
     --error-off: salmon;
@@ -192,14 +193,14 @@ main section>h2 {
     background-color: #eee;
     margin: 0px;
     padding: 5px;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 3px 5px var(--section-shadow);
 }
 
 main section>h3 {
     background-color: #eee;
     margin: 0px;
     padding: 5px;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 3px 5px var(--section-shadow);
 }
 
 main section>p {
@@ -284,7 +285,7 @@ main img.cardcontent {
     justify-content: center;
     border: none;
     border-radius: 8px;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 3px 5px var(--section-shadow);
     cursor: pointer;
 }
 main section.card.nyi h2 {
@@ -319,7 +320,7 @@ main a.cardbutton, main div.cardbutton a p.cardbutton {
     background-color: var(--secondary);
     border: none;
     border-radius: 8px;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 3px 5px var(--section-shadow);
 
     cursor: pointer;
     transition: 220ms all ease-in-out;    
@@ -943,7 +944,7 @@ main a.button {
     background-color: var(--secondary);
     border: none;
     border-radius: 8px;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 3px 5px var(--section-shadow);
 
     cursor: pointer;
     transition: 220ms all ease-in-out;
