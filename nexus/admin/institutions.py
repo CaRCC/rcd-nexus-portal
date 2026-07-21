@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Q
 
 from nexus.models import Institution, InstitutionAffiliation, NewInstitutionRequest, AffiliationRequest
 
@@ -15,7 +16,7 @@ class InstitutionAdmin(admin.ModelAdmin):
     readonly_fields = [
         "has_cilogon_idp",
     ]
-    search_fields = ["name"]
+    search_fields = ['name', 'internet_domain', 'country']
     list_filter = [
         # allow filtering by the carnegie_classification values, and by null
         "carnegie_classification",
@@ -80,12 +81,20 @@ class InstitutionAdmin(admin.ModelAdmin):
             },
         ),
     )
-
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        if search_term:
+            # This applies unaccent to the search
+            queryset |= self.model.objects.filter(
+                            Q(name__unaccent__icontains=search_term) |
+                            Q(internet_domain__icontains=search_term) |
+                            Q(country__icontains=search_term) )
+        return queryset, use_distinct
 
 @admin.register(NewInstitutionRequest)
 class NewInstitutionRequestAdmin(admin.ModelAdmin):
     list_display = ["name", "internet_domain", "requester", "created", "comment"]
-    actions = ["approve"]
+    actions = ["approve", "reject_dupe"]
 
     def approve(self, request, queryset):
         for req in queryset:
@@ -93,6 +102,16 @@ class NewInstitutionRequestAdmin(admin.ModelAdmin):
             self.message_user(
                 request,
                 f"Approved new institution request for '{institution}'",
+                level="success",
+            )
+
+    @admin.action(description="Reject selected Institutions requests as duplicates")
+    def reject_dupe(self, request, queryset):
+        for req in queryset:
+            institution = req.reject_dupe(request)
+            self.message_user(
+                request,
+                f"Rejected new institution request for '{institution}' as a duplicate",
                 level="success",
             )
 

@@ -9,6 +9,10 @@
         width: 25em;
         margin-top: 1em;
     }
+    span.nolink {
+        pointer-events: none;
+        color: var(--nexus-disabled);
+    }
 
     section.question {
         text-align: left;
@@ -160,14 +164,20 @@
 {% block title %}CaRCC Capabilities Model Capability{% endblock %}
 {% block main %}
 <div class="assessment-nav">
-    <span><a href="{% url 'capmodel:answer' answer.assessment.profile_id prev_question_pk %}">&larr; Previous
-            Capability</a></span>
+    {%if prev_question_pk %}
+        <span><a href="{% url 'capmodel:answer' answer.assessment.profile_id prev_question_pk %}">&larr; Previous Capability</a></span>
+    {%else%}
+        <span class="nolink">&larr; Previous Capability</span>
+    {%endif%}
     <span><a href="{% url 'capmodel:topic' answer.assessment.profile_id facing.facing.slug topic.topic.slug %}">Up to
             Topic</a></span>
-    <span><a href="{% url 'capmodel:answer' answer.assessment.profile_id next_question_pk %}">Next Capability
-            &rarr;</a></span>
+    {%if next_question_pk %}
+        <span><a href="{% url 'capmodel:answer' answer.assessment.profile_id next_question_pk %}">Next Capability&rarr;</a></span>
+    {%else%}
+        <span class="nolink">Next Capability&rarr;</span>
+    {%endif%}
 </div>
-<section class="question" data-qid="{{question.shorttext|safe}}">
+<section class="question" shorttext="{{question.shorttext|safe}}" qid="{{question.qid}}">
     <h3><span style="font-weight: normal;">Topic:</span> {{ topic.display_name }} &nbsp;<span
         class="facing">({{facing.display_name}}-Facing)</span></h3>
     <p class="question"><span class="qprompt">Capability{% if essentialAssmnt and question.is_essential %} (<em>Essential</em>){% endif %}:</span><br>{{ question.text|safe }}</p>

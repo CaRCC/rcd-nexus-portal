@@ -9,7 +9,8 @@ from django.utils.safestring import mark_safe
 from django.core.exceptions import PermissionDenied, ValidationError
 from nexus.utils import demogcharts, cmgraphs
 from nexus.models.rcd_profiles import RCDProfile
-from nexus.models import CapabilitiesAssessment, CapabilitiesTopic, CapabilitiesQuestion, Institution
+from nexus.views.rcd_profiles import view_roles, edit_roles, roles, manage_roles, submit_roles
+from nexus.models import CapabilitiesAssessment, CapabilitiesTopic, CapabilitiesQuestion, Institution, User
 import importlib.metadata
 from operator import attrgetter
 import csv
@@ -103,6 +104,20 @@ def report_prog_assessments(request):
 
     return render(request, "reports/prog_assessments.html", context)
 
+def report_rvw_pend_assessments(request):
+    if not request.user.is_staff:
+        raise PermissionDenied
+
+    assessments = CapabilitiesAssessment.objects.all().exclude(profile__archived=True)\
+        .filter(review_status=CapabilitiesAssessment.ReviewStatusChoices.PENDING)
+
+    context = {
+        "assessments":assessments,
+        "title":"Submitted Assessments Pending Review and Approval",
+    }
+
+    return render(request, "reports/rvw_pending_assessments.html", context)
+
 
 def report_stale_assessments(request):
     if not request.user.is_staff:
@@ -137,10 +152,63 @@ def report_institutions(request):
     if not request.user.is_staff:
         raise PermissionDenied
     
-    institutions = Institution.objects.all().exclude(profiles__isnull=True).order_by('country', 'state_or_province', 'name')
+    primary = None
+    if(request.GET) :
+        dict = request.GET.dict()
+        sortcol = dict.get('sort')
+        if sortcol in {'name','internet_domain'}:
+            primary = sortcol
+
+    if primary:
+        institutions = Institution.objects.all().exclude(profiles__isnull=True).order_by(primary)
+    else:
+        institutions = Institution.objects.all().exclude(profiles__isnull=True).order_by('country', 'state_or_province', 'name')
+
+
     context = {
         "count": institutions.count(),
         "institutions":institutions,
     }
 
     return render(request, "reports/institutions.html", context)
+
+def report_users(request):
+    if not request.user.is_staff:
+        raise PermissionDenied
+    
+    filterOnUpperCaseEmail = False
+
+    if(request.GET) :
+        dict = request.GET.dict()
+        filter = dict.get('filter')
+        if filter == 'emailcase':
+            filterOnUpperCaseEmail = True
+            print('Filtering users on case mismatch...')
+
+    users = User.objects.all().exclude(is_staff=True).order_by('last_name')
+
+    userList = list()
+    for user in users:
+        if filterOnUpperCaseEmail and user.email == user.email.lower():
+            continue
+
+        user.profile_list = RCDProfile.objects.filter_can_view(user).order_by('-year', '-capabilities_assessment__update_time')
+        for profile in user.profile_list:
+            if profile.memberships.filter(user=user, role__in=submit_roles).exists():
+                profile.role = "Submitter"
+            elif profile.memberships.filter(user=user, role__in=manage_roles).exists():
+                profile.role = "Manager"
+            elif profile.memberships.filter(user=user, role__in=edit_roles).exists():
+                profile.role = "Editor"
+            else:
+                profile.role = "Viewer"
+        userList.append(user)
+
+    # userList.sort(key=attrgetter(key=attrgetter('last_name'))) 
+
+    context = {
+        "count": len(userList),
+        "users":userList,
+    }
+
+    return render(request, "reports/users.html", context)

@@ -1,0 +1,9 @@
+{% extends "base_email.html" %}
+{% block main %}
+    <p>
+        Hello {{user}} - <br><br>Your recently submitted assessment for Profile: {{profile}} has been approved.
+        Your assessment data will be added to the community dataset for {{year}}, benefitting the entire community.<br><br>
+
+        On behalf of the CaRCC Capabilities Model working group - Thanks!
+    </p>
+{% endblock %}

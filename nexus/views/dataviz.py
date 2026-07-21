@@ -100,6 +100,7 @@ EPSCoRStates = ['Alabama', 'Alaska', 'Arkansas', 'Delaware', 'Guam', 'Hawaii', '
 def data_viz_demographics_maps(request): 
     graph = None
     graphtitle = None
+    missing_states = None
     nonDefs = ""
     if request.method == "POST":
         posted = DataFilterForm(request.POST)
@@ -112,6 +113,7 @@ def data_viz_demographics_maps(request):
             print(posted.errors)
             print(posted.cleaned_data)
             print(request.POST)
+            graphtitle = 'Problem with Filter specification for Map - see errors at left.'
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
     else: 
         if(request.GET) :
@@ -140,29 +142,34 @@ def data_viz_demographics_maps(request):
             #    graph = None
             #   graphtitle = f'Too Few Institutions ({instCount}) to Map!'
             #else :
-            grSize = cleaned_dict.get('graph_size')
-            match grSize:
-                case "lg":
-                    grheight = demogcharts.DEFAULT_PIE_HEIGHT
-                    grwidth = cmgraphs.DEFAULT_WIDTH
-                    #fontscale = 1
-                case "med":
-                    grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
-                    width_scale = 1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7)
-                    grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_MED_SCALE
-                    #grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
-                    #fontscale = width_scale
-                case "sm":
-                    grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
-                    width_scale = 1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7)
-                    grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_SMALL_SCALE
-                    #grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
-                    #fontscale = width_scale*1.1
-            graph, missing_states = demogcharts.demographicsMap(profiles,width=grwidth, height=grheight, 
-                                                    maplabelinclude=maplabelinclude, maplabelexclude=maplabelexclude)
+            if instCount == 0:
+                graph = None
+                missing_states = None
+                graphtitle = f'No Institutions in filtered set!'
+            else:
+                grSize = cleaned_dict.get('graph_size')
+                match grSize:
+                    case "lg":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT
+                        grwidth = cmgraphs.DEFAULT_WIDTH
+                        #fontscale = 1
+                    case "med":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
+                        width_scale = 1-((1-cmgraphs.GRAPHSIZE_MED_SCALE)*.7)
+                        grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_MED_SCALE
+                        #grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
+                        #fontscale = width_scale
+                    case "sm":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                        width_scale = 1-((1-cmgraphs.GRAPHSIZE_SMALL_SCALE)*.7)
+                        grwidth = cmgraphs.DEFAULT_WIDTH * cmgraphs.GRAPHSIZE_SMALL_SCALE
+                        #grwidth = cmgraphs.DEFAULT_WIDTH * width_scale
+                        #fontscale = width_scale*1.1
+                graph, missing_states = demogcharts.demographicsMap(profiles,width=grwidth, height=grheight, 
+                                                        maplabelinclude=maplabelinclude, maplabelexclude=maplabelexclude)
             if graph:
                 graphtitle = f'Geographic Distribution of {instCount} {popName}'
-            else:
+            elif not graphtitle:
                 graphtitle = 'No Data to Graph!'
 
         else :
@@ -216,6 +223,7 @@ def data_viz_demographics_charts(request):
             print(posted.cleaned_data)
             print(request.POST)
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
+            graphtitle = 'Problem with Filter specification for Chart - see errors at left.'
             chart = posted.cleaned_data.get('chart_views')      # Ensure we handle the chart filtering
     else: 
         if(request.GET) :
@@ -239,55 +247,60 @@ def data_viz_demographics_charts(request):
             #    graph = None
             #    graphtitle = f'Too Few Institutions ({instCount}) to Chart!'
             #else:
-            grSize = cleaned_dict.get('graph_size')
-            match grSize:
-                case "lg":
-                    grheight = demogcharts.DEFAULT_PIE_HEIGHT
-                case "med":
-                    grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
-                case "sm":
-                    grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
+            if instCount == 0:
+                graph = None
+                graphtitle = f'No Institutions in filtered set!'
+            else:
+                grSize = cleaned_dict.get('graph_size')
+                match grSize:
+                    case "lg":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT
+                    case "med":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_MED_SCALE
+                    case "sm":
+                        grheight = demogcharts.DEFAULT_PIE_HEIGHT * cmgraphs.GRAPHSIZE_SMALL_SCALE
 
-            match chart:
-                # Note that sum makes no sense for Charts, and will be hidden/disabled in the template
-                case "cc" :
-                    if graph := demogcharts.demographicsChartByCC(profiles, height=grheight) :
-                        graphtitle = f'Institutional Classification of {instCount} {popName}'
-                case "mission" :
-                    if graph := demogcharts.demographicsChartByMission(profiles, height=grheight) :
-                        graphtitle = f'Mission of {instCount} {popName}'
-                case "pub_priv" :
-                    graph, totalShown = demogcharts.demographicsChartByPubPriv(profiles, height=grheight)
-                    if graph :
-                        graphtitle = f'Control (Public/Private) of {totalShown} {popName}'
-                        if totalShown != instCount :
-                            footnote = FOOTNOTE_NOT_ALL_KNOWN
-                case "epscor" :
-                    graph, totalShown = demogcharts.demographicsChartByEPSCoR(profiles, height=grheight)
-                    if graph :
-                        graphtitle = f'EPSCoR status of {totalShown} {popName}'
-                        if totalShown != instCount :
-                            footnote = FOOTNOTE_NOT_ALL_KNOWN
-                case "msi" :
-                    if graph := demogcharts.demographicsChartByMSI(profiles, height=grheight) :
-                        graphtitle = f'Minority-serving status of {instCount} {popName}'
-                case "orgmodel" :
-                    if graph := demogcharts.demographicsChartByOrgModel(profiles, height=grheight) :
-                        graphtitle = f'Organizational Model of {instCount} {popName}'
-                case "reporting" :
-                    if graph := demogcharts.demographicsChartByReporting(profiles, height=grheight) :
-                        graphtitle = f'Reporting Structure of {instCount} {popName}'
-                case _ :
-                    send_mail(
-                            subject="Unrecognized Chart Option: "+chart,
-                            message=f"{request.user} tried to view Demographic chart option: {chart}, which is not recognized.",
-                            from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
-                            recipient_list=[settings.SUPPORT_EMAIL],
-                            fail_silently=False,)
-                    messages.error(request, f"Unrecognized Chart Option: {chart}. RCD Nexus Admins have been notified.")
+                match chart:
+                    # Note that sum makes no sense for Charts, and will be hidden/disabled in the template
+                    case "cc" :
+                        if graph := demogcharts.demographicsChartByCC(profiles, height=grheight) :
+                            graphtitle = f'Institutional Classification of {instCount} {popName}'
+                    case "mission" :
+                        if graph := demogcharts.demographicsChartByMission(profiles, height=grheight) :
+                            graphtitle = f'Mission of {instCount} {popName}'
+                    case "pub_priv" :
+                        graph, totalShown = demogcharts.demographicsChartByPubPriv(profiles, height=grheight)
+                        if graph :
+                            graphtitle = f'Control (Public/Private) of {totalShown} {popName}'
+                            if totalShown != instCount :
+                                footnote = FOOTNOTE_NOT_ALL_KNOWN
+                    case "epscor" :
+                        graph, totalShown = demogcharts.demographicsChartByEPSCoR(profiles, height=grheight)
+                        if graph :
+                            graphtitle = f'EPSCoR status of {totalShown} {popName}'
+                            if totalShown != instCount :
+                                footnote = FOOTNOTE_NOT_ALL_KNOWN
+                    case "msi" :
+                        if graph := demogcharts.demographicsChartByMSI(profiles, height=grheight) :
+                            graphtitle = f'Minority-serving status of {instCount} {popName}'
+                    case "orgmodel" :
+                        if graph := demogcharts.demographicsChartByOrgModel(profiles, height=grheight) :
+                            graphtitle = f'Organizational Model of {instCount} {popName}'
+                    case "reporting" :
+                        if graph := demogcharts.demographicsChartByReporting(profiles, height=grheight) :
+                            graphtitle = f'Reporting Structure of {instCount} {popName}'
+                    case _ :
+                        send_mail(
+                                subject="Unrecognized Chart Option: "+chart,
+                                message=f"{request.user} tried to view Demographic chart option: {chart}, which is not recognized.",
+                                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
+                                recipient_list=[settings.SUPPORT_EMAIL],
+                                fail_silently=False,)
+                        messages.error(request, f"Unrecognized Chart Option: {chart}. CaRCC RCD Nexus Admins have been notified.")
 
             if graph is None:
-                graphtitle = 'No Data to Chart!'
+                if not graphtitle:
+                    graphtitle = 'No Data to Chart!'
         else :
             #print( "GET with no params ")
             filter_form = DataFilterForm()
@@ -328,6 +341,7 @@ def data_viz_demographics_scatter(request):
             print(posted.errors)
             print(posted.cleaned_data)
             print(request.POST)
+            graphtitle = 'Problem with Filter specification for Chart - see errors at left.'
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
     else: 
         if(request.GET) :
@@ -362,7 +376,7 @@ def data_viz_demographics_scatter(request):
                 if graph := demogcharts.scatterChart(answers, instCount, height=grheight, width=grwidth, fontscale=fontscale) :
                     graphtitle = f'Scatter Graph of {instCount} Contributors'
 
-            if graph is None:
+            if graph is None and not graphtitle:
                 graphtitle = 'No Data to Graph!'
 
         else :
@@ -625,6 +639,7 @@ def data_viz_capsmodeldata(request):
             print(posted.errors)
             print(posted.cleaned_data)
             # print(request.POST)
+            graphtitle = 'Problem with Filter specification for Chart - see errors at left.'
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form and render that with error message
             chart = posted.cleaned_data.get('chart_views')      # Ensure we handle the chart filtering
     else: 
@@ -724,7 +739,7 @@ def data_viz_capsmodeldata(request):
                             topicQualifier = 'in this facing '
                         else:
                             topicQualifier = 'in this topic '
-                        partialBenchMarkNote = mark_safe(f'The basis benchmark assessment includes {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} {topicQualifier}for {basisBenchmarkYear}, and community data has been filtered accoundingly.')
+                        partialBenchMarkNote = mark_safe(f'The basis benchmark assessment includes {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} {topicQualifier}for {basisBenchmarkYear}, and community data has been filtered accordingly.')
                     #else:
                         #print(f'Basis benchmark assessment has all {basisBenchmarkQuestionIDs.count()} questions of {fullQuestionCountForBasisYear} for {basisBenchmarkYear} (topicQualifier}.')
 
@@ -841,11 +856,11 @@ def data_viz_capsmodeldata(request):
                     case _ :
                         send_mail(
                                 subject="Unrecognized Chart Option: "+chart,
-                                message=f"{request.user} tried to view chart option: {chart}, which is not recognized.",
+                                message=f"{request.user} tried to view CapsModel data chart option: {chart}, which is not recognized.",
                                 from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
                                 recipient_list=[settings.SUPPORT_EMAIL],
                                 fail_silently=False,)
-                        messages.error(request, f"Unrecognized Chart Option: {chart}. RCD Nexus Admins have been notified.")
+                        messages.error(request, f"Unrecognized Chart Option: {chart}. CaRCC RCD Nexus Admins have been notified.")
 
                 if graph is None:
                     graphtitle = 'No Data to Graph!'
@@ -894,6 +909,7 @@ def data_viz_prioritiessdata(request):
             print(posted.errors)
             print(posted.cleaned_data)
             print(request.POST)
+            graphtitle = 'Problem with Filter specification for Chart - see errors at left.'
             filter_form = DataFilterForm(posted.cleaned_data)   # recreate the form (unbound) so we can control which fields show
     else: 
         if(request.GET) :

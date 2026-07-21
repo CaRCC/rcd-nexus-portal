@@ -61,7 +61,7 @@ class AffiliationRequestForm(forms.Form):
             institution = Institution.objects.get(internet_domain__endswith=domain)
         except Institution.DoesNotExist:
             raise ValidationError(
-                "No institution found with that email domain. Fix any typos, or request a new institution be added to RCD Nexus using the above link."
+                "No institution found with that email domain. Fix any typos, or request a new institution be added to the CaRCC RCD Nexus portal using the above link."
             )
         except Institution.MultipleObjectsReturned:
             raise ValidationError(
@@ -70,7 +70,7 @@ class AffiliationRequestForm(forms.Form):
 
         if institution.has_cilogon_idp():
             raise ValidationError(
-                f"{institution} supports CILogon authentication, so you must logout and login to RCD Nexus directly with your institutional account. If you have configured CILogon to remember your institutional selection, you may need to clear your browser cookies for 'cilogon.org'."
+                f"{institution} supports CILogon authentication, so you must logout and login to the CaRCC RCD Nexus portal directly with your institutional account. If you have configured CILogon to remember your institutional selection, you may need to clear your browser cookies for 'cilogon.org'."
             )
 
         return cleaned_data

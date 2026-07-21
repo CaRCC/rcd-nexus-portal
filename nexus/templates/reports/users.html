@@ -44,30 +44,35 @@
 </style>
 {% endblock %}
 
-{% block title %}Institutions with Profiles{% endblock %}
+{% block title %}Users and associated Profiles{% endblock %}
 
 {% block main %}
 <section>
-    <h1 class="title">Institutions with Profiles</h1>
+    <h1 class="title">Users and associated Profiles</h1>
     <p class="content" style="text-align: center;">
-        These are the {{count}} institutions with profiles in the system.)
+        These are the {{count}} users and their associated profiles (if any) in the system.
     </p>
     <table class="content">
         <thead>
             <tr>
-                <th><p><a href="{{ request.path }}?sort=name">Name</a></p></th>
-                <th><p><a href="{{ request.path }}?sort=internet_domain">Domain</a></p></th>
-                <th><p><a href="{{ request.path }}">Country</a></p></th>
-                <th><p><a href="{{ request.path }}">State/Province</a></p></th>
+                <th><p>User Name</p></th>
+                <th><p>Associated Profiles</p></th>
             </tr>
         </thead>
         <tbody>
-            {% for inst in institutions %}
+            {% for user in users %}
             <tr>
-                <td><p><a href="{% url 'institutions:edit' inst.pk %}">{{ inst.name }}</a>  (<a href="{% url 'rcdprofile:view' inst.profiles.last.pk %}">Last Profile</a>)</p></td>
-                <td><p>{{ inst.internet_domain }}</p></td>
-                <td><p>{{ inst.country }}</p></td>
-                <td><p>{{ inst.state_or_province }}</p></td>
+                <td><p>{{ user }}</p></td>
+                <td>{% if not user.profile_list %}
+                    <p><i>no profiles...</i></p>
+                    {% else %}
+                    <p>
+                    {% for profile in user.profile_list %}
+                        {{ profile }} ({{profile.capabilities_assessment.review_status}}, <i>role: {{profile.role}}</i>)<br/>
+                    {% endfor %}
+                    </p>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>

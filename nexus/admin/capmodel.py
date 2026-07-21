@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib import admin
-from django.core.mail import send_mail
+from django.db.models import Q
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django import forms
 from django.contrib.admin.helpers import ActionForm
@@ -61,6 +63,15 @@ class AssessmentAdmin(admin.ModelAdmin):
     fields = [("review_status", "review_time"), "review_note", "assessment_type", "copied_from", ("update_time", "update_user"), "profile"]
 #    inlines = [AnswerInline]
     actions = ["approve"]
+    
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        if search_term:
+            # This applies unaccent to the search
+            queryset |= self.model.objects.filter(
+                            Q(profile__institution__name__unaccent__icontains=search_term) |
+                            Q(review_note__icontains=search_term) )
+        return queryset, use_distinct
 
     def approve(self, request, queryset):
 #        queryset.update(
@@ -83,14 +94,22 @@ class AssessmentAdmin(admin.ModelAdmin):
             assmnt.review_time=timezone.now()
             assmnt.save()
             if(submitter):
-                send_mail(
-                    subject=f"RCD Nexus Capabilities Model Assessment Approved",
-                    message=f"""Your recently submitted assessment for Profile: {profile} has been approved.
+                email_in_html = render_to_string('capmodel/assessment_approved_email.html', 
+                                    {'user': submitter.name(), 'profile': profile, 'year': approval_year})
+                msg = EmailMultiAlternatives(
+                    subject=f"CaRCC Capabilities Model Assessment Approved",
+                    body=f"""Hello {submitter.name()} - 
 
-Your assessment data will be added to the community dataset, benefitting the entire community.
+Your recently submitted assessment for Profile: {profile} has been approved.
+
+Your assessment data will be added to the community dataset for {approval_year}, benefitting the entire community.
 
 On behalf of the CaRCC Capabilities Model working group - Thanks!
 """,
                     from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
-                    recipient_list=[submitter.email],
+                    to=[submitter.email],
+                    cc=[settings.SUPPORT_EMAIL],
                 )
+                msg.attach_alternative(email_in_html, "text/html")
+                msg.send()
+

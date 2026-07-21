@@ -29,19 +29,11 @@ tbody td.domain {
 
 {% block main %}
 <h1>New Institution Request</h1>
-<p class="intro">Fill out the form below to request a new institution.<br>We will review your request and get back to you as soon as possible.</p>
-<p class="intro">Before submitting, <b>please verify</b> that your institution isn't already included in RCD Nexus,using the table at the bottom.
-    If it is, you should login to it via CILogon, or <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a>to it.</p>
-<form method="post" action="">
-    {% csrf_token %}
-    {{ form }}
-    <section class="actions">
-        <button type="submit">Submit Request</button>
-    </section>
-</form>
-
+<p class="intro">Before you request a new institution, check the list below to make sure it is not already in our system.</p>
+<p class="intro">If you find your institution in the list, please login to it via CILogon, or if your institution does not support CILogon use another
+    Identity provider (e.g., Google or Microsoft) and then <a href="{% url 'institutions:affiliation-request' %}">request an affiliation</a>to your institution.</p>
 <section>
-    <h3><label style="font-weight: bold; font-size: 1.2em; margin:.5em;" for="inst-filter">Filter existing institutions:</label>
+    <h3><label style="font-weight: bold; font-size: 1.2em; margin:.5em;" for="inst-filter">Search among existing institutions:</label>
     <input style="width:20em;" id="inst-filter" _="on input show <tbody>tr/> in <table.results/> when its textContent.toLowerCase() contains my value.toLowerCase()"/></h3>
     {% if institutions %}
 
@@ -64,5 +56,15 @@ tbody td.domain {
     <p>No institutions found.</p>
     {% endif %}
 </section>
+
+
+    <p class="intro">If you cannot find your institution in the list above, please fill out the form below to request a new institution.<br>We will review your request and get back to you as soon as possible.</p>
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form }}
+    <section class="actions">
+        <button type="submit">Submit Request</button>
+    </section>
+</form>
 
 {% endblock %}

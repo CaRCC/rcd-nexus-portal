@@ -48,6 +48,12 @@
         line-height: 1.2;
         margin:0;
     }
+    section.helpdocs ul li span.question-help {
+        font-size: .9em;
+        font-style: italic;
+        display: none;
+        padding: 0 10px;
+    }
     p.content {
         font-size: 0.9em;
     }
@@ -128,14 +134,14 @@
     }
 
     p.essentialCB {
-        text-align: center;
+        text-align: left;
     }
     p.essentialCB>span {
         color: var(--nexus-light-text);
         font-weight: bold;
         background-color: var(--info-off);
         margin: 0px;
-        padding: 6px 10px;
+        padding: 4px 6px;
         box-shadow: 1px 1px 2px var(--logo-dk-blue-shadow);
     }
     a.empty {
@@ -184,6 +190,18 @@
         }
     }
 
+    function onShowHelpChange(cbEl) {
+        //alert("onShowHelpChange checked: "+cbEl.checked?"Yes":"No");
+        show = cbEl.checked;
+        showHelp(show);
+    }
+
+    function showHelp(show) {
+        const helpSpans = document.querySelectorAll("span.question-help");
+        for (let i = 0; i < helpSpans.length; i++) {
+            helpSpans[i].style.display = show?"inline-block":"none";
+        }
+    }
 
 </script>
 
@@ -278,8 +296,14 @@
         <p class="footnote"><a href="#ftnt_ref2" id="ftnt2">[2]</a>&ldquo;CI Engineers&rdquo; have different roles
              at different institutions, and some might (also) be in the Systems Facing roles.</p>
     </div>
-    <p class="essentialCB noprint"><span><input type="checkbox" id="showHideExtrasCB" onchange="onShowExtrasChange(this)">
-        Show only Essential Topics and Questions.</span></p>
+    <p class="essentialCB noprint">
+        <span><input type="checkbox" id="showHideExtrasCB" onchange="onShowExtrasChange(this)">
+        Show only Essential Topics and Capabilities.</span>
+    </p>
+    <p class="essentialCB noprint">
+        <span><input type="checkbox" id="showHideHelpCB" onchange="onShowHelpChange(this)">
+        Show Help text for Capabilities Questions.</span>
+    </p>
 
     {% for facing, topics in categories.items %}
     <div class="helptopic">

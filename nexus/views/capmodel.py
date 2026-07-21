@@ -4,13 +4,16 @@ import csv
 from django.apps import apps
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django.http import HttpResponseBadRequest, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_page
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 from nexus.forms.capmodel import *
 from nexus.models.capmodel import *
@@ -72,6 +75,12 @@ def assessment(request, profile_id):
             assessment.update_time = timezone.now()
             assessment.update_user = request.user
             assessment.save()
+            send_mail(
+                subject=f"Capabilities Model Assessment created for {profile}",
+                message=f"A new assessment of type {atype} was created for: {profile} by: {request.user}. {profile.comments}",
+                from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
+                recipient_list=[settings.SUPPORT_EMAIL],
+            )
         else: # No assessment and no context to create one - redirect to the profile. 
             return redirect("rcdprofile:detail", profile.pk)
 
@@ -96,11 +105,17 @@ def assessment(request, profile_id):
                     request,
                     f"Your CaRCC Capabilities Assessment for {profile} has been submitted for final review.",
                 )
+                assessment_link = settings.BASE_URL+reverse("capmodel:assessment", args=[profile.pk])
+                content_type  = ContentType.objects.get_for_model(assessment.__class__)
+                approval_link = f"{settings.BASE_URL+reverse('admin:%s_%s_changelist' % (content_type.app_label, content_type.model))}?review_status__exact=pending"
+                message_as_html = render_to_string('capmodel/assessment_submit_email.html', 
+                                      {'profile': profile, 'institution':profile.institution, 'submitter':request.user, 'assmnt_link':assessment_link, 'approval_link':approval_link})
                 send_mail(
                     subject=f"CaRCC Capabilities Assessment Submitted for {profile}",
+                    html_message=message_as_html,
                     message=f"An assessment for Institution Profile: {profile} was just submitted from Institution: {profile.institution}, by: {request.user}.",
                     from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
-                    recipient_list=[settings.CURATOR_EMAIL],
+                    recipient_list=[settings.SUPPORT_EMAIL],
                 )
                 return redirect("capmodel:assessment", profile_id)
     else:
@@ -279,10 +294,10 @@ def assessment_unsubmit(request, profile_id):
         f"Your CaRCC Capabilities Assessment for {profile} has been unsubmitted.",
     )
     send_mail(
-        subject=f"RCD Nexus Assessment Un-Submitted for {profile}",
+        subject=f"CaRCC Capabilities Model Assessment Un-Submitted for {profile}",
         message=f"An assessment for RCD Profile: {profile} was just unsubmitted (withdrawn) from Institution: {profile.institution}, by: {request.user}.",
         from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
-        recipient_list=[settings.CURATOR_EMAIL],
+        recipient_list=[settings.SUPPORT_EMAIL],
     )
 
     return redirect("capmodel:assessment", profile_id)
@@ -313,13 +328,16 @@ def topic(request, profile_id, facing, topic):
     is_included = False
     has_nonincluded = False
     for answer in answers:
-        #answer.qid = {answer.question.legacy.qid if hasattr(answer.question, "legacy") else 'Q'}
+        answer.qid = answer.question.legacy_qid
         if answer.question.is_essential:
             is_essential = True
         else:
             has_nonessential = True
         if answer.is_included:
-            is_included = True
+            # This would just be True, except for weird cases in essentials assessments where an essential question
+            # is marked included. 
+            is_included = (assessment.assessment_type != CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL)\
+                        or not answer.question.is_essential
         else:
             has_nonincluded = True
         answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
@@ -361,8 +379,10 @@ def topic(request, profile_id, facing, topic):
             coverage_pct = mark_safe(f"{covstring}")
             coverage_color = compute_answer_color(coverage)
 
-    prev_topic_list = CapabilitiesTopic.objects.filter(facing__slug=facing.slug, index__lt=topic.index)
-    next_topic_list = CapabilitiesTopic.objects.filter(facing__slug=facing.slug, index__gt=topic.index)
+    prev_topic_list = CapabilitiesTopic.objects.filter(Q(facing__index__lt=topic.facing.index)
+                                            | Q(facing__index=topic.facing.index, index__lt=topic.index)).order_by('facing__index', 'index')
+    next_topic_list = CapabilitiesTopic.objects.filter(Q(facing__index__gt=topic.facing.index)
+                                            | Q(facing__index=topic.facing.index, index__gt=topic.index)).order_by('facing__index', 'index')
 
     showExtraTopics = request.COOKIES.get('showEX')=="1"
     # print(f"Topic view, showExtraTopics is: [{showExtraTopics}]")
@@ -375,14 +395,16 @@ def topic(request, profile_id, facing, topic):
         if prev_topic_list.count() > 0:
             for i in range(prev_topic_list.count()-1,-1,-1):
                 ptopic = prev_topic_list[i]
-                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and topic_is_essential(assessment, facing, ptopic) \
-                    or topic_is_included(assessment, facing, ptopic):
+                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL \
+                        and topic_is_essential(assessment, ptopic.facing, ptopic) \
+                    or topic_is_included(assessment, ptopic.facing, ptopic):
                     prev_topic = ptopic
                     break
         if next_topic_list.count() > 0:
             for ntopic in next_topic_list:
-                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and topic_is_essential(assessment, facing, ntopic) \
-                    or topic_is_included(assessment, facing, ntopic):
+                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL \
+                        and topic_is_essential(assessment, ntopic.facing, ntopic) \
+                    or topic_is_included(assessment, ntopic.facing, ntopic):
                     next_topic = ntopic
                     break
 
@@ -459,6 +481,7 @@ def answer(request, profile_id, question_pk):
     question = answer.question.contents.get(language=session_language)
     question.slug = answer.question.slug
     question.is_essential = answer.question.is_essential
+    question.qid = answer.question.legacy_qid
 
     match answer.state:
         case CapabilitiesAnswer.State.ANSWERED:
@@ -474,13 +497,51 @@ def answer(request, profile_id, question_pk):
     other_answers = CapabilitiesAnswer.objects.order_by("question_id").filter(
         assessment__profile_id=profile_id
     )
-    if answer.assessment.assessment_type==CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+    atype = answer.assessment.assessment_type
+    if atype==CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
         cyoj = True
         cyoj_copied = not answer.assessment.copied_from is None
     else :
         cyoj = False
         cyoj_copied = False
 
+    # Get previous and next answers ordering by the Facing, Topic, and Question indices (not the PKs)
+    prev_answer_list = other_answers.filter(Q(question__topic__facing__pk__lt=answer.question.topic.facing.pk)
+                                            | Q(question__topic__facing__pk=answer.question.topic.facing.pk,
+                                                question__topic__index__lt=answer.question.topic.index)
+                                            | Q(question__topic__pk=answer.question.topic.pk,
+                                                question__index__lt=answer.question.index))\
+                                                    .order_by('question__topic__facing_id', 'question__topic__index','question__index')
+    next_answer_list = other_answers.filter(Q(question__topic__facing__pk__gt=answer.question.topic.facing.pk)
+                                            | Q(question__topic__facing__pk=answer.question.topic.facing.pk,
+                                                question__topic__index__gt=answer.question.topic.index)
+                                            | Q(question__topic__pk=answer.question.topic.pk,
+                                                question__index__gt=answer.question.index))\
+                                                    .order_by('question__topic__facing_id', 'question__topic__index','question__index')
+
+    # We use the showExtraTopics cookie to decide whether to skip questions that are not included when 
+    # building the previous and next capability links
+    showExtraTopics = request.COOKIES.get('showEX')=="1"
+    if showExtraTopics or atype == CapabilitiesAssessment.AssessmentTypeChoices.FULL:
+        prev_answer = prev_answer_list.last()
+        next_answer = next_answer_list.first()
+    else:
+        prev_answer = None
+        next_answer = None
+        if prev_answer_list.count() > 0:
+            for i in range(prev_answer_list.count()-1,-1,-1):
+                panswer = prev_answer_list[i]
+                if atype == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and panswer.question.is_essential \
+                    or panswer.is_included:
+                    prev_answer = panswer
+                    break
+        if next_answer_list.count() > 0:
+            for nanswer in next_answer_list:
+                if atype == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL and nanswer.question.is_essential \
+                    or nanswer.is_included:
+                    next_answer = nanswer
+                    break
+    
     context = {
         "profile": profile,
         "essentialAssmnt": answer.assessment.assessment_type==CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL ,
@@ -495,14 +556,8 @@ def answer(request, profile_id, question_pk):
         "topic": answer.question.topic.contents.get(language=session_language),
         "facing": answer.question.topic.facing.contents.get(language=session_language),
         "coverage": covstring,
-        "prev_question_pk": (
-            other_answers.filter(question_id__lt=question_pk).last()
-            or other_answers.last()
-        ).question_id,
-        "next_question_pk": (
-            other_answers.filter(question_id__gt=question_pk).first()
-            or other_answers.first()
-        ).question_id,
+        "prev_question_pk": prev_answer.question_id if prev_answer else None,
+        "next_question_pk": next_answer.question_id if next_answer else None,
         "navtree": rcdprofile_navtree(profile, rcdprofile_navtree.CAPABILITIES),
     }
 
@@ -776,7 +831,17 @@ def printable_report(request, profile_id):
                                 topic_sum_count += 1
             #answers = answers.order_by("question_id")
             for answer in answers:
-                answer.html_display = mark_safe(f"{answer.question.contents.get(language=session_language).text}")
+                qtext = answer.question.contents.get(language=session_language)
+                if not qtext.help_text:
+                    helptext = ""
+                else:
+                    helptext = f'<span class="question-help">{qtext.help_text}</span>'
+                if not answer.work_notes:
+                    worknotes = ""
+                else:
+                    worknotes = f'<span class="question-worknotes"><span class="title">Work Notes: </span>{answer.work_notes}</span>'
+                    
+                answer.html_display = mark_safe(f"{qtext.text}{helptext}{worknotes}")
                 match answer.score_deployment:
                     case CapabilitiesAnswer.ScoreDeploymentChoices.NONE:
                         answer.avail = "None"

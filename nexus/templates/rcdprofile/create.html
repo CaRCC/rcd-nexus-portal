@@ -97,7 +97,7 @@
 {% block title %}RCD-Nexus New Institution Profile{% endblock %}
 
 {% block main %}
-<h2>New RCD Nexus Institution Profile for: <span class="Instname">{{institution}}</span></h2>
+<h2>New CaRCC RCD Nexus Institution Profile for: <span class="Instname">{{institution}}</span></h2>
 {% if importable_profiles.exists %}
 <h3 class="intro">You can either copy the information from an existing institution profile:</h3>
 <form action="{% url 'rcdprofile:import' %}" method="post">

@@ -1,0 +1,8 @@
+{% extends "base_email.html" %}
+{% block main %}
+    <p>
+        Hello {{user}} - <br><br>Your institution request for <b>{{institution}}</b> has been denied, 
+        as we already have an institution record for that institution.<br><br>
+        Please respond to this email or reach out to us at {{support}} if you have any questions.
+    </p>
+{% endblock %}

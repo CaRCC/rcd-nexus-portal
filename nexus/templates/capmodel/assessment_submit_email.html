@@ -1,0 +1,13 @@
+{% extends "base_email.html" %}
+{% block main %}
+    <p>
+        Hello Capabilities Model Support:<br><br>An assessment for Institution Profile: {{profile}} was just
+        submitted from Institution: {{institution}}, by: {{submitter}}.
+    </p>
+    <p>
+        <a href="{{assmnt_link}}">Click here to review the newly submitted assessment</a>.
+    </p>
+    <p>
+        <a href="{{approval_link}}">Click here to see assessments pending approval (must be logged in as admin/staff)</a>.
+    </p>
+{% endblock %}

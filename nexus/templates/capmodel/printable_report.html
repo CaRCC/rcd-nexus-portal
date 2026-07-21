@@ -12,7 +12,19 @@
 
     section.status p {
         margin: 0.1em 1em;
-        text-align: center;
+        text-align: left;
+        font-size: 0.95em;
+    }
+
+    section.status button {
+        margin: 0.1em .5em;
+        padding: 0px .7em;
+        min-height: 1.8em;
+        height: 1.8em;
+        box-shadow: none;
+    }
+    main section.status button:focus {
+        box-shadow: none;
     }
 
     div.report {
@@ -84,6 +96,21 @@
         text-decoration: line-through;
         color:grey;
     }
+    td.question span.question-help {
+        font-size: .9em;
+        font-style: italic;
+        display: none;
+        padding: 2px 10px 0 10px;
+    }
+    td.question span.question-worknotes {
+        font-size: .95em;
+        font-style: normal;
+        display: none;
+        padding: 2px 10px 0 0px;
+    }
+    td.question span.question-worknotes span.title {
+        font-weight: bold;
+    }
     td.prio {
         width:24px;
     }
@@ -107,14 +134,40 @@
             position: fixed;
             bottom:0;
         }
+        section.status {
+            display:none;
+        }
     }
 </style>
 <script>
-    function onShowExtrasChange(cbEl) {
-        //alert("onShowExtrasChange checked: "+cbEl.checked?"Yes":"No");
-        show = !cbEl.checked;
+    function onShowExtrasChange(btnEl) {
+        show = btnEl.textContent.startsWith("Show");
+        //alert("onShowExtrasChange found action is:"+(show?"Show":"Hide"));
         showExtras(show);
-        setExtraTopicsStateCookie(show?SHOWN:HIDDEN);
+        shown = show?SHOWN:HIDDEN;
+        setExtraTopicsStateCookie(shown);
+        setShowHideBtnText(btnEl, shown);
+    }
+    function onShowLensesChange(btnEl) {
+        show = btnEl.textContent.startsWith("Show");
+        //alert("onShowLensesChange found action is:"+(show?"Show":"Hide"));
+        showLenses(show);
+        shown = show?SHOWN:HIDDEN;
+        setShowHideBtnText(btnEl, shown);
+    }
+    function onShowHelpChange(btnEl) {
+        show = btnEl.textContent.startsWith("Show");
+        //alert("onShowHelpChange found action is:"+(show?"Show":"Hide"));
+        showHelp(show);
+        shown = show?SHOWN:HIDDEN;
+        setShowHideBtnText(btnEl, shown);
+    }
+    function onShowNotesChange(btnEl) {
+        show = btnEl.textContent.startsWith("Show");
+        //alert("onShowNotesChange found action is:"+(show?"Show":"Hide"));
+        showWorkNotes(show);
+        shown = show?SHOWN:HIDDEN;
+        setShowHideBtnText(btnEl, shown);
     }
 
     /*
@@ -154,19 +207,45 @@
             ifHiddenList[i].style.display = show?"none":"block";
         }
     }
+    function setShowHideBtnText(btnEl, shown) {
+        text = btnEl.textContent;
+        if(shown==SHOWN) {
+            btnEl.textContent = text.replace("Show","Hide");
+        } else {
+            btnEl.textContent = text.replace("Hide","Show");
+        }
+    }
 
     function initExtraTopicsFromCookie() {
         // Get the cookie and then call the method
         var shown = getStateCookie(SHOW_HIDE_EXTRAS)
         //console.log("Show Extras cookie val: "+shown);
         showExtras(shown==SHOWN);
-        cb = document.getElementById("showHideExtrasCB");
-        if( cb ) {
-            cb.checked = shown!=SHOWN;
-            //console.log("Init Hide Extras CB from cookie: "+((shown!=SHOWN)?"Hide":"Show"));
+        btnEl = document.getElementById("showHideExtrasBtn");
+        setShowHideBtnText(btnEl, shown);
+    }
+
+    function showLenses(show) {
+        const trList = document.querySelectorAll("td.lens");
+        //alert("showExtras found: "+nodeList.length+" p.extra nodes");
+        for (let i = 0; i < trList.length; i++) {
+            trList[i].style.display = show?"table-cell":"none";
         }
     }
 
+    function showHelp(show) {
+        const helpSpans = document.querySelectorAll("span.question-help");
+        for (let i = 0; i < helpSpans.length; i++) {
+            helpSpans[i].style.display = show?"inline-block":"none";
+        }
+    }
+
+    function showWorkNotes(show) {
+        const notesSpans = document.querySelectorAll("span.question-worknotes");
+        for (let i = 0; i < notesSpans.length; i++) {
+            notesSpans[i].style.display = show?"inline-block":"none";
+        }
+    }
 
 </script>
 {% endblock %}
@@ -186,12 +265,16 @@
     <span class="status">(Unknown state)</span>
     {% endif %}
 </h2>
-{%if atype != "full" %}
 <section class="status showHideExtras">
-    <p><input type="checkbox" id="showHideExtrasCB" onchange="onShowExtrasChange(this)">
-        Hide Extra Topics (i.e., {%if atype == "essential" %}Non-Essential Topics and {% endif %}those not included in this Assessment).</p>
+    {%if atype != "full" %}
+    <p><button id="showHideExtrasBtn" onclick="onShowExtrasChange(this)">Hide Extra Capabilities</button>
+        (i.e., {%if atype == "essential" %}Non-Essential {% endif %}Topics and Capabilities not included in this Assessment).</p>
+    {% endif %}
+    <p><button id="showHideLensesBtn" onclick="onShowLensesChange(this)">Hide Details of Lenses</button>
+        (i.e., Availability, Service Operating Level (SOL), and Community Engagement).</p>
+    <p><button id="showHideHelpBtn" onclick="onShowHelpChange(this)">Show Help Text for Capabilities</button></p>
+    <p><button id="showHideNotesBtn" onclick="onShowNotesChange(this)">Show Work Notes for Capabilities</button></p>
 </section>
-{% endif %}
 
 <div class="report">
 {% for facing, topics in categories.items %}
@@ -202,7 +285,7 @@
                 <span class="facingcovpcnt">{{facing.coverage_pct}}</span>{% endif %}
         </h3>
         {%if atype == "cyoj" and not facing.has_included %}
-            <p class="tname topicheader ifhidden">No Topics included in this Assessment</p>
+            <p class="tname topicheader ifhidden">No Topics included in this Assessment{%if cyoj_copied %} (all answers copied){%endif%}</p>
             <p class="tname topicheader ifhidden"></p>
         {%endif%}
 
@@ -224,7 +307,7 @@
                         {%if atype == "full" or topic.is_essential or topic.is_included %}
                             {%comment%}Produce a normal header since there is at least one essential or included capability{%endcomment%}
                             <tr class="headline">
-                                <td>{%if atype == "essential" %}Essential/{%endif%}{%if atype != "full" %}Included{%endif%} Capabilities</td>                            
+                                <td>{%if atype == "essential" %}Essential/{%endif%}{%if atype != "full" %}Included{%endif%} Capabilities</td>
                                 <td class="lens avail">Avail.</td>
                                 <td class="lens sol">SOL</td>
                                 <td class="lens">Comm.</td>
@@ -233,7 +316,7 @@
                             </tr>
                             {%comment%}Add all the included/essential capabilities (or all of them if this is a full assessment{%endcomment%}
                             {% for answer in answers %}
-                                {%if atype == "full" or answer.question.is_essential or answer.is_included %}
+                                {%if atype == "full" or atype == "essential" and answer.question.is_essential or answer.is_included %}
                                     <tr class="question {% cycle 'odd-field' 'even-field' as fieldcycle %}"
                                         {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
                                         <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>
@@ -255,12 +338,16 @@
                         {%comment%}If there are also non-essential or non-included capabilities, include those as well{%endcomment%}
                         {%if atype != "full" and topic.has_nonincluded or topic.has_nonessential%}
                             <tr class="headline extras">
-                                <td>{%if atype == "essential" %}Non-Essential Capabilities{%else%}Capabilities not included{%endif%}</td>
-                                <td></td><td></td><td></td><td></td><td></td>
+                                <td>{%if atype == "essential" %}Non-Essential {%endif%}Capabilities not included{%if cyoj_copied %} (answers copied){%endif%}</td>
+                                <td class="lens avail">Avail.</td>
+                                <td class="lens sol">SOL</td>
+                                <td class="lens">Comm.</td>
+                                <td class="cov">Cov.</td>
+                                <td class="prio">Prio</td>
                             </tr>
                             {%comment%}Add all the non-included/non-essential capabilities. Note that for CYOJ copies some may be answered.{%endcomment%}
                             {% for answer in answers %}
-                                {%if not answer.question.is_essential and not answer.is_included %}
+                                {%if atype == "essential" and not answer.question.is_essential or atype == "cyoj" and not answer.is_included %}
                                     <tr class="question extras {% cycle 'odd-field' 'even-field' as fieldcycle %}"
                                         {% if answer.coverage_color %}style="background-color:{{answer.coverage_color}};"{%endif%}>
                                         <td {% if answer.cssclass %} class="question {{answer.cssclass}}" {% else %} class="question" {%endif%}>

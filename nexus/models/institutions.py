@@ -3,8 +3,8 @@ import logging
 
 from django.conf import settings
 from django.contrib import admin
-from django.core.mail import send_mail
 from django.db import models, transaction
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -48,7 +48,7 @@ class Institution(IPEDSMixin, models.Model):
                 logger.error(f"getDemoIDList(): Multiple institutions found for domain: [{d}], only adding first.")
                 institution = Institution.objects.get(internet_domain__endswith=d).first()
             Institution.demo_ids.append(institution.id)
-            print(f'getDemoIDList() init: Added institution (id=[{institution.id}] for domain:[{d}]')
+            # print(f'getDemoIDList() init: Added institution (id=[{institution.id}] for domain:[{d}]')
 
         return Institution.demo_ids
 
@@ -171,24 +171,53 @@ class NewInstitutionRequest(models.Model):
         inst_link = settings.BASE_URL+reverse("institutions:edit", args=[institution.pk])
         email_in_html = render_to_string('institutions/inst_added_email.html', 
                             {'user': user, 'institution': institution, 'inst_link':inst_link})
-        send_mail(
-            subject=f"RCD Nexus institution added",
-            message=f"""Hello {user} - 
-            
+        msg = EmailMultiAlternatives(
+            subject=f"Institution added to the CaRCC RCD Nexus portal",
+            body=f"""Hello {user} - 
+        
 Your institution request for {institution} has been approved, and you have been added as a manager.
 
 You can manage it at: {inst_link}
 
 Please add as much institutional information as possible to improve the community datasets.
 
-You may now begin using the RCD Nexus assessment tools for your institution!
+You may now begin using the CaRCC Capabilities Model assessment tools for your institution!
 """,
-            html_message=email_in_html,
             from_email=settings.DEFAULT_FROM_EMAIL_USER+'@'+request.get_host(),
-            recipient_list=[self.requester.email],
+            to=[self.requester.email],
+            cc=[settings.SUPPORT_EMAIL],
         )
+        msg.attach_alternative(email_in_html, "text/html")
+        msg.send()
+
         return institution
 
+    def reject_dupe(self, request):
+        user = self.requester.name()
+        institution = self.name
+        supportEmail = settings.SUPPORT_EMAIL
+        email_in_html = render_to_string('institutions/inst_rejected_email.html', 
+                            {'user': user, 'institution': institution, 'support':supportEmail})
+        email_as_text = f"""Hello {user} - 
+                
+Your institution request for {institution} has been denied, as we already have an institution record for that institution. 
+
+Please respond to this email or reach out to us at {supportEmail} if you have any questions. 
+"""
+        msg = EmailMultiAlternatives(
+            subject=f"Request for new institution on the CaRCC RCD Nexus portal was denied",
+            body=email_as_text,
+            from_email=supportEmail,
+            to=[self.requester.email],
+            cc=[supportEmail],
+        )
+        msg.attach_alternative(email_in_html, "text/html")
+        msg.send()
+
+        self.delete()
+        
+        return institution  # Note this is just the name string
+      
     def __str__(self):
         return f"{self.name} (by {self.requester})"
 
@@ -260,6 +289,11 @@ class AffiliationRequest(models.Model):
     expires = models.DateTimeField()
 
     def approve(self):
+        # Check whether this affiliation has already been created (e.g., directly by a manager)
+        if InstitutionAffiliation.objects.filter(
+            user=self.user, institution_id=self.institution.pk).exists():
+            self.delete()   # Just toss this one and ignore
+            return False
         with transaction.atomic():
             InstitutionAffiliation.objects.create(
                 user=self.user,
@@ -267,6 +301,7 @@ class AffiliationRequest(models.Model):
                 role=InstitutionAffiliation.Role.AFFILIATE,
             )
             self.delete()
+        return True
 
     def __str__(self):
         return f"{self.user} -> {self.institution} (via {self.email})"

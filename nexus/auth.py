@@ -5,6 +5,8 @@ import requests
 from django.core.exceptions import SuspiciousOperation
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 from django.contrib import messages
+from django.conf import settings
+from django.core.mail import send_mail
 
 from nexus import models
 
@@ -22,19 +24,24 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
     CHPC and CILogon.
     """
 
+    invalid_IDPs = {"http://github.com/login/oauth/authorize":"GitHub",
+                             "http://orcid.org/oauth/authorize":"ORCID",
+                             "https://access-ci.org/idp":"ACCESS-CI",
+                             "https://proxyidp.es.net/satosafrontend/proxy.xml":"ESNet",}
+
     def authenticate(self, request, **kwargs):
         try:
             return super().authenticate(request, **kwargs)
         except InvalidClaimsError as e:
-            if e.claims["idp"] == "http://orcid.org/oauth/authorize":
-                messages.error(request, "ORCID login is not currently supported. Please use your institutional login, or a supported social login such as Google.")
-            elif e.claims["idp"] == "http://github.com/login/oauth/authorize":
-                messages.error(request, "GitHub login is not currently supported. Please use your institutional login, or a supported social login such as Google.")
+            badIDP = CILogonOIDCAuthenticationBackend.invalid_IDPs[e.claims["idp"]]
+            if badIDP:
+                messages.error(request, f'{badIDP} login is not currently supported. Please use your institutional login, or a supported social login such as Google.')
             else:
-                messages.error(request, "Invalid identity provider. If it is your institution, please contact RCD Nexus support.")
+                messages.error(request, "Invalid identity provider. If it is your institution, please contact CaRCC Capabilities Model support.")
 
     def verify_claims(self, claims):
-        if claims["idp"] in {"http://github.com/login/oauth/authorize", "http://orcid.org/oauth/authorize"}:
+        # print(f'Verify_claims: {claims}')
+        if claims["idp"] in CILogonOIDCAuthenticationBackend.invalid_IDPs.keys():
             return False
             
         return super().verify_claims(claims)
@@ -49,6 +56,7 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             identifier=claims["idp"],
             defaults={"name": claims.get("idp_name", None)},
         )
+        # print(f'CILogon backend get or create user: {claims["email"]} for idp: {idp.name}')
         if not idp.institution:
             try:
                 details = get_cilogon_idp_details(idp.identifier)
@@ -57,7 +65,7 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
                 # Search for a matching existing institution, starting with the full domain and working up to the TLD.
                 domain_parts = internet_domain.split(".")
                 searched_part_count = len(domain_parts)
-                while searched_part_count > 2:
+                while searched_part_count >= 2:
                     idp.institution = models.Institution.objects.filter(internet_domain=".".join(domain_parts[-searched_part_count:])).first()
                     if idp.institution:
                         break
@@ -65,6 +73,12 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
 
                 # No institution was found, so make one using the full domain name. Hopefully it wasn't already in IPEDS under a different domain name.
                 if not idp.institution:
+                    send_mail(
+                        subject=f"Nexus Portal creating new Institution",
+                        message=f'CILogon backend: No institution found for idp internet_domain: {internet_domain} for login by: {claims.get("email")}; creating one.',
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[settings.SUPPORT_EMAIL],
+                    )
                     idp.institution = models.Institution.objects.create(
                         internet_domain=internet_domain,
                         name=idp.name or idp.identifier,
@@ -83,10 +97,13 @@ class CILogonOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         )
 
         if profile.user == None:
+            # we map email to their username on create, but historically did not convert to lowercase, so use the email 
+            # to find the user, but allow case-insensitive match
             profile.user, created = models.User.objects.get_or_create(
-                email=claims["email"],
+                username__iexact=claims["email"],
                 defaults={
-                    "username": claims["email"],
+                    "email": claims["email"],               # leave their email as they specified it
+                    "username": claims["email"].lower(),    # force to lower for the username
                     "first_name": claims.get("given_name"),
                     "last_name": claims.get("family_name"),
                 },

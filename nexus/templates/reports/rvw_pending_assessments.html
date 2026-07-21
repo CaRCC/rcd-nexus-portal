@@ -19,6 +19,7 @@
         box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
     }
     table.content {
+        width: 100%;
         font-size: 0.85em;
         border: solid thick var(--primary-fg-off);
     }
@@ -33,9 +34,11 @@
         font-weight: normal;
     }
     table.content th, table.content th p {
-        text-align: center;
         font-weight: bold;
         background-color: var(--info-off);
+    }
+    p.desc {
+        font-size: 0.9em;
     }
     p.footnote {
         font-size: 0.85em;
@@ -44,30 +47,25 @@
 </style>
 {% endblock %}
 
-{% block title %}Institutions with Profiles{% endblock %}
+{% block title %}Submitted Assessments Pending Review{% endblock %}
 
 {% block main %}
-<section>
-    <h1 class="title">Institutions with Profiles</h1>
-    <p class="content" style="text-align: center;">
-        These are the {{count}} institutions with profiles in the system.)
-    </p>
+<section class="contriblist" >
+    <h1 class="title">{{title}}</h1>
     <table class="content">
         <thead>
             <tr>
-                <th><p><a href="{{ request.path }}?sort=name">Name</a></p></th>
-                <th><p><a href="{{ request.path }}?sort=internet_domain">Domain</a></p></th>
-                <th><p><a href="{{ request.path }}">Country</a></p></th>
-                <th><p><a href="{{ request.path }}">State/Province</a></p></th>
+                <th><p>Profile/Assessment</p></th>
+                <th><p>Submitted On</p></th>
+                <th><p>Submitter</p></th>
             </tr>
         </thead>
         <tbody>
-            {% for inst in institutions %}
+            {% for asmnt in assessments %}
             <tr>
-                <td><p><a href="{% url 'institutions:edit' inst.pk %}">{{ inst.name }}</a>  (<a href="{% url 'rcdprofile:view' inst.profiles.last.pk %}">Last Profile</a>)</p></td>
-                <td><p>{{ inst.internet_domain }}</p></td>
-                <td><p>{{ inst.country }}</p></td>
-                <td><p>{{ inst.state_or_province }}</p></td>
+                <td><p><a href="{% url 'capmodel:assessment' asmnt.profile.pk %}">{{asmnt.profile}}</a></p></td>
+                <td><p>{{ asmnt.update_time }}</p></td>
+                <td><p>{{ asmnt.update_user }}</p></td>
             </tr>
             {% endfor %}
         </tbody>

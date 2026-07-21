@@ -98,7 +98,11 @@ def printable_questions(request):
             if(topic.slug==CapabilitiesTopic.domain_coverage_slug):
                 topic.isdomain = True
             for question in questions:
-                question.html_display = mark_safe(f"{question.contents.get(language=session_language).text}")
+                qtext = question.contents.get(language=session_language)
+                if not qtext.help_text:
+                    question.html_display = mark_safe(f"{qtext.text}")
+                else:
+                    question.html_display = mark_safe(f'{qtext.text}<br><span class="question-help">{qtext.help_text}</span>')
                 if question.is_essential:
                     topic.is_essential = True
 

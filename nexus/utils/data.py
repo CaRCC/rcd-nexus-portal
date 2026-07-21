@@ -5,6 +5,7 @@ from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.db import IntegrityError, transaction
+from django.core.exceptions import ValidationError
 
 from nexus.models import (
     CapabilitiesAssessment,
@@ -321,30 +322,178 @@ def load_legacy_profiles_data(path):
 
     print(f'Loaded {profiles_loaded} profiles.')
 
+# deprecated("Use merge_institutions_into_primary() instead.")
 def merge_institutions(institutions):
+    return merge_institutions_into_primary(institutions[0], institutions[1:])
+
+def merge_institutions_into_primary(primary, merge_list, no_merge=True, verbose=False):
     """
     Merge the institutions into the first one in the list, for deduplication.
-
+    If no_merge is true (the default) this will only describe actions, and will not implement them. 
     WARNING: Make sure all FKs to the Institution model are included in this method before running it in prod. As of writing, there were 4.
-
-    Also double check that no data will be lost in the merge, e.g. important names/descriptions on each additional Institution record. This is a destructive operation.
+    TODO Refine to check that no data will be lost in the merge, e.g. important names/descriptions on each additional Institution record. This is a destructive operation.
     """
-    first = institutions[0]
-    print(f"nexus.utils.data.merge_institutions first is: {first}")
     with transaction.atomic():
-        for institution in institutions[1:]:
-            print(f"Next to merge is: {institution}")
+        for institution in merge_list:
+            print(f"Merging: {institution}({institution.pk}) into primary: {primary}({primary.pk})")
             for profile in institution.profiles.all():
-                profile.institution = first
-                profile.save()
+                if no_merge or verbose:
+                    print(f"Moving profile: {profile} to primary institution.")
+                if not no_merge:
+                    profile.institution = primary
+                    profile.save()
             for idp in institution.cilogon_idps.all():
-                idp.institution = first
-                idp.save()
+                if no_merge or verbose:
+                    print(f"Moving IDP: {idp} to primary institution.")
+                if not no_merge:
+                    idp.institution = primary
+                    idp.save()
             for affiliation in institution.user_affiliations.all():
-                affiliation.institution = first
-                affiliation.save()
+                if primary.user_affiliations.filter(user=affiliation.user).exists():
+                    print(f"Primary institution already has User affiliation for: {affiliation.user}.")
+                else:
+                    if no_merge or verbose:
+                        print(f"Moving User affiliation for: {affiliation.user} to primary institution.")
+                    if not no_merge:
+                        affiliation.institution = primary
+                        affiliation.save()
             for request in institution.affiliation_requests.all():
-                request.institution = first
-                request.save()
-            institution.delete()
-    return first
+                if no_merge or verbose:
+                    print(f"Moving Affiliation Request for: {request.user} (with email {request.email}) to primary institution.")
+                if not no_merge:
+                    request.institution = primary
+                    request.save()
+            # Check all the fields to preserve data on the "dupes"
+            if not primary.country and institution.country:
+                if no_merge or verbose:
+                    print(f"Copy merge institution country: {institution.country} to primary institution.")
+                if not no_merge:
+                    primary.country = institution.country
+            if not primary.state_or_province and institution.state_or_province:
+                if no_merge or verbose:
+                    print(f"Copy merge institution state_or_province: {institution.state_or_province} to primary institution.")
+                if not no_merge:
+                    primary.state_or_province = institution.state_or_province
+            if not primary.ipeds_unitid and institution.ipeds_unitid:
+                # Note that ipeds_unitid must be unique among institutions, so we have to remove it from the old instiution first. 
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_unitid: {institution.ipeds_unitid} to primary institution.")
+                if not no_merge:
+                    ipeds_unitid = institution.ipeds_unitid
+                    institution.ipeds_unitid = None
+                    institution.save()
+                    primary.ipeds_unitid = institution.ipeds_unitid
+            if not primary.ipeds_sector and institution.ipeds_sector:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_sector: {institution.ipeds_sector} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_sector = institution.ipeds_sector
+            if not primary.ipeds_level and institution.ipeds_level:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_level: {institution.ipeds_level} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_level = institution.ipeds_level
+            if not primary.ipeds_control and institution.ipeds_control:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_control: {institution.ipeds_control} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_control = institution.ipeds_control
+            if not primary.ipeds_hbcu and institution.ipeds_hbcu:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_hbcu: {institution.ipeds_hbcu} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_hbcu = institution.ipeds_hbcu
+            if not primary.ipeds_pbi and institution.ipeds_pbi:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_pbi: {institution.ipeds_pbi} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_pbi = institution.ipeds_pbi
+            if not primary.ipeds_tcu and institution.ipeds_tcu:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_tcu: {institution.ipeds_tcu} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_tcu = institution.ipeds_tcu
+            if not primary.ipeds_hsi and institution.ipeds_hsi:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_hsi: {institution.ipeds_hsi} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_hsi = institution.ipeds_hsi
+            if not primary.ipeds_aanapisi_annh and institution.ipeds_aanapisi_annh:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_aanapisi_annh: {institution.ipeds_aanapisi_annh} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_aanapisi_annh = institution.ipeds_aanapisi_annh
+            if not primary.ipeds_msi and institution.ipeds_msi:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_msi: {institution.ipeds_msi} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_msi = institution.ipeds_msi
+            if not primary.ipeds_epscor and institution.ipeds_epscor:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_epscor: {institution.ipeds_epscor} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_epscor = institution.ipeds_epscor
+            if not primary.ipeds_land_grant and institution.ipeds_land_grant:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_land_grant: {institution.ipeds_land_grant} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_land_grant = institution.ipeds_land_grant
+            if not primary.ipeds_urbanization and institution.ipeds_urbanization:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_urbanization: {institution.ipeds_urbanization} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_urbanization = institution.ipeds_urbanization
+            if not primary.ipeds_size and institution.ipeds_size:
+                if no_merge or verbose:
+                    print(f"Copy merge institution ipeds_size: {institution.ipeds_size} to primary institution.")
+                if not no_merge:
+                    primary.ipeds_size = institution.ipeds_size
+            if not primary.carnegie_classification and institution.carnegie_classification:
+                if no_merge or verbose:
+                    print(f"Copy merge institution carnegie_classification: {institution.carnegie_classification} to primary institution.")
+                if not no_merge:
+                    primary.carnegie_classification = institution.carnegie_classification
+            if not primary.undergrad_pop and institution.undergrad_pop:
+                if no_merge or verbose:
+                    print(f"Copy merge institution undergrad_pop: {institution.undergrad_pop} to primary institution.")
+                if not no_merge:
+                    primary.undergrad_pop = institution.undergrad_pop
+            if not primary.grad_pop and institution.grad_pop:
+                if no_merge or verbose:
+                    print(f"Copy merge institution grad_pop: {institution.grad_pop} to primary institution.")
+                if not no_merge:
+                    primary.grad_pop = institution.grad_pop
+            if not primary.student_pop and institution.student_pop:
+                if no_merge or verbose:
+                    print(f"Copy merge institution student_pop: {institution.student_pop} to primary institution.")
+                if not no_merge:
+                    primary.student_pop = institution.student_pop
+            if not primary.research_expenditure and institution.research_expenditure:
+                if no_merge or verbose:
+                    print(f"Copy merge institution research_expenditure: {institution.research_expenditure} to primary institution.")
+                if not no_merge:
+                    primary.research_expenditure = institution.research_expenditure
+
+            if not no_merge:
+                primary.save()
+                institution.delete()
+    return primary
+
+# Includes a name check just for safety. First pk in list
+def merge_institutions_by_pks(primary_pk, merge_pks, name_check, no_merge=True, verbose=False ):
+    institutions_to_merge = []
+    print(f"merge_institutions_by_pks primary: {primary_pk}, to merge: {merge_pks} with name: {name_check}"+"(Test only, no merge)" if no_merge else "")
+    try:
+        primary = Institution.objects.get(pk=primary_pk, name__icontains=name_check)
+    except Institution.DoesNotExist:
+        raise ValidationError(f"No institution found with for primary pk:[{primary_pk}] and name matching ({name_check}).")
+    
+    for pk in merge_pks:
+        try:
+            inst = Institution.objects.get(pk=pk, name__icontains=name_check)
+        except Institution.DoesNotExist:
+            raise ValidationError(f"No institution found with for merge pk:[{pk}] and name matching ({name_check}).")
+        institutions_to_merge.append(inst)
+        
+    merge_institutions_into_primary(primary, institutions_to_merge, no_merge=no_merge, verbose=verbose)
+    print(f"Merged institutions into base: {primary.name} ({primary.pk})")

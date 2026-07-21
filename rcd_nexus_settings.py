@@ -18,7 +18,7 @@ BASE_URL = "http://localhost:8000"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "django",
+        "NAME": "django",  # use "rcd-nexus-django" with a local dump of portal DB; else use "django" for a simple dev environment
         "USER": "django",
         "PASSWORD": "django",
         "HOST": "localhost",
