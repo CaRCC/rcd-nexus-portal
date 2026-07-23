@@ -62,11 +62,14 @@
         </thead>
         <tbody>
             {% for asmnt in assessments %}
-            <tr>
-                <td><p><a href="{% url 'capmodel:assessment' asmnt.profile.pk %}">{{asmnt.profile}}</a></p></td>
-                <td><p>{{ asmnt.update_time }}</p></td>
-                <td><p>{{ asmnt.update_user }}</p></td>
-            </tr>
+                <tr>
+                    <td><p><a href="{% url 'capmodel:assessment' asmnt.profile.pk %}">{{asmnt.profile}}</a></p></td>
+                    <td><p>{{ asmnt.update_time }}</p></td>
+                    <td><p>{{ asmnt.update_user }}</p></td>
+            {% empty %}
+                <tr>
+                    <td colspan="3"><p><b>No assessments pending review at this time.</b></p></td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>

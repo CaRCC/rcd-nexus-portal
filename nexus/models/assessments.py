@@ -5,6 +5,7 @@ Common assessment definitions/metadata. For actual assessments models, see:
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 
 class AssessmentBase(models.Model):
@@ -14,6 +15,14 @@ class AssessmentBase(models.Model):
 
     class Meta:
         abstract = True
+
+    # TODO need to add a create_time so we know which questions were valid then
+    # Default it to timezone.now so it will fill in old assessments, and then the migratation
+    # will have to reset it to something reasonable (e.g., mid-year in the year of the profile, or the update_time, whichever is earlier)
+    create_time = models.DateTimeField(
+        default=timezone.now,
+        help_text="When the assessment was created."
+    )
 
     update_time = models.DateTimeField(
         auto_now=True, help_text="When the assessment was most recently updated."

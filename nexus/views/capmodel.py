@@ -381,35 +381,49 @@ def topic(request, profile_id, facing, topic):
             coverage_pct = mark_safe(f"{covstring}")
             coverage_color = compute_answer_color(coverage)
 
-    prev_topic_list = CapabilitiesTopic.objects.filter(Q(facing__index__lt=topic.facing.index)
-                                            | Q(facing__index=topic.facing.index, index__lt=topic.index)).order_by('facing__index', 'index')
-    next_topic_list = CapabilitiesTopic.objects.filter(Q(facing__index__gt=topic.facing.index)
-                                            | Q(facing__index=topic.facing.index, index__gt=topic.index)).order_by('facing__index', 'index')
+
+    answers_in_profile = CapabilitiesAnswer.objects.filter(assessment__profile_id=profile_id)
+    questions_valid_for_profile = CapabilitiesQuestion.objects.filter_valid(assessment.update_time)
+
+    results = dict()
+    # TODO can filter by facing and topic with arguments
+
+    prev_topic = None
+    next_topic = None
 
     showExtraTopics = request.COOKIES.get('showEX')=="1"
-    # print(f"Topic view, showExtraTopics is: [{showExtraTopics}]")
-    if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.FULL or showExtraTopics:
-        prev_topic = prev_topic_list.last()
-        next_topic = next_topic_list.first()
-    else:
-        prev_topic = None
-        next_topic = None
-        if prev_topic_list.count() > 0:
-            for i in range(prev_topic_list.count()-1,-1,-1):
-                ptopic = prev_topic_list[i]
-                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL \
-                        and topic_is_essential(assessment, ptopic.facing, ptopic) \
-                    or topic_is_included(assessment, ptopic.facing, ptopic):
-                    prev_topic = ptopic
+    # look through previous topics in descending facing and topic order to find one that matches a question in this assessment
+    # OR if they are showing all topics, find one that matches any question valid when they created this assessment
+    for fitem in Facing.objects.filter(index__lte=topic.facing.index).order_by('-index'):
+        if fitem.index == topic.facing.index:
+            look_before = topic.index
+        else: 
+            look_before = 100
+        for t in fitem.capmodel_topics.filter(index__lt=look_before).order_by('-index'):
+            if showExtraTopics:     # work from the topics for all questions valid when the assessment was created
+                if questions_valid_for_profile.filter(topic=t):
+                    prev_topic = t
                     break
-        if next_topic_list.count() > 0:
-            for ntopic in next_topic_list:
-                if assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL \
-                        and topic_is_essential(assessment, ntopic.facing, ntopic) \
-                    or topic_is_included(assessment, ntopic.facing, ntopic):
-                    next_topic = ntopic
+            elif answers_in_profile.filter(question__topic=t):
+                prev_topic = t
+                break
+        if prev_topic:
+            break
+    for fitem in Facing.objects.filter(index__gte=topic.facing.index).order_by('index'):
+        if fitem.index == topic.facing.index:
+            look_after = topic.index
+        else: 
+            look_after = -1
+        for t in fitem.capmodel_topics.filter(index__gt=look_after).order_by('index'):
+            if showExtraTopics:     # work from the topics for all questions valid when the assessment was created
+                if questions_valid_for_profile.filter(topic=t):
+                    next_topic = t
                     break
-
+            elif answers_in_profile.filter(question__topic=t):
+                next_topic = t
+                break
+        if next_topic:
+            break
 
     return render(
         request,
@@ -496,7 +510,7 @@ def answer(request, profile_id, question_pk):
         case CapabilitiesAnswer.State.NOT_APPLICABLE:
             covstring = "N/A"
 
-    other_answers = CapabilitiesAnswer.objects.order_by("question_id").filter(
+    answers_in_profile = CapabilitiesAnswer.objects.order_by("question_id").filter(
         assessment__profile_id=profile_id
     )
     atype = answer.assessment.assessment_type
@@ -508,13 +522,13 @@ def answer(request, profile_id, question_pk):
         cyoj_copied = False
 
     # Get previous and next answers ordering by the Facing, Topic, and Question indices (not the PKs)
-    prev_answer_list = other_answers.filter(Q(question__topic__facing__pk__lt=answer.question.topic.facing.pk)
+    prev_answer_list = answers_in_profile.filter(Q(question__topic__facing__pk__lt=answer.question.topic.facing.pk)
                                             | Q(question__topic__facing__pk=answer.question.topic.facing.pk,
                                                 question__topic__index__lt=answer.question.topic.index)
                                             | Q(question__topic__pk=answer.question.topic.pk,
                                                 question__index__lt=answer.question.index))\
                                                     .order_by('question__topic__facing_id', 'question__topic__index','question__index')
-    next_answer_list = other_answers.filter(Q(question__topic__facing__pk__gt=answer.question.topic.facing.pk)
+    next_answer_list = answers_in_profile.filter(Q(question__topic__facing__pk__gt=answer.question.topic.facing.pk)
                                             | Q(question__topic__facing__pk=answer.question.topic.facing.pk,
                                                 question__topic__index__gt=answer.question.topic.index)
                                             | Q(question__topic__pk=answer.question.topic.pk,

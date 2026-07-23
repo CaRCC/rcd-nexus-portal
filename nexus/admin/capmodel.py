@@ -59,8 +59,8 @@ class AssessmentAdmin(admin.ModelAdmin):
     list_display = ["profile", "assessment_type", "completed_percent", "update_time", "review_status", "review_time"]
     list_filter = ["review_status", "assessment_type", "profile__archived", "profile__year"]
     search_fields = ["review_note", "profile__institution__name"]
-    readonly_fields = ("profile", "update_time", "update_user", "review_time",)
-    fields = [("review_status", "review_time"), "review_note", "assessment_type", "copied_from", ("update_time", "update_user"), "profile"]
+    readonly_fields = ("profile", "create_time", "update_time", "update_user", "review_time",)
+    fields = [("review_status", "review_time"), "review_note", "assessment_type", "copied_from", "create_time", ("update_time", "update_user"), "profile"]
 #    inlines = [AnswerInline]
     actions = ["approve"]
     
