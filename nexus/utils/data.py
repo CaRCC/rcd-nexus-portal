@@ -1,5 +1,6 @@
 import csv
 import json
+import re
 from datetime import datetime
 
 from django.apps import apps
@@ -17,6 +18,8 @@ from nexus.models import (
 from nexus.models.facings import Facing
 
 DEBUGMODE = False
+topicQIDpattern = re.compile(r'^[A-Z]{1,2}\d{1,2}$')
+questionQIDpattern = re.compile(r'^[A-Z]{1,2}\d{1,2}\.\d{1,2}$')
 
 
 def initial_load_ipeds_data(path):
@@ -164,10 +167,10 @@ def load_capmodel_questions(path):
     print("Loaded {} questions.".format(questions_loaded))
 
 topic_QID_to_slug_mapping = {
-    "R2" : "researcher.outreach",
-    "R1" : "researcher.staffing",
-    "R3" : "researcher.consulting",
-    "R4" : "researcher.lifecycle",
+    "R2" : "outreach",
+    "R1" : "staffing",
+    "R3" : "consulting",
+    "R4" : "lifecycle",
     "D1" : "creation",
     "D2" : "discovery",
     "D3" : "analysis",
@@ -196,7 +199,6 @@ topic_QID_to_slug_mapping = {
     "SP1" : "alignment",
     "SP2" : "culture",
     "SP3" : "funding",
-    "SP7" : "",
     "SP4" : "partnerships",
     "SP5" : "professionalization",
     "SP6" : "diversity",    
@@ -205,7 +207,44 @@ topic_QID_to_slug_mapping = {
 def getSlugForTopicQID(qid):
     return topic_QID_to_slug_mapping.get(qid)
 
-def addNewTopic(slug, facing, index, display_name, description=None):
+def getFacingSlugForTopicQID(qid):
+    facingslug = None
+    if qid.startswith("R"):
+        facingslug = "researcher"
+    elif qid.startswith("D"):
+        facingslug = "data"
+    elif qid.startswith("SW"):
+        facingslug = "software"
+    elif qid.startswith("SY"):
+        facingslug = "systems"
+    elif qid.startswith("SP"):
+        facingslug = "strategy"
+    else:
+        raise ValidationError(f"getTopicByQID passed bad qid {qid} (Unknown prefix).")
+    return facingslug
+
+def getTopicByQID(qid):
+    facingslug = None
+    if qid.startswith("R"):
+        facingslug = "researcher"
+    elif qid.startswith("D"):
+        facingslug = "data"
+    elif qid.startswith("SW"):
+        facingslug = "software"
+    elif qid.startswith("SY"):
+        facingslug = "systems"
+    elif qid.startswith("SP"):
+        facingslug = "strategy"
+    else:
+        raise ValidationError(f"getTopicByQID passed bad qid {qid} (Unknown prefix).")
+    facing = Facing.objects.get(facingslug)
+    topic = facing.capmodel_topics.get(getSlugForTopicQID(qid))
+    return topic
+
+
+def addNewTopic(qid, slug, facing, index, display_name, description=None):
+    # Question: do we need to add this to the topic_QID_to_slug_mapping?
+    # Yes, because the input fill will not have slugs
     t, created = CapabilitiesTopic.objects.get_or_create(
             slug=slug,
             facing=facing,
@@ -216,19 +255,18 @@ def addNewTopic(slug, facing, index, display_name, description=None):
     else:
         t.contents.get_or_create(display_name=display_name, description=description)
         t.save()
+        topic_QID_to_slug_mapping[qid] = slug
+    return t
 
 # Note that this can only be used to update topic details and order within a facing
-# It CANNOT be used to move a topic to a ne facing. That requires creating a new topic and adding
+# It CANNOT be used to move a topic to a new facing. That requires creating a new topic and adding
 # new questions to it.
-def update_capmodel_topic(slug, facing, new_index, new_display_name, new_description=None, update_time=None):
-    # Pass in update_time so all the changes happen together. Will default to timezone.now()
-    # Each item has a topic indicator followed by the associated list of questions. The topic indicator is 
-    at = update_time or timezone.now()
-
+def update_capmodel_topic(qid, facing, new_index, new_display_name, new_description=None):
     try: 
+        slug = getSlugForTopicQID(qid)
         t = CapabilitiesTopic.objects.get(slug=slug,facing=facing)
     except CapabilitiesTopic.DoesNotExist:
-        raise ValidationError(f"No CapabilitiesTopic found with slug {slug} in facing {facing}.")
+        raise ValidationError(f"No CapabilitiesTopic found with qid {qid} (slug {slug}) in facing {facing}.")
 
     # 
     # update the text, etc. for the new one. 
@@ -239,7 +277,9 @@ def update_capmodel_topic(slug, facing, new_index, new_display_name, new_descrip
         content.description=new_description
     content.save()
     t.save()
-    return
+    print(f"Updated Topic: {qid} Name: {new_display_name}")
+
+    return t
 
 # slug is a string, topic should be an object
 def addNewCapabilityQuestion(qid, slug, topic, index, is_essential, text, help_text, short_text, update_time=None):
@@ -259,8 +299,9 @@ def addNewCapabilityQuestion(qid, slug, topic, index, is_essential, text, help_t
     else:
         q.attrs["legacy_qid"] = qid
         # TODO handle multiple languages
-        q.contents.get_or_create(text=text, help_text=help_text, short_text=short_text)
+        q.contents.get_or_create(text=text, help_text=help_text, shorttext=short_text)
         q.save()
+    return q
     
 # This does not delete the question, but does mark it as no longer valid so it disappears from new assessments
 def removeCapabilityQuestion(qid, update_time=None):
@@ -272,25 +313,92 @@ def removeCapabilityQuestion(qid, update_time=None):
         question.save()
     except CapabilitiesQuestion.DoesNotExist:
         raise ValidationError(f"No CapabilitiesQuestion found with QID {qid} that is valid at {at}.")
-    except Institution.MultipleObjectsReturned:
+    except CapabilitiesQuestion.MultipleObjectsReturned:
         raise ValidationError(f"Multiple CapabilitiesQuestions found with QID {qid} that are valid at {at}.")
 
 
-def update_capmodel_question(question, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, update_time=None):
+def update_capmodel_question(question, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, suffix, update_time=None):
     # Pass in update_time so all the changes happen together. Will default to timezone.now()
     # Each item has a topic indicator followed by the associated list of questions. The topic indicator is 
     at = update_time or timezone.now()
     # We have to clone the existing question to preserve the old one for previous versions, and then 
     # update the text, etc. for the new one. 
-    newq = apps.get_model("nexus", "CapabilitiesQuestion").objects.copy(question, copy_contents=False, update_time=at)
-    newq.contents.get_or_create(text=new_text, help_text=new_help_text, short_text=new_short_text)
+    # We cannot have two questions with the same slug and topic, so we append a suffix to the question slug
+    newq = apps.get_model("nexus", "CapabilitiesQuestion").objects.copy(question, suffix, copy_contents=False, update_time=at)
+    newq.contents.get_or_create(text=new_text, help_text=new_help_text, shorttext=new_short_text)
     newq.topic = new_topic
     newq.index = new_index
     newq.is_essential = is_essential
+    # TODO need to make a new slug to keep DB happy. Is it enough to append a "_v3" to the slug? 
+    # Review code to see. 
     newq.save()
     return
 
-def add_or_update_capmodel_question(qid, slug, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, update_time=None):
+new_q_slugs = {
+    "R1.6" : "ext_training", 
+    "R2.7" : "inst_rsrcs_aware", 
+    "R2.8" : "ext_rsrcs_aware", 
+    "R3.3" : "emerging_tech_support", 
+    "R5.1" : "user_supp_track", 
+    "SW6.5" : "llm_apps", 
+    "SY1.6" : "sys_docs", 
+    "SY1.7" : "ident_role_mgmnt", 
+    "SP7.5" : "cybersec_ass_supp", 
+    "SP7.6" : "faculty_equip", 
+}
+
+"""
+# add_or_update_questions_by_topic_in_facing Expects facing info like this:
+data_facing = [
+    [ "D8", "Data Management, Discovery, and Creation", # Topic QID and Display Name
+        [   # List of questions in topic, in order
+            ['D1.1',                                        # Question QID 
+            'Do researchers ... {Data Creation Resources}', # Question text (HTML) and short-text in brackets
+            "<p>For example...",                            # Question help text (HTML)
+            'essential:True'                                # boolean: is_essential
+            ], ...
+        ], ...
+    ], 
+]
+"""
+# suffix will be appended to all updated question slugs to ensure uniqueness in the DB (mostly for serialization)
+# Topic QID regex ^[A-Z]{1,2}\d{1,2}$
+# Question QID regex ^[A-Z]{1,2}\d{1,2}\.\d{1,2}$
+def add_or_update_questions_for_facing(facing_info, facing_slug, suffix, at_time):
+    tindex = 0
+    facing = Facing.objects.get(slug=facing_slug)
+    print(f"add_or_update_questions_for_facing: {facing_slug}")
+    for topic in facing_info:
+        tqid = topic[0]
+        if not topicQIDpattern.fullmatch(tqid):
+            print(f"Bad or missing Topic QID: {tqid}")
+            continue    # Skip this (emtpy?) structure
+        tname = topic[1]
+        # Update the topic. Note there is no update time
+
+        tobj = update_capmodel_topic(tqid, facing, tindex, tname)
+        tindex = tindex+1
+        questions = topic[2]
+        qindex = 0
+        for question in questions:
+            qqid = question[0]
+            if not questionQIDpattern.fullmatch(qqid):
+                print(f"Bad or missing Question QID: {qqid}")
+                continue    # Skip this (emtpy?) structure
+            pieces = question[1].split(" {",1)
+            print(f"Question info: qid: {qqid} text and short: {pieces}")
+            qtext = pieces[0]
+            if len(pieces) == 1:
+                qshort = "Missing short text!"
+            else: 
+                qshort = pieces[1].split("}", 1)[0] # There may be multiple shorts - ignore all but the first. 
+            qhelp = question[2]
+            is_essential = True if "True" in question[3] else False
+            add_or_update_capmodel_question(qqid, tobj, qindex, is_essential, qtext, qhelp, qshort, suffix, update_time=at_time)
+            qindex = qindex+1
+
+
+def add_or_update_capmodel_question(qid, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, suffix, update_time=None):
     # Pass in update_time so all the changes happen together. Will default to timezone.now()
     # This will look for an existing question with the passed QID, and if found will update that one, 
     # and otherwise will create a new one. 
@@ -298,17 +406,25 @@ def add_or_update_capmodel_question(qid, slug, new_topic, new_index, is_essentia
     try:
         question = CapabilitiesQuestion.objects.filter_valid(at=at).get(attrs__legacy_qid=qid)
         # question exists and must be updated. This is naive and only handles the default language. 
-        # Note that we do not allow updating the QID or slug
-        if slug and question.slug != slug:
-            raise ValidationError(f"Attempt to update question with QID {qid} and slug {question.slug} to have new slug {slug}.")
         # TODO Once we have translations, this will have to be extended to handle multiple languages. 
-        return update_capmodel_question(question, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, at)
-    except Institution.MultipleObjectsReturned:
-        raise ValidationError(f"Mujltiple CapabilitiesQuestions found with QID {qid} that are valid at {at}.")
+        print(f"Updating Question: {qid} Short: {new_short_text}")
+        return update_capmodel_question(question, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, suffix, at)
+    except CapabilitiesQuestion.MultipleObjectsReturned:
+        raise ValidationError(f"Multiple CapabilitiesQuestions found with QID {qid} that are valid at {at}.")
     except CapabilitiesQuestion.DoesNotExist:
         # This just means we have to add a new one
+        # We need to map the new slugs - hack!
+        slug = new_q_slugs[qid]
+        print(f"Adding Question: {qid} slug:{slug} Short: {new_short_text}")
         return addNewCapabilityQuestion(qid, slug, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, at)
     
+def verify_deleted_topic(topic_qid, at_time):
+    # Need to find all questions valid after update time contained in the topic. Should be empty. 
+    topicslug = getSlugForTopicQID(topic_qid)
+    facingslug = getFacingSlugForTopicQID(topic_qid)
+    questions = CapabilitiesQuestion.objects.filter_valid(at=at_time).filter(topic__facing__slug=facingslug).filter(topic__slug=topicslug)
+    if questions.exists:
+        raise RuntimeError(f"Found questions still tied to Topic: {topic_qid} ({facingslug}.{topicslug}) at: {at_time}")
 
 def load_capmodel_data(path, institution_path):
     """

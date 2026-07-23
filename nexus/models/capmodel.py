@@ -84,7 +84,7 @@ class CapabilitiesTopicContent(models.Model):
 class CapabilitiesQuestion(models.Model):
     class Manager(models.Manager):
         
-        def copy(self, existing, copy_contents=True, update_time=None):
+        def copy(self, existing, newslugsuffix, copy_contents=True, update_time=None):
             at = update_time or timezone.now()
             """
             Clone a question and mark the old as valid before update_time, and the new one valid after update_time
@@ -93,7 +93,7 @@ class CapabilitiesQuestion(models.Model):
             """
             with transaction.atomic():
                 question = self.create(
-                    slug=existing.slug,
+                    slug=existing.slug+newslugsuffix,
                     topic=existing.topic,
                     index=existing.index,
                     is_essential=existing.is_essential,

@@ -319,6 +319,8 @@ def topic(request, profile_id, facing, topic):
     facing = Facing.objects.get(slug=facing)
     topic = facing.capmodel_topics.get(slug=topic)
 
+    # Note that while we allow all answers regardless of version, a given assessment will only have the questions valid when
+    # it was created, so we can ignore that here. 
     answers = assessment.answers.filter(question__topic__facing_id=facing.pk, question__topic_id=topic.pk).annotate_coverage().order_by("question_id")
 
     session_language = "en"  # TODO get session language
