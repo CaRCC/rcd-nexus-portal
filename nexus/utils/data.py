@@ -334,19 +334,6 @@ def update_capmodel_question(question, new_topic, new_index, is_essential, new_t
     newq.save()
     return
 
-new_q_slugs = {
-    "R1.6" : "ext_training", 
-    "R2.7" : "inst_rsrcs_aware", 
-    "R2.8" : "ext_rsrcs_aware", 
-    "R3.3" : "emerging_tech_support", 
-    "R5.1" : "user_supp_track", 
-    "SW6.5" : "llm_apps", 
-    "SY1.6" : "sys_docs", 
-    "SY1.7" : "ident_role_mgmnt", 
-    "SP7.5" : "cybersec_ass_supp", 
-    "SP7.6" : "faculty_equip", 
-}
-
 """
 # add_or_update_questions_by_topic_in_facing Expects facing info like this:
 data_facing = [
@@ -364,7 +351,7 @@ data_facing = [
 # suffix will be appended to all updated question slugs to ensure uniqueness in the DB (mostly for serialization)
 # Topic QID regex ^[A-Z]{1,2}\d{1,2}$
 # Question QID regex ^[A-Z]{1,2}\d{1,2}\.\d{1,2}$
-def add_or_update_questions_for_facing(facing_info, facing_slug, suffix, at_time):
+def add_or_update_questions_for_facing(facing_info, facing_slug, new_q_slugs, suffix, at_time):
     tindex = 0
     facing = Facing.objects.get(slug=facing_slug)
     print(f"add_or_update_questions_for_facing: {facing_slug}")
@@ -394,11 +381,11 @@ def add_or_update_questions_for_facing(facing_info, facing_slug, suffix, at_time
                 qshort = pieces[1].split("}", 1)[0] # There may be multiple shorts - ignore all but the first. 
             qhelp = question[2]
             is_essential = True if "True" in question[3] else False
-            add_or_update_capmodel_question(qqid, tobj, qindex, is_essential, qtext, qhelp, qshort, suffix, update_time=at_time)
+            add_or_update_capmodel_question(qqid, tobj, qindex, is_essential, qtext, qhelp, qshort, new_q_slugs, suffix, update_time=at_time)
             qindex = qindex+1
 
 
-def add_or_update_capmodel_question(qid, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, suffix, update_time=None):
+def add_or_update_capmodel_question(qid, new_topic, new_index, is_essential, new_text, new_help_text, new_short_text, new_q_slugs, suffix, update_time=None):
     # Pass in update_time so all the changes happen together. Will default to timezone.now()
     # This will look for an existing question with the passed QID, and if found will update that one, 
     # and otherwise will create a new one. 
