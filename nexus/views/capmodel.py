@@ -137,7 +137,8 @@ def assessment(request, profile_id):
         topic_sum_count=0
         included_topic_count=0
         # print(f"Working through facing {facing.slug}...")
-        facing.questionCount = assessment.answers.filter(question__topic__facing=facing).filter_included(assessment).count()
+        # topic.slug!=CapabilitiesTopic.domain_coverage_slug
+        facing.questionCount = assessment.answers.filter(question__topic__facing=facing).filter_included(assessment).exclude(question__topic__slug=CapabilitiesTopic.domain_coverage_slug).count()
         for topic, answers in topics.items():
             topic.content = topic.contents.get(language=session_language)
             topic.is_partial = False
