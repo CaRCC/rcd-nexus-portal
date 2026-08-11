@@ -156,13 +156,16 @@ def report_institutions(request):
     if(request.GET) :
         dict = request.GET.dict()
         sortcol = dict.get('sort')
-        if sortcol in {'name','internet_domain'}:
+        if sortcol in {'name','internet_domain', 'country','state_or_province'}:
             primary = sortcol
 
     if primary:
         institutions = Institution.objects.all().exclude(profiles__isnull=True).order_by(primary)
     else:
         institutions = Institution.objects.all().exclude(profiles__isnull=True).order_by('country', 'state_or_province', 'name')
+
+    for inst in institutions:
+        inst.profile_list = RCDProfile.objects.filter(institution__id=inst.pk)
 
 
     context = {

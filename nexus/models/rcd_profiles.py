@@ -239,10 +239,8 @@ class RCDProfile(models.Model):
         blank=True,
     )
 
-
-    def __str__(self):
-        archived = "[ARCHIVED] " if self.archived else ""
-
+    @property
+    def year_type_str(self):
         if not hasattr(self, "capabilities_assessment"):
             atype = ""
         elif self.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
@@ -251,10 +249,15 @@ class RCDProfile(models.Model):
             atype = " Custom"
         else: 
             atype = " Full"
+        return f"({self.year}{atype})"
+
+
+    def __str__(self):
+        archived = "[ARCHIVED] " if self.archived else ""
         subunit = (
             f"({self.institution_subunit}) at " if self.institution_subunit else ""
         )
-        return f"{archived}{subunit}{self.institution} ({self.year}{atype})"
+        return f"{archived}{subunit}{self.institution} {self.year_type_str}"
 
 class SurveyReasonChoices(models.TextChoices):
     BENCHMARKING = "benchmarking", "Benchmarking of current service offerings."

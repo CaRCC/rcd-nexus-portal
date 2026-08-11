@@ -408,7 +408,7 @@ def demographicsMap(profiles, width=cmgraphs.DEFAULT_WIDTH, height=DEFAULT_PIE_H
     if not maplabelexclude:
         for profile_state in data.order_by('institution__state_or_province').distinct('institution__state_or_province'):
             state = profile_state['institution__state_or_province']
-            if count := data.filter(institution__state_or_province=name).count():
+            if count := data.filter(institution__state_or_province=state).count():
                 if not state in data2:
                     if not missing_states:
                         missing_states = f'{state}: {count}'
