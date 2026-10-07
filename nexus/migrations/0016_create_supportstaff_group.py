@@ -43,7 +43,7 @@ def create_SupportStaff_GroupWithPerms(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("nexus", "0013_auto_20260630_2339"),
+        ("nexus", "0015_capabilitiesassessment_create_time_and_more"),
     ]
 
     operations = [
