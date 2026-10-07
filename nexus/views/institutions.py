@@ -121,8 +121,7 @@ def affiliation_request(request: HttpRequest, token=None):
     if request.method == "POST":
         if form.is_valid():
             email = form.cleaned_data["email"]
-            name, domain = email.split("@")
-            institution = Institution.objects.get(internet_domain=domain)
+            institution = form.cleaned_data["institution"]
             if institution.has_cilogon_idp():
                 messages.error(
                     request,
