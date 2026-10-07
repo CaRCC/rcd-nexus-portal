@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.safestring import mark_safe
 from nexus.models.capmodel import CapabilitiesAssessment
-
+import importlib
 from nexus.utils.time import next_week
 
 logger = logging.getLogger(__name__)
@@ -241,14 +241,23 @@ class RCDProfile(models.Model):
 
     @property
     def year_type_str(self):
+        V3QuestionUpdater_path = "nexus.migrations.0014_auto_20260720_2010"
+        V3QuestionUpdater_module = importlib.import_module(V3QuestionUpdater_path)
+        V3QuestionUpdater = V3QuestionUpdater_module.V3QuestionUpdater
+
         if not hasattr(self, "capabilities_assessment"):
             atype = ""
-        elif self.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
-            atype = " Essential"
-        elif self.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
-            atype = " Custom"
-        else: 
-            atype = " Full"
+        else:
+            if self.capabilities_assessment.create_time >= V3QuestionUpdater.v3_update_time:
+                prefix = " V3_"
+            else: 
+                prefix = " "
+            if self.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.ESSENTIAL:
+                atype = prefix+"Essential"
+            elif self.capabilities_assessment.assessment_type == CapabilitiesAssessment.AssessmentTypeChoices.CYOJ:
+                atype = prefix+"Custom"
+            else: 
+                atype = prefix+"Full"
         return f"({self.year}{atype})"
 
 

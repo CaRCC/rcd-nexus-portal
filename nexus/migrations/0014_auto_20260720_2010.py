@@ -246,10 +246,10 @@ new_q_slugs = {
 }
 
 
-class QuestionUpdater:
+class V3QuestionUpdater:
     # Just using July 15 for now. 
-    update_time = datetime(2026, 7, 15, tzinfo=timezone.utc)
-    update_suffix = "_v3"
+    v3_update_time = datetime(2026, 7, 15, tzinfo=timezone.utc)
+    v3_update_suffix = "_v3"
     
     @classmethod
     def addNewTopics(self, apps, schema_editor):
@@ -263,11 +263,11 @@ class QuestionUpdater:
 
     @classmethod
     def add_or_update_questions(self, apps, schema_editor):
-        add_or_update_questions_for_facing(researcher_facing, "researcher", new_q_slugs, QuestionUpdater.update_suffix, QuestionUpdater.update_time)
-        add_or_update_questions_for_facing(data_facing, "data", new_q_slugs, QuestionUpdater.update_suffix, QuestionUpdater.update_time)
-        add_or_update_questions_for_facing(software_facing, "software", new_q_slugs, QuestionUpdater.update_suffix, QuestionUpdater.update_time)
-        add_or_update_questions_for_facing(systems_facing, "systems", new_q_slugs, QuestionUpdater.update_suffix, QuestionUpdater.update_time)
-        add_or_update_questions_for_facing(strategy_policy_facing, "strategy", new_q_slugs, QuestionUpdater.update_suffix, QuestionUpdater.update_time)
+        add_or_update_questions_for_facing(researcher_facing, "researcher", new_q_slugs, V3QuestionUpdater.v3_update_suffix, V3QuestionUpdater.v3_update_time)
+        add_or_update_questions_for_facing(data_facing, "data", new_q_slugs, V3QuestionUpdater.v3_update_suffix, V3QuestionUpdater.v3_update_time)
+        add_or_update_questions_for_facing(software_facing, "software", new_q_slugs, V3QuestionUpdater.v3_update_suffix, V3QuestionUpdater.v3_update_time)
+        add_or_update_questions_for_facing(systems_facing, "systems", new_q_slugs, V3QuestionUpdater.v3_update_suffix, V3QuestionUpdater.v3_update_time)
+        add_or_update_questions_for_facing(strategy_policy_facing, "strategy", new_q_slugs, V3QuestionUpdater.v3_update_suffix, V3QuestionUpdater.v3_update_time)
 
     @classmethod
     def delete_old_questions(self, apps, schema_editor):
@@ -283,7 +283,7 @@ class QuestionUpdater:
         for question in questions_to_delete:
                 print(f"Deleting question ({question})")
                 # no_merge=True during testing, verbose to get output of all changes implemented. 
-                removeCapabilityQuestion(question, QuestionUpdater.update_time)
+                removeCapabilityQuestion(question, V3QuestionUpdater.v3_update_time)
 
     @classmethod
     def verify_deleted_topics(self, apps, schema_editor):
@@ -292,7 +292,7 @@ class QuestionUpdater:
         ]
         # Need to find all questions valid after update time contained in the topic. Should be empty. 
         for topic_qid in topics_to_delete:
-            verify_deleted_topic(topic_qid, QuestionUpdater.update_time)
+            verify_deleted_topic(topic_qid, V3QuestionUpdater.v3_update_time)
 
 class Migration(migrations.Migration):
     dependencies = [
@@ -300,8 +300,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(QuestionUpdater.addNewTopics),
-        migrations.RunPython(QuestionUpdater.add_or_update_questions),
-        migrations.RunPython(QuestionUpdater.delete_old_questions),
-        # migrations.RunPython(QuestionUpdater.verify_deleted_topics),
+        migrations.RunPython(V3QuestionUpdater.addNewTopics),
+        migrations.RunPython(V3QuestionUpdater.add_or_update_questions),
+        migrations.RunPython(V3QuestionUpdater.delete_old_questions),
+        # migrations.RunPython(V3QuestionUpdater.verify_deleted_topics),
     ]
